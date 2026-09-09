@@ -1,0 +1,4 @@
+interface:
+  display_name: "DealPME Interactive Reference Builder"
+  short_description: "Build executable product-reference apps"
+  brand_color: "#152B58"

@@ -1,0 +1,338 @@
+{
+  "schema_version": "3.0",
+  "fixture_kind": "SERVICE_SCENARIO",
+  "synthetic": true,
+  "scenario_id": "EX-03",
+  "service": "deal-experts",
+  "service_label": "Deal-Experts",
+  "title": "Due diligence fiscale",
+  "archetype": "REMEDIATION",
+  "capability_status": "FUTURE_TARGET",
+  "objective": "Tester une mission fiscale nécessitant clarification du périmètre et des pièces avant accès.",
+  "state_in": "RFP_NEEDS_SCOPE_REFINEMENT",
+  "trigger": "Besoin d’un diagnostic fiscal Togo avant fixation des garanties SPA.",
+  "actors": [
+    {
+      "role": "Utilisateur",
+      "responsibility": "Définir le besoin et contracter la mission",
+      "accountable_for": "Définir le besoin et contracter la mission",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "DealPME",
+      "responsibility": "Orchestrer la demande et les accès techniques",
+      "accountable_for": "Orchestrer la demande et les accès techniques",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Expert",
+      "responsibility": "Exécuter la mission de façon indépendante",
+      "accountable_for": "Exécuter la mission de façon indépendante",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Conformité",
+      "responsibility": "Vérifier conflit, habilitation et périmètre",
+      "accountable_for": "Vérifier conflit, habilitation et périmètre",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Cédant",
+      "responsibility": "Autoriser les accès aux pièces de son dossier",
+      "accountable_for": "Autoriser les accès aux pièces de son dossier",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "Périmètre fiscal",
+      "status": "INCOMPLETE",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    },
+    {
+      "name": "Liste des entités",
+      "status": "INCOMPLETE",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    },
+    {
+      "name": "Documents fiscaux",
+      "status": "INCOMPLETE",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    }
+  ],
+  "controls": [
+    {
+      "id": "EX-C04",
+      "severity": "P0",
+      "rule": "périmètre explicite",
+      "owner": "Utilisateur",
+      "expected_evidence": "EX-C04-EVIDENCE",
+      "blocking": true
+    },
+    {
+      "id": "EX-C05",
+      "severity": "P0",
+      "rule": "pas d’accès global",
+      "owner": "DealPME",
+      "expected_evidence": "EX-C05-EVIDENCE",
+      "blocking": false
+    },
+    {
+      "id": "EX-C06",
+      "severity": "P1",
+      "rule": "contrat direct utilisateur-expert",
+      "owner": "Expert",
+      "expected_evidence": "EX-C06-EVIDENCE",
+      "blocking": false
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "Conseil fiscal",
+      "status": "PARTIAL",
+      "required": true,
+      "partner_dependent": true,
+      "fallback": "Traitement manuel/documenté lorsque prévu"
+    },
+    {
+      "name": "Autorisation documents",
+      "status": "PARTIAL",
+      "required": true,
+      "partner_dependent": true,
+      "fallback": "Traitement manuel/documenté lorsque prévu"
+    }
+  ],
+  "events": [
+    {
+      "seq": 1,
+      "type": "REQUEST_CREATED",
+      "actor": "Utilisateur",
+      "result": "Demande créée et identifiée",
+      "audit_event": "EX_REQUEST_CREATED"
+    },
+    {
+      "seq": 2,
+      "type": "INPUTS_CHECKED",
+      "actor": "DealPME",
+      "result": "Entrées et habilitations contrôlées",
+      "audit_event": "EX_INPUTS_CHECKED"
+    },
+    {
+      "seq": 3,
+      "type": "CONTROL_GATE_EVALUATED",
+      "actor": "Expert",
+      "result": "Gate métier/compliance évalué",
+      "audit_event": "EX_CONTROL_GATE_EVALUATED"
+    },
+    {
+      "seq": 4,
+      "type": "HUMAN_GATE_IF_REQUIRED",
+      "actor": "Conformité",
+      "result": "Décision humaine appliquée lorsqu’elle est requise",
+      "audit_event": "EX_HUMAN_GATE_IF_REQUIRED"
+    },
+    {
+      "seq": 5,
+      "type": "OUTPUT_RECORDED",
+      "actor": "Cédant",
+      "result": "SCOPE_REMEDIATION",
+      "audit_event": "EX_OUTPUT_RECORDED"
+    },
+    {
+      "seq": 6,
+      "type": "AUDIT_EVENT_WRITTEN",
+      "actor": "Utilisateur",
+      "result": "Trace exploitable par QA",
+      "audit_event": "EX_AUDIT_EVENT_WRITTEN"
+    }
+  ],
+  "human_decision": {
+    "required": true,
+    "owner": "Utilisateur / client",
+    "decision": "CONFIRM_REVISED_SCOPE",
+    "evidence": "Le client valide la mission ; la conformité vérifie l’accès temporaire."
+  },
+  "state_out": "SCOPE_REMEDIATION",
+  "prohibited_states": [
+    "FINAL_SUCCESS_BEFORE_REMEDIATION"
+  ],
+  "expected_user_message": "Le périmètre doit être précisé avant que l’expert puisse accéder aux documents fiscaux.",
+  "audit_events": [
+    "EX_REQUEST_CREATED",
+    "EX_INPUTS_CHECKED",
+    "EX_CONTROL_GATE_EVALUATED",
+    "EX_HUMAN_GATE_IF_REQUIRED",
+    "EX_OUTPUT_RECORDED",
+    "EX_AUDIT_EVENT_WRITTEN",
+    "EX_EDIT_SCOPE",
+    "EX_UPLOAD_SCOPE_EVIDENCE"
+  ],
+  "negative_assertions": [
+    "Forcer SCOPE_REMEDIATION sans exécuter CONTROL_GATE_EVALUATED doit échouer.",
+    "Exécuter une action sensible avec un profil non autorisé doit échouer et être journalisé.",
+    "Supprimer l’interaction contract d’un contrôle visible doit déclencher DEAD_CONTROL."
+  ],
+  "qa_assertions": [
+    "Le scénario ne peut atteindre son état cible qu’après satisfaction des gates explicitement définis.",
+    "Chaque contrôle visible possède un interaction contract et produit un changement d’état ou un blocage explicite.",
+    "Les rôles ne voient que le périmètre nécessaire et les événements sensibles sont journalisés.",
+    "Aucun message utilisateur ne présente DealPME comme conseil juridique, fiscal, réglementaire ou financier.",
+    "Les sorties synthétiques sont identifiées comme telles et ne peuvent être confondues avec un dossier réel."
+  ],
+  "evidence_pack": [
+    {
+      "id": "EX-03-EV-01",
+      "description": "Périmètre fiscal",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "EX-03-EV-02",
+      "description": "Liste des entités",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "EX-03-EV-03",
+      "description": "Documents fiscaux",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "EX-03-EV-04",
+      "description": "EX-C04 périmètre explicite",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "EX-03-EV-05",
+      "description": "EX-C05 pas d’accès global",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "EX-03-EV-06",
+      "description": "EX-C06 contrat direct utilisateur-expert",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    }
+  ],
+  "primary_action": {
+    "label": "Corriger le périmètre",
+    "action": "EDIT_SCOPE",
+    "success_state": "SCOPE_UPDATED"
+  },
+  "secondary_action": {
+    "label": "Ajouter pièces requises",
+    "action": "UPLOAD_SCOPE_EVIDENCE",
+    "success_state": "EVIDENCE_RECEIVED"
+  },
+  "interaction_contracts": [
+    {
+      "control_id": "PRIMARY_ACTION",
+      "surface": "scenario",
+      "label": "Corriger le périmètre",
+      "action": "EDIT_SCOPE",
+      "target": "scenario-state-machine",
+      "required_profile": "AUTHORIZED_TEST_USER",
+      "success_state": "SCOPE_UPDATED",
+      "blocked_state": null,
+      "blocked_message": null,
+      "audit_event": "EX_EDIT_SCOPE"
+    },
+    {
+      "control_id": "SECONDARY_ACTION",
+      "surface": "scenario",
+      "label": "Ajouter pièces requises",
+      "action": "UPLOAD_SCOPE_EVIDENCE",
+      "target": "scenario-workspace",
+      "required_profile": "AUTHORIZED_TEST_USER",
+      "success_state": "EVIDENCE_RECEIVED",
+      "audit_event": "EX_UPLOAD_SCOPE_EVIDENCE"
+    },
+    {
+      "control_id": "TAB_OVERVIEW",
+      "surface": "scenario-navigation",
+      "label": "Situation",
+      "action": "SWITCH_TAB",
+      "target": "overview",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_WORKFLOW",
+      "surface": "scenario-navigation",
+      "label": "Parcours",
+      "action": "SWITCH_TAB",
+      "target": "workflow",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_CONTROLS",
+      "surface": "scenario-navigation",
+      "label": "Contrôles & RACI",
+      "action": "SWITCH_TAB",
+      "target": "controls",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_EVIDENCE",
+      "surface": "scenario-navigation",
+      "label": "Preuves & audit",
+      "action": "SWITCH_TAB",
+      "target": "evidence",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_TESTS",
+      "surface": "scenario-navigation",
+      "label": "Tests dev",
+      "action": "SWITCH_TAB",
+      "target": "tests",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "PROFILE_SWITCH",
+      "surface": "dev-reference",
+      "label": "Profil de test",
+      "action": "SWITCH_TEST_PROFILE",
+      "target": "local-reference-state",
+      "required_profile": "DEV_REFERENCE",
+      "success_state": "PROFILE_CHANGED",
+      "audit_event": "PROFILE_CHANGED"
+    },
+    {
+      "control_id": "MODAL_CLOSE",
+      "surface": "modal",
+      "label": "Fermer",
+      "action": "CLOSE_MODAL",
+      "target": "modal",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "MODAL_CLOSED",
+      "audit_event": "MODAL_CLOSED"
+    }
+  ],
+  "test_profiles": [
+    "Utilisateur autorisé",
+    "Utilisateur non autorisé",
+    "Conformité / opérateur",
+    "Administrateur support contrôlé"
+  ],
+  "provenance": {
+    "type": "SYNTHETIC_TEST_DATA",
+    "generated_for": "DealPME V3 developer reference and regression QA",
+    "not_real_case": true
+  }
+}

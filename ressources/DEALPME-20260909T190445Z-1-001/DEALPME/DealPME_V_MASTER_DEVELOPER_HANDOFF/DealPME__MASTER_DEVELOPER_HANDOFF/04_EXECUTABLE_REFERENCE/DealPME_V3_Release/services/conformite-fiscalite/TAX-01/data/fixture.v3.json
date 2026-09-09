@@ -1,0 +1,329 @@
+{
+  "schema_version": "3.0",
+  "fixture_kind": "SERVICE_SCENARIO",
+  "synthetic": true,
+  "scenario_id": "TAX-01",
+  "service": "conformite-fiscalite",
+  "service_label": "Conformité & Fiscalité",
+  "title": "Simulation fiscale de cession",
+  "archetype": "NORMAL",
+  "capability_status": "PARTNER_DEPENDENT",
+  "objective": "Tester une simulation fiscale préparatoire fournie par le module partenaire avec avertissement clair.",
+  "state_in": "TAX_DATA_COMPLETE",
+  "trigger": "Le cédant souhaite estimer les incidences fiscales à titre préparatoire.",
+  "actors": [
+    {
+      "role": "Entreprise",
+      "responsibility": "Fournir les données fiscales exactes",
+      "accountable_for": "Fournir les données fiscales exactes",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "DealPME",
+      "responsibility": "Orchestrer l’interface et journaliser le statut",
+      "accountable_for": "Orchestrer l’interface et journaliser le statut",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Partenaire fiscal",
+      "responsibility": "Calculer, déposer ou délivrer selon son habilitation",
+      "accountable_for": "Calculer, déposer ou délivrer selon son habilitation",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Conseil fiscal",
+      "responsibility": "Interpréter les questions nécessitant un avis",
+      "accountable_for": "Interpréter les questions nécessitant un avis",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Conformité",
+      "responsibility": "Empêcher toute fausse réussite en cas de dépendance indisponible",
+      "accountable_for": "Empêcher toute fausse réussite en cas de dépendance indisponible",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "Hypothèses prix vendeur",
+      "status": "PRESENT",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    },
+    {
+      "name": "Nature cession",
+      "status": "PRESENT",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    },
+    {
+      "name": "Données fiscales",
+      "status": "PRESENT",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    }
+  ],
+  "controls": [
+    {
+      "id": "TAX-C01",
+      "severity": "P0",
+      "rule": "simulation indicative",
+      "owner": "Entreprise",
+      "expected_evidence": "TAX-C01-EVIDENCE",
+      "blocking": true
+    },
+    {
+      "id": "TAX-C02",
+      "severity": "P0",
+      "rule": "source partenaire",
+      "owner": "DealPME",
+      "expected_evidence": "TAX-C02-EVIDENCE",
+      "blocking": false
+    },
+    {
+      "id": "TAX-C03",
+      "severity": "P1",
+      "rule": "pas d’avis DealPME",
+      "owner": "Partenaire fiscal",
+      "expected_evidence": "TAX-C03-EVIDENCE",
+      "blocking": false
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "Module partenaire",
+      "status": "AVAILABLE",
+      "required": true,
+      "partner_dependent": true,
+      "fallback": null
+    }
+  ],
+  "events": [
+    {
+      "seq": 1,
+      "type": "REQUEST_CREATED",
+      "actor": "Entreprise",
+      "result": "Demande créée et identifiée",
+      "audit_event": "TAX_REQUEST_CREATED"
+    },
+    {
+      "seq": 2,
+      "type": "INPUTS_CHECKED",
+      "actor": "DealPME",
+      "result": "Entrées et habilitations contrôlées",
+      "audit_event": "TAX_INPUTS_CHECKED"
+    },
+    {
+      "seq": 3,
+      "type": "CONTROL_GATE_EVALUATED",
+      "actor": "Partenaire fiscal",
+      "result": "Gate métier/compliance évalué",
+      "audit_event": "TAX_CONTROL_GATE_EVALUATED"
+    },
+    {
+      "seq": 4,
+      "type": "HUMAN_GATE_IF_REQUIRED",
+      "actor": "Conseil fiscal",
+      "result": "Décision humaine appliquée lorsqu’elle est requise",
+      "audit_event": "TAX_HUMAN_GATE_IF_REQUIRED"
+    },
+    {
+      "seq": 5,
+      "type": "OUTPUT_RECORDED",
+      "actor": "Conformité",
+      "result": "INDICATIVE_SIMULATION_READY",
+      "audit_event": "TAX_OUTPUT_RECORDED"
+    },
+    {
+      "seq": 6,
+      "type": "AUDIT_EVENT_WRITTEN",
+      "actor": "Entreprise",
+      "result": "Trace exploitable par QA",
+      "audit_event": "TAX_AUDIT_EVENT_WRITTEN"
+    }
+  ],
+  "human_decision": {
+    "required": false,
+    "owner": "Partenaire fiscal",
+    "decision": "PARTNER_CALCULATION",
+    "evidence": "DealPME orchestre l’interface sans fournir d’avis fiscal."
+  },
+  "state_out": "INDICATIVE_SIMULATION_READY",
+  "prohibited_states": [],
+  "expected_user_message": "Simulation indicative disponible ; toute décision nécessite la validation d’un professionnel qualifié.",
+  "audit_events": [
+    "TAX_REQUEST_CREATED",
+    "TAX_INPUTS_CHECKED",
+    "TAX_CONTROL_GATE_EVALUATED",
+    "TAX_HUMAN_GATE_IF_REQUIRED",
+    "TAX_OUTPUT_RECORDED",
+    "TAX_AUDIT_EVENT_WRITTEN",
+    "TAX_RUN_TAX_SIMULATION",
+    "TAX_REQUEST_TAX_EXPERT"
+  ],
+  "negative_assertions": [
+    "Forcer INDICATIVE_SIMULATION_READY sans exécuter CONTROL_GATE_EVALUATED doit échouer.",
+    "Exécuter une action sensible avec un profil non autorisé doit échouer et être journalisé.",
+    "Supprimer l’interaction contract d’un contrôle visible doit déclencher DEAD_CONTROL."
+  ],
+  "qa_assertions": [
+    "Le scénario ne peut atteindre son état cible qu’après satisfaction des gates explicitement définis.",
+    "Chaque contrôle visible possède un interaction contract et produit un changement d’état ou un blocage explicite.",
+    "Les rôles ne voient que le périmètre nécessaire et les événements sensibles sont journalisés.",
+    "Aucun message utilisateur ne présente DealPME comme conseil juridique, fiscal, réglementaire ou financier.",
+    "Les sorties synthétiques sont identifiées comme telles et ne peuvent être confondues avec un dossier réel."
+  ],
+  "evidence_pack": [
+    {
+      "id": "TAX-01-EV-01",
+      "description": "Hypothèses prix vendeur",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "TAX-01-EV-02",
+      "description": "Nature cession",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "TAX-01-EV-03",
+      "description": "Données fiscales",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "TAX-01-EV-04",
+      "description": "TAX-C01 simulation indicative",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "TAX-01-EV-05",
+      "description": "TAX-C02 source partenaire",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "TAX-01-EV-06",
+      "description": "TAX-C03 pas d’avis DealPME",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    }
+  ],
+  "primary_action": {
+    "label": "Lancer la simulation",
+    "action": "RUN_TAX_SIMULATION",
+    "success_state": "SIMULATION_READY"
+  },
+  "secondary_action": {
+    "label": "Demander un expert",
+    "action": "REQUEST_TAX_EXPERT",
+    "success_state": "EXPERT_REQUESTED"
+  },
+  "interaction_contracts": [
+    {
+      "control_id": "PRIMARY_ACTION",
+      "surface": "scenario",
+      "label": "Lancer la simulation",
+      "action": "RUN_TAX_SIMULATION",
+      "target": "scenario-state-machine",
+      "required_profile": "AUTHORIZED_TEST_USER",
+      "success_state": "SIMULATION_READY",
+      "blocked_state": null,
+      "blocked_message": null,
+      "audit_event": "TAX_RUN_TAX_SIMULATION"
+    },
+    {
+      "control_id": "SECONDARY_ACTION",
+      "surface": "scenario",
+      "label": "Demander un expert",
+      "action": "REQUEST_TAX_EXPERT",
+      "target": "scenario-workspace",
+      "required_profile": "AUTHORIZED_TEST_USER",
+      "success_state": "EXPERT_REQUESTED",
+      "audit_event": "TAX_REQUEST_TAX_EXPERT"
+    },
+    {
+      "control_id": "TAB_OVERVIEW",
+      "surface": "scenario-navigation",
+      "label": "Situation",
+      "action": "SWITCH_TAB",
+      "target": "overview",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_WORKFLOW",
+      "surface": "scenario-navigation",
+      "label": "Parcours",
+      "action": "SWITCH_TAB",
+      "target": "workflow",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_CONTROLS",
+      "surface": "scenario-navigation",
+      "label": "Contrôles & RACI",
+      "action": "SWITCH_TAB",
+      "target": "controls",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_EVIDENCE",
+      "surface": "scenario-navigation",
+      "label": "Preuves & audit",
+      "action": "SWITCH_TAB",
+      "target": "evidence",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_TESTS",
+      "surface": "scenario-navigation",
+      "label": "Tests dev",
+      "action": "SWITCH_TAB",
+      "target": "tests",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "PROFILE_SWITCH",
+      "surface": "dev-reference",
+      "label": "Profil de test",
+      "action": "SWITCH_TEST_PROFILE",
+      "target": "local-reference-state",
+      "required_profile": "DEV_REFERENCE",
+      "success_state": "PROFILE_CHANGED",
+      "audit_event": "PROFILE_CHANGED"
+    },
+    {
+      "control_id": "MODAL_CLOSE",
+      "surface": "modal",
+      "label": "Fermer",
+      "action": "CLOSE_MODAL",
+      "target": "modal",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "MODAL_CLOSED",
+      "audit_event": "MODAL_CLOSED"
+    }
+  ],
+  "test_profiles": [
+    "Utilisateur autorisé",
+    "Utilisateur non autorisé",
+    "Conformité / opérateur",
+    "Administrateur support contrôlé"
+  ],
+  "provenance": {
+    "type": "SYNTHETIC_TEST_DATA",
+    "generated_for": "DealPME V3 developer reference and regression QA",
+    "not_real_case": true
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@dealpme/connector-tax-partner",
+  "description": "Module fiscal partenaire (simulation, télédéclaration simplifiée, attestation). Une panne partenaire ne doit jamais produire une fausse attestation. Partenaire à confirmer.",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "@dealpme/config": "*"
+  }
+}

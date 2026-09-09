@@ -1,0 +1,1456 @@
+[
+  {
+    "document_id": "DOC-COR-001",
+    "summary": "Immatriculation synthétique SYN-PT-006-RCCM. Forme juridique déclarée et siège de démonstration à Lomé périphérie.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "VERIFIED",
+        "source": "DOC-COR-001 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-COR-001 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-COR-001 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-COR-001 · p.1"
+      }
+    ],
+    "risks": [],
+    "suggested_questions": [
+      "Quels sont les principaux éléments à retenir de ce document ?",
+      "Quels risques ou obligations sont à approfondir ?",
+      "Quels autres documents doivent être rapprochés de cette pièce ?"
+    ],
+    "related_documents": [],
+    "confidence": "HIGH",
+    "evidence": [
+      {
+        "document_id": "DOC-COR-001",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-COR-002",
+    "summary": "Statuts synthétiques de BétonPlus Préfabriqués SARL; gouvernance, objet social lié au secteur Matériaux de construction, règles de représentation et clauses de décision.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-COR-002 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-COR-002 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-COR-002 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-COR-002 · p.1"
+      }
+    ],
+    "risks": [],
+    "suggested_questions": [
+      "Quels sont les principaux éléments à retenir de ce document ?",
+      "Quels risques ou obligations sont à approfondir ?",
+      "Quels autres documents doivent être rapprochés de cette pièce ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-COR-002",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-COR-003",
+    "summary": "Décisions synthétiques autorisant la préparation du dossier et la divulgation contrôlée. Aucun acte réel n’est reproduit.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-COR-003 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-COR-003 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-COR-003 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-COR-003 · p.1"
+      }
+    ],
+    "risks": [],
+    "suggested_questions": [
+      "Quels sont les principaux éléments à retenir de ce document ?",
+      "Quels risques ou obligations sont à approfondir ?",
+      "Quels autres documents doivent être rapprochés de cette pièce ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-COR-003",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-EQT-001",
+    "summary": "Structure synthétique de détention et contrôle de l’autorité du cédant. Périmètre proposé : Activité + usine + marques + contrats.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-EQT-001 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-EQT-001 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-EQT-001 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-EQT-001 · p.1"
+      }
+    ],
+    "risks": [],
+    "suggested_questions": [
+      "Quels sont les principaux éléments à retenir de ce document ?",
+      "Quels risques ou obligations sont à approfondir ?",
+      "Quels autres documents doivent être rapprochés de cette pièce ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-EQT-001",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-EQT-002",
+    "summary": "Tableau synthétique des restrictions de transfert, consentements potentiels et points à confirmer avec un conseil qualifié avant toute opération.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-EQT-002 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-EQT-002 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-EQT-002 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-EQT-002 · p.1"
+      }
+    ],
+    "risks": [],
+    "suggested_questions": [
+      "Quelles clauses d’agrément ou de préemption s’appliquent ?",
+      "Quels consentements doivent être obtenus avant réalisation ?",
+      "Quelles restrictions peuvent affecter le calendrier ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-EQT-002",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-FIN-001",
+    "summary": "CA 2023 : 4 876 M FCFA. Présentation structurée pour rapprochement avec le grand livre de démonstration.",
+    "facts": [
+      {
+        "label": "CA 2025",
+        "value": "5 900 M FCFA",
+        "source": "DOC-FIN-001 · p.1"
+      },
+      {
+        "label": "EBITDA 2025",
+        "value": "708 M FCFA · 12,0 %",
+        "source": "DOC-FIN-001 · p.1"
+      },
+      {
+        "label": "Résultat net 2025",
+        "value": "364 M FCFA",
+        "source": "DOC-FIN-001 · p.1"
+      },
+      {
+        "label": "Effectif",
+        "value": "118",
+        "source": "DOC-FIN-001 · p.1"
+      }
+    ],
+    "risks": [],
+    "suggested_questions": [
+      "Quels éléments expliquent l’évolution du chiffre d’affaires ?",
+      "Quels retraitements seraient nécessaires pour une lecture normalisée ?",
+      "Les comptes sont-ils cohérents avec les autres preuves financières disponibles ?"
+    ],
+    "related_documents": [
+      {
+        "document_id": "DOC-FIN-002",
+        "title": "États financiers synthétiques 2024"
+      },
+      {
+        "document_id": "DOC-FIN-003",
+        "title": "États financiers synthétiques 2025"
+      }
+    ],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-FIN-001",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-FIN-002",
+    "summary": "CA 2024 : 5 315 M FCFA. Données fictives et non auditées.",
+    "facts": [
+      {
+        "label": "CA 2025",
+        "value": "5 900 M FCFA",
+        "source": "DOC-FIN-002 · p.1"
+      },
+      {
+        "label": "EBITDA 2025",
+        "value": "708 M FCFA · 12,0 %",
+        "source": "DOC-FIN-002 · p.1"
+      },
+      {
+        "label": "Résultat net 2025",
+        "value": "364 M FCFA",
+        "source": "DOC-FIN-002 · p.1"
+      },
+      {
+        "label": "Effectif",
+        "value": "118",
+        "source": "DOC-FIN-002 · p.1"
+      }
+    ],
+    "risks": [],
+    "suggested_questions": [
+      "Quels éléments expliquent l’évolution du chiffre d’affaires ?",
+      "Quels retraitements seraient nécessaires pour une lecture normalisée ?",
+      "Les comptes sont-ils cohérents avec les autres preuves financières disponibles ?"
+    ],
+    "related_documents": [
+      {
+        "document_id": "DOC-FIN-001",
+        "title": "États financiers synthétiques 2023"
+      },
+      {
+        "document_id": "DOC-FIN-003",
+        "title": "États financiers synthétiques 2025"
+      }
+    ],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-FIN-002",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-FIN-003",
+    "summary": "CA 2025 : 5 900 M FCFA; EBITDA : 708 M FCFA; résultat net : 364 M FCFA. Données synthétiques déclarées par le cédant.",
+    "facts": [
+      {
+        "label": "CA 2025",
+        "value": "5 900 M FCFA",
+        "source": "DOC-FIN-003 · p.1"
+      },
+      {
+        "label": "EBITDA 2025",
+        "value": "708 M FCFA · 12,0 %",
+        "source": "DOC-FIN-003 · p.1"
+      },
+      {
+        "label": "Résultat net 2025",
+        "value": "364 M FCFA",
+        "source": "DOC-FIN-003 · p.1"
+      },
+      {
+        "label": "Effectif",
+        "value": "118",
+        "source": "DOC-FIN-003 · p.1"
+      }
+    ],
+    "risks": [
+      {
+        "risk_id": "R-FIN-01",
+        "title": "Besoin en fonds de roulement et conversion de trésorerie",
+        "severity": "MEDIUM",
+        "status": "OPEN"
+      }
+    ],
+    "suggested_questions": [
+      "Quels éléments expliquent l’évolution du chiffre d’affaires ?",
+      "Quels retraitements seraient nécessaires pour une lecture normalisée ?",
+      "Les comptes sont-ils cohérents avec les autres preuves financières disponibles ?"
+    ],
+    "related_documents": [
+      {
+        "document_id": "DOC-FIN-001",
+        "title": "États financiers synthétiques 2023"
+      },
+      {
+        "document_id": "DOC-FIN-002",
+        "title": "États financiers synthétiques 2024"
+      }
+    ],
+    "confidence": "HIGH",
+    "evidence": [
+      {
+        "document_id": "DOC-FIN-003",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-FIN-004",
+    "summary": "Créances : 944 M FCFA; stocks : 708 M FCFA; fournisseurs : 767 M FCFA; BFR calculé : 885 M FCFA.",
+    "facts": [
+      {
+        "label": "BFR",
+        "value": "885 M FCFA",
+        "source": "DOC-FIN-004 · p.1"
+      },
+      {
+        "label": "Top 5 clients",
+        "value": "34,0 %",
+        "source": "DOC-FIN-004 · p.1"
+      },
+      {
+        "label": "Revenus récurrents",
+        "value": "42,0 %",
+        "source": "DOC-FIN-004 · p.1"
+      }
+    ],
+    "risks": [
+      {
+        "risk_id": "R-FIN-01",
+        "title": "Besoin en fonds de roulement et conversion de trésorerie",
+        "severity": "MEDIUM",
+        "status": "OPEN"
+      }
+    ],
+    "suggested_questions": [
+      "Quels postes expliquent le besoin en fonds de roulement ?",
+      "Quelles créances dépassent 90 jours ?",
+      "Le niveau de BFR est-il structurel ou saisonnier ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-FIN-004",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-FIN-005",
+    "summary": "Dette brute : 880 M FCFA; trésorerie : 324 M FCFA; dette nette calculée : 556 M FCFA. Les clauses de changement de contrôle restent à confirmer.",
+    "facts": [
+      {
+        "label": "Dette nette",
+        "value": "556 M FCFA",
+        "source": "DOC-FIN-005 · p.1"
+      },
+      {
+        "label": "Dette / EBITDA",
+        "value": "0.79x",
+        "source": "DOC-FIN-005 · p.1"
+      },
+      {
+        "label": "Trésorerie",
+        "value": "324 M FCFA",
+        "source": "DOC-FIN-005 · p.1"
+      }
+    ],
+    "risks": [
+      {
+        "risk_id": "R-FIN-02",
+        "title": "Dette, liquidité et clauses de financement",
+        "severity": "LOW",
+        "status": "OPEN"
+      }
+    ],
+    "suggested_questions": [
+      "Quelles clauses de changement de contrôle doivent être confirmées ?",
+      "Quelles sûretés subsistent à la date de réalisation ?",
+      "Quelles échéances importantes interviennent avant la clôture ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-FIN-005",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-FIN-006",
+    "summary": "Scénario interne de démonstration pour Matériaux de construction. Hypothèses visibles, sans présentation comme prévision garantie.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-FIN-006 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-FIN-006 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-FIN-006 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-FIN-006 · p.1"
+      }
+    ],
+    "risks": [],
+    "suggested_questions": [
+      "Quels sont les principaux éléments à retenir de ce document ?",
+      "Quels risques ou obligations sont à approfondir ?",
+      "Quels autres documents doivent être rapprochés de cette pièce ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-FIN-006",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-TAX-001",
+    "summary": "Synthèse fictive des déclarations, paiements, attestations et points ouverts. Toute conclusion fiscale relève d’un professionnel qualifié.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-TAX-001 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-TAX-001 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-TAX-001 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-TAX-001 · p.1"
+      }
+    ],
+    "risks": [],
+    "suggested_questions": [
+      "Quels sont les principaux éléments à retenir de ce document ?",
+      "Quels risques ou obligations sont à approfondir ?",
+      "Quels autres documents doivent être rapprochés de cette pièce ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-TAX-001",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-TAX-002",
+    "summary": "Rapprochement de démonstration des principaux postes fiscaux avec liste des justificatifs et écarts à examiner.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-TAX-002 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-TAX-002 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-TAX-002 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-TAX-002 · p.1"
+      }
+    ],
+    "risks": [],
+    "suggested_questions": [
+      "Quels sont les principaux éléments à retenir de ce document ?",
+      "Quels risques ou obligations sont à approfondir ?",
+      "Quels autres documents doivent être rapprochés de cette pièce ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-TAX-002",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-COM-001",
+    "summary": "Top 5 clients : 34 % du CA synthétique; revenus récurrents : 42 %. Analyse par client anonymisé.",
+    "facts": [
+      {
+        "label": "Top 5 clients",
+        "value": "34,0 %",
+        "source": "DOC-COM-001 · p.1"
+      },
+      {
+        "label": "Récurrence",
+        "value": "42,0 %",
+        "source": "DOC-COM-001 · p.1"
+      },
+      {
+        "label": "Export",
+        "value": "8,0 %",
+        "source": "DOC-COM-001 · p.1"
+      }
+    ],
+    "risks": [
+      {
+        "risk_id": "R-BIZ-02",
+        "title": "Exposition au prix ciment / énergie",
+        "severity": "MEDIUM",
+        "status": "OPEN"
+      },
+      {
+        "risk_id": "R-COM-01",
+        "title": "Concentration et qualité du chiffre d’affaires",
+        "severity": "MEDIUM",
+        "status": "OPEN"
+      }
+    ],
+    "suggested_questions": [
+      "Quels clients concentrent le plus de chiffre d’affaires ?",
+      "Quelle part du revenu est contractuelle ou récurrente ?",
+      "Existe-t-il une dépendance à un client ou canal ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-COM-001",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-COM-002",
+    "summary": "Extraits fictifs de contrats représentatifs de l’activité Matériaux de construction; durée, renouvellement, résiliation et changement de contrôle à diligenter.",
+    "facts": [
+      {
+        "label": "Top 5 clients",
+        "value": "34,0 %",
+        "source": "DOC-COM-002 · p.1"
+      },
+      {
+        "label": "Récurrence",
+        "value": "42,0 %",
+        "source": "DOC-COM-002 · p.1"
+      },
+      {
+        "label": "Export",
+        "value": "8,0 %",
+        "source": "DOC-COM-002 · p.1"
+      }
+    ],
+    "risks": [
+      {
+        "risk_id": "R-BIZ-02",
+        "title": "Exposition au prix ciment / énergie",
+        "severity": "MEDIUM",
+        "status": "OPEN"
+      },
+      {
+        "risk_id": "R-COM-01",
+        "title": "Concentration et qualité du chiffre d’affaires",
+        "severity": "MEDIUM",
+        "status": "OPEN"
+      }
+    ],
+    "suggested_questions": [
+      "Quels contrats comportent une clause de changement de contrôle ?",
+      "Quelles dates de renouvellement ou résiliation sont critiques ?",
+      "Quelles obligations commerciales pourraient affecter la transaction ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-COM-002",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-SUP-001",
+    "summary": "Cartographie synthétique des fournisseurs critiques de BétonPlus Préfabriqués SARL; dépendance, alternatives, délais et conditions de paiement.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-SUP-001 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-SUP-001 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-SUP-001 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-SUP-001 · p.1"
+      }
+    ],
+    "risks": [
+      {
+        "risk_id": "R-BIZ-01",
+        "title": "Cyclicité du BTP",
+        "severity": "MEDIUM",
+        "status": "OPEN"
+      }
+    ],
+    "suggested_questions": [
+      "Quels fournisseurs sont critiques ou non substituables ?",
+      "Quelles dépendances d’approvisionnement sont identifiées ?",
+      "Existe-t-il des hausses de prix ou clauses d’indexation significatives ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-SUP-001",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-SUP-002",
+    "summary": "Tableau fictif des engagements, devises, Incoterms ou conditions locales selon le secteur. Aucun engagement réel.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-SUP-002 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-SUP-002 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-SUP-002 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-SUP-002 · p.1"
+      }
+    ],
+    "risks": [
+      {
+        "risk_id": "R-BIZ-01",
+        "title": "Cyclicité du BTP",
+        "severity": "MEDIUM",
+        "status": "OPEN"
+      }
+    ],
+    "suggested_questions": [
+      "Quels sont les principaux éléments à retenir de ce document ?",
+      "Quels risques ou obligations sont à approfondir ?",
+      "Quels autres documents doivent être rapprochés de cette pièce ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-SUP-002",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-HR-001",
+    "summary": "Effectif de référence : 118 personnes. Répartition fictive par fonction, ancienneté et type de contrat, sans donnée personnelle réelle.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-HR-001 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-HR-001 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-HR-001 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-HR-001 · p.1"
+      }
+    ],
+    "risks": [
+      {
+        "risk_id": "R-HR-01",
+        "title": "Dépendance aux personnes clés",
+        "severity": "MEDIUM",
+        "status": "OPEN"
+      }
+    ],
+    "suggested_questions": [
+      "Quels postes sont critiques à la continuité ?",
+      "Quels engagements de rémunération ou avantages doivent être confirmés ?",
+      "Y a-t-il des risques de départ liés à la transaction ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-HR-001",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-HR-002",
+    "summary": "Cartographie synthétique des rôles clés, délégations, dépendances et plan de continuité pour la transition proposée (9 mois).",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-HR-002 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-HR-002 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-HR-002 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-HR-002 · p.1"
+      }
+    ],
+    "risks": [
+      {
+        "risk_id": "R-HR-01",
+        "title": "Dépendance aux personnes clés",
+        "severity": "MEDIUM",
+        "status": "OPEN"
+      }
+    ],
+    "suggested_questions": [
+      "Quels dirigeants sont indispensables à la transition ?",
+      "Quelles périodes d’accompagnement sont prévues ?",
+      "Quels plans de rétention pourraient être nécessaires ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-HR-002",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-AST-001",
+    "summary": "Immobilisations nettes 2025 : 1 770 M FCFA dans le fixture. Liste synthétique des actifs matériels/logiciels pertinents à Matériaux de construction.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-AST-001 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-AST-001 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-AST-001 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-AST-001 · p.1"
+      }
+    ],
+    "risks": [],
+    "suggested_questions": [
+      "Quels sont les principaux éléments à retenir de ce document ?",
+      "Quels risques ou obligations sont à approfondir ?",
+      "Quels autres documents doivent être rapprochés de cette pièce ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-AST-001",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-AST-002",
+    "summary": "Polices et historique de sinistres fictifs; limites, franchises et renouvellements à confirmer dans un audit réel.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-AST-002 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-AST-002 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-AST-002 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-AST-002 · p.1"
+      }
+    ],
+    "risks": [],
+    "suggested_questions": [
+      "Quels sont les principaux éléments à retenir de ce document ?",
+      "Quels risques ou obligations sont à approfondir ?",
+      "Quels autres documents doivent être rapprochés de cette pièce ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-AST-002",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-AST-003",
+    "summary": "Capex 2025 synthétique : 310 M FCFA. Historique et besoins de renouvellement adaptés au secteur.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-AST-003 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-AST-003 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-AST-003 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-AST-003 · p.1"
+      }
+    ],
+    "risks": [],
+    "suggested_questions": [
+      "Quels sont les principaux éléments à retenir de ce document ?",
+      "Quels risques ou obligations sont à approfondir ?",
+      "Quels autres documents doivent être rapprochés de cette pièce ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-AST-003",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-REG-001",
+    "summary": "Registre synthétique des licences/autorisations applicables à Matériaux de construction; statut et échéances fictifs.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-REG-001 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-REG-001 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-REG-001 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-REG-001 · p.1"
+      }
+    ],
+    "risks": [
+      {
+        "risk_id": "R-REG-01",
+        "title": "Transférabilité des autorisations et contrats",
+        "severity": "MEDIUM",
+        "status": "OPEN"
+      }
+    ],
+    "suggested_questions": [
+      "Quelles autorisations sont nécessaires pour exploiter l’activité ?",
+      "Quelles échéances de renouvellement doivent être surveillées ?",
+      "Une autorisation est-elle affectée par un changement de contrôle ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-REG-001",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-REG-002",
+    "summary": "Tableau synthétique des litiges/réclamations et engagements hors bilan; aucun fait réel n’est allégué.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-REG-002 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-REG-002 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-REG-002 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-REG-002 · p.1"
+      }
+    ],
+    "risks": [
+      {
+        "risk_id": "R-REG-01",
+        "title": "Transférabilité des autorisations et contrats",
+        "severity": "MEDIUM",
+        "status": "OPEN"
+      }
+    ],
+    "suggested_questions": [
+      "Quels litiges peuvent avoir un impact financier ou opérationnel ?",
+      "Quelles provisions ou engagements sont documentés ?",
+      "Existe-t-il des procédures non clôturées ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-REG-002",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-OPS-003",
+    "summary": "Description synthétique des processus, contrôles et systèmes de BétonPlus Préfabriqués SARL, avec points de dépendance à vérifier.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-OPS-003 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-OPS-003 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-OPS-003 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-OPS-003 · p.1"
+      }
+    ],
+    "risks": [],
+    "suggested_questions": [
+      "Quels sont les principaux éléments à retenir de ce document ?",
+      "Quels risques ou obligations sont à approfondir ?",
+      "Quels autres documents doivent être rapprochés de cette pièce ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-OPS-003",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-TRX-001",
+    "summary": "Processus synthétique : intérêt → qualification → NDA → accès détaillé → VDR → LOI → audit → documentation → résultat. Type : ASSET_DEAL.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-TRX-001 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-TRX-001 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-TRX-001 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-TRX-001 · p.1"
+      }
+    ],
+    "risks": [
+      {
+        "risk_id": "R-TRX-01",
+        "title": "Périmètre, prix vendeur et mécanisme de clôture",
+        "severity": "MEDIUM",
+        "status": "OPEN"
+      }
+    ],
+    "suggested_questions": [
+      "Quels sont les principaux éléments à retenir de ce document ?",
+      "Quels risques ou obligations sont à approfondir ?",
+      "Quels autres documents doivent être rapprochés de cette pièce ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-TRX-001",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-TRX-002",
+    "summary": "Accompagnement déclaré : 9 mois. Plan fictif de transfert clients, équipes, partenaires et savoir-faire.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-TRX-002 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-TRX-002 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-TRX-002 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-TRX-002 · p.1"
+      }
+    ],
+    "risks": [],
+    "suggested_questions": [
+      "Quels sont les principaux éléments à retenir de ce document ?",
+      "Quels risques ou obligations sont à approfondir ?",
+      "Quels autres documents doivent être rapprochés de cette pièce ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-TRX-002",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  },
+  {
+    "document_id": "DOC-TRX-003",
+    "summary": "Attente du cédant : 6 200 M FCFA. Ce montant n’est ni une valorisation DealPME, ni une opinion d’équité, ni une recommandation.",
+    "facts": [
+      {
+        "label": "Statut",
+        "value": "DECLARED",
+        "source": "DOC-TRX-003 · p.1"
+      },
+      {
+        "label": "Niveau",
+        "value": "T2",
+        "source": "DOC-TRX-003 · p.1"
+      },
+      {
+        "label": "Version",
+        "value": "1.0",
+        "source": "DOC-TRX-003 · p.1"
+      },
+      {
+        "label": "Date",
+        "value": "2025-12-31",
+        "source": "DOC-TRX-003 · p.1"
+      }
+    ],
+    "risks": [
+      {
+        "risk_id": "R-TRX-01",
+        "title": "Périmètre, prix vendeur et mécanisme de clôture",
+        "severity": "MEDIUM",
+        "status": "OPEN"
+      }
+    ],
+    "suggested_questions": [
+      "Quelles hypothèses sous-tendent l’attente du cédant ?",
+      "Quels éléments sont expressément non constitutifs d’une valorisation DealPME ?",
+      "Quelles variables peuvent affecter les termes proposés ?"
+    ],
+    "related_documents": [],
+    "confidence": "MEDIUM",
+    "evidence": [
+      {
+        "document_id": "DOC-TRX-003",
+        "page": 1,
+        "anchor": "SYNTHETIC-PAGE-1",
+        "label": "Source principale"
+      }
+    ],
+    "ai_policy": {
+      "read_only": true,
+      "permission_scoped": true,
+      "no_external_action": true,
+      "no_evidence_response": "Les documents auxquels vous avez accès ne permettent pas de conclure."
+    }
+  }
+]

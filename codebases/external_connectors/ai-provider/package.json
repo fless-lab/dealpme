@@ -1,0 +1,17 @@
+{
+  "name": "@dealpme/connector-ai-provider",
+  "description": "Fournisseur de modèle pour DealLens (V5). Aucun document VDR ne sort vers un outil public : uniquement le fournisseur sous contrat. Le filtrage des permissions a lieu AVANT l'appel.",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "@dealpme/config": "*"
+  }
+}

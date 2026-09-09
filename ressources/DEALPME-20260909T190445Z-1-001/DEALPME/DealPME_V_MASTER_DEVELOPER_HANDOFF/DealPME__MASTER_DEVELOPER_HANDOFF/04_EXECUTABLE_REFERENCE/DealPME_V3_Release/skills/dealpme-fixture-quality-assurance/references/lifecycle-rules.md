@@ -1,0 +1,21 @@
+# Pass Transmission lifecycle rules v3
+
+Valid states:
+`DRAFT`, `PENDING_VERIFICATION`, `VERIFIED`, `LISTED_OPEN`, `LISTED_RESTRICTED`, `ENGAGED`, `DUE_DILIGENCE`, `NEGOTIATION`, `CLOSED_REPORTED`, `HANDED_OFF`, `ABANDONED`.
+
+Terminal states:
+`CLOSED_REPORTED`, `HANDED_OFF`, `ABANDONED`.
+
+Core ordered path:
+`DRAFT -> PENDING_VERIFICATION -> VERIFIED -> LISTED_OPEN|LISTED_RESTRICTED -> ENGAGED -> DUE_DILIGENCE -> NEGOTIATION -> CLOSED_REPORTED|HANDED_OFF|ABANDONED`.
+
+Allowed early exits:
+- `DRAFT -> ABANDONED`
+- `PENDING_VERIFICATION -> ABANDONED`
+- `VERIFIED -> ABANDONED`
+- `LISTED_* -> ABANDONED`
+- `ENGAGED -> ABANDONED`
+- `DUE_DILIGENCE -> ABANDONED`
+- `NEGOTIATION -> ABANDONED`
+
+Do not infer that `CLOSED_REPORTED` is legally verified by DealPME. It is a reported/result state unless evidence level explicitly supports more.

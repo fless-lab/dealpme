@@ -1,0 +1,135 @@
+{
+  "status": "PASS",
+  "detected": 9,
+  "total": 9,
+  "mutations": [
+    {
+      "mutation": "balance",
+      "expected_any": [
+        "FIN-004"
+      ],
+      "detected_rules": [
+        "FIN-004"
+      ],
+      "detected": true,
+      "validators": {
+        "fixture": "FAIL",
+        "interactions": "PASS"
+      }
+    },
+    {
+      "mutation": "t1_leak",
+      "expected_any": [
+        "DISC-001"
+      ],
+      "detected_rules": [
+        "DISC-001"
+      ],
+      "detected": true,
+      "validators": {
+        "fixture": "FAIL",
+        "interactions": "PASS"
+      }
+    },
+    {
+      "mutation": "auto_cert",
+      "expected_any": [
+        "DR-001"
+      ],
+      "detected_rules": [
+        "DR-001"
+      ],
+      "detected": true,
+      "validators": {
+        "fixture": "FAIL",
+        "interactions": "PASS"
+      }
+    },
+    {
+      "mutation": "vdr_gate",
+      "expected_any": [
+        "VDR-001"
+      ],
+      "detected_rules": [
+        "VDR-001"
+      ],
+      "detected": true,
+      "validators": {
+        "fixture": "FAIL",
+        "interactions": "PASS"
+      }
+    },
+    {
+      "mutation": "admin_access",
+      "expected_any": [
+        "ACC-001"
+      ],
+      "detected_rules": [
+        "ACC-001"
+      ],
+      "detected": true,
+      "validators": {
+        "fixture": "FAIL",
+        "interactions": "PASS"
+      }
+    },
+    {
+      "mutation": "unregister_control",
+      "expected_any": [
+        "INT-REG-003"
+      ],
+      "detected_rules": [
+        "INT-REG-003"
+      ],
+      "detected": true,
+      "validators": {
+        "fixture": "PASS",
+        "interactions": "FAIL"
+      }
+    },
+    {
+      "mutation": "broken_qa_ref",
+      "expected_any": [
+        "CNT-004",
+        "INT-REF-001"
+      ],
+      "detected_rules": [
+        "CNT-004",
+        "INT-REF-001"
+      ],
+      "detected": true,
+      "validators": {
+        "fixture": "FAIL",
+        "interactions": "FAIL"
+      }
+    },
+    {
+      "mutation": "live_fixture",
+      "expected_any": [
+        "SYN-001"
+      ],
+      "detected_rules": [
+        "SYN-001"
+      ],
+      "detected": true,
+      "validators": {
+        "fixture": "FAIL",
+        "interactions": "PASS"
+      }
+    },
+    {
+      "mutation": "valuation_claim",
+      "expected_any": [
+        "COPY-001"
+      ],
+      "detected_rules": [
+        "COPY-001"
+      ],
+      "detected": true,
+      "validators": {
+        "fixture": "FAIL",
+        "interactions": "PASS"
+      }
+    }
+  ]
+}

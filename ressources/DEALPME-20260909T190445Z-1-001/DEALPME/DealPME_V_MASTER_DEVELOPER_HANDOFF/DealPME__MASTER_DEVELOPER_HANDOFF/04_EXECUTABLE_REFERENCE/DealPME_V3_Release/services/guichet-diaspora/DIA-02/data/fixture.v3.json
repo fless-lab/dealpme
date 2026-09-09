@@ -1,0 +1,345 @@
+{
+  "schema_version": "3.0",
+  "fixture_kind": "SERVICE_SCENARIO",
+  "synthetic": true,
+  "scenario_id": "DIA-02",
+  "service": "guichet-diaspora",
+  "service_label": "Guichet Diaspora",
+  "title": "Contrainte de change / autorisation",
+  "archetype": "CONTROL_FAILURE",
+  "capability_status": "GOVERNED_V0",
+  "objective": "Prouver qu’une question de change/autorisation suspend l’étape sans avis autonome DealPME.",
+  "state_in": "CROSS_BORDER_TRANSFER_NEAR_COMPLETION",
+  "trigger": "Investisseur hors UEMOA proche de la réalisation mais transfert soumis à vérification réglementaire.",
+  "actors": [
+    {
+      "role": "Investisseur diaspora",
+      "responsibility": "Déclarer sa thèse, son identité et sa capacité",
+      "accountable_for": "Déclarer sa thèse, son identité et sa capacité",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "DealPME",
+      "responsibility": "Qualifier l’accès, faire correspondre et organiser les rendez-vous",
+      "accountable_for": "Qualifier l’accès, faire correspondre et organiser les rendez-vous",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Cédant",
+      "responsibility": "Autoriser la divulgation détaillée",
+      "accountable_for": "Autoriser la divulgation détaillée",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Banque / conseil",
+      "responsibility": "Traiter change, financement et autorisations",
+      "accountable_for": "Traiter change, financement et autorisations",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Conformité",
+      "responsibility": "Appliquer les contrôles transfrontaliers",
+      "accountable_for": "Appliquer les contrôles transfrontaliers",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "Dossier transfert",
+      "status": "REVIEW_REQUIRED",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    },
+    {
+      "name": "Devise/source fonds",
+      "status": "REVIEW_REQUIRED",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    },
+    {
+      "name": "Pays origine",
+      "status": "REVIEW_REQUIRED",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    }
+  ],
+  "controls": [
+    {
+      "id": "DIA-C07",
+      "severity": "P0",
+      "rule": "hold conformité",
+      "owner": "Investisseur diaspora",
+      "expected_evidence": "DIA-C07-EVIDENCE",
+      "blocking": true
+    },
+    {
+      "id": "DIA-C08",
+      "severity": "P0",
+      "rule": "routage banque/conseil",
+      "owner": "DealPME",
+      "expected_evidence": "DIA-C08-EVIDENCE",
+      "blocking": true
+    },
+    {
+      "id": "DIA-C09",
+      "severity": "P1",
+      "rule": "aucun avis autonome",
+      "owner": "Cédant",
+      "expected_evidence": "DIA-C09-EVIDENCE",
+      "blocking": true
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "Banque",
+      "status": "BLOCKED_OR_REVIEW",
+      "required": true,
+      "partner_dependent": true,
+      "fallback": "Traitement manuel/documenté lorsque prévu"
+    },
+    {
+      "name": "Conseil réglementaire",
+      "status": "BLOCKED_OR_REVIEW",
+      "required": true,
+      "partner_dependent": true,
+      "fallback": "Traitement manuel/documenté lorsque prévu"
+    }
+  ],
+  "events": [
+    {
+      "seq": 1,
+      "type": "REQUEST_CREATED",
+      "actor": "Investisseur diaspora",
+      "result": "Demande créée et identifiée",
+      "audit_event": "DIA_REQUEST_CREATED"
+    },
+    {
+      "seq": 2,
+      "type": "INPUTS_CHECKED",
+      "actor": "DealPME",
+      "result": "Entrées et habilitations contrôlées",
+      "audit_event": "DIA_INPUTS_CHECKED"
+    },
+    {
+      "seq": 3,
+      "type": "CONTROL_GATE_EVALUATED",
+      "actor": "Cédant",
+      "result": "Gate métier/compliance évalué",
+      "audit_event": "DIA_CONTROL_GATE_EVALUATED"
+    },
+    {
+      "seq": 4,
+      "type": "HUMAN_GATE_IF_REQUIRED",
+      "actor": "Banque / conseil",
+      "result": "Décision humaine appliquée lorsqu’elle est requise",
+      "audit_event": "DIA_HUMAN_GATE_IF_REQUIRED"
+    },
+    {
+      "seq": 5,
+      "type": "OUTPUT_RECORDED",
+      "actor": "Conformité",
+      "result": "COMPLIANCE_HOLD_EXTERNAL_REVIEW",
+      "audit_event": "DIA_OUTPUT_RECORDED"
+    },
+    {
+      "seq": 6,
+      "type": "AUDIT_EVENT_WRITTEN",
+      "actor": "Investisseur diaspora",
+      "result": "Trace exploitable par QA",
+      "audit_event": "DIA_AUDIT_EVENT_WRITTEN"
+    }
+  ],
+  "human_decision": {
+    "required": true,
+    "owner": "Banque / conseil compétent",
+    "decision": "EXTERNAL_AUTHORIZATION_REVIEW",
+    "evidence": "DealPME enregistre le statut et n’émet pas d’avis réglementaire."
+  },
+  "state_out": "COMPLIANCE_HOLD_EXTERNAL_REVIEW",
+  "prohibited_states": [
+    "SUCCESS",
+    "COMPLETED",
+    "CERTIFIED",
+    "ACCESS_GRANTED",
+    "CONTACT_SHARED",
+    "FILED",
+    "CERTIFICATE_ISSUED"
+  ],
+  "expected_user_message": "Opération mise en attente : validation de la banque/conseil compétent requise sur le transfert transfrontalier.",
+  "audit_events": [
+    "DIA_REQUEST_CREATED",
+    "DIA_INPUTS_CHECKED",
+    "DIA_CONTROL_GATE_EVALUATED",
+    "DIA_HUMAN_GATE_IF_REQUIRED",
+    "DIA_OUTPUT_RECORDED",
+    "DIA_AUDIT_EVENT_WRITTEN",
+    "DIA_OPEN_EXTERNAL_REQUIREMENTS",
+    "DIA_REQUEST_BANK_APPOINTMENT"
+  ],
+  "negative_assertions": [
+    "Forcer COMPLIANCE_HOLD_EXTERNAL_REVIEW sans exécuter CONTROL_GATE_EVALUATED doit échouer.",
+    "Exécuter une action sensible avec un profil non autorisé doit échouer et être journalisé.",
+    "Supprimer l’interaction contract d’un contrôle visible doit déclencher DEAD_CONTROL.",
+    "Forcer un état de succès interdit malgré la condition de blocage doit être refusé."
+  ],
+  "qa_assertions": [
+    "Le scénario ne peut atteindre son état cible qu’après satisfaction des gates explicitement définis.",
+    "Chaque contrôle visible possède un interaction contract et produit un changement d’état ou un blocage explicite.",
+    "Les rôles ne voient que le périmètre nécessaire et les événements sensibles sont journalisés.",
+    "Aucun message utilisateur ne présente DealPME comme conseil juridique, fiscal, réglementaire ou financier.",
+    "Les sorties synthétiques sont identifiées comme telles et ne peuvent être confondues avec un dossier réel."
+  ],
+  "evidence_pack": [
+    {
+      "id": "DIA-02-EV-01",
+      "description": "Dossier transfert",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "DIA-02-EV-02",
+      "description": "Devise/source fonds",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "DIA-02-EV-03",
+      "description": "Pays origine",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "DIA-02-EV-04",
+      "description": "DIA-C07 hold conformité",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "DIA-02-EV-05",
+      "description": "DIA-C08 routage banque/conseil",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "DIA-02-EV-06",
+      "description": "DIA-C09 aucun avis autonome",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    }
+  ],
+  "primary_action": {
+    "label": "Voir les exigences",
+    "action": "OPEN_EXTERNAL_REQUIREMENTS",
+    "success_state": "REQUIREMENTS_VIEW"
+  },
+  "secondary_action": {
+    "label": "Demander un rendez-vous banque",
+    "action": "REQUEST_BANK_APPOINTMENT",
+    "success_state": "BANK_APPOINTMENT_REQUESTED"
+  },
+  "interaction_contracts": [
+    {
+      "control_id": "PRIMARY_ACTION",
+      "surface": "scenario",
+      "label": "Voir les exigences",
+      "action": "OPEN_EXTERNAL_REQUIREMENTS",
+      "target": "scenario-state-machine",
+      "required_profile": "AUTHORIZED_TEST_USER",
+      "success_state": "REQUIREMENTS_VIEW",
+      "blocked_state": "COMPLIANCE_HOLD_EXTERNAL_REVIEW",
+      "blocked_message": "Opération mise en attente : validation de la banque/conseil compétent requise sur le transfert transfrontalier.",
+      "audit_event": "DIA_OPEN_EXTERNAL_REQUIREMENTS"
+    },
+    {
+      "control_id": "SECONDARY_ACTION",
+      "surface": "scenario",
+      "label": "Demander un rendez-vous banque",
+      "action": "REQUEST_BANK_APPOINTMENT",
+      "target": "scenario-workspace",
+      "required_profile": "AUTHORIZED_TEST_USER",
+      "success_state": "BANK_APPOINTMENT_REQUESTED",
+      "audit_event": "DIA_REQUEST_BANK_APPOINTMENT"
+    },
+    {
+      "control_id": "TAB_OVERVIEW",
+      "surface": "scenario-navigation",
+      "label": "Situation",
+      "action": "SWITCH_TAB",
+      "target": "overview",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_WORKFLOW",
+      "surface": "scenario-navigation",
+      "label": "Parcours",
+      "action": "SWITCH_TAB",
+      "target": "workflow",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_CONTROLS",
+      "surface": "scenario-navigation",
+      "label": "Contrôles & RACI",
+      "action": "SWITCH_TAB",
+      "target": "controls",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_EVIDENCE",
+      "surface": "scenario-navigation",
+      "label": "Preuves & audit",
+      "action": "SWITCH_TAB",
+      "target": "evidence",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_TESTS",
+      "surface": "scenario-navigation",
+      "label": "Tests dev",
+      "action": "SWITCH_TAB",
+      "target": "tests",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "PROFILE_SWITCH",
+      "surface": "dev-reference",
+      "label": "Profil de test",
+      "action": "SWITCH_TEST_PROFILE",
+      "target": "local-reference-state",
+      "required_profile": "DEV_REFERENCE",
+      "success_state": "PROFILE_CHANGED",
+      "audit_event": "PROFILE_CHANGED"
+    },
+    {
+      "control_id": "MODAL_CLOSE",
+      "surface": "modal",
+      "label": "Fermer",
+      "action": "CLOSE_MODAL",
+      "target": "modal",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "MODAL_CLOSED",
+      "audit_event": "MODAL_CLOSED"
+    }
+  ],
+  "test_profiles": [
+    "Utilisateur autorisé",
+    "Utilisateur non autorisé",
+    "Conformité / opérateur",
+    "Administrateur support contrôlé"
+  ],
+  "provenance": {
+    "type": "SYNTHETIC_TEST_DATA",
+    "generated_for": "DealPME V3 developer reference and regression QA",
+    "not_real_case": true
+  }
+}

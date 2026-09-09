@@ -1,0 +1,61 @@
+{
+  "total": 9,
+  "detected": 9,
+  "status": "PASS",
+  "results": [
+    {
+      "mutation": "admin_access",
+      "detected": true,
+      "fixture_status": "FAIL",
+      "interaction_status": "PASS"
+    },
+    {
+      "mutation": "auto_cert",
+      "detected": true,
+      "fixture_status": "FAIL",
+      "interaction_status": "PASS"
+    },
+    {
+      "mutation": "balance",
+      "detected": true,
+      "fixture_status": "FAIL",
+      "interaction_status": "PASS"
+    },
+    {
+      "mutation": "broken_qa_ref",
+      "detected": true,
+      "fixture_status": "FAIL",
+      "interaction_status": "FAIL"
+    },
+    {
+      "mutation": "live_fixture",
+      "detected": true,
+      "fixture_status": "FAIL",
+      "interaction_status": "PASS"
+    },
+    {
+      "mutation": "t1_leak",
+      "detected": true,
+      "fixture_status": "FAIL",
+      "interaction_status": "PASS"
+    },
+    {
+      "mutation": "unregister_control",
+      "detected": true,
+      "fixture_status": "PASS",
+      "interaction_status": "FAIL"
+    },
+    {
+      "mutation": "valuation_claim",
+      "detected": true,
+      "fixture_status": "FAIL",
+      "interaction_status": "PASS"
+    },
+    {
+      "mutation": "vdr_gate",
+      "detected": true,
+      "fixture_status": "FAIL",
+      "interaction_status": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "scenarios": 24,
+  "passed_scenarios": 24,
+  "tests_total": 216,
+  "tests_passed": 216,
+  "families": [
+    {
+      "service": "alerte-rebond",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0,
+      "tests_total": 27,
+      "tests_passed": 27
+    },
+    {
+      "service": "conformite-fiscalite",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0,
+      "tests_total": 27,
+      "tests_passed": 27
+    },
+    {
+      "service": "deal-connect",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0,
+      "tests_total": 27,
+      "tests_passed": 27
+    },
+    {
+      "service": "deal-experts",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0,
+      "tests_total": 27,
+      "tests_passed": 27
+    },
+    {
+      "service": "deal-ready",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0,
+      "tests_total": 27,
+      "tests_passed": 27
+    },
+    {
+      "service": "guichet-diaspora",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0,
+      "tests_total": 27,
+      "tests_passed": 27
+    },
+    {
+      "service": "legaltech-ohada",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0,
+      "tests_total": 27,
+      "tests_passed": 27
+    },
+    {
+      "service": "vdr-qa",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0,
+      "tests_total": 27,
+      "tests_passed": 27
+    }
+  ]
+}

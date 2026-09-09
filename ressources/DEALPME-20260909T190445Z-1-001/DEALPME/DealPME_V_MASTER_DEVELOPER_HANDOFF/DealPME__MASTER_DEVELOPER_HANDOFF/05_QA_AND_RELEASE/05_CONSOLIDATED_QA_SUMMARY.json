@@ -1,0 +1,43 @@
+{
+  "release": "DealPME V3",
+  "date": "2026-09-05",
+  "status": "PASS",
+  "skills": {
+    "packaged_and_valid": 5,
+    "total": 5
+  },
+  "gold_reference": {
+    "e2e_passed": 49,
+    "e2e_total": 49,
+    "dead_control_P0": 0,
+    "mutation_detected": 9,
+    "mutation_total": 9
+  },
+  "pass_transmission": {
+    "cases_passed": 12,
+    "cases_total": 12,
+    "browser_tests_passed": 240,
+    "browser_tests_total": 240,
+    "validators_passed": 60,
+    "validators_total": 60,
+    "synthetic_documents": 336,
+    "qa_threads": 120,
+    "risks": 96,
+    "interaction_contracts": 372
+  },
+  "services": {
+    "families": 8,
+    "scenarios_passed": 24,
+    "scenarios_total": 24,
+    "browser_tests_passed": 216,
+    "browser_tests_total": 216,
+    "semantic_triplets_passed": 8,
+    "interaction_sets_passed": 8,
+    "interaction_contracts": 216,
+    "evidence_items": 149
+  },
+  "global": {
+    "executable_scenarios": 36,
+    "interaction_contracts": 588
+  }
+}

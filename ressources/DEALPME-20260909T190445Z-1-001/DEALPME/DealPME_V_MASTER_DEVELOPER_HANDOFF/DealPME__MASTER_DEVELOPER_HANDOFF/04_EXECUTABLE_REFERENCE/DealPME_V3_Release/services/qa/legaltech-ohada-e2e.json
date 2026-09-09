@@ -1,0 +1,144 @@
+{
+  "service": "legaltech-ohada",
+  "scenarios": 3,
+  "passed": 3,
+  "failed": 0,
+  "tests_total": 27,
+  "tests_passed": 27,
+  "console_errors": [],
+  "page_errors": [],
+  "results": [
+    {
+      "scenario_id": "LEG-01",
+      "status": "PASS",
+      "tests": [
+        {
+          "name": "synthetic_banner",
+          "status": "PASS"
+        },
+        {
+          "name": "TAB_WORKFLOW",
+          "status": "PASS"
+        },
+        {
+          "name": "TAB_CONTROLS",
+          "status": "PASS"
+        },
+        {
+          "name": "TAB_EVIDENCE",
+          "status": "PASS"
+        },
+        {
+          "name": "TAB_TESTS",
+          "status": "PASS"
+        },
+        {
+          "name": "TAB_OVERVIEW",
+          "status": "PASS"
+        },
+        {
+          "name": "PRIMARY_ACTION",
+          "status": "PASS"
+        },
+        {
+          "name": "SECONDARY_ACTION",
+          "status": "PASS"
+        },
+        {
+          "name": "PROFILE_SWITCH",
+          "status": "PASS"
+        }
+      ],
+      "console_errors": [],
+      "page_errors": []
+    },
+    {
+      "scenario_id": "LEG-02",
+      "status": "PASS",
+      "tests": [
+        {
+          "name": "synthetic_banner",
+          "status": "PASS"
+        },
+        {
+          "name": "TAB_WORKFLOW",
+          "status": "PASS"
+        },
+        {
+          "name": "TAB_CONTROLS",
+          "status": "PASS"
+        },
+        {
+          "name": "TAB_EVIDENCE",
+          "status": "PASS"
+        },
+        {
+          "name": "TAB_TESTS",
+          "status": "PASS"
+        },
+        {
+          "name": "TAB_OVERVIEW",
+          "status": "PASS"
+        },
+        {
+          "name": "PRIMARY_ACTION",
+          "status": "PASS"
+        },
+        {
+          "name": "SECONDARY_ACTION",
+          "status": "PASS"
+        },
+        {
+          "name": "PROFILE_SWITCH",
+          "status": "PASS"
+        }
+      ],
+      "console_errors": [],
+      "page_errors": []
+    },
+    {
+      "scenario_id": "LEG-03",
+      "status": "PASS",
+      "tests": [
+        {
+          "name": "synthetic_banner",
+          "status": "PASS"
+        },
+        {
+          "name": "TAB_WORKFLOW",
+          "status": "PASS"
+        },
+        {
+          "name": "TAB_CONTROLS",
+          "status": "PASS"
+        },
+        {
+          "name": "TAB_EVIDENCE",
+          "status": "PASS"
+        },
+        {
+          "name": "TAB_TESTS",
+          "status": "PASS"
+        },
+        {
+          "name": "TAB_OVERVIEW",
+          "status": "PASS"
+        },
+        {
+          "name": "PRIMARY_ACTION",
+          "status": "PASS"
+        },
+        {
+          "name": "SECONDARY_ACTION",
+          "status": "PASS"
+        },
+        {
+          "name": "PROFILE_SWITCH",
+          "status": "PASS"
+        }
+      ],
+      "console_errors": [],
+      "page_errors": []
+    }
+  ]
+}

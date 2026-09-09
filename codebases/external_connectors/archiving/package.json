@@ -1,0 +1,17 @@
+{
+  "name": "@dealpme/connector-archiving",
+  "description": "Archivage électronique à valeur probante (PSAE accrédité) pour la piste d'audit de signature. Une table SQL n'est pas un service d'archivage.",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "@dealpme/config": "*"
+  }
+}

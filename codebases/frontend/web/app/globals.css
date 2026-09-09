@@ -1,0 +1,5 @@
+@import "@dealpme/ui/src/tokens.css";
+
+a { color: var(--dp-signal); }
+.dp-card { background: var(--dp-blanc); border: 1px solid var(--dp-border); border-radius: var(--dp-radius); padding: 1rem 1.2rem; }
+.dp-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }

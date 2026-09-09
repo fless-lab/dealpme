@@ -1,0 +1,218 @@
+[
+  {
+    "scenario_id": "AR-01",
+    "service": "alerte-rebond",
+    "service_label": "Alerte & Rebond",
+    "archetype": "NORMAL",
+    "capability_status": "GOVERNED_V0",
+    "title": "Tension de trésorerie précoce",
+    "path": "alerte-rebond/AR-01"
+  },
+  {
+    "scenario_id": "AR-02",
+    "service": "alerte-rebond",
+    "service_label": "Alerte & Rebond",
+    "archetype": "REMEDIATION",
+    "capability_status": "GOVERNED_V0",
+    "title": "Conciliation confidentielle",
+    "path": "alerte-rebond/AR-02"
+  },
+  {
+    "scenario_id": "AR-03",
+    "service": "alerte-rebond",
+    "service_label": "Alerte & Rebond",
+    "archetype": "CONTROL_FAILURE",
+    "capability_status": "GOVERNED_V0",
+    "title": "Portefeuille d’actifs bancaire",
+    "path": "alerte-rebond/AR-03"
+  },
+  {
+    "scenario_id": "TAX-01",
+    "service": "conformite-fiscalite",
+    "service_label": "Conformité & Fiscalité",
+    "archetype": "NORMAL",
+    "capability_status": "PARTNER_DEPENDENT",
+    "title": "Simulation fiscale de cession",
+    "path": "conformite-fiscalite/TAX-01"
+  },
+  {
+    "scenario_id": "TAX-02",
+    "service": "conformite-fiscalite",
+    "service_label": "Conformité & Fiscalité",
+    "archetype": "REMEDIATION",
+    "capability_status": "PARTNER_DEPENDENT",
+    "title": "Télédéclaration incomplète",
+    "path": "conformite-fiscalite/TAX-02"
+  },
+  {
+    "scenario_id": "TAX-03",
+    "service": "conformite-fiscalite",
+    "service_label": "Conformité & Fiscalité",
+    "archetype": "CONTROL_FAILURE",
+    "capability_status": "PARTNER_DEPENDENT",
+    "title": "API partenaire indisponible",
+    "path": "conformite-fiscalite/TAX-03"
+  },
+  {
+    "scenario_id": "CNX-01",
+    "service": "deal-connect",
+    "service_label": "Deal-Connect",
+    "archetype": "NORMAL",
+    "capability_status": "GOVERNED_V0",
+    "title": "Salon agro UEMOA",
+    "path": "deal-connect/CNX-01"
+  },
+  {
+    "scenario_id": "CNX-02",
+    "service": "deal-connect",
+    "service_label": "Deal-Connect",
+    "archetype": "CONTROL_FAILURE",
+    "capability_status": "GOVERNED_V0",
+    "title": "Speed meetings ciblés",
+    "path": "deal-connect/CNX-02"
+  },
+  {
+    "scenario_id": "CNX-03",
+    "service": "deal-connect",
+    "service_label": "Deal-Connect",
+    "archetype": "REMEDIATION",
+    "capability_status": "GOVERNED_V0",
+    "title": "Connexion faible",
+    "path": "deal-connect/CNX-03"
+  },
+  {
+    "scenario_id": "EX-01",
+    "service": "deal-experts",
+    "service_label": "Deal-Experts",
+    "archetype": "NORMAL",
+    "capability_status": "FUTURE_TARGET",
+    "title": "Quality of Earnings urgent",
+    "path": "deal-experts/EX-01"
+  },
+  {
+    "scenario_id": "EX-02",
+    "service": "deal-experts",
+    "service_label": "Deal-Experts",
+    "archetype": "CONTROL_FAILURE",
+    "capability_status": "FUTURE_TARGET",
+    "title": "Conflit d’intérêts détecté",
+    "path": "deal-experts/EX-02"
+  },
+  {
+    "scenario_id": "EX-03",
+    "service": "deal-experts",
+    "service_label": "Deal-Experts",
+    "archetype": "REMEDIATION",
+    "capability_status": "FUTURE_TARGET",
+    "title": "Due diligence fiscale",
+    "path": "deal-experts/EX-03"
+  },
+  {
+    "scenario_id": "DR-01",
+    "service": "deal-ready",
+    "service_label": "Deal-Ready",
+    "archetype": "NORMAL",
+    "capability_status": "GOVERNED_V0",
+    "title": "Certification prête",
+    "path": "deal-ready/DR-01"
+  },
+  {
+    "scenario_id": "DR-02",
+    "service": "deal-ready",
+    "service_label": "Deal-Ready",
+    "archetype": "REMEDIATION",
+    "capability_status": "GOVERNED_V0",
+    "title": "Remédiation requise",
+    "path": "deal-ready/DR-02"
+  },
+  {
+    "scenario_id": "DR-03",
+    "service": "deal-ready",
+    "service_label": "Deal-Ready",
+    "archetype": "CONTROL_FAILURE",
+    "capability_status": "GOVERNED_V0",
+    "title": "Certification différée",
+    "path": "deal-ready/DR-03"
+  },
+  {
+    "scenario_id": "DIA-01",
+    "service": "guichet-diaspora",
+    "service_label": "Guichet Diaspora",
+    "archetype": "NORMAL",
+    "capability_status": "GOVERNED_V0",
+    "title": "Acquéreur diaspora qualifié",
+    "path": "guichet-diaspora/DIA-01"
+  },
+  {
+    "scenario_id": "DIA-02",
+    "service": "guichet-diaspora",
+    "service_label": "Guichet Diaspora",
+    "archetype": "CONTROL_FAILURE",
+    "capability_status": "GOVERNED_V0",
+    "title": "Contrainte de change / autorisation",
+    "path": "guichet-diaspora/DIA-02"
+  },
+  {
+    "scenario_id": "DIA-03",
+    "service": "guichet-diaspora",
+    "service_label": "Guichet Diaspora",
+    "archetype": "REMEDIATION",
+    "capability_status": "GOVERNED_V0",
+    "title": "Due diligence 100 % à distance",
+    "path": "guichet-diaspora/DIA-03"
+  },
+  {
+    "scenario_id": "LEG-01",
+    "service": "legaltech-ohada",
+    "service_label": "LegalTech OHADA",
+    "archetype": "NORMAL",
+    "capability_status": "GOVERNED_V0",
+    "title": "NDA de transaction",
+    "path": "legaltech-ohada/LEG-01"
+  },
+  {
+    "scenario_id": "LEG-02",
+    "service": "legaltech-ohada",
+    "service_label": "LegalTech OHADA",
+    "archetype": "REMEDIATION",
+    "capability_status": "GOVERNED_V0",
+    "title": "LOI avec restrictions de transfert",
+    "path": "legaltech-ohada/LEG-02"
+  },
+  {
+    "scenario_id": "LEG-03",
+    "service": "legaltech-ohada",
+    "service_label": "LegalTech OHADA",
+    "archetype": "CONTROL_FAILURE",
+    "capability_status": "GOVERNED_V0",
+    "title": "Contrat de travail",
+    "path": "legaltech-ohada/LEG-03"
+  },
+  {
+    "scenario_id": "VDR-01",
+    "service": "vdr-qa",
+    "service_label": "VDR & Q&R",
+    "archetype": "NORMAL",
+    "capability_status": "GOVERNED_V0",
+    "title": "Audit acquéreur normal",
+    "path": "vdr-qa/VDR-01"
+  },
+  {
+    "scenario_id": "VDR-02",
+    "service": "vdr-qa",
+    "service_label": "VDR & Q&R",
+    "archetype": "CONTROL_FAILURE",
+    "capability_status": "GOVERNED_V0",
+    "title": "Accès révoqué",
+    "path": "vdr-qa/VDR-02"
+  },
+  {
+    "scenario_id": "VDR-03",
+    "service": "vdr-qa",
+    "service_label": "VDR & Q&R",
+    "archetype": "REMEDIATION",
+    "capability_status": "GOVERNED_V0",
+    "title": "Comportement anormal",
+    "path": "vdr-qa/VDR-03"
+  }
+]

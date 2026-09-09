@@ -1,0 +1,17 @@
+{
+  "package": "DealPME V3.1 MASTER DEVELOPER HANDOFF",
+  "generated_at_utc": "2026-09-06T08:33:45.779570+00:00",
+  "canonical_release": "04_EXECUTABLE_REFERENCE/DealPME_V3_Release",
+  "counts": {
+    "pass_transmission_cases": 12,
+    "service_scenarios": 24,
+    "skills": 6,
+    "vdr_documents": 336,
+    "q_and_a_threads": 120,
+    "structured_risks": 96,
+    "global_interaction_contracts": 1044,
+    "vdr_interaction_contracts": 456
+  },
+  "start_here": "OPEN_ME_REFERENCE_PORTAL.html",
+  "version_authority": "00_START_HERE/VERSION_AUTHORITY.md"
+}

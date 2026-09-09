@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "summary": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "findings": [],
+  "file": "/mnt/data/dealpme_skill_v3/portfolio_v3/PT-011/data/fixture.v3.json"
+}

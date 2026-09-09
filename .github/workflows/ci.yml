@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres-core:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: dealpme_core
+          POSTGRES_USER: dealpme_core
+          POSTGRES_PASSWORD: dealpme_core
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U dealpme_core" --health-interval 5s --health-timeout 3s --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build:libs
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      # Le build échoue sur toute vulnérabilité critique dans les dépendances (exigence v0, section sécurité).
+      - run: npm audit --audit-level=critical

@@ -1,0 +1,28 @@
+{
+  "name": "@dealpme/web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Site public et application DealPME (Next.js) : marketplace, espace cédant, espace investisseur, console CCI-Togo, administration, data room. Français langue source.",
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start --port 3000",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "next lint",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@dealpme/contracts": "*",
+    "@dealpme/domain": "*",
+    "@dealpme/i18n": "*",
+    "@dealpme/ui": "*",
+    "next": "^15.5.3",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@dealpme/config": "*",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9"
+  }
+}

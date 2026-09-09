@@ -1,0 +1,17 @@
+{
+  "status": "FAIL",
+  "summary": {
+    "P0": 1,
+    "P1": 0,
+    "P2": 0
+  },
+  "findings": [
+    {
+      "severity": "P0",
+      "rule_id": "DISC-001",
+      "path": "disclosure.T1.company",
+      "message": "Forbidden restricted field company"
+    }
+  ],
+  "file": "/mnt/data/dealpme_skill_v3/reference_app/qa/mutations_v3/t1_leak.json"
+}

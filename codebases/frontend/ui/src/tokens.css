@@ -1,0 +1,28 @@
+/* Jetons CSS DealPME. Importer une fois dans l'application (app/globals.css). */
+:root {
+  --dp-marine: #1c2751;
+  --dp-signal: #6678f1;
+  --dp-papier: #f2f2f3;
+  --dp-graphite: #1d1f20;
+  --dp-acier: #5980a6;
+  --dp-verifie: #2f6b4f;
+  --dp-en-cours: #b07a2b;
+  --dp-retire: #8c3a3a;
+  --dp-blanc: #ffffff;
+  --dp-border: rgba(28, 39, 81, 0.14);
+  --dp-font-display: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  --dp-font-body: "Barlow", Arial, "Segoe UI", sans-serif;
+  --dp-radius: 8px;
+}
+html { color-scheme: light; }
+body {
+  margin: 0;
+  background: var(--dp-papier);
+  color: var(--dp-graphite);
+  font-family: var(--dp-font-body);
+  font-size: 15.5px;
+  line-height: 1.5;
+}
+h1, h2, h3 { font-family: var(--dp-font-display); font-weight: 600; color: var(--dp-marine); margin: 0; }
+.dp-tabular { font-variant-numeric: tabular-nums; }
+.dp-label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dp-acier); font-weight: 600; }

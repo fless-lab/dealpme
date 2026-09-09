@@ -1,0 +1,17 @@
+{
+  "status": "FAIL",
+  "summary": {
+    "P0": 1,
+    "P1": 0,
+    "P2": 0
+  },
+  "registered_controls": 31,
+  "findings": [
+    {
+      "severity": "P0",
+      "rule_id": "INT-REF-001",
+      "path": "QA-001",
+      "message": "Q&R references missing document"
+    }
+  ]
+}

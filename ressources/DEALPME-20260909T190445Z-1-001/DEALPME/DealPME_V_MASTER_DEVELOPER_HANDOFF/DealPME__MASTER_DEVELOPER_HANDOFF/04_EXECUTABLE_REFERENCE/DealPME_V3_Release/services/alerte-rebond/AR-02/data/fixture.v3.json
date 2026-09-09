@@ -1,0 +1,331 @@
+{
+  "schema_version": "3.0",
+  "fixture_kind": "SERVICE_SCENARIO",
+  "synthetic": true,
+  "scenario_id": "AR-02",
+  "service": "alerte-rebond",
+  "service_label": "Alerte & Rebond",
+  "title": "Conciliation confidentielle",
+  "archetype": "REMEDIATION",
+  "capability_status": "GOVERNED_V0",
+  "objective": "Tester la protection renforcée d’un dossier lié à une conciliation formelle.",
+  "state_in": "CONCILIATION_DECLARED",
+  "trigger": "Entreprise déjà engagée dans une conciliation formelle.",
+  "actors": [
+    {
+      "role": "Entreprise",
+      "responsibility": "Déclarer la situation et fournir les éléments",
+      "accountable_for": "Déclarer la situation et fournir les éléments",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "DealPME",
+      "responsibility": "Orchestrer le diagnostic et les espaces sécurisés",
+      "accountable_for": "Orchestrer le diagnostic et les espaces sécurisés",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Expert restructuration",
+      "responsibility": "Analyser et proposer des scénarios",
+      "accountable_for": "Analyser et proposer des scénarios",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Conformité",
+      "responsibility": "Valider la confidentialité et les admissions",
+      "accountable_for": "Valider la confidentialité et les admissions",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Partenaire institutionnel",
+      "responsibility": "Orienter vers les procédures ou acteurs compétents",
+      "accountable_for": "Orienter vers les procédures ou acteurs compétents",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "Référence conciliation",
+      "status": "INCOMPLETE",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    },
+    {
+      "name": "Liste invités",
+      "status": "INCOMPLETE",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    },
+    {
+      "name": "Documents protégés",
+      "status": "INCOMPLETE",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    }
+  ],
+  "controls": [
+    {
+      "id": "AR-C04",
+      "severity": "P0",
+      "rule": "invite-only",
+      "owner": "Entreprise",
+      "expected_evidence": "AR-C04-EVIDENCE",
+      "blocking": true
+    },
+    {
+      "id": "AR-C05",
+      "severity": "P0",
+      "rule": "liste nominative",
+      "owner": "DealPME",
+      "expected_evidence": "AR-C05-EVIDENCE",
+      "blocking": false
+    },
+    {
+      "id": "AR-C06",
+      "severity": "P1",
+      "rule": "kill switch",
+      "owner": "Expert restructuration",
+      "expected_evidence": "AR-C06-EVIDENCE",
+      "blocking": false
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "Conseil / mandataire selon besoin",
+      "status": "PARTIAL",
+      "required": true,
+      "partner_dependent": true,
+      "fallback": "Traitement manuel/documenté lorsque prévu"
+    }
+  ],
+  "events": [
+    {
+      "seq": 1,
+      "type": "REQUEST_CREATED",
+      "actor": "Entreprise",
+      "result": "Demande créée et identifiée",
+      "audit_event": "AR_REQUEST_CREATED"
+    },
+    {
+      "seq": 2,
+      "type": "INPUTS_CHECKED",
+      "actor": "DealPME",
+      "result": "Entrées et habilitations contrôlées",
+      "audit_event": "AR_INPUTS_CHECKED"
+    },
+    {
+      "seq": 3,
+      "type": "CONTROL_GATE_EVALUATED",
+      "actor": "Expert restructuration",
+      "result": "Gate métier/compliance évalué",
+      "audit_event": "AR_CONTROL_GATE_EVALUATED"
+    },
+    {
+      "seq": 4,
+      "type": "HUMAN_GATE_IF_REQUIRED",
+      "actor": "Conformité",
+      "result": "Décision humaine appliquée lorsqu’elle est requise",
+      "audit_event": "AR_HUMAN_GATE_IF_REQUIRED"
+    },
+    {
+      "seq": 5,
+      "type": "OUTPUT_RECORDED",
+      "actor": "Partenaire institutionnel",
+      "result": "CONFIDENTIALITY_REMEDIATION",
+      "audit_event": "AR_OUTPUT_RECORDED"
+    },
+    {
+      "seq": 6,
+      "type": "AUDIT_EVENT_WRITTEN",
+      "actor": "Entreprise",
+      "result": "Trace exploitable par QA",
+      "audit_event": "AR_AUDIT_EVENT_WRITTEN"
+    }
+  ],
+  "human_decision": {
+    "required": true,
+    "owner": "Conformité + entreprise",
+    "decision": "CONFIRM_INVITE_LIST",
+    "evidence": "Aucune visibilité publique et aucune invitation non nominative."
+  },
+  "state_out": "CONFIDENTIALITY_REMEDIATION",
+  "prohibited_states": [
+    "FINAL_SUCCESS_BEFORE_REMEDIATION"
+  ],
+  "expected_user_message": "Le dossier reste strictement sur invitation ; les habilitations doivent être revues avant tout partage.",
+  "audit_events": [
+    "AR_REQUEST_CREATED",
+    "AR_INPUTS_CHECKED",
+    "AR_CONTROL_GATE_EVALUATED",
+    "AR_HUMAN_GATE_IF_REQUIRED",
+    "AR_OUTPUT_RECORDED",
+    "AR_AUDIT_EVENT_WRITTEN",
+    "AR_REVIEW_INVITE_LIST",
+    "AR_UPLOAD_CONFIDENTIAL_EVIDENCE"
+  ],
+  "negative_assertions": [
+    "Forcer CONFIDENTIALITY_REMEDIATION sans exécuter CONTROL_GATE_EVALUATED doit échouer.",
+    "Exécuter une action sensible avec un profil non autorisé doit échouer et être journalisé.",
+    "Supprimer l’interaction contract d’un contrôle visible doit déclencher DEAD_CONTROL."
+  ],
+  "qa_assertions": [
+    "Le scénario ne peut atteindre son état cible qu’après satisfaction des gates explicitement définis.",
+    "Chaque contrôle visible possède un interaction contract et produit un changement d’état ou un blocage explicite.",
+    "Les rôles ne voient que le périmètre nécessaire et les événements sensibles sont journalisés.",
+    "Aucun message utilisateur ne présente DealPME comme conseil juridique, fiscal, réglementaire ou financier.",
+    "Les sorties synthétiques sont identifiées comme telles et ne peuvent être confondues avec un dossier réel."
+  ],
+  "evidence_pack": [
+    {
+      "id": "AR-02-EV-01",
+      "description": "Référence conciliation",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "AR-02-EV-02",
+      "description": "Liste invités",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "AR-02-EV-03",
+      "description": "Documents protégés",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "AR-02-EV-04",
+      "description": "AR-C04 invite-only",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "AR-02-EV-05",
+      "description": "AR-C05 liste nominative",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "AR-02-EV-06",
+      "description": "AR-C06 kill switch",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    }
+  ],
+  "primary_action": {
+    "label": "Revoir les habilitations",
+    "action": "REVIEW_INVITE_LIST",
+    "success_state": "INVITE_LIST_REVIEW"
+  },
+  "secondary_action": {
+    "label": "Ajouter un document",
+    "action": "UPLOAD_CONFIDENTIAL_EVIDENCE",
+    "success_state": "EVIDENCE_RECEIVED"
+  },
+  "interaction_contracts": [
+    {
+      "control_id": "PRIMARY_ACTION",
+      "surface": "scenario",
+      "label": "Revoir les habilitations",
+      "action": "REVIEW_INVITE_LIST",
+      "target": "scenario-state-machine",
+      "required_profile": "AUTHORIZED_TEST_USER",
+      "success_state": "INVITE_LIST_REVIEW",
+      "blocked_state": null,
+      "blocked_message": null,
+      "audit_event": "AR_REVIEW_INVITE_LIST"
+    },
+    {
+      "control_id": "SECONDARY_ACTION",
+      "surface": "scenario",
+      "label": "Ajouter un document",
+      "action": "UPLOAD_CONFIDENTIAL_EVIDENCE",
+      "target": "scenario-workspace",
+      "required_profile": "AUTHORIZED_TEST_USER",
+      "success_state": "EVIDENCE_RECEIVED",
+      "audit_event": "AR_UPLOAD_CONFIDENTIAL_EVIDENCE"
+    },
+    {
+      "control_id": "TAB_OVERVIEW",
+      "surface": "scenario-navigation",
+      "label": "Situation",
+      "action": "SWITCH_TAB",
+      "target": "overview",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_WORKFLOW",
+      "surface": "scenario-navigation",
+      "label": "Parcours",
+      "action": "SWITCH_TAB",
+      "target": "workflow",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_CONTROLS",
+      "surface": "scenario-navigation",
+      "label": "Contrôles & RACI",
+      "action": "SWITCH_TAB",
+      "target": "controls",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_EVIDENCE",
+      "surface": "scenario-navigation",
+      "label": "Preuves & audit",
+      "action": "SWITCH_TAB",
+      "target": "evidence",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_TESTS",
+      "surface": "scenario-navigation",
+      "label": "Tests dev",
+      "action": "SWITCH_TAB",
+      "target": "tests",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "PROFILE_SWITCH",
+      "surface": "dev-reference",
+      "label": "Profil de test",
+      "action": "SWITCH_TEST_PROFILE",
+      "target": "local-reference-state",
+      "required_profile": "DEV_REFERENCE",
+      "success_state": "PROFILE_CHANGED",
+      "audit_event": "PROFILE_CHANGED"
+    },
+    {
+      "control_id": "MODAL_CLOSE",
+      "surface": "modal",
+      "label": "Fermer",
+      "action": "CLOSE_MODAL",
+      "target": "modal",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "MODAL_CLOSED",
+      "audit_event": "MODAL_CLOSED"
+    }
+  ],
+  "test_profiles": [
+    "Utilisateur autorisé",
+    "Utilisateur non autorisé",
+    "Conformité / opérateur",
+    "Administrateur support contrôlé"
+  ],
+  "provenance": {
+    "type": "SYNTHETIC_TEST_DATA",
+    "generated_for": "DealPME V3 developer reference and regression QA",
+    "not_real_case": true
+  }
+}

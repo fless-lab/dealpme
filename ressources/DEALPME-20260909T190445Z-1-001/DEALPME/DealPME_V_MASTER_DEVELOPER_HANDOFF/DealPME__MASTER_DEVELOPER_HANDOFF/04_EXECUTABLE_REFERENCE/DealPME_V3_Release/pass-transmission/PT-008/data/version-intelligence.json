@@ -1,0 +1,26 @@
+{
+  "case_id": "PT-008",
+  "comparisons": [
+    {
+      "document_id": "DOC-TRX-001",
+      "from_version": "0.9",
+      "to_version": "1.0",
+      "material_changes": 2,
+      "summary": [
+        "Calendrier de diligence étendu de 10 jours.",
+        "Étape de confirmation des consentements ajoutée."
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED"
+    },
+    {
+      "document_id": "DOC-COM-002",
+      "from_version": "0.8",
+      "to_version": "1.0",
+      "material_changes": 1,
+      "summary": [
+        "Ajout d’un extrait de clause de changement de contrôle dans le spécimen."
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED"
+    }
+  ]
+}

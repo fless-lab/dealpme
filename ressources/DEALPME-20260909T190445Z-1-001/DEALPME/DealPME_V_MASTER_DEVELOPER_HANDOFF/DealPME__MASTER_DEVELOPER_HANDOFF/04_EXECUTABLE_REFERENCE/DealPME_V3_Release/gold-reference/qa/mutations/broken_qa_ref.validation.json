@@ -1,0 +1,36 @@
+{
+  "fixture": {
+    "status": "FAIL",
+    "summary": {
+      "P0": 1,
+      "P1": 0,
+      "P2": 0
+    },
+    "findings": [
+      {
+        "severity": "P0",
+        "rule_id": "CNT-004",
+        "path": "QA-001",
+        "message": "Q&R missing linked document"
+      }
+    ],
+    "file": "/mnt/data/dealpme_skill_v3/reference_app/qa/mutations/broken_qa_ref.json"
+  },
+  "interactions": {
+    "status": "FAIL",
+    "summary": {
+      "P0": 1,
+      "P1": 0,
+      "P2": 0
+    },
+    "registered_controls": 32,
+    "findings": [
+      {
+        "severity": "P0",
+        "rule_id": "INT-REF-001",
+        "path": "QA-001",
+        "message": "Q&R references missing document"
+      }
+    ]
+  }
+}

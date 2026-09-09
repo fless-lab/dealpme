@@ -1,0 +1,17 @@
+{
+  "case_id": "PT-003",
+  "room_prompts": [
+    "Quels documents soutiennent le chiffre d’affaires 2025 annoncé ?",
+    "Quels sont les cinq risques les plus importants non clôturés ?",
+    "Quelles clauses de changement de contrôle apparaissent dans les documents auxquels j’ai accès ?",
+    "Quels écarts de preuve subsistent avant une LOI ?",
+    "Quels documents devrais-je lire en priorité pour comprendre le BFR et la dette ?"
+  ],
+  "policy": {
+    "permission_filter_before_retrieval": true,
+    "citation_required": true,
+    "read_only": true,
+    "clean_team_isolation": true,
+    "revocation_propagates_to_ai": true
+  }
+}

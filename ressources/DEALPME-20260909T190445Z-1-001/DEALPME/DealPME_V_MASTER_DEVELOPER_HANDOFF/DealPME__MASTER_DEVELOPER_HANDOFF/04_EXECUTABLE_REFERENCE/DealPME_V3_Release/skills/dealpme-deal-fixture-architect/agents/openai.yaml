@@ -1,0 +1,4 @@
+interface:
+  display_name: "DealPME Deal Fixture Architect"
+  short_description: "Create coherent synthetic transaction cases"
+  brand_color: "#132553"

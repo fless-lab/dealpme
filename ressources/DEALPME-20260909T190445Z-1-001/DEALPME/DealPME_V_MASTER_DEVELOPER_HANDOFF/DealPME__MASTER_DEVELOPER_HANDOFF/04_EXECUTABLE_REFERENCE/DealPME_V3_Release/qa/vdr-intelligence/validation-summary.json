@@ -1,0 +1,182 @@
+[
+  {
+    "case_id": "PT-001",
+    "fixture": {
+      "status": "PASS",
+      "errors": []
+    },
+    "citations": {
+      "status": "PASS",
+      "errors": []
+    },
+    "firewall": {
+      "status": "PASS",
+      "errors": []
+    }
+  },
+  {
+    "case_id": "PT-002",
+    "fixture": {
+      "status": "PASS",
+      "errors": []
+    },
+    "citations": {
+      "status": "PASS",
+      "errors": []
+    },
+    "firewall": {
+      "status": "PASS",
+      "errors": []
+    }
+  },
+  {
+    "case_id": "PT-003",
+    "fixture": {
+      "status": "PASS",
+      "errors": []
+    },
+    "citations": {
+      "status": "PASS",
+      "errors": []
+    },
+    "firewall": {
+      "status": "PASS",
+      "errors": []
+    }
+  },
+  {
+    "case_id": "PT-004",
+    "fixture": {
+      "status": "PASS",
+      "errors": []
+    },
+    "citations": {
+      "status": "PASS",
+      "errors": []
+    },
+    "firewall": {
+      "status": "PASS",
+      "errors": []
+    }
+  },
+  {
+    "case_id": "PT-005",
+    "fixture": {
+      "status": "PASS",
+      "errors": []
+    },
+    "citations": {
+      "status": "PASS",
+      "errors": []
+    },
+    "firewall": {
+      "status": "PASS",
+      "errors": []
+    }
+  },
+  {
+    "case_id": "PT-006",
+    "fixture": {
+      "status": "PASS",
+      "errors": []
+    },
+    "citations": {
+      "status": "PASS",
+      "errors": []
+    },
+    "firewall": {
+      "status": "PASS",
+      "errors": []
+    }
+  },
+  {
+    "case_id": "PT-007",
+    "fixture": {
+      "status": "PASS",
+      "errors": []
+    },
+    "citations": {
+      "status": "PASS",
+      "errors": []
+    },
+    "firewall": {
+      "status": "PASS",
+      "errors": []
+    }
+  },
+  {
+    "case_id": "PT-008",
+    "fixture": {
+      "status": "PASS",
+      "errors": []
+    },
+    "citations": {
+      "status": "PASS",
+      "errors": []
+    },
+    "firewall": {
+      "status": "PASS",
+      "errors": []
+    }
+  },
+  {
+    "case_id": "PT-009",
+    "fixture": {
+      "status": "PASS",
+      "errors": []
+    },
+    "citations": {
+      "status": "PASS",
+      "errors": []
+    },
+    "firewall": {
+      "status": "PASS",
+      "errors": []
+    }
+  },
+  {
+    "case_id": "PT-010",
+    "fixture": {
+      "status": "PASS",
+      "errors": []
+    },
+    "citations": {
+      "status": "PASS",
+      "errors": []
+    },
+    "firewall": {
+      "status": "PASS",
+      "errors": []
+    }
+  },
+  {
+    "case_id": "PT-011",
+    "fixture": {
+      "status": "PASS",
+      "errors": []
+    },
+    "citations": {
+      "status": "PASS",
+      "errors": []
+    },
+    "firewall": {
+      "status": "PASS",
+      "errors": []
+    }
+  },
+  {
+    "case_id": "PT-012",
+    "fixture": {
+      "status": "PASS",
+      "errors": []
+    },
+    "citations": {
+      "status": "PASS",
+      "errors": []
+    },
+    "firewall": {
+      "status": "PASS",
+      "errors": []
+    }
+  }
+]

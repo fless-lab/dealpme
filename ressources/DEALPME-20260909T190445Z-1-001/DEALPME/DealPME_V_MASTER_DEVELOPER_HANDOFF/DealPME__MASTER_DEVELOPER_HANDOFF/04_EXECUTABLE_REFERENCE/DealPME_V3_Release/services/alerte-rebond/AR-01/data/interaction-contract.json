@@ -1,0 +1,97 @@
+{
+  "scenario_id": "AR-01",
+  "contracts": [
+    {
+      "control_id": "PRIMARY_ACTION",
+      "surface": "scenario",
+      "label": "Démarrer le diagnostic",
+      "action": "START_DIAGNOSTIC",
+      "target": "scenario-state-machine",
+      "required_profile": "AUTHORIZED_TEST_USER",
+      "success_state": "DIAGNOSTIC_ACTIVE",
+      "blocked_state": null,
+      "blocked_message": null,
+      "audit_event": "AR_START_DIAGNOSTIC"
+    },
+    {
+      "control_id": "SECONDARY_ACTION",
+      "surface": "scenario",
+      "label": "Inviter un expert",
+      "action": "REQUEST_TURNAROUND_EXPERT",
+      "target": "scenario-workspace",
+      "required_profile": "AUTHORIZED_TEST_USER",
+      "success_state": "EXPERT_REQUESTED",
+      "audit_event": "AR_REQUEST_TURNAROUND_EXPERT"
+    },
+    {
+      "control_id": "TAB_OVERVIEW",
+      "surface": "scenario-navigation",
+      "label": "Situation",
+      "action": "SWITCH_TAB",
+      "target": "overview",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_WORKFLOW",
+      "surface": "scenario-navigation",
+      "label": "Parcours",
+      "action": "SWITCH_TAB",
+      "target": "workflow",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_CONTROLS",
+      "surface": "scenario-navigation",
+      "label": "Contrôles & RACI",
+      "action": "SWITCH_TAB",
+      "target": "controls",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_EVIDENCE",
+      "surface": "scenario-navigation",
+      "label": "Preuves & audit",
+      "action": "SWITCH_TAB",
+      "target": "evidence",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_TESTS",
+      "surface": "scenario-navigation",
+      "label": "Tests dev",
+      "action": "SWITCH_TAB",
+      "target": "tests",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "PROFILE_SWITCH",
+      "surface": "dev-reference",
+      "label": "Profil de test",
+      "action": "SWITCH_TEST_PROFILE",
+      "target": "local-reference-state",
+      "required_profile": "DEV_REFERENCE",
+      "success_state": "PROFILE_CHANGED",
+      "audit_event": "PROFILE_CHANGED"
+    },
+    {
+      "control_id": "MODAL_CLOSE",
+      "surface": "modal",
+      "label": "Fermer",
+      "action": "CLOSE_MODAL",
+      "target": "modal",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "MODAL_CLOSED",
+      "audit_event": "MODAL_CLOSED"
+    }
+  ]
+}

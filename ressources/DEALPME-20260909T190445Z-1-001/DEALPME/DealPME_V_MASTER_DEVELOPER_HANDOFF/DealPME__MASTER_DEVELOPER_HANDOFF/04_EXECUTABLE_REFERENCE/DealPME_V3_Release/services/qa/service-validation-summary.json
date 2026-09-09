@@ -1,0 +1,106 @@
+[
+  {
+    "service": "alerte-rebond",
+    "triplet": "PASS",
+    "interactions": "PASS",
+    "triplet_summary": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0
+    },
+    "interaction_summary": {
+      "P0": 0
+    }
+  },
+  {
+    "service": "conformite-fiscalite",
+    "triplet": "PASS",
+    "interactions": "PASS",
+    "triplet_summary": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0
+    },
+    "interaction_summary": {
+      "P0": 0
+    }
+  },
+  {
+    "service": "deal-connect",
+    "triplet": "PASS",
+    "interactions": "PASS",
+    "triplet_summary": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0
+    },
+    "interaction_summary": {
+      "P0": 0
+    }
+  },
+  {
+    "service": "deal-experts",
+    "triplet": "PASS",
+    "interactions": "PASS",
+    "triplet_summary": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0
+    },
+    "interaction_summary": {
+      "P0": 0
+    }
+  },
+  {
+    "service": "deal-ready",
+    "triplet": "PASS",
+    "interactions": "PASS",
+    "triplet_summary": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0
+    },
+    "interaction_summary": {
+      "P0": 0
+    }
+  },
+  {
+    "service": "guichet-diaspora",
+    "triplet": "PASS",
+    "interactions": "PASS",
+    "triplet_summary": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0
+    },
+    "interaction_summary": {
+      "P0": 0
+    }
+  },
+  {
+    "service": "legaltech-ohada",
+    "triplet": "PASS",
+    "interactions": "PASS",
+    "triplet_summary": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0
+    },
+    "interaction_summary": {
+      "P0": 0
+    }
+  },
+  {
+    "service": "vdr-qa",
+    "triplet": "PASS",
+    "interactions": "PASS",
+    "triplet_summary": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0
+    },
+    "interaction_summary": {
+      "P0": 0
+    }
+  }
+]

@@ -1,0 +1,137 @@
+[
+  {
+    "risk_id": "R-BIZ-01",
+    "category": "Métier",
+    "title": "Concentration de deux grands comptes",
+    "severity": "MEDIUM",
+    "probability": "MEDIUM",
+    "status": "OPEN",
+    "description": "Point de diligence spécifique au profil Services aux entreprises : Concentration de deux grands comptes. Le fixture exige une preuve et une réponse, pas une simple mention marketing.",
+    "evidence": [
+      "DOC-SUP-001",
+      "DOC-SUP-002"
+    ],
+    "owner": "Direction opérationnelle",
+    "mitigation": "Documenter le niveau d’exposition, les mesures existantes et le plan de réduction avant LOI.",
+    "buyer_question": "Pouvez-vous quantifier et documenter le risque « Concentration de deux grands comptes » sur les 24 derniers mois ?",
+    "linked_qa": "QA-001"
+  },
+  {
+    "risk_id": "R-BIZ-02",
+    "category": "Métier",
+    "title": "Rotation du personnel technique",
+    "severity": "MEDIUM",
+    "probability": "MEDIUM",
+    "status": "OPEN",
+    "description": "Point de diligence spécifique au profil Services aux entreprises : Rotation du personnel technique. Le fixture exige une preuve et une réponse, pas une simple mention marketing.",
+    "evidence": [
+      "DOC-COM-001",
+      "DOC-COM-002"
+    ],
+    "owner": "Direction opérationnelle",
+    "mitigation": "Documenter le niveau d’exposition, les mesures existantes et le plan de réduction avant LOI.",
+    "buyer_question": "Pouvez-vous quantifier et documenter le risque « Rotation du personnel technique » sur les 24 derniers mois ?",
+    "linked_qa": "QA-002"
+  },
+  {
+    "risk_id": "R-FIN-01",
+    "category": "Financier",
+    "title": "Besoin en fonds de roulement et conversion de trésorerie",
+    "severity": "MEDIUM",
+    "probability": "MEDIUM",
+    "status": "OPEN",
+    "description": "BFR 2025 de 546 M FCFA; l’acquéreur doit comprendre saisonnalité, encaissements et fournisseurs.",
+    "evidence": [
+      "DOC-FIN-003",
+      "DOC-FIN-004"
+    ],
+    "owner": "Direction financière",
+    "mitigation": "Rapprocher créances/stocks/fournisseurs et normaliser le BFR de clôture.",
+    "buyer_question": "Quel niveau de BFR normalisé serait nécessaire à la date de réalisation ?",
+    "linked_qa": "QA-003"
+  },
+  {
+    "risk_id": "R-FIN-02",
+    "category": "Financier",
+    "title": "Dette, liquidité et clauses de financement",
+    "severity": "LOW",
+    "probability": "MEDIUM",
+    "status": "OPEN",
+    "description": "Dette brute 360 M FCFA, cash 429 M FCFA, dette nette -69 M FCFA.",
+    "evidence": [
+      "DOC-FIN-005"
+    ],
+    "owner": "Direction financière",
+    "mitigation": "Obtenir échéancier, sûretés et clauses de changement de contrôle.",
+    "buyer_question": "Quelles dettes/sûretés doivent être remboursées, refinancées ou consenties ?",
+    "linked_qa": "QA-004"
+  },
+  {
+    "risk_id": "R-COM-01",
+    "category": "Commercial",
+    "title": "Concentration et qualité du chiffre d’affaires",
+    "severity": "MEDIUM",
+    "probability": "MEDIUM",
+    "status": "OPEN",
+    "description": "Top 5 clients : 48 %; revenus récurrents : 79 %.",
+    "evidence": [
+      "DOC-COM-001",
+      "DOC-COM-002"
+    ],
+    "owner": "Direction commerciale",
+    "mitigation": "Analyser durée, marge, résiliation et historique de rétention par client.",
+    "buyer_question": "Quelle part du CA est sécurisée au-delà de 12 mois et à quelle marge ?",
+    "linked_qa": "QA-005"
+  },
+  {
+    "risk_id": "R-HR-01",
+    "category": "Ressources humaines",
+    "title": "Dépendance aux personnes clés",
+    "severity": "MEDIUM",
+    "probability": "MEDIUM",
+    "status": "OPEN",
+    "description": "La continuité managériale et la transition du cédant (12 mois) doivent être testées.",
+    "evidence": [
+      "DOC-HR-001",
+      "DOC-HR-002"
+    ],
+    "owner": "Direction générale",
+    "mitigation": "Formaliser délégations, rétention des cadres clés et plan 100 jours.",
+    "buyer_question": "Quels rôles, clients ou savoir-faire dépendent encore d’une personne clé ?",
+    "linked_qa": "QA-006"
+  },
+  {
+    "risk_id": "R-REG-01",
+    "category": "Juridique / réglementaire",
+    "title": "Transférabilité des autorisations et contrats",
+    "severity": "MEDIUM",
+    "probability": "MEDIUM",
+    "status": "OPEN",
+    "description": "Le secteur Services aux entreprises peut comporter des agréments, contrats ou autorisations soumis à notification/consentement.",
+    "evidence": [
+      "DOC-REG-001",
+      "DOC-REG-002"
+    ],
+    "owner": "Conseil / conformité",
+    "mitigation": "Préparer matrice des consentements et conditions suspensives.",
+    "buyer_question": "Quelles autorisations ou relations contractuelles exigent une action avant réalisation ?",
+    "linked_qa": "QA-007"
+  },
+  {
+    "risk_id": "R-TRX-01",
+    "category": "Transaction",
+    "title": "Périmètre, prix vendeur et mécanisme de clôture",
+    "severity": "MEDIUM",
+    "probability": "MEDIUM",
+    "status": "OPEN",
+    "description": "Périmètre : 75 %; attente vendeur 7 100 M FCFA, non valorisation DealPME.",
+    "evidence": [
+      "DOC-TRX-001",
+      "DOC-TRX-003"
+    ],
+    "owner": "Conseil transaction",
+    "mitigation": "Documenter dette/cash/BFR, conditions, consentements et preuve de résultat.",
+    "buyer_question": "Quels ajustements et conditions doivent être figés dans la LOI ?",
+    "linked_qa": "QA-008"
+  }
+]

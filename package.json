@@ -1,0 +1,43 @@
+{
+  "name": "dealpme",
+  "private": true,
+  "version": "0.1.0",
+  "description": "DealPME : place de marché de transmission et reprise de PME (zone OHADA, pilote Togo). Monorepo TypeScript.",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "packages/config",
+    "packages/domain",
+    "packages/contracts",
+    "packages/i18n",
+    "packages/testing",
+    "codebases/engine/rules",
+    "codebases/external_connectors/*",
+    "codebases/frontend/ui",
+    "codebases/engine/rps",
+    "codebases/backend/api",
+    "codebases/backend/worker",
+    "codebases/frontend/web"
+  ],
+  "scripts": {
+    "build:libs": "npm run build -w packages/domain -w packages/contracts -w packages/i18n -w packages/testing -w codebases/engine/rules -w codebases/frontend/ui && npm run build --workspaces --if-present --include-workspace-root=false -- --pretty false >/dev/null 2>&1 || true",
+    "build": "npm run build:libs && npm run build -w codebases/engine/rps -w codebases/backend/api -w codebases/backend/worker -w codebases/frontend/web",
+    "dev:api": "npm run dev -w codebases/backend/api",
+    "dev:rps": "npm run dev -w codebases/engine/rps",
+    "dev:worker": "npm run dev -w codebases/backend/worker",
+    "dev:web": "npm run dev -w codebases/frontend/web",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "infra:up": "docker compose -f infra/docker-compose.yml up -d",
+    "infra:down": "docker compose -f infra/docker-compose.yml down",
+    "db:migrate:core": "npm run db:migrate -w codebases/backend/api",
+    "db:migrate:rps": "npm run db:migrate -w codebases/engine/rps"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4",
+    "@types/node": "^24.5.2"
+  }
+}

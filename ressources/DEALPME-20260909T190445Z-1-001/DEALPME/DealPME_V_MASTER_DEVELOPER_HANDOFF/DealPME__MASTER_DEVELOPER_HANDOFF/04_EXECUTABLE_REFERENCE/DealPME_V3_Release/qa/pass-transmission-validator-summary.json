@@ -1,0 +1,308 @@
+{
+  "status": "PASS",
+  "passed": 60,
+  "total": 60,
+  "cases": 12,
+  "validations": [
+    {
+      "case_id": "PT-001",
+      "validator": "financial",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-001",
+      "validator": "content",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-001",
+      "validator": "disclosure",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-001",
+      "validator": "fixture_qa",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-001",
+      "validator": "interactions",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-002",
+      "validator": "financial",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-002",
+      "validator": "content",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-002",
+      "validator": "disclosure",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-002",
+      "validator": "fixture_qa",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-002",
+      "validator": "interactions",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-003",
+      "validator": "financial",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-003",
+      "validator": "content",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-003",
+      "validator": "disclosure",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-003",
+      "validator": "fixture_qa",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-003",
+      "validator": "interactions",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-004",
+      "validator": "financial",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-004",
+      "validator": "content",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-004",
+      "validator": "disclosure",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-004",
+      "validator": "fixture_qa",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-004",
+      "validator": "interactions",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-005",
+      "validator": "financial",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-005",
+      "validator": "content",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-005",
+      "validator": "disclosure",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-005",
+      "validator": "fixture_qa",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-005",
+      "validator": "interactions",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-006",
+      "validator": "financial",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-006",
+      "validator": "content",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-006",
+      "validator": "disclosure",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-006",
+      "validator": "fixture_qa",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-006",
+      "validator": "interactions",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-007",
+      "validator": "financial",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-007",
+      "validator": "content",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-007",
+      "validator": "disclosure",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-007",
+      "validator": "fixture_qa",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-007",
+      "validator": "interactions",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-008",
+      "validator": "financial",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-008",
+      "validator": "content",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-008",
+      "validator": "disclosure",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-008",
+      "validator": "fixture_qa",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-008",
+      "validator": "interactions",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-009",
+      "validator": "financial",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-009",
+      "validator": "content",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-009",
+      "validator": "disclosure",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-009",
+      "validator": "fixture_qa",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-009",
+      "validator": "interactions",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-010",
+      "validator": "financial",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-010",
+      "validator": "content",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-010",
+      "validator": "disclosure",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-010",
+      "validator": "fixture_qa",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-010",
+      "validator": "interactions",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-011",
+      "validator": "financial",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-011",
+      "validator": "content",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-011",
+      "validator": "disclosure",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-011",
+      "validator": "fixture_qa",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-011",
+      "validator": "interactions",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-012",
+      "validator": "financial",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-012",
+      "validator": "content",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-012",
+      "validator": "disclosure",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-012",
+      "validator": "fixture_qa",
+      "status": "PASS"
+    },
+    {
+      "case_id": "PT-012",
+      "validator": "interactions",
+      "status": "PASS"
+    }
+  ]
+}

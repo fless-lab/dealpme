@@ -1,0 +1,21 @@
+{
+  "name": "@dealpme/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "description": "Contrats d'API : schémas zod des requêtes et réponses (camelCase), enveloppe d'erreur, codes d'erreur.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@dealpme/domain": "*",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@dealpme/config": "*"
+  }
+}

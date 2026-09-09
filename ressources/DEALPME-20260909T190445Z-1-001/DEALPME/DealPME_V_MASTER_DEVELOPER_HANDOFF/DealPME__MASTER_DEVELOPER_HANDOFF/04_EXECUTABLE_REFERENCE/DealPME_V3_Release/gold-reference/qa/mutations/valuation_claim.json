@@ -1,0 +1,2084 @@
+{
+  "schema_version": "3.0",
+  "fixture_kind": "PASS_TRANSMISSION",
+  "synthetic": true,
+  "case_id": "PT-001",
+  "master": {
+    "id": "PT-001",
+    "slug": "tropicvale-agro",
+    "company": "TropicVale Industries SA",
+    "teaser": "Transformateur de fruits tropicaux avec outil industriel récent",
+    "country": "Togo",
+    "city": "Lomé / Kpalimé",
+    "sector": "Agroalimentaire",
+    "years": 16,
+    "employees": 62,
+    "deal_type": "SHARE_DEAL",
+    "stake": "100 %",
+    "seller_reason": "Transmission entrepreneuriale et recentrage familial",
+    "seller_support": "12 mois",
+    "revenue_2025": 2120,
+    "margin_2025": 0.178,
+    "growth": 0.16,
+    "customer_top5": 0.46,
+    "recurring": 0.64,
+    "export_share": 0.38,
+    "net_debt": 293,
+    "capex": 155,
+    "asking": 2850,
+    "currency": "M FCFA",
+    "readiness": 91,
+    "badge": true,
+    "variant": "standard",
+    "hero": "agro",
+    "t0_region": "Sud Togo",
+    "t0_size": "CA 1,5–2,5 Md FCFA",
+    "legacy_reported_net_debt": 410,
+    "reference_year": 2025,
+    "currency_unit": "M FCFA",
+    "asking_unit": "M FCFA",
+    "asking_source": "SELLER_EXPECTATION",
+    "rccm": "SYN-PT-001-RCCM"
+  },
+  "highlights": [
+    "Contrats récurrents GMS et distributeurs",
+    "Capacité disponible pour +35 % de volume",
+    "Traçabilité qualité déjà structurée",
+    "Accès rapide au port de Lomé"
+  ],
+  "risks": [
+    "Saisonnalité des approvisionnements",
+    "Concentration sur deux distributeurs régionaux"
+  ],
+  "products": [
+    "Jus premium",
+    "Purées",
+    "Fruits séchés",
+    "Confitures"
+  ],
+  "financials": {
+    "income_statement": [
+      {
+        "year": 2021,
+        "revenue": 1301,
+        "gross_profit": 416,
+        "ebitda": 186,
+        "ebitda_margin": 0.14300000000000002,
+        "opex": 230,
+        "da": 33,
+        "ebit": 153,
+        "interest": 21,
+        "ebt": 132,
+        "tax": 33,
+        "net_income": 99
+      },
+      {
+        "year": 2022,
+        "revenue": 1431,
+        "gross_profit": 458,
+        "ebitda": 219,
+        "ebitda_margin": 0.153,
+        "opex": 239,
+        "da": 36,
+        "ebit": 183,
+        "interest": 24,
+        "ebt": 159,
+        "tax": 40,
+        "net_income": 119
+      },
+      {
+        "year": 2023,
+        "revenue": 1603,
+        "gross_profit": 513,
+        "ebitda": 261,
+        "ebitda_margin": 0.163,
+        "opex": 252,
+        "da": 40,
+        "ebit": 221,
+        "interest": 26,
+        "ebt": 195,
+        "tax": 49,
+        "net_income": 146,
+        "gross_margin": 0.32,
+        "net_margin": 0.0911,
+        "cogs": 1090,
+        "revenue_growth": null
+      },
+      {
+        "year": 2024,
+        "revenue": 1828,
+        "gross_profit": 585,
+        "ebitda": 311,
+        "ebitda_margin": 0.17,
+        "opex": 274,
+        "da": 46,
+        "ebit": 265,
+        "interest": 30,
+        "ebt": 235,
+        "tax": 59,
+        "net_income": 176,
+        "gross_margin": 0.32,
+        "net_margin": 0.0963,
+        "cogs": 1243,
+        "revenue_growth": 0.1404
+      },
+      {
+        "year": 2025,
+        "revenue": 2120,
+        "gross_profit": 678,
+        "ebitda": 377,
+        "ebitda_margin": 0.17800000000000002,
+        "opex": 301,
+        "da": 53,
+        "ebit": 324,
+        "interest": 35,
+        "ebt": 289,
+        "tax": 72,
+        "net_income": 217,
+        "gross_margin": 0.3198,
+        "net_margin": 0.1024,
+        "cogs": 1442,
+        "revenue_growth": 0.1597
+      }
+    ],
+    "balance_sheet": [
+      {
+        "year": 2023,
+        "cash": 88,
+        "receivables": 256,
+        "inventory": 192,
+        "ppe": 481,
+        "other_assets": 112,
+        "total_assets": 1129,
+        "payables": 208,
+        "debt": 320,
+        "other_liabilities": 112,
+        "equity": 489,
+        "total_liab_equity": 1129,
+        "dso_days": 58.3,
+        "inventory_days": 64.3,
+        "dpo_days": 69.7,
+        "net_debt": 232,
+        "working_capital": 240
+      },
+      {
+        "year": 2024,
+        "cash": 101,
+        "receivables": 292,
+        "inventory": 219,
+        "ppe": 548,
+        "other_assets": 128,
+        "total_assets": 1288,
+        "payables": 238,
+        "debt": 365,
+        "other_liabilities": 128,
+        "equity": 557,
+        "total_liab_equity": 1288,
+        "dso_days": 58.3,
+        "inventory_days": 64.3,
+        "dpo_days": 69.9,
+        "net_debt": 264,
+        "working_capital": 273
+      },
+      {
+        "year": 2025,
+        "cash": 117,
+        "receivables": 339,
+        "inventory": 254,
+        "ppe": 636,
+        "other_assets": 148,
+        "total_assets": 1494,
+        "payables": 276,
+        "debt": 410,
+        "other_liabilities": 148,
+        "equity": 660,
+        "total_liab_equity": 1494,
+        "dso_days": 58.4,
+        "inventory_days": 64.3,
+        "dpo_days": 69.9,
+        "net_debt": 293,
+        "working_capital": 317
+      }
+    ],
+    "cash_flow": [
+      {
+        "year": 2023,
+        "ebitda": 261,
+        "cash_tax": 49,
+        "interest": 26,
+        "change_nwc": 24,
+        "capex": 127,
+        "free_cash_flow": 35
+      },
+      {
+        "year": 2024,
+        "ebitda": 311,
+        "cash_tax": 59,
+        "interest": 30,
+        "change_nwc": 40,
+        "capex": 141,
+        "free_cash_flow": 41
+      },
+      {
+        "year": 2025,
+        "ebitda": 377,
+        "cash_tax": 72,
+        "interest": 35,
+        "change_nwc": 53,
+        "capex": 155,
+        "free_cash_flow": 62
+      }
+    ],
+    "kpis": {
+      "year": 2025,
+      "revenue": 2120,
+      "ebitda": 377,
+      "ebitda_margin": 0.17800000000000002,
+      "net_income": 217,
+      "net_debt": 293,
+      "net_debt_to_ebitda": 0.7772,
+      "working_capital": 317,
+      "top5_customer_concentration": 0.46,
+      "recurring_revenue": 0.64,
+      "export_share": 0.38,
+      "headcount": 62,
+      "legacy_reported_net_debt": 410
+    },
+    "analysis": {
+      "revenue_cagr_2021_2025": 0.1298,
+      "ebitda_cagr_2021_2025": 0.1932,
+      "cash_conversion_2025": 0.1645,
+      "capex_intensity_2025": 0.0731,
+      "revenue_per_employee_2025_mfcfa": 34.2,
+      "seller_ask_to_ebitda": 7.56,
+      "seller_ask_label": "Multiple implicite de l’attente du cédant — calcul arithmétique, pas une valorisation DealPME"
+    }
+  },
+  "disclosure": {
+    "T0": {
+      "tier": "T0",
+      "indexable": true,
+      "access_condition": "AUTHENTICATED_OR_PUBLIC_POLICY",
+      "data": {
+        "sector": "Agroalimentaire",
+        "region": "Sud Togo",
+        "size_band": "CA 1,5–2,5 Md FCFA",
+        "years_band": "15+ ans",
+        "headline": "Transformateur de fruits tropicaux avec outil industriel récent",
+        "synthetic_label": "DÉMO SYNTHÉTIQUE · DONNÉES FICTIVES"
+      }
+    },
+    "T1": {
+      "tier": "T1",
+      "indexable": false,
+      "access_condition": "ADMISSION_IF_SHARE_DEAL",
+      "data": {
+        "sector": "Agroalimentaire",
+        "region": "Sud Togo",
+        "size_band": "CA 1,5–2,5 Md FCFA",
+        "years_band": "15+ ans",
+        "headline": "Transformateur de fruits tropicaux avec outil industriel récent",
+        "revenue_2025": 2120,
+        "ebitda_2025": 377,
+        "ebitda_margin": 0.17800000000000002,
+        "employees": 62,
+        "recurring_share": 0.64,
+        "export_share": 0.38,
+        "highlights": [
+          "Contrats récurrents GMS et distributeurs",
+          "Capacité disponible pour +35 % de volume",
+          "Traçabilité qualité déjà structurée"
+        ],
+        "synthetic_label": "DÉMO SYNTHÉTIQUE · DONNÉES FICTIVES"
+      }
+    },
+    "T2": {
+      "tier": "T2",
+      "indexable": false,
+      "access_condition": "NDA_EXECUTED_AND_T2_GRANTED",
+      "data": {
+        "sector": "Agroalimentaire",
+        "region": "Sud Togo",
+        "size_band": "CA 1,5–2,5 Md FCFA",
+        "years_band": "15+ ans",
+        "headline": "Transformateur de fruits tropicaux avec outil industriel récent",
+        "revenue_2025": 2120,
+        "ebitda_2025": 377,
+        "ebitda_margin": 0.17800000000000002,
+        "employees": 62,
+        "recurring_share": 0.64,
+        "export_share": 0.38,
+        "highlights": [
+          "Contrats récurrents GMS et distributeurs",
+          "Capacité disponible pour +35 % de volume",
+          "Traçabilité qualité déjà structurée"
+        ],
+        "company": "TropicVale Industries SA",
+        "city": "Lomé / Kpalimé",
+        "stake": "100 %",
+        "seller_reason": "Transmission entrepreneuriale et recentrage familial",
+        "seller_support": "12 mois",
+        "asking_price": 2850,
+        "net_debt": 293,
+        "products": [
+          "Jus premium",
+          "Purées",
+          "Fruits séchés",
+          "Confitures"
+        ],
+        "risks": [
+          "Saisonnalité des approvisionnements",
+          "Concentration sur deux distributeurs régionaux"
+        ],
+        "synthetic_label": "DÉMO SYNTHÉTIQUE · DONNÉES FICTIVES",
+        "rccm": "SYN-PT-001-RCCM",
+        "asking_price_unit": "M FCFA",
+        "asking_price_source": "Attente du cédant — non valorisation DealPME",
+        "vdr_gate": "NDA_EXECUTED_AND_T2_GRANTED",
+        "gross_debt": 410,
+        "cash": 117,
+        "financial_statement_label": "Données synthétiques déclarées par le cédant — non auditées sauf mention contraire"
+      }
+    }
+  },
+  "deal_ready": {
+    "preflight_score": 91,
+    "institutional_badge": true,
+    "status": "CERTIFIED",
+    "human_decision_required": true,
+    "certification_awarded": true,
+    "decision_owner": "CCI / officier nommé",
+    "open_items": [],
+    "decision_evidence": "Décision humaine institutionnelle synthétique, migrée depuis le fixture v1",
+    "scope_statement": "Existence, immatriculation et complétude documentaire de démonstration. Ne couvre ni l’exactitude financière, ni la solvabilité, ni l’absence de litige.",
+    "decision_officer": "Officier CCI — profil de démonstration",
+    "decision_date": "2025-12-18",
+    "expiry_date": "2026-12-18"
+  },
+  "matching": {
+    "preferred_buyer_types": [
+      "Strategique regional",
+      "Entrepreneur / search fund",
+      "Family office",
+      "Diaspora"
+    ],
+    "geographies": [
+      "Togo",
+      "UEMOA",
+      "Diaspora Europe"
+    ],
+    "ticket_min": 2138,
+    "ticket_max": 3562,
+    "sector_tags": [
+      "Agroalimentaire"
+    ]
+  },
+  "vdr": {
+    "folders": [
+      "01_Corporate_Rccm",
+      "02_Actionnariat",
+      "03_Finance_36m",
+      "04_Fiscalite",
+      "05_Clients_Contrats",
+      "06_Fournisseurs",
+      "07_RH",
+      "08_Actifs_Assurances",
+      "09_Litiges_Conformite",
+      "10_Transaction"
+    ],
+    "download_default": false,
+    "watermark": true,
+    "q_and_a": true,
+    "status": "PREPARED_NOT_GRANTED",
+    "access_rule": "NDA + T2 grant + seller approval",
+    "nda_required": true,
+    "t2_grant_required": true,
+    "seller_approval_required": true,
+    "default_download_allowed": false,
+    "watermark_required": true,
+    "document_count": 28,
+    "folder_count": 10,
+    "document_access": {
+      "required_profile": "T2_GRANTED",
+      "session_bound": true,
+      "short_lived_url": true,
+      "viewer_server_rendered_target": true,
+      "download_default": false,
+      "watermark_fields": [
+        "viewer_name",
+        "account_id",
+        "timestamp",
+        "deal_reference"
+      ],
+      "revocation_sla_seconds": 60
+    }
+  },
+  "expected_state_path": [
+    "DRAFT",
+    "PENDING_VERIFICATION",
+    "VERIFIED",
+    "LISTED_RESTRICTED",
+    "ENGAGED",
+    "DUE_DILIGENCE",
+    "NEGOTIATION",
+    "CLOSED_REPORTED"
+  ],
+  "qa_assertions": [
+    "T0 never exposes company identity, price or offer terms for share deals.",
+    "T1 share-deal payload excludes companyName, RCCM, askingPrice, valuation and offerTerms.",
+    "T2 requires executed NDA and recorded qualification for share deals.",
+    "Every financial figure carries year, currency/unit and synthetic provenance.",
+    "EBITDA equals gross profit minus operating expenses for each year.",
+    "Balance sheet totals reconcile for each displayed year.",
+    "No DealPME-owned valuation opinion is implied; asking price is seller-provided."
+  ],
+  "provenance": {
+    "type": "SYNTHETIC_TEST_DATA",
+    "created_for": "DealPME platform QA and showcase",
+    "not_real_company": true,
+    "generated_for": "DealPME platform QA and showcase",
+    "not_real_case": true,
+    "source_documents": []
+  },
+  "meta": {
+    "seed": "PT-001",
+    "as_of_date": "2025-12-31",
+    "source_locale": "fr",
+    "scenario_class": "STANDARD",
+    "confidentiality_class": "RESTRICTED",
+    "reference_year": 2025,
+    "currency": "XOF",
+    "scale": "MILLION",
+    "migration_from": "1.0",
+    "interaction_contract_version": "1.0",
+    "ui_reference_version": "3.0"
+  },
+  "access_model": {
+    "default_deny": true,
+    "admin_confidential_default": false,
+    "break_glass_required": true,
+    "expert_scope_required": true,
+    "expert_access_expires": true
+  },
+  "audit_events": [
+    "VERIFICATION_DECISION",
+    "DISCLOSURE_ADMISSION",
+    "NDA_EXECUTION",
+    "T2_GRANT",
+    "VDR_ACCESS"
+  ],
+  "evidence_ledger": [
+    {
+      "field_path": "master.asking",
+      "status": "DECLARED",
+      "source_type": "SELLER_DECLARATION",
+      "as_of_date": "2025-12-31",
+      "confidence": 0.7
+    },
+    {
+      "field_path": "financials.kpis.revenue",
+      "status": "SYNTHETIC",
+      "source_type": "SYNTHETIC_MODEL",
+      "as_of_date": "2025-12-31",
+      "confidence": 1.0
+    },
+    {
+      "field_path": "financials.kpis.ebitda",
+      "status": "SYNTHETIC",
+      "source_type": "SYNTHETIC_MODEL",
+      "as_of_date": "2025-12-31",
+      "confidence": 1.0
+    },
+    {
+      "field_path": "master.rccm",
+      "status": "SYNTHETIC",
+      "source_type": "SYNTHETIC_MODEL",
+      "as_of_date": "2025-12-31",
+      "confidence": 1.0
+    },
+    {
+      "field_path": "deal_ready.status",
+      "status": "SYNTHETIC",
+      "source_type": "SYNTHETIC_MODEL",
+      "as_of_date": "2025-12-31",
+      "confidence": 1.0
+    },
+    {
+      "field_path": "financials.balance_sheet[2025].debt",
+      "status": "SYNTHETIC",
+      "source_type": "DOC-FIN-005",
+      "as_of_date": "2025-12-31",
+      "confidence": 1.0
+    },
+    {
+      "field_path": "financials.balance_sheet[2025].cash",
+      "status": "SYNTHETIC",
+      "source_type": "DOC-FIN-005",
+      "as_of_date": "2025-12-31",
+      "confidence": 1.0
+    },
+    {
+      "field_path": "financials.kpis.net_debt",
+      "status": "DERIVED",
+      "source_type": "DEBT_MINUS_CASH",
+      "as_of_date": "2025-12-31",
+      "confidence": 1.0
+    },
+    {
+      "field_path": "financials.kpis.top5_customer_concentration",
+      "status": "SYNTHETIC",
+      "source_type": "DOC-COM-001",
+      "as_of_date": "2025-12-31",
+      "confidence": 1.0
+    },
+    {
+      "field_path": "deal_ready.scope_statement",
+      "status": "SYNTHETIC",
+      "source_type": "INSTITUTIONAL_DECISION_FIXTURE",
+      "as_of_date": "2025-12-18",
+      "confidence": 1.0
+    }
+  ],
+  "transaction_workspace": {
+    "deal_type": "SHARE_DEAL",
+    "legal_form": "SA",
+    "stake_offered_pct": 100,
+    "seller_asking_price_mfcfa": 2850,
+    "asking_source": "SELLER_EXPECTATION",
+    "gross_debt_mfcfa": 410,
+    "cash_mfcfa": 117,
+    "net_debt_mfcfa": 293,
+    "working_capital_reference_mfcfa": 317,
+    "working_capital_mechanism": "À convenir entre les parties sur la base d’un niveau normalisé après audit.",
+    "seller_support_months": 12,
+    "preferred_completion_window": "T2 2026",
+    "seller_rationale": "Transmission entrepreneuriale et recentrage familial.",
+    "buyer_profile": "Industriel agroalimentaire régional, entrepreneur/repreneur expérimenté, family office ou investisseur diaspora avec capacité d’exécution démontrée.",
+    "funding_expectation": "Preuve de capacité financière avant accès aux documents les plus sensibles.",
+    "current_stage": "DUE_DILIGENCE",
+    "stages": [
+      {
+        "id": "INTEREST",
+        "label": "Manifestation d’intérêt",
+        "status": "DONE",
+        "date": "2026-01-08",
+        "evidence": "INT-PT001-0001"
+      },
+      {
+        "id": "QUALIFICATION",
+        "label": "Qualification acquéreur",
+        "status": "DONE",
+        "date": "2026-01-10",
+        "evidence": "QUAL-PT001-0001"
+      },
+      {
+        "id": "ADMISSION",
+        "label": "Admission au cercle",
+        "status": "DONE",
+        "date": "2026-01-12",
+        "evidence": "ADM-PT001-0001"
+      },
+      {
+        "id": "NDA",
+        "label": "Accord de confidentialité",
+        "status": "DONE",
+        "date": "2026-01-13",
+        "evidence": "NDA-PT001-0001"
+      },
+      {
+        "id": "T2",
+        "label": "Accès détaillé T2",
+        "status": "DONE",
+        "date": "2026-01-14",
+        "evidence": "T2-PT001-0001"
+      },
+      {
+        "id": "VDR",
+        "label": "Audit / VDR",
+        "status": "CURRENT",
+        "date": "2026-01-15",
+        "evidence": "VDR-PT001-0001"
+      },
+      {
+        "id": "LOI",
+        "label": "LOI",
+        "status": "PENDING",
+        "date": null,
+        "evidence": null
+      },
+      {
+        "id": "CONFIRMATORY_DD",
+        "label": "Audit confirmatoire",
+        "status": "PENDING",
+        "date": null,
+        "evidence": null
+      },
+      {
+        "id": "SPA",
+        "label": "Documentation définitive",
+        "status": "PENDING",
+        "date": null,
+        "evidence": null
+      },
+      {
+        "id": "OUTCOME",
+        "label": "Résultat déclaré/documenté",
+        "status": "PENDING",
+        "date": null,
+        "evidence": null
+      }
+    ],
+    "terms_notes": [
+      "L’attente du cédant est informative et non opposable.",
+      "Aucune offre, LOI ou opération n’est garantie par DealPME.",
+      "Les modalités dette/trésorerie/BFR restent à confirmer dans la documentation de transaction.",
+      "Toute fonction réglementée éventuelle reste portée par un professionnel ou partenaire habilité."
+    ]
+  },
+  "risk_register": [
+    {
+      "risk_id": "R-COM-01",
+      "category": "Commercial",
+      "title": "Concentration clients",
+      "severity": "MEDIUM",
+      "probability": "MEDIUM",
+      "status": "OPEN",
+      "description": "Les cinq premiers clients représentent 46 % du chiffre d’affaires 2025 ; le premier client représente 17 %.",
+      "evidence": [
+        "DOC-COM-001",
+        "DOC-COM-002"
+      ],
+      "owner": "Direction commerciale",
+      "mitigation": "Contrats-cadres, diversification GMS/UEMOA et pipeline export.",
+      "buyer_question": "Quelle part des revenus des cinq premiers clients est contractuellement sécurisée au-delà de 12 mois ?",
+      "linked_qa": "QA-004"
+    },
+    {
+      "risk_id": "R-SUP-01",
+      "category": "Approvisionnement",
+      "title": "Saisonnalité de la matière première",
+      "severity": "MEDIUM",
+      "probability": "HIGH",
+      "status": "MITIGATING",
+      "description": "L’ananas frais est saisonnier ; la disponibilité et le prix peuvent varier selon la campagne agricole.",
+      "evidence": [
+        "DOC-SUP-001",
+        "DOC-SUP-002"
+      ],
+      "owner": "Direction opérations",
+      "mitigation": "Double sourcing, contrats de campagne, stock tampon et extension du bassin fournisseurs.",
+      "buyer_question": "Quel est le niveau de couverture contractuelle de la campagne 2026 ?",
+      "linked_qa": "QA-007"
+    },
+    {
+      "risk_id": "R-FIN-01",
+      "category": "Financier",
+      "title": "Hausse du besoin en fonds de roulement",
+      "severity": "MEDIUM",
+      "probability": "MEDIUM",
+      "status": "OPEN",
+      "description": "Le BFR atteint 317 M FCFA en 2025, avec un DSO d’environ 58 jours et un stock de 57 jours.",
+      "evidence": [
+        "DOC-FIN-003",
+        "DOC-FIN-004"
+      ],
+      "owner": "Direction financière",
+      "mitigation": "Suivi hebdomadaire des créances, limites de crédit et négociation fournisseurs.",
+      "buyer_question": "Pouvez-vous expliquer la hausse du DSO en 2025 et documenter les créances >90 jours ?",
+      "linked_qa": "QA-001"
+    },
+    {
+      "risk_id": "R-FIN-02",
+      "category": "Financier",
+      "title": "Dette bancaire brute",
+      "severity": "LOW",
+      "probability": "MEDIUM",
+      "status": "MONITORED",
+      "description": "Dette brute 410 M FCFA et trésorerie 117 M FCFA, soit une dette nette de 293 M FCFA (0,78x EBITDA 2025).",
+      "evidence": [
+        "DOC-FIN-005"
+      ],
+      "owner": "Direction financière",
+      "mitigation": "Amortissement contractuel et génération de trésorerie opérationnelle.",
+      "buyer_question": "Quelles clauses de changement de contrôle figurent dans les contrats de crédit ?",
+      "linked_qa": "QA-006"
+    },
+    {
+      "risk_id": "R-OPS-01",
+      "category": "Opérations",
+      "title": "Dépendance à la ligne de pasteurisation",
+      "severity": "MEDIUM",
+      "probability": "LOW",
+      "status": "MITIGATING",
+      "description": "Une ligne concentre une part significative de la capacité de production.",
+      "evidence": [
+        "DOC-AST-001",
+        "DOC-AST-002"
+      ],
+      "owner": "Direction industrielle",
+      "mitigation": "Maintenance préventive, pièces critiques et contrat d’assistance fournisseur.",
+      "buyer_question": "Quel est le temps maximal de remise en service sur panne critique ?",
+      "linked_qa": "QA-009"
+    },
+    {
+      "risk_id": "R-HR-01",
+      "category": "Ressources humaines",
+      "title": "Dépendance au fondateur",
+      "severity": "MEDIUM",
+      "probability": "MEDIUM",
+      "status": "MITIGATING",
+      "description": "Le fondateur conserve des relations commerciales et institutionnelles clés.",
+      "evidence": [
+        "DOC-HR-002",
+        "DOC-TRX-002"
+      ],
+      "owner": "Présidence",
+      "mitigation": "Accompagnement 12 mois, délégation documentée et plan de transfert relationnel.",
+      "buyer_question": "Quelles relations-clés doivent être transférées durant les 100 premiers jours ?",
+      "linked_qa": "QA-010"
+    },
+    {
+      "risk_id": "R-TAX-01",
+      "category": "Fiscalité",
+      "title": "Contrôle documentaire sur TVA export",
+      "severity": "LOW",
+      "probability": "LOW",
+      "status": "CLOSED",
+      "description": "Une vérification documentaire interne a identifié deux pièces d’export à compléter ; les éléments ont été régularisés dans le dossier synthétique.",
+      "evidence": [
+        "DOC-TAX-002"
+      ],
+      "owner": "Direction financière",
+      "mitigation": "Checklist export et revue mensuelle des justificatifs.",
+      "buyer_question": "Pouvez-vous fournir le rapprochement TVA/exports 2025 ?",
+      "linked_qa": "QA-011"
+    },
+    {
+      "risk_id": "R-REG-01",
+      "category": "Réglementaire",
+      "title": "Maintien des autorisations qualité",
+      "severity": "MEDIUM",
+      "probability": "LOW",
+      "status": "MONITORED",
+      "description": "La continuité de certaines autorisations et certifications doit être vérifiée dans le cadre d’un changement de contrôle.",
+      "evidence": [
+        "DOC-REG-001",
+        "DOC-REG-002"
+      ],
+      "owner": "Responsable qualité",
+      "mitigation": "Calendrier de renouvellement et revue conseil avant réalisation.",
+      "buyer_question": "Quelles autorisations nécessitent notification ou accord en cas de changement de contrôle ?",
+      "linked_qa": "QA-012"
+    },
+    {
+      "risk_id": "R-IT-01",
+      "category": "Systèmes",
+      "title": "ERP partiellement dépendant de procédures manuelles",
+      "severity": "LOW",
+      "probability": "MEDIUM",
+      "status": "OPEN",
+      "description": "Certaines clôtures de stock et rapprochements fournisseurs reposent encore sur des fichiers complémentaires.",
+      "evidence": [
+        "DOC-OPS-003"
+      ],
+      "owner": "Direction financière",
+      "mitigation": "Projet d’intégration planifié ; procédures documentées.",
+      "buyer_question": "Quels contrôles compensatoires sécurisent les rapprochements manuels ?",
+      "linked_qa": "QA-013"
+    },
+    {
+      "risk_id": "R-TRX-01",
+      "category": "Transaction",
+      "title": "Conditions de transfert des principaux contrats",
+      "severity": "MEDIUM",
+      "probability": "MEDIUM",
+      "status": "OPEN",
+      "description": "Trois contrats significatifs comportent des clauses de notification ou consentement à vérifier.",
+      "evidence": [
+        "DOC-COM-002",
+        "DOC-SUP-001"
+      ],
+      "owner": "Conseil transaction",
+      "mitigation": "Matrice des consentements et plan de notification avant réalisation.",
+      "buyer_question": "Quels contrats constituent des conditions préalables à la réalisation ?",
+      "linked_qa": "QA-005"
+    }
+  ],
+  "documents": [
+    {
+      "document_id": "DOC-COR-001",
+      "folder": "01_Corporate_Rccm",
+      "title": "Extrait RCCM — spécimen synthétique",
+      "document_type": "RCCM",
+      "status": "VERIFIED",
+      "tier": "T2",
+      "date": "2025-12-10",
+      "version": "1.0",
+      "pages": 1,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-COR-001.md",
+      "summary": "RCCM synthétique, forme SA, siège à Lomé, établissement industriel à Kpalimé. Document de démonstration uniquement.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-COR-001-HASH"
+    },
+    {
+      "document_id": "DOC-COR-002",
+      "folder": "01_Corporate_Rccm",
+      "title": "Statuts coordonnés — extrait synthétique",
+      "document_type": "STATUTES",
+      "status": "VERIFIED",
+      "tier": "T2",
+      "date": "2025-11-25",
+      "version": "1.0",
+      "pages": 3,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-COR-002.md",
+      "summary": "Objet social : transformation et commercialisation de produits agroalimentaires. Capital social synthétique : 500 M FCFA.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-COR-002-HASH"
+    },
+    {
+      "document_id": "DOC-COR-003",
+      "folder": "01_Corporate_Rccm",
+      "title": "Procès-verbal autorisant l’ouverture du processus",
+      "document_type": "BOARD_RESOLUTION",
+      "status": "VERIFIED",
+      "tier": "T2",
+      "date": "2025-12-05",
+      "version": "1.0",
+      "pages": 1,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-COR-003.md",
+      "summary": "Résolution synthétique autorisant la préparation du dossier et la divulgation progressive selon les règles DealPME.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-COR-003-HASH"
+    },
+    {
+      "document_id": "DOC-EQT-001",
+      "folder": "02_Actionnariat",
+      "title": "Table de capitalisation",
+      "document_type": "CAP_TABLE",
+      "status": "VERIFIED",
+      "tier": "T2",
+      "date": "2025-12-08",
+      "version": "1.0",
+      "pages": 2,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-EQT-001.md",
+      "summary": "Fondateur 78 %, holding familiale 12 %, cadres historiques 10 %. Données fictives.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-EQT-001-HASH"
+    },
+    {
+      "document_id": "DOC-EQT-002",
+      "folder": "02_Actionnariat",
+      "title": "Registre des mouvements de titres — extrait",
+      "document_type": "SHARE_REGISTER",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2025-12-08",
+      "version": "1.0",
+      "pages": 1,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-EQT-002.md",
+      "summary": "Historique synthétique des mouvements de titres et restrictions statutaires pertinentes.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-EQT-002-HASH"
+    },
+    {
+      "document_id": "DOC-FIN-001",
+      "folder": "03_Finance_36m",
+      "title": "États financiers SYSCOHADA 2023",
+      "document_type": "FINANCIAL_STATEMENTS",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2024-05-30",
+      "version": "1.0",
+      "pages": 34,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-FIN-001.md",
+      "summary": "CA 1 603 M FCFA ; EBITDA 261 M FCFA ; résultat net 146 M FCFA. Données synthétiques, non auditées.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-FIN-001-HASH"
+    },
+    {
+      "document_id": "DOC-FIN-002",
+      "folder": "03_Finance_36m",
+      "title": "États financiers SYSCOHADA 2024",
+      "document_type": "FINANCIAL_STATEMENTS",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2025-05-29",
+      "version": "1.0",
+      "pages": 36,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-FIN-002.md",
+      "summary": "CA 1 828 M FCFA ; EBITDA 311 M FCFA ; résultat net 176 M FCFA. Données synthétiques, non auditées.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-FIN-002-HASH"
+    },
+    {
+      "document_id": "DOC-FIN-003",
+      "folder": "03_Finance_36m",
+      "title": "Comptes de gestion 2025",
+      "document_type": "MANAGEMENT_ACCOUNTS",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2026-01-07",
+      "version": "1.0",
+      "pages": 28,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-FIN-003.md",
+      "summary": "CA 2 120 M FCFA ; EBITDA 377 M FCFA ; résultat net 217 M FCFA. Données synthétiques déclarées par le cédant.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-FIN-003-HASH"
+    },
+    {
+      "document_id": "DOC-FIN-004",
+      "folder": "03_Finance_36m",
+      "title": "Balance âgée clients au 31/12/2025",
+      "document_type": "AR_AGING",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2026-01-06",
+      "version": "1.0",
+      "pages": 5,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-FIN-004.md",
+      "summary": "Créances 339 M FCFA ; ventilation synthétique par échéance, dont 8 % à plus de 90 jours.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-FIN-004-HASH"
+    },
+    {
+      "document_id": "DOC-FIN-005",
+      "folder": "03_Finance_36m",
+      "title": "Dette bancaire et échéancier",
+      "document_type": "DEBT_SCHEDULE",
+      "status": "VERIFIED",
+      "tier": "T2",
+      "date": "2026-01-06",
+      "version": "1.0",
+      "pages": 4,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-FIN-005.md",
+      "summary": "Dette brute 410 M FCFA ; trésorerie 117 M FCFA ; dette nette calculée 293 M FCFA. Deux lignes amortissables synthétiques.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-FIN-005-HASH"
+    },
+    {
+      "document_id": "DOC-FIN-006",
+      "folder": "03_Finance_36m",
+      "title": "Analyse BFR et trésorerie",
+      "document_type": "WORKING_CAPITAL",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2026-01-07",
+      "version": "1.0",
+      "pages": 6,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-FIN-006.md",
+      "summary": "BFR 317 M FCFA ; DSO ~58 j ; stock ~57 j ; DPO ~47 j. Hypothèses et calculs explicités.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-FIN-006-HASH"
+    },
+    {
+      "document_id": "DOC-TAX-001",
+      "folder": "04_Fiscalite",
+      "title": "Synthèse fiscale 2023–2025",
+      "document_type": "TAX_SUMMARY",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2026-01-04",
+      "version": "1.0",
+      "pages": 7,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-TAX-001.md",
+      "summary": "Synthèse fictive de TVA, IS et retenues. Aucune conclusion de conseil fiscal.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-TAX-001-HASH"
+    },
+    {
+      "document_id": "DOC-TAX-002",
+      "folder": "04_Fiscalite",
+      "title": "Rapprochement TVA et export 2025",
+      "document_type": "VAT_EXPORT",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2026-01-05",
+      "version": "1.0",
+      "pages": 4,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-TAX-002.md",
+      "summary": "Rapprochement synthétique des ventes export et justificatifs ; deux pièces complétées après revue.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-TAX-002-HASH"
+    },
+    {
+      "document_id": "DOC-COM-001",
+      "folder": "05_Clients_Contrats",
+      "title": "Analyse chiffre d’affaires par client",
+      "document_type": "CUSTOMER_ANALYSIS",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2026-01-08",
+      "version": "1.0",
+      "pages": 6,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-COM-001.md",
+      "summary": "Top 5 = 46 % du CA ; premier client = 17 % ; 64 % des revenus qualifiés de récurrents dans le modèle synthétique.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-COM-001-HASH"
+    },
+    {
+      "document_id": "DOC-COM-002",
+      "folder": "05_Clients_Contrats",
+      "title": "Matrice contrats clients significatifs",
+      "document_type": "CUSTOMER_CONTRACTS",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2026-01-08",
+      "version": "1.0",
+      "pages": 8,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-COM-002.md",
+      "summary": "Douze contrats synthétiques, durée, renouvellement, préavis et clauses de changement de contrôle.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-COM-002-HASH"
+    },
+    {
+      "document_id": "DOC-SUP-001",
+      "folder": "06_Fournisseurs",
+      "title": "Matrice fournisseurs critiques",
+      "document_type": "SUPPLIER_CONTRACTS",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2026-01-08",
+      "version": "1.0",
+      "pages": 7,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-SUP-001.md",
+      "summary": "Huit fournisseurs critiques synthétiques ; trois contrats de campagne avec mécanisme de volume minimum.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-SUP-001-HASH"
+    },
+    {
+      "document_id": "DOC-SUP-002",
+      "folder": "06_Fournisseurs",
+      "title": "Plan d’approvisionnement campagne 2026",
+      "document_type": "PROCUREMENT_PLAN",
+      "status": "DRAFT",
+      "tier": "T2",
+      "date": "2026-01-09",
+      "version": "1.0",
+      "pages": 5,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-SUP-002.md",
+      "summary": "Prévision synthétique de volumes, couverture contractuelle et fournisseurs alternatifs.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-SUP-002-HASH"
+    },
+    {
+      "document_id": "DOC-HR-001",
+      "folder": "07_RH",
+      "title": "Registre anonymisé du personnel",
+      "document_type": "EMPLOYEE_REGISTER",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2026-01-05",
+      "version": "1.0",
+      "pages": 9,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-HR-001.md",
+      "summary": "62 salariés ; répartition par fonction, ancienneté et type de contrat. Identités remplacées par identifiants synthétiques.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-HR-001-HASH"
+    },
+    {
+      "document_id": "DOC-HR-002",
+      "folder": "07_RH",
+      "title": "Équipe de direction et plan de succession",
+      "document_type": "MANAGEMENT",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2026-01-06",
+      "version": "1.0",
+      "pages": 6,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-HR-002.md",
+      "summary": "Organigramme synthétique, responsabilités, dépendance au fondateur et plan de transfert sur 12 mois.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-HR-002-HASH"
+    },
+    {
+      "document_id": "DOC-AST-001",
+      "folder": "08_Actifs_Assurances",
+      "title": "Registre des immobilisations",
+      "document_type": "ASSET_REGISTER",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2026-01-03",
+      "version": "1.0",
+      "pages": 12,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-AST-001.md",
+      "summary": "Immobilisations industrielles synthétiques : ligne de préparation, pasteurisation, conditionnement et froid.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-AST-001-HASH"
+    },
+    {
+      "document_id": "DOC-AST-002",
+      "folder": "08_Actifs_Assurances",
+      "title": "Maintenance et disponibilité des lignes",
+      "document_type": "MAINTENANCE",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2026-01-04",
+      "version": "1.0",
+      "pages": 10,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-AST-002.md",
+      "summary": "Historique synthétique de maintenance, disponibilité 93 %, pièces critiques et interventions planifiées.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-AST-002-HASH"
+    },
+    {
+      "document_id": "DOC-AST-003",
+      "folder": "08_Actifs_Assurances",
+      "title": "Polices d’assurance — tableau de synthèse",
+      "document_type": "INSURANCE",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2026-01-04",
+      "version": "1.0",
+      "pages": 4,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-AST-003.md",
+      "summary": "Synthèse fictive des couvertures dommages, responsabilité et pertes d’exploitation.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-AST-003-HASH"
+    },
+    {
+      "document_id": "DOC-REG-001",
+      "folder": "09_Litiges_Conformite",
+      "title": "Permis et autorisations — registre",
+      "document_type": "PERMITS",
+      "status": "VERIFIED",
+      "tier": "T2",
+      "date": "2026-01-05",
+      "version": "1.0",
+      "pages": 6,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-REG-001.md",
+      "summary": "Registre synthétique des autorisations d’exploitation et contrôles qualité avec dates d’échéance.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-REG-001-HASH"
+    },
+    {
+      "document_id": "DOC-REG-002",
+      "folder": "09_Litiges_Conformite",
+      "title": "Contentieux et réclamations",
+      "document_type": "LITIGATION",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2026-01-05",
+      "version": "1.0",
+      "pages": 4,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-REG-002.md",
+      "summary": "Aucun contentieux matériel dans le scénario synthétique ; deux réclamations commerciales mineures clôturées.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-REG-002-HASH"
+    },
+    {
+      "document_id": "DOC-OPS-003",
+      "folder": "09_Litiges_Conformite",
+      "title": "Cartographie des systèmes et contrôles",
+      "document_type": "IT_CONTROLS",
+      "status": "DRAFT",
+      "tier": "T2",
+      "date": "2026-01-09",
+      "version": "1.0",
+      "pages": 5,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-OPS-003.md",
+      "summary": "ERP de production/comptabilité complété par fichiers de rapprochement ; contrôles compensatoires documentés.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-OPS-003-HASH"
+    },
+    {
+      "document_id": "DOC-TRX-001",
+      "folder": "10_Transaction",
+      "title": "Note de processus et calendrier indicatif",
+      "document_type": "PROCESS_LETTER",
+      "status": "VERIFIED",
+      "tier": "T2",
+      "date": "2026-01-10",
+      "version": "1.0",
+      "pages": 5,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-TRX-001.md",
+      "summary": "Calendrier synthétique : accès VDR, Q&R, réunion management, LOI, audit confirmatoire, documentation.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-TRX-001-HASH"
+    },
+    {
+      "document_id": "DOC-TRX-002",
+      "folder": "10_Transaction",
+      "title": "Note d’accompagnement du cédant",
+      "document_type": "SELLER_TRANSITION",
+      "status": "REVIEWED",
+      "tier": "T2",
+      "date": "2026-01-10",
+      "version": "1.0",
+      "pages": 4,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-TRX-002.md",
+      "summary": "Accompagnement proposé sur 12 mois, transfert des relations clés et gouvernance de transition à convenir.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-TRX-002-HASH"
+    },
+    {
+      "document_id": "DOC-TRX-003",
+      "folder": "10_Transaction",
+      "title": "Attente de prix du cédant et hypothèses",
+      "document_type": "SELLER_ASK",
+      "status": "DECLARED",
+      "tier": "T2",
+      "date": "2026-01-10",
+      "version": "1.0",
+      "pages": 3,
+      "download_allowed": false,
+      "watermark_required": true,
+      "owner": "Cédant / équipe transaction — démonstration",
+      "file_path": "data/documents/DOC-TRX-003.md",
+      "summary": "Attente du cédant : 2 850 M FCFA. Ce montant n’est ni une valorisation DealPME, ni une opinion d’équité, ni une recommandation.",
+      "synthetic": true,
+      "hash": "SYNTHETIC-DOC-TRX-003-HASH"
+    }
+  ],
+  "qa_threads": [
+    {
+      "qa_id": "QA-001",
+      "category": "Finance",
+      "document_id": "DOC-FIN-004",
+      "question": "Pouvez-vous expliquer la hausse du DSO en 2025 et ventiler les créances supérieures à 90 jours ?",
+      "asked_by": "Acheteur — démo",
+      "assigned_to": "Direction financière",
+      "status": "ANSWERED",
+      "visibility": "ALL_AUTHORIZED",
+      "asked_at": "2026-01-18T09:12:00Z",
+      "answer": "La hausse provient principalement de deux distributeurs régionaux. Les créances >90 jours représentent 8 % du solde et sont détaillées dans la balance âgée synthétique.",
+      "answered_at": "2026-01-18T15:40:00Z",
+      "attachments": [
+        "DOC-FIN-004"
+      ]
+    },
+    {
+      "qa_id": "QA-002",
+      "category": "Finance",
+      "document_id": "DOC-FIN-003",
+      "question": "Le résultat 2025 comprend-il des éléments non récurrents significatifs ?",
+      "asked_by": "Acheteur — démo",
+      "assigned_to": "Direction financière",
+      "status": "ANSWERED",
+      "visibility": "ALL_AUTHORIZED",
+      "asked_at": "2026-01-18T09:20:00Z",
+      "answer": "Le fixture ne comprend pas d’élément exceptionnel matériel. Une normalisation de 6 M FCFA de frais de conseil ponctuels est néanmoins signalée séparément pour discussion.",
+      "answered_at": "2026-01-18T16:05:00Z",
+      "attachments": [
+        "DOC-FIN-003"
+      ]
+    },
+    {
+      "qa_id": "QA-003",
+      "category": "Finance",
+      "document_id": "DOC-FIN-005",
+      "question": "Pouvez-vous confirmer la dette nette et fournir les clauses financières des lignes de crédit ?",
+      "asked_by": "Acheteur — démo",
+      "assigned_to": "Direction financière",
+      "status": "OPEN",
+      "visibility": "ALL_AUTHORIZED",
+      "asked_at": "2026-01-18T09:28:00Z",
+      "answer": null,
+      "answered_at": null,
+      "attachments": [
+        "DOC-FIN-005"
+      ]
+    },
+    {
+      "qa_id": "QA-004",
+      "category": "Commercial",
+      "document_id": "DOC-COM-002",
+      "question": "Quelle part du chiffre d’affaires des cinq premiers clients est contractuellement sécurisée au-delà de 12 mois ?",
+      "asked_by": "Acheteur — démo",
+      "assigned_to": "Direction commerciale",
+      "status": "ANSWERED",
+      "visibility": "ALL_AUTHORIZED",
+      "asked_at": "2026-01-18T10:03:00Z",
+      "answer": "Environ 31 % du CA 2025 du fixture est couvert par des contrats ou cadres dépassant 12 mois ; le reste est reconduit par commandes récurrentes.",
+      "answered_at": "2026-01-19T08:30:00Z",
+      "attachments": [
+        "DOC-COM-002"
+      ]
+    },
+    {
+      "qa_id": "QA-005",
+      "category": "Transaction",
+      "document_id": "DOC-COM-002",
+      "question": "Quels contrats nécessitent une notification ou un consentement en cas de changement de contrôle ?",
+      "asked_by": "Conseil acheteur — démo",
+      "assigned_to": "Conseil transaction",
+      "status": "IN_REVIEW",
+      "visibility": "ALL_AUTHORIZED",
+      "asked_at": "2026-01-18T10:20:00Z",
+      "answer": "Trois contrats sont identifiés pour revue ; la matrice synthétique distingue notification, consentement et absence de clause.",
+      "answered_at": null,
+      "attachments": [
+        "DOC-COM-002",
+        "DOC-SUP-001"
+      ]
+    },
+    {
+      "qa_id": "QA-006",
+      "category": "Finance",
+      "document_id": "DOC-FIN-005",
+      "question": "Les financements bancaires comportent-ils des clauses de changement de contrôle ?",
+      "asked_by": "Acheteur — démo",
+      "assigned_to": "Direction financière",
+      "status": "OPEN",
+      "visibility": "ALL_AUTHORIZED",
+      "asked_at": "2026-01-18T10:34:00Z",
+      "answer": null,
+      "answered_at": null,
+      "attachments": [
+        "DOC-FIN-005"
+      ]
+    },
+    {
+      "qa_id": "QA-007",
+      "category": "Approvisionnement",
+      "document_id": "DOC-SUP-002",
+      "question": "Quel pourcentage du besoin ananas 2026 est déjà couvert par contrat de campagne ?",
+      "asked_by": "Acheteur industriel — démo",
+      "assigned_to": "Direction opérations",
+      "status": "ANSWERED",
+      "visibility": "ALL_AUTHORIZED",
+      "asked_at": "2026-01-18T11:05:00Z",
+      "answer": "Le scénario synthétique retient 72 % de couverture ferme et 18 % de couverture optionnelle ; 10 % reste à sécuriser.",
+      "answered_at": "2026-01-19T07:45:00Z",
+      "attachments": [
+        "DOC-SUP-002"
+      ]
+    },
+    {
+      "qa_id": "QA-008",
+      "category": "Opérations",
+      "document_id": "DOC-AST-001",
+      "question": "Quelle capacité additionnelle est réalisable sans capex industriel majeur ?",
+      "asked_by": "Acheteur industriel — démo",
+      "assigned_to": "Direction industrielle",
+      "status": "ANSWERED",
+      "visibility": "ALL_AUTHORIZED",
+      "asked_at": "2026-01-18T11:17:00Z",
+      "answer": "Le fixture documente environ 35 % de capacité disponible à mix produit constant, sous réserve d’approvisionnement et de main-d’œuvre de campagne.",
+      "answered_at": "2026-01-19T08:12:00Z",
+      "attachments": [
+        "DOC-AST-001"
+      ]
+    },
+    {
+      "qa_id": "QA-009",
+      "category": "Opérations",
+      "document_id": "DOC-AST-002",
+      "question": "Quel est le temps maximal de remise en service de la ligne de pasteurisation ?",
+      "asked_by": "Acheteur industriel — démo",
+      "assigned_to": "Direction industrielle",
+      "status": "OPEN",
+      "visibility": "ALL_AUTHORIZED",
+      "asked_at": "2026-01-18T11:25:00Z",
+      "answer": null,
+      "answered_at": null,
+      "attachments": [
+        "DOC-AST-002"
+      ]
+    },
+    {
+      "qa_id": "QA-010",
+      "category": "RH",
+      "document_id": "DOC-HR-002",
+      "question": "Quelles relations clés restent personnellement portées par le fondateur ?",
+      "asked_by": "Acheteur — démo",
+      "assigned_to": "Présidence",
+      "status": "ANSWERED",
+      "visibility": "ALL_AUTHORIZED",
+      "asked_at": "2026-01-18T11:42:00Z",
+      "answer": "Cinq relations sont identifiées dans le plan synthétique : deux grands comptes, une banque, un fournisseur agricole et une relation institutionnelle.",
+      "answered_at": "2026-01-19T09:03:00Z",
+      "attachments": [
+        "DOC-HR-002",
+        "DOC-TRX-002"
+      ]
+    },
+    {
+      "qa_id": "QA-011",
+      "category": "Fiscalité",
+      "document_id": "DOC-TAX-002",
+      "question": "Pouvez-vous fournir le rapprochement TVA / export 2025 ?",
+      "asked_by": "Conseil fiscal acheteur — démo",
+      "assigned_to": "Direction financière",
+      "status": "ANSWERED",
+      "visibility": "ALL_AUTHORIZED",
+      "asked_at": "2026-01-18T12:02:00Z",
+      "answer": "Le rapprochement synthétique est disponible dans DOC-TAX-002. Il ne constitue pas une attestation fiscale ni un avis de conformité.",
+      "answered_at": "2026-01-19T09:18:00Z",
+      "attachments": [
+        "DOC-TAX-002"
+      ]
+    },
+    {
+      "qa_id": "QA-012",
+      "category": "Réglementaire",
+      "document_id": "DOC-REG-001",
+      "question": "Quelles autorisations nécessitent une notification ou validation en cas de changement de contrôle ?",
+      "asked_by": "Conseil juridique acheteur — démo",
+      "assigned_to": "Responsable qualité",
+      "status": "IN_REVIEW",
+      "visibility": "ALL_AUTHORIZED",
+      "asked_at": "2026-01-18T12:16:00Z",
+      "answer": "Le fixture identifie deux autorisations à confirmer avec le conseil compétent avant réalisation.",
+      "answered_at": null,
+      "attachments": [
+        "DOC-REG-001"
+      ]
+    },
+    {
+      "qa_id": "QA-013",
+      "category": "Systèmes",
+      "document_id": "DOC-OPS-003",
+      "question": "Quels contrôles compensatoires couvrent les rapprochements manuels hors ERP ?",
+      "asked_by": "Acheteur — démo",
+      "assigned_to": "Direction financière",
+      "status": "OPEN",
+      "visibility": "ALL_AUTHORIZED",
+      "asked_at": "2026-01-18T12:27:00Z",
+      "answer": null,
+      "answered_at": null,
+      "attachments": [
+        "DOC-OPS-003"
+      ]
+    },
+    {
+      "qa_id": "QA-014",
+      "category": "Transaction",
+      "document_id": "DOC-TRX-001",
+      "question": "Quel calendrier est attendu entre LOI et signature de la documentation définitive ?",
+      "asked_by": "Acheteur — démo",
+      "assigned_to": "Conseil transaction",
+      "status": "ANSWERED",
+      "visibility": "ALL_AUTHORIZED",
+      "asked_at": "2026-01-18T12:45:00Z",
+      "answer": "Le scénario de test prévoit 6 à 8 semaines d’audit confirmatoire puis 3 à 4 semaines de documentation, sous réserve des consentements et du financement.",
+      "answered_at": "2026-01-19T09:40:00Z",
+      "attachments": [
+        "DOC-TRX-001"
+      ]
+    }
+  ],
+  "interaction_profiles": {
+    "GUEST": {
+      "label": "Non connecté",
+      "authenticated": false,
+      "qualified": false,
+      "admitted": false,
+      "nda_executed": false,
+      "t2_granted": false,
+      "seller_approved": false,
+      "revoked": false
+    },
+    "VERIFIED_BUYER": {
+      "label": "Acheteur vérifié, non qualifié",
+      "authenticated": true,
+      "qualified": false,
+      "admitted": false,
+      "nda_executed": false,
+      "t2_granted": false,
+      "seller_approved": false,
+      "revoked": false
+    },
+    "QUALIFIED": {
+      "label": "Acheteur qualifié",
+      "authenticated": true,
+      "qualified": true,
+      "admitted": false,
+      "nda_executed": false,
+      "t2_granted": false,
+      "seller_approved": false,
+      "revoked": false
+    },
+    "ADMITTED": {
+      "label": "Admis au cercle",
+      "authenticated": true,
+      "qualified": true,
+      "admitted": true,
+      "nda_executed": false,
+      "t2_granted": false,
+      "seller_approved": false,
+      "revoked": false
+    },
+    "NDA_SIGNED": {
+      "label": "NDA exécuté",
+      "authenticated": true,
+      "qualified": true,
+      "admitted": true,
+      "nda_executed": true,
+      "t2_granted": false,
+      "seller_approved": false,
+      "revoked": false
+    },
+    "AUTHORIZED": {
+      "label": "T2 + VDR autorisés",
+      "authenticated": true,
+      "qualified": true,
+      "admitted": true,
+      "nda_executed": true,
+      "t2_granted": true,
+      "seller_approved": true,
+      "revoked": false
+    },
+    "REVOKED": {
+      "label": "Accès révoqué",
+      "authenticated": true,
+      "qualified": true,
+      "admitted": true,
+      "nda_executed": true,
+      "t2_granted": true,
+      "seller_approved": true,
+      "revoked": true
+    }
+  },
+  "interaction_contracts": [
+    {
+      "control_id": "TAB_OVERVIEW",
+      "surface": "DEAL_DETAIL",
+      "label": "Aperçu",
+      "action": "SHOW_TAB",
+      "target": "overview",
+      "required_profile": "GUEST",
+      "success_state": "TAB_OVERVIEW",
+      "audit_event": "TAB_VIEWED"
+    },
+    {
+      "control_id": "TAB_FINANCIALS",
+      "surface": "DEAL_DETAIL",
+      "label": "Données financières",
+      "action": "SHOW_TAB",
+      "target": "financials",
+      "required_profile": "AUTHORIZED",
+      "success_state": "TAB_FINANCIALS",
+      "blocked_state": "ACCESS_GATE",
+      "audit_event": "TAB_VIEWED"
+    },
+    {
+      "control_id": "TAB_TRANSACTION",
+      "surface": "DEAL_DETAIL",
+      "label": "Transaction",
+      "action": "SHOW_TAB",
+      "target": "transaction",
+      "required_profile": "AUTHORIZED",
+      "success_state": "TAB_TRANSACTION",
+      "blocked_state": "ACCESS_GATE",
+      "audit_event": "TAB_VIEWED"
+    },
+    {
+      "control_id": "TAB_RISKS",
+      "surface": "DEAL_DETAIL",
+      "label": "Risques",
+      "action": "SHOW_TAB",
+      "target": "risks",
+      "required_profile": "AUTHORIZED",
+      "success_state": "TAB_RISKS",
+      "blocked_state": "ACCESS_GATE",
+      "audit_event": "TAB_VIEWED"
+    },
+    {
+      "control_id": "TAB_DOCUMENTS",
+      "surface": "DEAL_DETAIL",
+      "label": "Documents",
+      "action": "SHOW_TAB",
+      "target": "documents",
+      "required_profile": "AUTHORIZED",
+      "success_state": "TAB_DOCUMENTS",
+      "blocked_state": "ACCESS_GATE",
+      "audit_event": "TAB_VIEWED"
+    },
+    {
+      "control_id": "TAB_QA",
+      "surface": "DEAL_DETAIL",
+      "label": "Q&R",
+      "action": "SHOW_TAB",
+      "target": "qa",
+      "required_profile": "AUTHORIZED",
+      "success_state": "TAB_QA",
+      "blocked_state": "ACCESS_GATE",
+      "audit_event": "TAB_VIEWED"
+    },
+    {
+      "control_id": "OPEN_VDR",
+      "surface": "DEAL_DETAIL",
+      "label": "Ouvrir la VDR",
+      "action": "OPEN_VDR",
+      "target": "vdr",
+      "required_profile": "AUTHORIZED",
+      "success_state": "VDR_HOME",
+      "audit_event": "VDR_OPEN_ATTEMPT"
+    },
+    {
+      "control_id": "TOGGLE_FAVORITE",
+      "surface": "DEAL_DETAIL",
+      "label": "Favoris",
+      "action": "TOGGLE_FAVORITE",
+      "target": "deal",
+      "required_profile": "GUEST",
+      "success_state": "FAVORITE_UPDATED",
+      "audit_event": "FAVORITE_UPDATED"
+    },
+    {
+      "control_id": "CONTACT_SELLER",
+      "surface": "DEAL_DETAIL",
+      "label": "Contacter le cédant",
+      "action": "REQUEST_CONTACT",
+      "target": "contact",
+      "required_profile": "AUTHORIZED",
+      "success_state": "CONTACT_REQUESTED",
+      "audit_event": "CONTACT_REQUEST_CREATED"
+    },
+    {
+      "control_id": "EXPRESS_INTEREST",
+      "surface": "TRANSACTION",
+      "label": "Manifester mon intérêt",
+      "action": "EXPRESS_INTEREST",
+      "target": "transaction",
+      "required_profile": "QUALIFIED",
+      "success_state": "INTEREST_RECORDED",
+      "audit_event": "INTEREST_RECORDED"
+    },
+    {
+      "control_id": "REQUEST_MEETING",
+      "surface": "TRANSACTION",
+      "label": "Demander une réunion management",
+      "action": "REQUEST_MEETING",
+      "target": "transaction",
+      "required_profile": "AUTHORIZED",
+      "success_state": "MEETING_REQUESTED",
+      "audit_event": "MEETING_REQUESTED"
+    },
+    {
+      "control_id": "OPEN_DOCUMENT",
+      "surface": "DOCUMENTS",
+      "label": "Ouvrir",
+      "action": "OPEN_DOCUMENT",
+      "target": "document",
+      "required_profile": "AUTHORIZED",
+      "success_state": "DOCUMENT_VIEWER",
+      "audit_event": "DOCUMENT_VIEWED"
+    },
+    {
+      "control_id": "DOWNLOAD_DOCUMENT",
+      "surface": "VDR",
+      "label": "Télécharger",
+      "action": "DOWNLOAD_DOCUMENT",
+      "target": "document",
+      "required_profile": "AUTHORIZED",
+      "success_state": "DOWNLOAD_ALLOWED",
+      "blocked_state": "DOWNLOAD_BLOCKED",
+      "audit_event": "DOWNLOAD_ATTEMPT"
+    },
+    {
+      "control_id": "ASK_QUESTION",
+      "surface": "QA",
+      "label": "Poser une question",
+      "action": "ASK_QUESTION",
+      "target": "qa",
+      "required_profile": "AUTHORIZED",
+      "success_state": "QUESTION_CREATED",
+      "audit_event": "QUESTION_CREATED"
+    },
+    {
+      "control_id": "FILTER_DOCUMENTS",
+      "surface": "DOCUMENTS",
+      "label": "Filtrer les documents",
+      "action": "FILTER",
+      "target": "documents",
+      "required_profile": "AUTHORIZED",
+      "success_state": "FILTER_APPLIED",
+      "audit_event": "FILTER_APPLIED"
+    },
+    {
+      "control_id": "FILTER_QA",
+      "surface": "QA",
+      "label": "Filtrer les Q&R",
+      "action": "FILTER",
+      "target": "qa",
+      "required_profile": "AUTHORIZED",
+      "success_state": "FILTER_APPLIED",
+      "audit_event": "FILTER_APPLIED"
+    },
+    {
+      "control_id": "DEV_SET_PROFILE",
+      "surface": "DEV_TOOLS",
+      "label": "Profil d’accès",
+      "action": "SET_PROFILE",
+      "target": "profile",
+      "required_profile": "GUEST",
+      "success_state": "PROFILE_CHANGED",
+      "audit_event": "DEV_PROFILE_CHANGED"
+    },
+    {
+      "control_id": "NAV_OPPORTUNITIES",
+      "surface": "GLOBAL_NAV",
+      "label": "Entreprises à céder",
+      "action": "NAVIGATE_REFERENCE",
+      "target": "overview",
+      "required_profile": "GUEST",
+      "success_state": "TAB_OVERVIEW",
+      "audit_event": "NAVIGATION"
+    },
+    {
+      "control_id": "NAV_BUYERS",
+      "surface": "GLOBAL_NAV",
+      "label": "Repreneurs",
+      "action": "OUT_OF_FIXTURE_SCOPE",
+      "target": "/buyers",
+      "required_profile": "GUEST",
+      "success_state": "SCOPE_NOTICE",
+      "audit_event": "NAVIGATION"
+    },
+    {
+      "control_id": "NAV_SERVICES",
+      "surface": "GLOBAL_NAV",
+      "label": "Services",
+      "action": "OUT_OF_FIXTURE_SCOPE",
+      "target": "/services",
+      "required_profile": "GUEST",
+      "success_state": "SCOPE_NOTICE",
+      "audit_event": "NAVIGATION"
+    },
+    {
+      "control_id": "NAV_RESOURCES",
+      "surface": "GLOBAL_NAV",
+      "label": "Ressources",
+      "action": "OUT_OF_FIXTURE_SCOPE",
+      "target": "/resources",
+      "required_profile": "GUEST",
+      "success_state": "SCOPE_NOTICE",
+      "audit_event": "NAVIGATION"
+    },
+    {
+      "control_id": "NAV_ABOUT",
+      "surface": "GLOBAL_NAV",
+      "label": "À propos",
+      "action": "OUT_OF_FIXTURE_SCOPE",
+      "target": "/about",
+      "required_profile": "GUEST",
+      "success_state": "SCOPE_NOTICE",
+      "audit_event": "NAVIGATION"
+    },
+    {
+      "control_id": "BACK_TO_OPPORTUNITIES",
+      "surface": "DEAL_DETAIL",
+      "label": "Retour aux opportunités",
+      "action": "OUT_OF_FIXTURE_SCOPE",
+      "target": "/opportunities",
+      "required_profile": "GUEST",
+      "success_state": "SCOPE_NOTICE",
+      "audit_event": "NAVIGATION"
+    },
+    {
+      "control_id": "DOCUMENT_SEARCH",
+      "surface": "DOCUMENTS",
+      "label": "Rechercher un document",
+      "action": "FILTER_INPUT",
+      "target": "documents",
+      "required_profile": "AUTHORIZED",
+      "success_state": "FILTER_APPLIED",
+      "audit_event": "FILTER_APPLIED"
+    },
+    {
+      "control_id": "DOCUMENT_FOLDER_FILTER",
+      "surface": "DOCUMENTS",
+      "label": "Filtrer par dossier",
+      "action": "FILTER_SELECT",
+      "target": "documents",
+      "required_profile": "AUTHORIZED",
+      "success_state": "FILTER_APPLIED",
+      "audit_event": "FILTER_APPLIED"
+    },
+    {
+      "control_id": "QA_STATUS_FILTER",
+      "surface": "QA",
+      "label": "Filtrer les Q&R",
+      "action": "FILTER_SELECT",
+      "target": "qa",
+      "required_profile": "AUTHORIZED",
+      "success_state": "FILTER_APPLIED",
+      "audit_event": "FILTER_APPLIED"
+    },
+    {
+      "control_id": "VDR_BACK",
+      "surface": "VDR",
+      "label": "Retour au dossier",
+      "action": "CLOSE_VDR",
+      "target": "overview",
+      "required_profile": "AUTHORIZED",
+      "success_state": "TAB_OVERVIEW",
+      "audit_event": "VDR_CLOSED"
+    },
+    {
+      "control_id": "VDR_SEARCH",
+      "surface": "VDR",
+      "label": "Rechercher dans la VDR",
+      "action": "FILTER_INPUT",
+      "target": "vdr_documents",
+      "required_profile": "AUTHORIZED",
+      "success_state": "FILTER_APPLIED",
+      "audit_event": "FILTER_APPLIED"
+    },
+    {
+      "control_id": "VDR_SELECT_FOLDER",
+      "surface": "VDR",
+      "label": "Sélectionner un dossier",
+      "action": "SELECT_FOLDER",
+      "target": "vdr_folder",
+      "required_profile": "AUTHORIZED",
+      "success_state": "VDR_FOLDER_SELECTED",
+      "audit_event": "VDR_FOLDER_SELECTED"
+    },
+    {
+      "control_id": "VDR_SELECT_DOCUMENT",
+      "surface": "VDR",
+      "label": "Sélectionner un document",
+      "action": "SELECT_DOCUMENT",
+      "target": "vdr_document",
+      "required_profile": "AUTHORIZED",
+      "success_state": "DOCUMENT_VIEWER",
+      "audit_event": "DOCUMENT_VIEWED"
+    },
+    {
+      "control_id": "MODAL_CLOSE",
+      "surface": "MODAL",
+      "label": "Fermer",
+      "action": "CLOSE_MODAL",
+      "target": "modal",
+      "required_profile": "GUEST",
+      "success_state": "MODAL_CLOSED",
+      "audit_event": "MODAL_CLOSED"
+    },
+    {
+      "control_id": "QUESTION_SUBMIT",
+      "surface": "QA",
+      "label": "Créer la question",
+      "action": "SUBMIT_QUESTION",
+      "target": "qa",
+      "required_profile": "AUTHORIZED",
+      "success_state": "QUESTION_CREATED",
+      "audit_event": "QUESTION_CREATED"
+    }
+  ],
+  "interaction_rules": {
+    "OPEN_VDR": {
+      "decision_order": [
+        "revoked",
+        "authenticated",
+        "qualified",
+        "admitted",
+        "nda_executed",
+        "t2_granted",
+        "seller_approved"
+      ],
+      "blocked_states": {
+        "revoked": "ACCESS_REVOKED",
+        "authenticated": "LOGIN_REQUIRED",
+        "qualified": "QUALIFICATION_REQUIRED",
+        "admitted": "ADMISSION_REQUIRED",
+        "nda_executed": "NDA_REQUIRED",
+        "t2_granted": "T2_GRANT_REQUIRED",
+        "seller_approved": "SELLER_APPROVAL_REQUIRED"
+      },
+      "success": "VDR_HOME"
+    }
+  },
+  "ui_routes": [
+    {
+      "route": "/",
+      "view": "DEAL_DETAIL",
+      "default_tab": "overview"
+    },
+    {
+      "route": "/#financials",
+      "view": "DEAL_DETAIL",
+      "tab": "financials"
+    },
+    {
+      "route": "/#transaction",
+      "view": "DEAL_DETAIL",
+      "tab": "transaction"
+    },
+    {
+      "route": "/#risks",
+      "view": "DEAL_DETAIL",
+      "tab": "risks"
+    },
+    {
+      "route": "/#documents",
+      "view": "DEAL_DETAIL",
+      "tab": "documents"
+    },
+    {
+      "route": "/#qa",
+      "view": "DEAL_DETAIL",
+      "tab": "qa"
+    },
+    {
+      "route": "/#vdr",
+      "view": "VDR_HOME",
+      "gate": "AUTHORIZED"
+    },
+    {
+      "route": "/?dev=1",
+      "view": "DEAL_DETAIL",
+      "developer_tools": true
+    }
+  ],
+  "expected_audit_events": [
+    "CONTACT_REQUEST_CREATED",
+    "DEV_PROFILE_CHANGED",
+    "DISCLOSURE_ADMISSION",
+    "DOCUMENT_VIEWED",
+    "DOWNLOAD_ATTEMPT",
+    "FAVORITE_UPDATED",
+    "FILTER_APPLIED",
+    "INTEREST_RECORDED",
+    "MEETING_REQUESTED",
+    "MODAL_CLOSED",
+    "NAVIGATION",
+    "NDA_EXECUTION",
+    "QUESTION_CREATED",
+    "T2_GRANT",
+    "TAB_VIEWED",
+    "VDR_ACCESS",
+    "VDR_CLOSED",
+    "VDR_FOLDER_SELECTED",
+    "VDR_OPEN_ATTEMPT",
+    "VERIFICATION_DECISION"
+  ],
+  "negative_tests": [
+    {
+      "id": "NEG-001",
+      "given": "GUEST",
+      "when": "OPEN_VDR",
+      "then": "LOGIN_REQUIRED"
+    },
+    {
+      "id": "NEG-002",
+      "given": "VERIFIED_BUYER",
+      "when": "OPEN_VDR",
+      "then": "QUALIFICATION_REQUIRED"
+    },
+    {
+      "id": "NEG-003",
+      "given": "QUALIFIED",
+      "when": "OPEN_VDR",
+      "then": "ADMISSION_REQUIRED"
+    },
+    {
+      "id": "NEG-004",
+      "given": "ADMITTED",
+      "when": "OPEN_VDR",
+      "then": "NDA_REQUIRED"
+    },
+    {
+      "id": "NEG-005",
+      "given": "NDA_SIGNED",
+      "when": "OPEN_VDR",
+      "then": "T2_GRANT_REQUIRED"
+    },
+    {
+      "id": "NEG-006",
+      "given": "REVOKED",
+      "when": "OPEN_VDR",
+      "then": "ACCESS_REVOKED"
+    },
+    {
+      "id": "NEG-007",
+      "given": "AUTHORIZED",
+      "when": "DOWNLOAD_DOCUMENT on default document",
+      "then": "DOWNLOAD_BLOCKED"
+    },
+    {
+      "id": "NEG-008",
+      "given": "T1 share deal",
+      "when": "serialize",
+      "then": "company/rccm/asking absent"
+    }
+  ],
+  "ui_copy_contract": {
+    "financial_disclaimer": "Données synthétiques déclarées par le cédant — non auditées sauf mention contraire.",
+    "asking_disclaimer": "Valorisation DealPME recommandée",
+    "vdr_protection_copy": "La VDR vise la dissuasion, l’attribution et la traçabilité. Elle ne peut empêcher toute capture ou fuite après accès légitime.",
+    "synthetic_banner": "DÉMO SYNTHÉTIQUE · DONNÉES FICTIVES · ENVIRONNEMENT DE TEST DEALPME"
+  }
+}

@@ -1,0 +1,254 @@
+{
+  "status": "PASS",
+  "tests": [
+    {
+      "name": "page title",
+      "ok": true,
+      "detail": "DealPME · PT-001 · Référence interactive"
+    },
+    {
+      "name": "synthetic banner visible",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "six main tabs",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "name": "initial visible controls all identified",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "initial visible controls all registered",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "favorite responds",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "contact responds",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "opportunities nav responds",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "NAV_BUYERS explicit scope state",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "NAV_SERVICES explicit scope state",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "NAV_RESOURCES explicit scope state",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "NAV_ABOUT explicit scope state",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "BACK_TO_OPPORTUNITIES explicit scope state",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "TAB_FINANCIALS populated",
+      "ok": true,
+      "detail": "Données financières\n\nVue d’acquisition : compte de résultat, bilan, trésorerie et ratios. Données synthétiques déclarées par le cédant — non auditées sauf menti"
+    },
+    {
+      "name": "TAB_TRANSACTION populated",
+      "ok": true,
+      "detail": "Transaction\n\nMini Deal Workspace : structure, statut, prochaines étapes et actions contrôlées.\n\nÉtape actuelle · Audit / VDR\nParamètres de l’opération\nType\nCess"
+    },
+    {
+      "name": "TAB_RISKS populated",
+      "ok": true,
+      "detail": "Risques à diligenter\n\nChaque risque est relié à une preuve, un responsable, une mesure de réduction et une question de diligence.\n\n10 risques\nR-COM-01 · Concent"
+    },
+    {
+      "name": "TAB_DOCUMENTS populated",
+      "ok": true,
+      "detail": "Documents\n\nInventaire VDR synthétique avec statut, niveau d’accès, métadonnées et ouverture contrôlée.\n\n28 pièces\nTous les dossiers\n01_Corporate_Rccm\n02_Actionn"
+    },
+    {
+      "name": "TAB_QA populated",
+      "ok": true,
+      "detail": "Questions & réponses\n\nFil de diligence documenté, assigné et journalisé. Les pièces liées ouvrent le même viewer documentaire.\n\nPoser une question\nTous les stat"
+    },
+    {
+      "name": "TAB_OVERVIEW populated",
+      "ok": true,
+      "detail": "Informations clés\nChiffre d’affaires 2025\n2 120 M FCFA\nEBITDA 2025\n377 M FCFA · 17,8 %\nEffectif\n62\nType d’opération\nCession de titres\nPérimètre\n100 %\nAttente du"
+    },
+    {
+      "name": "document search responds",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "document folder filter responds",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "document viewer content",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "document metadata present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "document modal download policy responds",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Q&A status filter responds",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Q&A create interaction",
+      "ok": true,
+      "detail": "14->15"
+    },
+    {
+      "name": "question modal close responds",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "interest state changes",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "meeting state changes",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "VDR gate GUEST",
+      "ok": true,
+      "detail": "LOGIN_REQUIRED"
+    },
+    {
+      "name": "VDR gate VERIFIED_BUYER",
+      "ok": true,
+      "detail": "QUALIFICATION_REQUIRED"
+    },
+    {
+      "name": "VDR gate QUALIFIED",
+      "ok": true,
+      "detail": "ADMISSION_REQUIRED"
+    },
+    {
+      "name": "VDR gate ADMITTED",
+      "ok": true,
+      "detail": "NDA_REQUIRED"
+    },
+    {
+      "name": "VDR gate NDA_SIGNED",
+      "ok": true,
+      "detail": "T2_GRANT_REQUIRED"
+    },
+    {
+      "name": "VDR gate REVOKED",
+      "ok": true,
+      "detail": "ACCESS_REVOKED"
+    },
+    {
+      "name": "VDR opens authorized",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "VDR folders populated",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "name": "VDR search responds",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "VDR folder selection responds",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "VDR viewer contains synthetic doc",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "VDR controls all identified",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "VDR controls all registered",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "download blocked by default",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "VDR Q&R action responds",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile no horizontal body overflow",
+      "ok": true,
+      "detail": "390 / 390"
+    },
+    {
+      "name": "mobile financial tab populated",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "final visible controls all identified",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "final visible controls all registered",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "every registered interaction exercised in runtime",
+      "ok": true,
+      "detail": "[]"
+    }
+  ],
+  "console_errors": [],
+  "page_errors": [],
+  "passed": 49,
+  "total": 49
+}

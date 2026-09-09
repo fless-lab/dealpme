@@ -1,0 +1,27 @@
+{
+  "case_id": "PT-009",
+  "proposals": [
+    {
+      "document_id": "DOC-HR-001",
+      "category": "PERSONAL_DATA",
+      "count": 14,
+      "status": "PROPOSED",
+      "requires_human_publish": true
+    },
+    {
+      "document_id": "DOC-COM-002",
+      "category": "CUSTOMER_IDENTITY",
+      "count": 3,
+      "status": "PROPOSED",
+      "requires_human_publish": true
+    },
+    {
+      "document_id": "DOC-TAX-002",
+      "category": "TAX_IDENTIFIER",
+      "count": 4,
+      "status": "PROPOSED",
+      "requires_human_publish": true
+    }
+  ],
+  "rule": "AI proposes only. Human review and publish are mandatory; original is preserved."
+}

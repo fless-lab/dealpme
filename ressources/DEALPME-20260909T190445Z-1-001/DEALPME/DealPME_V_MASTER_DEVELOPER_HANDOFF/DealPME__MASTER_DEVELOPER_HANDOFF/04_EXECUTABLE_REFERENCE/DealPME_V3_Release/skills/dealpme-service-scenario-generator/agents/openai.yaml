@@ -1,0 +1,4 @@
+interface:
+  display_name: "DealPME Service Scenario Generator"
+  short_description: "Create normal and edge service fixtures"
+  brand_color: "#118351"

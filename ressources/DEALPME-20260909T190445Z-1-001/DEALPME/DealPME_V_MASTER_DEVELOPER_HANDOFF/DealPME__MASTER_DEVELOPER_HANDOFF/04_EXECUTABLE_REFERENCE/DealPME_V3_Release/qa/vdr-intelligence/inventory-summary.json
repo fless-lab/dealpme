@@ -1,0 +1,122 @@
+[
+  {
+    "case": "PT-001",
+    "docs": 28,
+    "intel": 28,
+    "qa": 10,
+    "risks": 8,
+    "controls": 38,
+    "standalone": true,
+    "integrated_open_vdr": true
+  },
+  {
+    "case": "PT-002",
+    "docs": 28,
+    "intel": 28,
+    "qa": 10,
+    "risks": 8,
+    "controls": 38,
+    "standalone": true,
+    "integrated_open_vdr": true
+  },
+  {
+    "case": "PT-003",
+    "docs": 28,
+    "intel": 28,
+    "qa": 10,
+    "risks": 8,
+    "controls": 38,
+    "standalone": true,
+    "integrated_open_vdr": true
+  },
+  {
+    "case": "PT-004",
+    "docs": 28,
+    "intel": 28,
+    "qa": 10,
+    "risks": 8,
+    "controls": 38,
+    "standalone": true,
+    "integrated_open_vdr": true
+  },
+  {
+    "case": "PT-005",
+    "docs": 28,
+    "intel": 28,
+    "qa": 10,
+    "risks": 8,
+    "controls": 38,
+    "standalone": true,
+    "integrated_open_vdr": true
+  },
+  {
+    "case": "PT-006",
+    "docs": 28,
+    "intel": 28,
+    "qa": 10,
+    "risks": 8,
+    "controls": 38,
+    "standalone": true,
+    "integrated_open_vdr": true
+  },
+  {
+    "case": "PT-007",
+    "docs": 28,
+    "intel": 28,
+    "qa": 10,
+    "risks": 8,
+    "controls": 38,
+    "standalone": true,
+    "integrated_open_vdr": true
+  },
+  {
+    "case": "PT-008",
+    "docs": 28,
+    "intel": 28,
+    "qa": 10,
+    "risks": 8,
+    "controls": 38,
+    "standalone": true,
+    "integrated_open_vdr": true
+  },
+  {
+    "case": "PT-009",
+    "docs": 28,
+    "intel": 28,
+    "qa": 10,
+    "risks": 8,
+    "controls": 38,
+    "standalone": true,
+    "integrated_open_vdr": true
+  },
+  {
+    "case": "PT-010",
+    "docs": 28,
+    "intel": 28,
+    "qa": 10,
+    "risks": 8,
+    "controls": 38,
+    "standalone": true,
+    "integrated_open_vdr": true
+  },
+  {
+    "case": "PT-011",
+    "docs": 28,
+    "intel": 28,
+    "qa": 10,
+    "risks": 8,
+    "controls": 38,
+    "standalone": true,
+    "integrated_open_vdr": true
+  },
+  {
+    "case": "PT-012",
+    "docs": 28,
+    "intel": 28,
+    "qa": 10,
+    "risks": 8,
+    "controls": 38,
+    "standalone": true,
+    "integrated_open_vdr": true
+  }
+]

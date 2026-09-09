@@ -1,0 +1,20 @@
+{
+  "name": "@dealpme/domain",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "description": "Entités, énumérations et types du domaine DealPME (source de vérité partagée par l'API, le RPS, le worker et le web).",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@dealpme/config": "*"
+  }
+}

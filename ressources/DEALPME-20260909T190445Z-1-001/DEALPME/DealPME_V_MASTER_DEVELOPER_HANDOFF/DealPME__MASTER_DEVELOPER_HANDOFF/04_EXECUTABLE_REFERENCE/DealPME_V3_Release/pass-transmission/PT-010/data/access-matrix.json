@@ -1,0 +1,101 @@
+{
+  "case_id": "PT-010",
+  "clean_team": {
+    "enabled": true,
+    "policy": "NAMED_USERS_ONLY",
+    "ai_inherits_scope": true,
+    "default_download": false
+  },
+  "profiles": {
+    "GUEST": {
+      "label": "Non connecté",
+      "authenticated": false,
+      "qualified": false,
+      "admitted": false,
+      "nda_executed": false,
+      "t2_granted": false,
+      "seller_approved": false,
+      "revoked": false
+    },
+    "VERIFIED_BUYER": {
+      "label": "Acheteur vérifié, non qualifié",
+      "authenticated": true,
+      "qualified": false,
+      "admitted": false,
+      "nda_executed": false,
+      "t2_granted": false,
+      "seller_approved": false,
+      "revoked": false
+    },
+    "QUALIFIED": {
+      "label": "Acheteur qualifié",
+      "authenticated": true,
+      "qualified": true,
+      "admitted": false,
+      "nda_executed": false,
+      "t2_granted": false,
+      "seller_approved": false,
+      "revoked": false
+    },
+    "ADMITTED": {
+      "label": "Admis au cercle",
+      "authenticated": true,
+      "qualified": true,
+      "admitted": true,
+      "nda_executed": false,
+      "t2_granted": false,
+      "seller_approved": false,
+      "revoked": false
+    },
+    "NDA_SIGNED": {
+      "label": "NDA exécuté",
+      "authenticated": true,
+      "qualified": true,
+      "admitted": true,
+      "nda_executed": true,
+      "t2_granted": false,
+      "seller_approved": false,
+      "revoked": false
+    },
+    "AUTHORIZED": {
+      "label": "T2 + VDR autorisés",
+      "authenticated": true,
+      "qualified": true,
+      "admitted": true,
+      "nda_executed": true,
+      "t2_granted": true,
+      "seller_approved": true,
+      "revoked": false
+    },
+    "REVOKED": {
+      "label": "Accès révoqué",
+      "authenticated": true,
+      "qualified": true,
+      "admitted": true,
+      "nda_executed": true,
+      "t2_granted": true,
+      "seller_approved": true,
+      "revoked": true
+    }
+  },
+  "groups": [
+    {
+      "group": "Transaction Team",
+      "scope": "T2 standard",
+      "ai": "permitted docs only",
+      "download": "per-document"
+    },
+    {
+      "group": "Clean Team",
+      "scope": "restricted sensitive",
+      "ai": "clean-team docs only",
+      "download": "default off"
+    },
+    {
+      "group": "Expert mandaté",
+      "scope": "folder/document scoped",
+      "ai": "scoped only",
+      "download": "default off"
+    }
+  ]
+}

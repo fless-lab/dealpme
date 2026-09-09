@@ -1,0 +1,38 @@
+[
+  {
+    "mutation": "balance",
+    "file": "/mnt/data/dealpme_skill_v3/reference_app/qa/mutations_v3/balance.json"
+  },
+  {
+    "mutation": "t1_leak",
+    "file": "/mnt/data/dealpme_skill_v3/reference_app/qa/mutations_v3/t1_leak.json"
+  },
+  {
+    "mutation": "auto_cert",
+    "file": "/mnt/data/dealpme_skill_v3/reference_app/qa/mutations_v3/auto_cert.json"
+  },
+  {
+    "mutation": "vdr_gate",
+    "file": "/mnt/data/dealpme_skill_v3/reference_app/qa/mutations_v3/vdr_gate.json"
+  },
+  {
+    "mutation": "admin_access",
+    "file": "/mnt/data/dealpme_skill_v3/reference_app/qa/mutations_v3/admin_access.json"
+  },
+  {
+    "mutation": "unregister_control",
+    "file": "/mnt/data/dealpme_skill_v3/reference_app/qa/mutations_v3/unregister_control.json"
+  },
+  {
+    "mutation": "broken_qa_ref",
+    "file": "/mnt/data/dealpme_skill_v3/reference_app/qa/mutations_v3/broken_qa_ref.json"
+  },
+  {
+    "mutation": "live_fixture",
+    "file": "/mnt/data/dealpme_skill_v3/reference_app/qa/mutations_v3/live_fixture.json"
+  },
+  {
+    "mutation": "valuation_claim",
+    "file": "/mnt/data/dealpme_skill_v3/reference_app/qa/mutations_v3/valuation_claim.json"
+  }
+]

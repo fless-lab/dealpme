@@ -1,0 +1,40 @@
+{
+  "case_id": "PT-012",
+  "status": "REVIEW_REQUIRED",
+  "items": [
+    {
+      "metric": "Chiffre d’affaires 2025",
+      "source_a": "Pass Transmission",
+      "value_a": 1850,
+      "source_b": "États financiers 2025",
+      "value_b": 1842,
+      "difference": 8,
+      "unit": "M FCFA",
+      "materiality": "LOW",
+      "status": "TO_CONFIRM"
+    },
+    {
+      "metric": "Chiffre d’affaires fiscal implicite",
+      "source_a": "États financiers 2025",
+      "value_a": 1842,
+      "source_b": "Rapprochement fiscal",
+      "value_b": 1829,
+      "difference": 13,
+      "unit": "M FCFA",
+      "materiality": "LOW",
+      "status": "OPEN"
+    },
+    {
+      "metric": "Dette nette",
+      "source_a": "Transaction workspace",
+      "value_a": 1078,
+      "source_b": "Échéancier de dette",
+      "value_b": 1078,
+      "difference": 0,
+      "unit": "M FCFA",
+      "materiality": "NONE",
+      "status": "RECONCILED"
+    }
+  ],
+  "disclaimer": "Rapprochement d’éléments de preuve synthétiques. Ne constitue ni un audit ni une certification des comptes."
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@dealpme/testing",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "description": "Outils de test partagés : accès aux fixtures du corpus de référence (PT-001 à PT-012, scénarios de service), constructeurs d'objets synthétiques.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@dealpme/domain": "*"
+  },
+  "devDependencies": {
+    "@dealpme/config": "*"
+  }
+}

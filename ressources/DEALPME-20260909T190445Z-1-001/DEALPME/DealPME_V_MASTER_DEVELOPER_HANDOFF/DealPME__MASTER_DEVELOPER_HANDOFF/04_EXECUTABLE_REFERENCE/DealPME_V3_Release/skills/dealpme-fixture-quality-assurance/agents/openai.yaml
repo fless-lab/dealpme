@@ -1,0 +1,4 @@
+interface:
+  display_name: "DealPME Fixture Quality Assurance"
+  short_description: "Audit fixtures before demos and QA"
+  brand_color: "#D5A84E"

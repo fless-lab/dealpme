@@ -1,0 +1,343 @@
+{
+  "schema_version": "3.0",
+  "fixture_kind": "SERVICE_SCENARIO",
+  "synthetic": true,
+  "scenario_id": "LEG-02",
+  "service": "legaltech-ohada",
+  "service_label": "LegalTech OHADA",
+  "title": "LOI avec restrictions de transfert",
+  "archetype": "REMEDIATION",
+  "capability_status": "GOVERNED_V0",
+  "objective": "Tester une LOI contenant agrément et préemption qui exige une revue professionnelle.",
+  "state_in": "LOI_VARIABLES_CAPTURED_TRANSFER_RESTRICTIONS",
+  "trigger": "Cession de titres avec agrément statutaire et droit de préemption.",
+  "actors": [
+    {
+      "role": "Utilisateur",
+      "responsibility": "Renseigner les variables et vérifier les faits",
+      "accountable_for": "Renseigner les variables et vérifier les faits",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "DealPME",
+      "responsibility": "Générer le projet et conserver la version de modèle",
+      "accountable_for": "Générer le projet et conserver la version de modèle",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Conseil qualifié",
+      "responsibility": "Relire et adapter lorsque requis",
+      "accountable_for": "Relire et adapter lorsque requis",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Contrepartie",
+      "responsibility": "Recevoir ou signer après revue appropriée",
+      "accountable_for": "Recevoir ou signer après revue appropriée",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Conformité",
+      "responsibility": "Contrôler les avertissements et le bon régime juridique",
+      "accountable_for": "Contrôler les avertissements et le bon régime juridique",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "Statuts",
+      "status": "INCOMPLETE",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    },
+    {
+      "name": "Clause agrément",
+      "status": "INCOMPLETE",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    },
+    {
+      "name": "Droit préemption",
+      "status": "INCOMPLETE",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    },
+    {
+      "name": "Termes LOI",
+      "status": "INCOMPLETE",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    }
+  ],
+  "controls": [
+    {
+      "id": "LEG-C04",
+      "severity": "P0",
+      "rule": "restrictions détectées",
+      "owner": "Utilisateur",
+      "expected_evidence": "LEG-C04-EVIDENCE",
+      "blocking": true
+    },
+    {
+      "id": "LEG-C05",
+      "severity": "P0",
+      "rule": "revue pro requise",
+      "owner": "DealPME",
+      "expected_evidence": "LEG-C05-EVIDENCE",
+      "blocking": false
+    },
+    {
+      "id": "LEG-C06",
+      "severity": "P1",
+      "rule": "version counsel enregistrée",
+      "owner": "Conseil qualifié",
+      "expected_evidence": "LEG-C06-EVIDENCE",
+      "blocking": false
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "Conseil qualifié",
+      "status": "PARTIAL",
+      "required": true,
+      "partner_dependent": true,
+      "fallback": "Traitement manuel/documenté lorsque prévu"
+    }
+  ],
+  "events": [
+    {
+      "seq": 1,
+      "type": "REQUEST_CREATED",
+      "actor": "Utilisateur",
+      "result": "Demande créée et identifiée",
+      "audit_event": "LEG_REQUEST_CREATED"
+    },
+    {
+      "seq": 2,
+      "type": "INPUTS_CHECKED",
+      "actor": "DealPME",
+      "result": "Entrées et habilitations contrôlées",
+      "audit_event": "LEG_INPUTS_CHECKED"
+    },
+    {
+      "seq": 3,
+      "type": "CONTROL_GATE_EVALUATED",
+      "actor": "Conseil qualifié",
+      "result": "Gate métier/compliance évalué",
+      "audit_event": "LEG_CONTROL_GATE_EVALUATED"
+    },
+    {
+      "seq": 4,
+      "type": "HUMAN_GATE_IF_REQUIRED",
+      "actor": "Contrepartie",
+      "result": "Décision humaine appliquée lorsqu’elle est requise",
+      "audit_event": "LEG_HUMAN_GATE_IF_REQUIRED"
+    },
+    {
+      "seq": 5,
+      "type": "OUTPUT_RECORDED",
+      "actor": "Conformité",
+      "result": "COUNSEL_REVIEW_REQUIRED",
+      "audit_event": "LEG_OUTPUT_RECORDED"
+    },
+    {
+      "seq": 6,
+      "type": "AUDIT_EVENT_WRITTEN",
+      "actor": "Utilisateur",
+      "result": "Trace exploitable par QA",
+      "audit_event": "LEG_AUDIT_EVENT_WRITTEN"
+    }
+  ],
+  "human_decision": {
+    "required": true,
+    "owner": "Conseil qualifié / parties",
+    "decision": "APPROVE_OR_REVISE_DRAFT",
+    "evidence": "Le conseil adapte le projet au contexte ; DealPME ne conclut pas à sa validité."
+  },
+  "state_out": "COUNSEL_REVIEW_REQUIRED",
+  "prohibited_states": [
+    "FINAL_SUCCESS_BEFORE_REMEDIATION"
+  ],
+  "expected_user_message": "Le projet signale les restrictions de transfert et exige une revue par un conseil qualifié avant usage.",
+  "audit_events": [
+    "LEG_REQUEST_CREATED",
+    "LEG_INPUTS_CHECKED",
+    "LEG_CONTROL_GATE_EVALUATED",
+    "LEG_HUMAN_GATE_IF_REQUIRED",
+    "LEG_OUTPUT_RECORDED",
+    "LEG_AUDIT_EVENT_WRITTEN",
+    "LEG_OPEN_TRANSFER_FLAGS",
+    "LEG_REQUEST_PRO_REVIEW"
+  ],
+  "negative_assertions": [
+    "Forcer COUNSEL_REVIEW_REQUIRED sans exécuter CONTROL_GATE_EVALUATED doit échouer.",
+    "Exécuter une action sensible avec un profil non autorisé doit échouer et être journalisé.",
+    "Supprimer l’interaction contract d’un contrôle visible doit déclencher DEAD_CONTROL."
+  ],
+  "qa_assertions": [
+    "Le scénario ne peut atteindre son état cible qu’après satisfaction des gates explicitement définis.",
+    "Chaque contrôle visible possède un interaction contract et produit un changement d’état ou un blocage explicite.",
+    "Les rôles ne voient que le périmètre nécessaire et les événements sensibles sont journalisés.",
+    "Aucun message utilisateur ne présente DealPME comme conseil juridique, fiscal, réglementaire ou financier.",
+    "Les sorties synthétiques sont identifiées comme telles et ne peuvent être confondues avec un dossier réel."
+  ],
+  "evidence_pack": [
+    {
+      "id": "LEG-02-EV-01",
+      "description": "Statuts",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "LEG-02-EV-02",
+      "description": "Clause agrément",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "LEG-02-EV-03",
+      "description": "Droit préemption",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "LEG-02-EV-04",
+      "description": "Termes LOI",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "LEG-02-EV-05",
+      "description": "LEG-C04 restrictions détectées",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "LEG-02-EV-06",
+      "description": "LEG-C05 revue pro requise",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "LEG-02-EV-07",
+      "description": "LEG-C06 version counsel enregistrée",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    }
+  ],
+  "primary_action": {
+    "label": "Voir les clauses signalées",
+    "action": "OPEN_TRANSFER_FLAGS",
+    "success_state": "TRANSFER_FLAGS"
+  },
+  "secondary_action": {
+    "label": "Envoyer en revue",
+    "action": "REQUEST_PRO_REVIEW",
+    "success_state": "PRO_REVIEW_REQUESTED"
+  },
+  "interaction_contracts": [
+    {
+      "control_id": "PRIMARY_ACTION",
+      "surface": "scenario",
+      "label": "Voir les clauses signalées",
+      "action": "OPEN_TRANSFER_FLAGS",
+      "target": "scenario-state-machine",
+      "required_profile": "AUTHORIZED_TEST_USER",
+      "success_state": "TRANSFER_FLAGS",
+      "blocked_state": null,
+      "blocked_message": null,
+      "audit_event": "LEG_OPEN_TRANSFER_FLAGS"
+    },
+    {
+      "control_id": "SECONDARY_ACTION",
+      "surface": "scenario",
+      "label": "Envoyer en revue",
+      "action": "REQUEST_PRO_REVIEW",
+      "target": "scenario-workspace",
+      "required_profile": "AUTHORIZED_TEST_USER",
+      "success_state": "PRO_REVIEW_REQUESTED",
+      "audit_event": "LEG_REQUEST_PRO_REVIEW"
+    },
+    {
+      "control_id": "TAB_OVERVIEW",
+      "surface": "scenario-navigation",
+      "label": "Situation",
+      "action": "SWITCH_TAB",
+      "target": "overview",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_WORKFLOW",
+      "surface": "scenario-navigation",
+      "label": "Parcours",
+      "action": "SWITCH_TAB",
+      "target": "workflow",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_CONTROLS",
+      "surface": "scenario-navigation",
+      "label": "Contrôles & RACI",
+      "action": "SWITCH_TAB",
+      "target": "controls",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_EVIDENCE",
+      "surface": "scenario-navigation",
+      "label": "Preuves & audit",
+      "action": "SWITCH_TAB",
+      "target": "evidence",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_TESTS",
+      "surface": "scenario-navigation",
+      "label": "Tests dev",
+      "action": "SWITCH_TAB",
+      "target": "tests",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "PROFILE_SWITCH",
+      "surface": "dev-reference",
+      "label": "Profil de test",
+      "action": "SWITCH_TEST_PROFILE",
+      "target": "local-reference-state",
+      "required_profile": "DEV_REFERENCE",
+      "success_state": "PROFILE_CHANGED",
+      "audit_event": "PROFILE_CHANGED"
+    },
+    {
+      "control_id": "MODAL_CLOSE",
+      "surface": "modal",
+      "label": "Fermer",
+      "action": "CLOSE_MODAL",
+      "target": "modal",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "MODAL_CLOSED",
+      "audit_event": "MODAL_CLOSED"
+    }
+  ],
+  "test_profiles": [
+    "Utilisateur autorisé",
+    "Utilisateur non autorisé",
+    "Conformité / opérateur",
+    "Administrateur support contrôlé"
+  ],
+  "provenance": {
+    "type": "SYNTHETIC_TEST_DATA",
+    "generated_for": "DealPME V3 developer reference and regression QA",
+    "not_real_case": true
+  }
+}

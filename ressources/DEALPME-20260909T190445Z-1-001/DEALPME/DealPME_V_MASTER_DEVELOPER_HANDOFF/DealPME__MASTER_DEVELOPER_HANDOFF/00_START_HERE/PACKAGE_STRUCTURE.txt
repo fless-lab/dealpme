@@ -1,0 +1,19 @@
+DealPME_V3.1_MASTER_DEVELOPER_HANDOFF/
+├── OPEN_ME_REFERENCE_PORTAL.html
+├── 00_START_HERE/
+├── 01_SOURCE_BASIS/
+├── 02_INSTALLABLE_SKILLS/
+├── 03_DEVELOPER_GUIDES/
+├── 04_EXECUTABLE_REFERENCE/
+│   └── DealPME_V3_Release/
+│       ├── gold-reference/
+│       ├── pass-transmission/PT-001 … PT-012/
+│       ├── services/24 scenarios/
+│       ├── vdr-intelligence/
+│       ├── governance/
+│       ├── qa/
+│       ├── skills/
+│       └── skill-packages/
+├── 05_QA_AND_RELEASE/
+├── 06_VISUAL_REFERENCES/
+└── 07_MANIFESTS_AND_TRACEABILITY/

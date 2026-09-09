@@ -1,0 +1,7 @@
+{
+  "name": "@dealpme/config",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Configurations TypeScript partagées (bibliothèques, applications Node, applications web).",
+  "files": ["tsconfig.lib.json", "tsconfig.node-app.json"]
+}

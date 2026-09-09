@@ -1,0 +1,417 @@
+{
+  "case_id": "PT-012",
+  "version": "3.0",
+  "contracts": [
+    {
+      "control_id": "TAB_OVERVIEW",
+      "surface": "DEAL_DETAIL",
+      "label": "Aperçu",
+      "action": "SHOW_TAB",
+      "target": "overview",
+      "required_profile": "GUEST",
+      "success_state": "TAB_OVERVIEW",
+      "audit_event": "TAB_VIEWED"
+    },
+    {
+      "control_id": "TAB_FINANCIALS",
+      "surface": "DEAL_DETAIL",
+      "label": "Données financières",
+      "action": "SHOW_TAB",
+      "target": "financials",
+      "required_profile": "AUTHORIZED",
+      "success_state": "TAB_FINANCIALS",
+      "blocked_state": "ACCESS_GATE",
+      "audit_event": "TAB_VIEWED"
+    },
+    {
+      "control_id": "TAB_TRANSACTION",
+      "surface": "DEAL_DETAIL",
+      "label": "Transaction",
+      "action": "SHOW_TAB",
+      "target": "transaction",
+      "required_profile": "AUTHORIZED",
+      "success_state": "TAB_TRANSACTION",
+      "blocked_state": "ACCESS_GATE",
+      "audit_event": "TAB_VIEWED"
+    },
+    {
+      "control_id": "TAB_RISKS",
+      "surface": "DEAL_DETAIL",
+      "label": "Risques",
+      "action": "SHOW_TAB",
+      "target": "risks",
+      "required_profile": "AUTHORIZED",
+      "success_state": "TAB_RISKS",
+      "blocked_state": "ACCESS_GATE",
+      "audit_event": "TAB_VIEWED"
+    },
+    {
+      "control_id": "TAB_DOCUMENTS",
+      "surface": "DEAL_DETAIL",
+      "label": "Documents",
+      "action": "SHOW_TAB",
+      "target": "documents",
+      "required_profile": "AUTHORIZED",
+      "success_state": "TAB_DOCUMENTS",
+      "blocked_state": "ACCESS_GATE",
+      "audit_event": "TAB_VIEWED"
+    },
+    {
+      "control_id": "TAB_QA",
+      "surface": "DEAL_DETAIL",
+      "label": "Q&R",
+      "action": "SHOW_TAB",
+      "target": "qa",
+      "required_profile": "AUTHORIZED",
+      "success_state": "TAB_QA",
+      "blocked_state": "ACCESS_GATE",
+      "audit_event": "TAB_VIEWED"
+    },
+    {
+      "control_id": "OPEN_VDR",
+      "surface": "DEAL_DETAIL",
+      "label": "Ouvrir la VDR",
+      "action": "OPEN_VDR",
+      "target": "vdr",
+      "required_profile": "AUTHORIZED",
+      "success_state": "VDR_HOME",
+      "audit_event": "VDR_OPEN_ATTEMPT"
+    },
+    {
+      "control_id": "TOGGLE_FAVORITE",
+      "surface": "DEAL_DETAIL",
+      "label": "Favoris",
+      "action": "TOGGLE_FAVORITE",
+      "target": "deal",
+      "required_profile": "GUEST",
+      "success_state": "FAVORITE_UPDATED",
+      "audit_event": "FAVORITE_UPDATED"
+    },
+    {
+      "control_id": "CONTACT_SELLER",
+      "surface": "DEAL_DETAIL",
+      "label": "Contacter le cédant",
+      "action": "REQUEST_CONTACT",
+      "target": "contact",
+      "required_profile": "AUTHORIZED",
+      "success_state": "CONTACT_REQUESTED",
+      "audit_event": "CONTACT_REQUEST_CREATED"
+    },
+    {
+      "control_id": "EXPRESS_INTEREST",
+      "surface": "TRANSACTION",
+      "label": "Manifester mon intérêt",
+      "action": "EXPRESS_INTEREST",
+      "target": "transaction",
+      "required_profile": "QUALIFIED",
+      "success_state": "INTEREST_RECORDED",
+      "audit_event": "INTEREST_RECORDED"
+    },
+    {
+      "control_id": "REQUEST_MEETING",
+      "surface": "TRANSACTION",
+      "label": "Demander une réunion management",
+      "action": "REQUEST_MEETING",
+      "target": "transaction",
+      "required_profile": "AUTHORIZED",
+      "success_state": "MEETING_REQUESTED",
+      "audit_event": "MEETING_REQUESTED"
+    },
+    {
+      "control_id": "OPEN_DOCUMENT",
+      "surface": "DOCUMENTS",
+      "label": "Ouvrir",
+      "action": "OPEN_DOCUMENT",
+      "target": "document",
+      "required_profile": "AUTHORIZED",
+      "success_state": "DOCUMENT_VIEWER",
+      "audit_event": "DOCUMENT_VIEWED"
+    },
+    {
+      "control_id": "DOWNLOAD_DOCUMENT",
+      "surface": "VDR",
+      "label": "Télécharger",
+      "action": "DOWNLOAD_DOCUMENT",
+      "target": "document",
+      "required_profile": "AUTHORIZED",
+      "success_state": "DOWNLOAD_ALLOWED",
+      "blocked_state": "DOWNLOAD_BLOCKED",
+      "audit_event": "DOWNLOAD_ATTEMPT"
+    },
+    {
+      "control_id": "ASK_QUESTION",
+      "surface": "QA",
+      "label": "Poser une question",
+      "action": "ASK_QUESTION",
+      "target": "qa",
+      "required_profile": "AUTHORIZED",
+      "success_state": "QUESTION_CREATED",
+      "audit_event": "QUESTION_CREATED"
+    },
+    {
+      "control_id": "DEV_SET_PROFILE",
+      "surface": "DEV_TOOLS",
+      "label": "Profil d’accès",
+      "action": "SET_PROFILE",
+      "target": "profile",
+      "required_profile": "GUEST",
+      "success_state": "PROFILE_CHANGED",
+      "audit_event": "DEV_PROFILE_CHANGED"
+    },
+    {
+      "control_id": "NAV_OPPORTUNITIES",
+      "surface": "GLOBAL_NAV",
+      "label": "Entreprises à céder",
+      "action": "NAVIGATE_REFERENCE",
+      "target": "overview",
+      "required_profile": "GUEST",
+      "success_state": "TAB_OVERVIEW",
+      "audit_event": "NAVIGATION"
+    },
+    {
+      "control_id": "NAV_BUYERS",
+      "surface": "GLOBAL_NAV",
+      "label": "Repreneurs",
+      "action": "OUT_OF_FIXTURE_SCOPE",
+      "target": "/buyers",
+      "required_profile": "GUEST",
+      "success_state": "SCOPE_NOTICE",
+      "audit_event": "NAVIGATION"
+    },
+    {
+      "control_id": "NAV_SERVICES",
+      "surface": "GLOBAL_NAV",
+      "label": "Services",
+      "action": "OUT_OF_FIXTURE_SCOPE",
+      "target": "/services",
+      "required_profile": "GUEST",
+      "success_state": "SCOPE_NOTICE",
+      "audit_event": "NAVIGATION"
+    },
+    {
+      "control_id": "NAV_RESOURCES",
+      "surface": "GLOBAL_NAV",
+      "label": "Ressources",
+      "action": "OUT_OF_FIXTURE_SCOPE",
+      "target": "/resources",
+      "required_profile": "GUEST",
+      "success_state": "SCOPE_NOTICE",
+      "audit_event": "NAVIGATION"
+    },
+    {
+      "control_id": "NAV_ABOUT",
+      "surface": "GLOBAL_NAV",
+      "label": "À propos",
+      "action": "OUT_OF_FIXTURE_SCOPE",
+      "target": "/about",
+      "required_profile": "GUEST",
+      "success_state": "SCOPE_NOTICE",
+      "audit_event": "NAVIGATION"
+    },
+    {
+      "control_id": "BACK_TO_OPPORTUNITIES",
+      "surface": "DEAL_DETAIL",
+      "label": "Retour aux opportunités",
+      "action": "OUT_OF_FIXTURE_SCOPE",
+      "target": "/opportunities",
+      "required_profile": "GUEST",
+      "success_state": "SCOPE_NOTICE",
+      "audit_event": "NAVIGATION"
+    },
+    {
+      "control_id": "DOCUMENT_SEARCH",
+      "surface": "DOCUMENTS",
+      "label": "Rechercher un document",
+      "action": "FILTER_INPUT",
+      "target": "documents",
+      "required_profile": "AUTHORIZED",
+      "success_state": "FILTER_APPLIED",
+      "audit_event": "FILTER_APPLIED"
+    },
+    {
+      "control_id": "DOCUMENT_FOLDER_FILTER",
+      "surface": "DOCUMENTS",
+      "label": "Filtrer par dossier",
+      "action": "FILTER_SELECT",
+      "target": "documents",
+      "required_profile": "AUTHORIZED",
+      "success_state": "FILTER_APPLIED",
+      "audit_event": "FILTER_APPLIED"
+    },
+    {
+      "control_id": "QA_STATUS_FILTER",
+      "surface": "QA",
+      "label": "Filtrer les Q&R",
+      "action": "FILTER_SELECT",
+      "target": "qa",
+      "required_profile": "AUTHORIZED",
+      "success_state": "FILTER_APPLIED",
+      "audit_event": "FILTER_APPLIED"
+    },
+    {
+      "control_id": "VDR_BACK",
+      "surface": "VDR",
+      "label": "Retour au dossier",
+      "action": "CLOSE_VDR",
+      "target": "overview",
+      "required_profile": "AUTHORIZED",
+      "success_state": "TAB_OVERVIEW",
+      "audit_event": "VDR_CLOSED"
+    },
+    {
+      "control_id": "VDR_SEARCH",
+      "surface": "VDR",
+      "label": "Rechercher dans la VDR",
+      "action": "FILTER_INPUT",
+      "target": "vdr_documents",
+      "required_profile": "AUTHORIZED",
+      "success_state": "FILTER_APPLIED",
+      "audit_event": "FILTER_APPLIED"
+    },
+    {
+      "control_id": "VDR_SELECT_FOLDER",
+      "surface": "VDR",
+      "label": "Sélectionner un dossier",
+      "action": "SELECT_FOLDER",
+      "target": "vdr_folder",
+      "required_profile": "AUTHORIZED",
+      "success_state": "VDR_FOLDER_SELECTED",
+      "audit_event": "VDR_FOLDER_SELECTED"
+    },
+    {
+      "control_id": "VDR_SELECT_DOCUMENT",
+      "surface": "VDR",
+      "label": "Sélectionner un document",
+      "action": "SELECT_DOCUMENT",
+      "target": "vdr_document",
+      "required_profile": "AUTHORIZED",
+      "success_state": "DOCUMENT_VIEWER",
+      "audit_event": "DOCUMENT_VIEWED"
+    },
+    {
+      "control_id": "MODAL_CLOSE",
+      "surface": "MODAL",
+      "label": "Fermer",
+      "action": "CLOSE_MODAL",
+      "target": "modal",
+      "required_profile": "GUEST",
+      "success_state": "MODAL_CLOSED",
+      "audit_event": "MODAL_CLOSED"
+    },
+    {
+      "control_id": "QUESTION_SUBMIT",
+      "surface": "QA",
+      "label": "Créer la question",
+      "action": "SUBMIT_QUESTION",
+      "target": "qa",
+      "required_profile": "AUTHORIZED",
+      "success_state": "QUESTION_CREATED",
+      "audit_event": "QUESTION_CREATED"
+    },
+    {
+      "control_id": "QUESTION_TEXT_INPUT",
+      "surface": "QA",
+      "label": "Texte de la question",
+      "action": "INPUT_TEXT",
+      "target": "qa_draft",
+      "required_profile": "AUTHORIZED",
+      "success_state": "DRAFT_UPDATED",
+      "audit_event": "QUESTION_TEXT_CHANGED"
+    }
+  ],
+  "profiles": {
+    "GUEST": {
+      "label": "Non connecté",
+      "authenticated": false,
+      "qualified": false,
+      "admitted": false,
+      "nda_executed": false,
+      "t2_granted": false,
+      "seller_approved": false,
+      "revoked": false
+    },
+    "VERIFIED_BUYER": {
+      "label": "Acheteur vérifié, non qualifié",
+      "authenticated": true,
+      "qualified": false,
+      "admitted": false,
+      "nda_executed": false,
+      "t2_granted": false,
+      "seller_approved": false,
+      "revoked": false
+    },
+    "QUALIFIED": {
+      "label": "Acheteur qualifié",
+      "authenticated": true,
+      "qualified": true,
+      "admitted": false,
+      "nda_executed": false,
+      "t2_granted": false,
+      "seller_approved": false,
+      "revoked": false
+    },
+    "ADMITTED": {
+      "label": "Admis au cercle",
+      "authenticated": true,
+      "qualified": true,
+      "admitted": true,
+      "nda_executed": false,
+      "t2_granted": false,
+      "seller_approved": false,
+      "revoked": false
+    },
+    "NDA_SIGNED": {
+      "label": "NDA exécuté",
+      "authenticated": true,
+      "qualified": true,
+      "admitted": true,
+      "nda_executed": true,
+      "t2_granted": false,
+      "seller_approved": false,
+      "revoked": false
+    },
+    "AUTHORIZED": {
+      "label": "T2 + VDR autorisés",
+      "authenticated": true,
+      "qualified": true,
+      "admitted": true,
+      "nda_executed": true,
+      "t2_granted": true,
+      "seller_approved": true,
+      "revoked": false
+    },
+    "REVOKED": {
+      "label": "Accès révoqué",
+      "authenticated": true,
+      "qualified": true,
+      "admitted": true,
+      "nda_executed": true,
+      "t2_granted": true,
+      "seller_approved": true,
+      "revoked": true
+    }
+  },
+  "rules": {
+    "OPEN_VDR": {
+      "decision_order": [
+        "revoked",
+        "authenticated",
+        "qualified",
+        "admitted",
+        "nda_executed",
+        "t2_granted",
+        "seller_approved"
+      ],
+      "blocked_states": {
+        "revoked": "ACCESS_REVOKED",
+        "authenticated": "LOGIN_REQUIRED",
+        "qualified": "QUALIFICATION_REQUIRED",
+        "admitted": "ADMISSION_REQUIRED",
+        "nda_executed": "NDA_REQUIRED",
+        "t2_granted": "T2_GRANT_REQUIRED",
+        "seller_approved": "SELLER_APPROVAL_REQUIRED"
+      },
+      "success": "VDR_HOME"
+    }
+  }
+}

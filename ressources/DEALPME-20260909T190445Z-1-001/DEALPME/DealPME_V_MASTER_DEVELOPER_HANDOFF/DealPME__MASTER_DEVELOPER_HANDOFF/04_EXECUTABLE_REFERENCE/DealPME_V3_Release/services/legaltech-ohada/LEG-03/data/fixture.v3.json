@@ -1,0 +1,338 @@
+{
+  "schema_version": "3.0",
+  "fixture_kind": "SERVICE_SCENARIO",
+  "synthetic": true,
+  "scenario_id": "LEG-03",
+  "service": "legaltech-ohada",
+  "service_label": "LegalTech OHADA",
+  "title": "Contrat de travail",
+  "archetype": "CONTROL_FAILURE",
+  "capability_status": "GOVERNED_V0",
+  "objective": "Prouver qu’un contrat de travail ne peut être présenté comme régi par un Acte uniforme OHADA.",
+  "state_in": "EMPLOYMENT_TEMPLATE_REQUESTED_AS_OHADA",
+  "trigger": "Le cédant veut régulariser un cadre clé avant audit.",
+  "actors": [
+    {
+      "role": "Utilisateur",
+      "responsibility": "Renseigner les variables et vérifier les faits",
+      "accountable_for": "Renseigner les variables et vérifier les faits",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "DealPME",
+      "responsibility": "Générer le projet et conserver la version de modèle",
+      "accountable_for": "Générer le projet et conserver la version de modèle",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Conseil qualifié",
+      "responsibility": "Relire et adapter lorsque requis",
+      "accountable_for": "Relire et adapter lorsque requis",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Contrepartie",
+      "responsibility": "Recevoir ou signer après revue appropriée",
+      "accountable_for": "Recevoir ou signer après revue appropriée",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    },
+    {
+      "role": "Conformité",
+      "responsibility": "Contrôler les avertissements et le bon régime juridique",
+      "accountable_for": "Contrôler les avertissements et le bon régime juridique",
+      "access_scope": "Périmètre minimal nécessaire au scénario"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "Données salarié",
+      "status": "REVIEW_REQUIRED",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    },
+    {
+      "name": "Convention collective applicable",
+      "status": "REVIEW_REQUIRED",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    },
+    {
+      "name": "Droit togolais",
+      "status": "REVIEW_REQUIRED",
+      "evidence_status": "SYNTHETIC_EVIDENCE",
+      "source": "Fixture synthétique DealPME"
+    }
+  ],
+  "controls": [
+    {
+      "id": "LEG-C07",
+      "severity": "P0",
+      "rule": "aucun libellé OHADA erroné",
+      "owner": "Utilisateur",
+      "expected_evidence": "LEG-C07-EVIDENCE",
+      "blocking": true
+    },
+    {
+      "id": "LEG-C08",
+      "severity": "P0",
+      "rule": "droit national affiché",
+      "owner": "DealPME",
+      "expected_evidence": "LEG-C08-EVIDENCE",
+      "blocking": true
+    },
+    {
+      "id": "LEG-C09",
+      "severity": "P1",
+      "rule": "revue pro",
+      "owner": "Conseil qualifié",
+      "expected_evidence": "LEG-C09-EVIDENCE",
+      "blocking": true
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "Conseil droit social",
+      "status": "BLOCKED_OR_REVIEW",
+      "required": true,
+      "partner_dependent": true,
+      "fallback": "Traitement manuel/documenté lorsque prévu"
+    }
+  ],
+  "events": [
+    {
+      "seq": 1,
+      "type": "REQUEST_CREATED",
+      "actor": "Utilisateur",
+      "result": "Demande créée et identifiée",
+      "audit_event": "LEG_REQUEST_CREATED"
+    },
+    {
+      "seq": 2,
+      "type": "INPUTS_CHECKED",
+      "actor": "DealPME",
+      "result": "Entrées et habilitations contrôlées",
+      "audit_event": "LEG_INPUTS_CHECKED"
+    },
+    {
+      "seq": 3,
+      "type": "CONTROL_GATE_EVALUATED",
+      "actor": "Conseil qualifié",
+      "result": "Gate métier/compliance évalué",
+      "audit_event": "LEG_CONTROL_GATE_EVALUATED"
+    },
+    {
+      "seq": 4,
+      "type": "HUMAN_GATE_IF_REQUIRED",
+      "actor": "Contrepartie",
+      "result": "Décision humaine appliquée lorsqu’elle est requise",
+      "audit_event": "LEG_HUMAN_GATE_IF_REQUIRED"
+    },
+    {
+      "seq": 5,
+      "type": "OUTPUT_RECORDED",
+      "actor": "Conformité",
+      "result": "BLOCKED_NATIONAL_LAW_REVIEW",
+      "audit_event": "LEG_OUTPUT_RECORDED"
+    },
+    {
+      "seq": 6,
+      "type": "AUDIT_EVENT_WRITTEN",
+      "actor": "Utilisateur",
+      "result": "Trace exploitable par QA",
+      "audit_event": "LEG_AUDIT_EVENT_WRITTEN"
+    }
+  ],
+  "human_decision": {
+    "required": true,
+    "owner": "Conformité / conseil",
+    "decision": "CORRECT_LEGAL_BASIS",
+    "evidence": "Le modèle peut être généré seulement avec la base nationale correcte et l’avertissement professionnel."
+  },
+  "state_out": "BLOCKED_NATIONAL_LAW_REVIEW",
+  "prohibited_states": [
+    "SUCCESS",
+    "COMPLETED",
+    "CERTIFIED",
+    "ACCESS_GRANTED",
+    "CONTACT_SHARED",
+    "FILED",
+    "CERTIFICATE_ISSUED"
+  ],
+  "expected_user_message": "Génération bloquée sous le libellé demandé : le contrat de travail relève du droit togolais et des conventions applicables.",
+  "audit_events": [
+    "LEG_REQUEST_CREATED",
+    "LEG_INPUTS_CHECKED",
+    "LEG_CONTROL_GATE_EVALUATED",
+    "LEG_HUMAN_GATE_IF_REQUIRED",
+    "LEG_OUTPUT_RECORDED",
+    "LEG_AUDIT_EVENT_WRITTEN",
+    "LEG_CORRECT_LEGAL_BASIS",
+    "LEG_REQUEST_PRO_REVIEW"
+  ],
+  "negative_assertions": [
+    "Forcer BLOCKED_NATIONAL_LAW_REVIEW sans exécuter CONTROL_GATE_EVALUATED doit échouer.",
+    "Exécuter une action sensible avec un profil non autorisé doit échouer et être journalisé.",
+    "Supprimer l’interaction contract d’un contrôle visible doit déclencher DEAD_CONTROL.",
+    "Forcer un état de succès interdit malgré la condition de blocage doit être refusé."
+  ],
+  "qa_assertions": [
+    "Le scénario ne peut atteindre son état cible qu’après satisfaction des gates explicitement définis.",
+    "Chaque contrôle visible possède un interaction contract et produit un changement d’état ou un blocage explicite.",
+    "Les rôles ne voient que le périmètre nécessaire et les événements sensibles sont journalisés.",
+    "Aucun message utilisateur ne présente DealPME comme conseil juridique, fiscal, réglementaire ou financier.",
+    "Les sorties synthétiques sont identifiées comme telles et ne peuvent être confondues avec un dossier réel."
+  ],
+  "evidence_pack": [
+    {
+      "id": "LEG-03-EV-01",
+      "description": "Données salarié",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "LEG-03-EV-02",
+      "description": "Convention collective applicable",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "LEG-03-EV-03",
+      "description": "Droit togolais",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "LEG-03-EV-04",
+      "description": "LEG-C07 aucun libellé OHADA erroné",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "LEG-03-EV-05",
+      "description": "LEG-C08 droit national affiché",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    },
+    {
+      "id": "LEG-03-EV-06",
+      "description": "LEG-C09 revue pro",
+      "source": "Synthetic test evidence",
+      "classification": "INTERNAL"
+    }
+  ],
+  "primary_action": {
+    "label": "Corriger le régime juridique",
+    "action": "CORRECT_LEGAL_BASIS",
+    "success_state": "LEGAL_BASIS_CORRECTED"
+  },
+  "secondary_action": {
+    "label": "Demander une revue",
+    "action": "REQUEST_PRO_REVIEW",
+    "success_state": "PRO_REVIEW_REQUESTED"
+  },
+  "interaction_contracts": [
+    {
+      "control_id": "PRIMARY_ACTION",
+      "surface": "scenario",
+      "label": "Corriger le régime juridique",
+      "action": "CORRECT_LEGAL_BASIS",
+      "target": "scenario-state-machine",
+      "required_profile": "AUTHORIZED_TEST_USER",
+      "success_state": "LEGAL_BASIS_CORRECTED",
+      "blocked_state": "BLOCKED_NATIONAL_LAW_REVIEW",
+      "blocked_message": "Génération bloquée sous le libellé demandé : le contrat de travail relève du droit togolais et des conventions applicables.",
+      "audit_event": "LEG_CORRECT_LEGAL_BASIS"
+    },
+    {
+      "control_id": "SECONDARY_ACTION",
+      "surface": "scenario",
+      "label": "Demander une revue",
+      "action": "REQUEST_PRO_REVIEW",
+      "target": "scenario-workspace",
+      "required_profile": "AUTHORIZED_TEST_USER",
+      "success_state": "PRO_REVIEW_REQUESTED",
+      "audit_event": "LEG_REQUEST_PRO_REVIEW"
+    },
+    {
+      "control_id": "TAB_OVERVIEW",
+      "surface": "scenario-navigation",
+      "label": "Situation",
+      "action": "SWITCH_TAB",
+      "target": "overview",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_WORKFLOW",
+      "surface": "scenario-navigation",
+      "label": "Parcours",
+      "action": "SWITCH_TAB",
+      "target": "workflow",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_CONTROLS",
+      "surface": "scenario-navigation",
+      "label": "Contrôles & RACI",
+      "action": "SWITCH_TAB",
+      "target": "controls",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_EVIDENCE",
+      "surface": "scenario-navigation",
+      "label": "Preuves & audit",
+      "action": "SWITCH_TAB",
+      "target": "evidence",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "TAB_TESTS",
+      "surface": "scenario-navigation",
+      "label": "Tests dev",
+      "action": "SWITCH_TAB",
+      "target": "tests",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "TAB_ACTIVE",
+      "audit_event": "TAB_CHANGED"
+    },
+    {
+      "control_id": "PROFILE_SWITCH",
+      "surface": "dev-reference",
+      "label": "Profil de test",
+      "action": "SWITCH_TEST_PROFILE",
+      "target": "local-reference-state",
+      "required_profile": "DEV_REFERENCE",
+      "success_state": "PROFILE_CHANGED",
+      "audit_event": "PROFILE_CHANGED"
+    },
+    {
+      "control_id": "MODAL_CLOSE",
+      "surface": "modal",
+      "label": "Fermer",
+      "action": "CLOSE_MODAL",
+      "target": "modal",
+      "required_profile": "ANY_VISIBLE_USER",
+      "success_state": "MODAL_CLOSED",
+      "audit_event": "MODAL_CLOSED"
+    }
+  ],
+  "test_profiles": [
+    "Utilisateur autorisé",
+    "Utilisateur non autorisé",
+    "Conformité / opérateur",
+    "Administrateur support contrôlé"
+  ],
+  "provenance": {
+    "type": "SYNTHETIC_TEST_DATA",
+    "generated_for": "DealPME V3 developer reference and regression QA",
+    "not_real_case": true
+  }
+}

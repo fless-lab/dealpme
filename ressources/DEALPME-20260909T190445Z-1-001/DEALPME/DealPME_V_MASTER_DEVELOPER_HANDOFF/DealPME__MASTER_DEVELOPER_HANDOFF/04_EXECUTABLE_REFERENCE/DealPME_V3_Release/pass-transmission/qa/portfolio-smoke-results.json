@@ -1,0 +1,1463 @@
+{
+  "status": "PASS",
+  "cases": {
+    "PT-001": true,
+    "PT-002": true,
+    "PT-003": true,
+    "PT-004": true,
+    "PT-005": true,
+    "PT-006": true,
+    "PT-007": true,
+    "PT-008": true,
+    "PT-009": true,
+    "PT-010": true,
+    "PT-011": true,
+    "PT-012": true
+  },
+  "passed_cases": 12,
+  "total_cases": 12,
+  "passed_tests": 240,
+  "total_tests": 240,
+  "tests": [
+    {
+      "case_id": "PT-001",
+      "name": "title",
+      "ok": true,
+      "detail": "DealPME · PT-001 · Référence interactive"
+    },
+    {
+      "case_id": "PT-001",
+      "name": "synthetic banner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-001",
+      "name": "six tabs",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "case_id": "PT-001",
+      "name": "TAB_OVERVIEW populated",
+      "ok": true,
+      "detail": "Informations clés\nChiffre d’affaires 2025\n2 120 M FCFA\nEBITDA 2025\n377 M FCFA · 17,8 %\nEffectif\n62\nT"
+    },
+    {
+      "case_id": "PT-001",
+      "name": "TAB_FINANCIALS populated",
+      "ok": true,
+      "detail": "Données financières\n\nVue d’acquisition : compte de résultat, bilan, trésorerie et ratios. Données sy"
+    },
+    {
+      "case_id": "PT-001",
+      "name": "TAB_TRANSACTION populated",
+      "ok": true,
+      "detail": "Transaction\n\nMini Deal Workspace : structure, statut, prochaines étapes et actions contrôlées.\n\nÉtap"
+    },
+    {
+      "case_id": "PT-001",
+      "name": "TAB_RISKS populated",
+      "ok": true,
+      "detail": "Risques à diligenter\n\nChaque risque est relié à une preuve, un responsable, une mesure de réduction "
+    },
+    {
+      "case_id": "PT-001",
+      "name": "TAB_DOCUMENTS populated",
+      "ok": true,
+      "detail": "Documents\n\nInventaire VDR synthétique avec statut, niveau d’accès, métadonnées et ouverture contrôlé"
+    },
+    {
+      "case_id": "PT-001",
+      "name": "TAB_QA populated",
+      "ok": true,
+      "detail": "Questions & réponses\n\nFil de diligence documenté, assigné et journalisé. Les pièces liées ouvrent le"
+    },
+    {
+      "case_id": "PT-001",
+      "name": "document rows >= 28",
+      "ok": true,
+      "detail": "28"
+    },
+    {
+      "case_id": "PT-001",
+      "name": "document viewer synthetic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-001",
+      "name": "Q&A >= 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-001",
+      "name": "guest VDR blocked",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-001",
+      "name": "authorized VDR opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-001",
+      "name": "VDR folders 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-001",
+      "name": "VDR docs visible",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "case_id": "PT-001",
+      "name": "visible controls identified",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-001",
+      "name": "visible controls registered",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-001",
+      "name": "mobile no horizontal overflow",
+      "ok": true,
+      "detail": "390/390"
+    },
+    {
+      "case_id": "PT-001",
+      "name": "runtime errors absent",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-002",
+      "name": "title",
+      "ok": true,
+      "detail": "DealPME · PT-002 · Référence interactive"
+    },
+    {
+      "case_id": "PT-002",
+      "name": "synthetic banner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-002",
+      "name": "six tabs",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "case_id": "PT-002",
+      "name": "TAB_OVERVIEW populated",
+      "ok": true,
+      "detail": "Informations clés\nChiffre d’affaires 2025\n4 650 M FCFA\nEBITDA 2025\n512 M FCFA · 11,0 %\nEffectif\n41\nT"
+    },
+    {
+      "case_id": "PT-002",
+      "name": "TAB_FINANCIALS populated",
+      "ok": true,
+      "detail": "Données financières\n\nVue d’acquisition : compte de résultat, bilan, trésorerie et ratios. Données sy"
+    },
+    {
+      "case_id": "PT-002",
+      "name": "TAB_TRANSACTION populated",
+      "ok": true,
+      "detail": "Transaction\n\nMini Deal Workspace : structure, statut, prochaines étapes et actions contrôlées.\n\nÉtap"
+    },
+    {
+      "case_id": "PT-002",
+      "name": "TAB_RISKS populated",
+      "ok": true,
+      "detail": "Risques à diligenter\n\nChaque risque est relié à une preuve, un responsable, une mesure de réduction "
+    },
+    {
+      "case_id": "PT-002",
+      "name": "TAB_DOCUMENTS populated",
+      "ok": true,
+      "detail": "Documents\n\nInventaire VDR synthétique avec statut, niveau d’accès, métadonnées et ouverture contrôlé"
+    },
+    {
+      "case_id": "PT-002",
+      "name": "TAB_QA populated",
+      "ok": true,
+      "detail": "Questions & réponses\n\nFil de diligence documenté, assigné et journalisé. Les pièces liées ouvrent le"
+    },
+    {
+      "case_id": "PT-002",
+      "name": "document rows >= 28",
+      "ok": true,
+      "detail": "28"
+    },
+    {
+      "case_id": "PT-002",
+      "name": "document viewer synthetic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-002",
+      "name": "Q&A >= 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-002",
+      "name": "guest VDR blocked",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-002",
+      "name": "authorized VDR opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-002",
+      "name": "VDR folders 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-002",
+      "name": "VDR docs visible",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "case_id": "PT-002",
+      "name": "visible controls identified",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-002",
+      "name": "visible controls registered",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-002",
+      "name": "mobile no horizontal overflow",
+      "ok": true,
+      "detail": "390/390"
+    },
+    {
+      "case_id": "PT-002",
+      "name": "runtime errors absent",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-003",
+      "name": "title",
+      "ok": true,
+      "detail": "DealPME · PT-003 · Référence interactive"
+    },
+    {
+      "case_id": "PT-003",
+      "name": "synthetic banner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-003",
+      "name": "six tabs",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "case_id": "PT-003",
+      "name": "TAB_OVERVIEW populated",
+      "ok": true,
+      "detail": "Informations clés\nChiffre d’affaires 2025\n3 120 M FCFA\nEBITDA 2025\n437 M FCFA · 14,0 %\nEffectif\n78\nT"
+    },
+    {
+      "case_id": "PT-003",
+      "name": "TAB_FINANCIALS populated",
+      "ok": true,
+      "detail": "Données financières\n\nVue d’acquisition : compte de résultat, bilan, trésorerie et ratios. Données sy"
+    },
+    {
+      "case_id": "PT-003",
+      "name": "TAB_TRANSACTION populated",
+      "ok": true,
+      "detail": "Transaction\n\nMini Deal Workspace : structure, statut, prochaines étapes et actions contrôlées.\n\nÉtap"
+    },
+    {
+      "case_id": "PT-003",
+      "name": "TAB_RISKS populated",
+      "ok": true,
+      "detail": "Risques à diligenter\n\nChaque risque est relié à une preuve, un responsable, une mesure de réduction "
+    },
+    {
+      "case_id": "PT-003",
+      "name": "TAB_DOCUMENTS populated",
+      "ok": true,
+      "detail": "Documents\n\nInventaire VDR synthétique avec statut, niveau d’accès, métadonnées et ouverture contrôlé"
+    },
+    {
+      "case_id": "PT-003",
+      "name": "TAB_QA populated",
+      "ok": true,
+      "detail": "Questions & réponses\n\nFil de diligence documenté, assigné et journalisé. Les pièces liées ouvrent le"
+    },
+    {
+      "case_id": "PT-003",
+      "name": "document rows >= 28",
+      "ok": true,
+      "detail": "28"
+    },
+    {
+      "case_id": "PT-003",
+      "name": "document viewer synthetic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-003",
+      "name": "Q&A >= 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-003",
+      "name": "guest VDR blocked",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-003",
+      "name": "authorized VDR opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-003",
+      "name": "VDR folders 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-003",
+      "name": "VDR docs visible",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "case_id": "PT-003",
+      "name": "visible controls identified",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-003",
+      "name": "visible controls registered",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-003",
+      "name": "mobile no horizontal overflow",
+      "ok": true,
+      "detail": "390/390"
+    },
+    {
+      "case_id": "PT-003",
+      "name": "runtime errors absent",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-004",
+      "name": "title",
+      "ok": true,
+      "detail": "DealPME · PT-004 · Référence interactive"
+    },
+    {
+      "case_id": "PT-004",
+      "name": "synthetic banner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-004",
+      "name": "six tabs",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "case_id": "PT-004",
+      "name": "TAB_OVERVIEW populated",
+      "ok": true,
+      "detail": "Informations clés\nChiffre d’affaires 2025\n2 780 M FCFA\nEBITDA 2025\n639 M FCFA · 23,0 %\nEffectif\n96\nT"
+    },
+    {
+      "case_id": "PT-004",
+      "name": "TAB_FINANCIALS populated",
+      "ok": true,
+      "detail": "Données financières\n\nVue d’acquisition : compte de résultat, bilan, trésorerie et ratios. Données sy"
+    },
+    {
+      "case_id": "PT-004",
+      "name": "TAB_TRANSACTION populated",
+      "ok": true,
+      "detail": "Transaction\n\nMini Deal Workspace : structure, statut, prochaines étapes et actions contrôlées.\n\nÉtap"
+    },
+    {
+      "case_id": "PT-004",
+      "name": "TAB_RISKS populated",
+      "ok": true,
+      "detail": "Risques à diligenter\n\nChaque risque est relié à une preuve, un responsable, une mesure de réduction "
+    },
+    {
+      "case_id": "PT-004",
+      "name": "TAB_DOCUMENTS populated",
+      "ok": true,
+      "detail": "Documents\n\nInventaire VDR synthétique avec statut, niveau d’accès, métadonnées et ouverture contrôlé"
+    },
+    {
+      "case_id": "PT-004",
+      "name": "TAB_QA populated",
+      "ok": true,
+      "detail": "Questions & réponses\n\nFil de diligence documenté, assigné et journalisé. Les pièces liées ouvrent le"
+    },
+    {
+      "case_id": "PT-004",
+      "name": "document rows >= 28",
+      "ok": true,
+      "detail": "28"
+    },
+    {
+      "case_id": "PT-004",
+      "name": "document viewer synthetic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-004",
+      "name": "Q&A >= 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-004",
+      "name": "guest VDR blocked",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-004",
+      "name": "authorized VDR opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-004",
+      "name": "VDR folders 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-004",
+      "name": "VDR docs visible",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "case_id": "PT-004",
+      "name": "visible controls identified",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-004",
+      "name": "visible controls registered",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-004",
+      "name": "mobile no horizontal overflow",
+      "ok": true,
+      "detail": "390/390"
+    },
+    {
+      "case_id": "PT-004",
+      "name": "runtime errors absent",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-005",
+      "name": "title",
+      "ok": true,
+      "detail": "DealPME · PT-005 · Référence interactive"
+    },
+    {
+      "case_id": "PT-005",
+      "name": "synthetic banner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-005",
+      "name": "six tabs",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "case_id": "PT-005",
+      "name": "TAB_OVERVIEW populated",
+      "ok": true,
+      "detail": "Informations clés\nChiffre d’affaires 2025\n1 280 M FCFA\nEBITDA 2025\n320 M FCFA · 25,0 %\nEffectif\n29\nT"
+    },
+    {
+      "case_id": "PT-005",
+      "name": "TAB_FINANCIALS populated",
+      "ok": true,
+      "detail": "Données financières\n\nVue d’acquisition : compte de résultat, bilan, trésorerie et ratios. Données sy"
+    },
+    {
+      "case_id": "PT-005",
+      "name": "TAB_TRANSACTION populated",
+      "ok": true,
+      "detail": "Transaction\n\nMini Deal Workspace : structure, statut, prochaines étapes et actions contrôlées.\n\nÉtap"
+    },
+    {
+      "case_id": "PT-005",
+      "name": "TAB_RISKS populated",
+      "ok": true,
+      "detail": "Risques à diligenter\n\nChaque risque est relié à une preuve, un responsable, une mesure de réduction "
+    },
+    {
+      "case_id": "PT-005",
+      "name": "TAB_DOCUMENTS populated",
+      "ok": true,
+      "detail": "Documents\n\nInventaire VDR synthétique avec statut, niveau d’accès, métadonnées et ouverture contrôlé"
+    },
+    {
+      "case_id": "PT-005",
+      "name": "TAB_QA populated",
+      "ok": true,
+      "detail": "Questions & réponses\n\nFil de diligence documenté, assigné et journalisé. Les pièces liées ouvrent le"
+    },
+    {
+      "case_id": "PT-005",
+      "name": "document rows >= 28",
+      "ok": true,
+      "detail": "28"
+    },
+    {
+      "case_id": "PT-005",
+      "name": "document viewer synthetic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-005",
+      "name": "Q&A >= 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-005",
+      "name": "guest VDR blocked",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-005",
+      "name": "authorized VDR opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-005",
+      "name": "VDR folders 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-005",
+      "name": "VDR docs visible",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "case_id": "PT-005",
+      "name": "visible controls identified",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-005",
+      "name": "visible controls registered",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-005",
+      "name": "mobile no horizontal overflow",
+      "ok": true,
+      "detail": "390/390"
+    },
+    {
+      "case_id": "PT-005",
+      "name": "runtime errors absent",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-006",
+      "name": "title",
+      "ok": true,
+      "detail": "DealPME · PT-006 · Référence interactive"
+    },
+    {
+      "case_id": "PT-006",
+      "name": "synthetic banner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-006",
+      "name": "six tabs",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "case_id": "PT-006",
+      "name": "TAB_OVERVIEW populated",
+      "ok": true,
+      "detail": "Informations clés\nChiffre d’affaires 2025\n5 900 M FCFA\nEBITDA 2025\n708 M FCFA · 12,0 %\nEffectif\n118\n"
+    },
+    {
+      "case_id": "PT-006",
+      "name": "TAB_FINANCIALS populated",
+      "ok": true,
+      "detail": "Données financières\n\nVue d’acquisition : compte de résultat, bilan, trésorerie et ratios. Données sy"
+    },
+    {
+      "case_id": "PT-006",
+      "name": "TAB_TRANSACTION populated",
+      "ok": true,
+      "detail": "Transaction\n\nMini Deal Workspace : structure, statut, prochaines étapes et actions contrôlées.\n\nÉtap"
+    },
+    {
+      "case_id": "PT-006",
+      "name": "TAB_RISKS populated",
+      "ok": true,
+      "detail": "Risques à diligenter\n\nChaque risque est relié à une preuve, un responsable, une mesure de réduction "
+    },
+    {
+      "case_id": "PT-006",
+      "name": "TAB_DOCUMENTS populated",
+      "ok": true,
+      "detail": "Documents\n\nInventaire VDR synthétique avec statut, niveau d’accès, métadonnées et ouverture contrôlé"
+    },
+    {
+      "case_id": "PT-006",
+      "name": "TAB_QA populated",
+      "ok": true,
+      "detail": "Questions & réponses\n\nFil de diligence documenté, assigné et journalisé. Les pièces liées ouvrent le"
+    },
+    {
+      "case_id": "PT-006",
+      "name": "document rows >= 28",
+      "ok": true,
+      "detail": "28"
+    },
+    {
+      "case_id": "PT-006",
+      "name": "document viewer synthetic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-006",
+      "name": "Q&A >= 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-006",
+      "name": "guest VDR blocked",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-006",
+      "name": "authorized VDR opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-006",
+      "name": "VDR folders 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-006",
+      "name": "VDR docs visible",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "case_id": "PT-006",
+      "name": "visible controls identified",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-006",
+      "name": "visible controls registered",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-006",
+      "name": "mobile no horizontal overflow",
+      "ok": true,
+      "detail": "390/390"
+    },
+    {
+      "case_id": "PT-006",
+      "name": "runtime errors absent",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-007",
+      "name": "title",
+      "ok": true,
+      "detail": "DealPME · PT-007 · Référence interactive"
+    },
+    {
+      "case_id": "PT-007",
+      "name": "synthetic banner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-007",
+      "name": "six tabs",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "case_id": "PT-007",
+      "name": "TAB_OVERVIEW populated",
+      "ok": true,
+      "detail": "Informations clés\nChiffre d’affaires 2025\n6 450 M FCFA\nEBITDA 2025\n903 M FCFA · 14,0 %\nEffectif\n134\n"
+    },
+    {
+      "case_id": "PT-007",
+      "name": "TAB_FINANCIALS populated",
+      "ok": true,
+      "detail": "Données financières\n\nVue d’acquisition : compte de résultat, bilan, trésorerie et ratios. Données sy"
+    },
+    {
+      "case_id": "PT-007",
+      "name": "TAB_TRANSACTION populated",
+      "ok": true,
+      "detail": "Transaction\n\nMini Deal Workspace : structure, statut, prochaines étapes et actions contrôlées.\n\nÉtap"
+    },
+    {
+      "case_id": "PT-007",
+      "name": "TAB_RISKS populated",
+      "ok": true,
+      "detail": "Risques à diligenter\n\nChaque risque est relié à une preuve, un responsable, une mesure de réduction "
+    },
+    {
+      "case_id": "PT-007",
+      "name": "TAB_DOCUMENTS populated",
+      "ok": true,
+      "detail": "Documents\n\nInventaire VDR synthétique avec statut, niveau d’accès, métadonnées et ouverture contrôlé"
+    },
+    {
+      "case_id": "PT-007",
+      "name": "TAB_QA populated",
+      "ok": true,
+      "detail": "Questions & réponses\n\nFil de diligence documenté, assigné et journalisé. Les pièces liées ouvrent le"
+    },
+    {
+      "case_id": "PT-007",
+      "name": "document rows >= 28",
+      "ok": true,
+      "detail": "28"
+    },
+    {
+      "case_id": "PT-007",
+      "name": "document viewer synthetic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-007",
+      "name": "Q&A >= 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-007",
+      "name": "guest VDR blocked",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-007",
+      "name": "authorized VDR opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-007",
+      "name": "VDR folders 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-007",
+      "name": "VDR docs visible",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "case_id": "PT-007",
+      "name": "visible controls identified",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-007",
+      "name": "visible controls registered",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-007",
+      "name": "mobile no horizontal overflow",
+      "ok": true,
+      "detail": "390/390"
+    },
+    {
+      "case_id": "PT-007",
+      "name": "runtime errors absent",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-008",
+      "name": "title",
+      "ok": true,
+      "detail": "DealPME · PT-008 · Référence interactive"
+    },
+    {
+      "case_id": "PT-008",
+      "name": "synthetic banner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-008",
+      "name": "six tabs",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "case_id": "PT-008",
+      "name": "TAB_OVERVIEW populated",
+      "ok": true,
+      "detail": "Informations clés\nChiffre d’affaires 2025\n7 800 M FCFA\nEBITDA 2025\n936 M FCFA · 12,0 %\nEffectif\n246\n"
+    },
+    {
+      "case_id": "PT-008",
+      "name": "TAB_FINANCIALS populated",
+      "ok": true,
+      "detail": "Données financières\n\nVue d’acquisition : compte de résultat, bilan, trésorerie et ratios. Données sy"
+    },
+    {
+      "case_id": "PT-008",
+      "name": "TAB_TRANSACTION populated",
+      "ok": true,
+      "detail": "Transaction\n\nMini Deal Workspace : structure, statut, prochaines étapes et actions contrôlées.\n\nÉtap"
+    },
+    {
+      "case_id": "PT-008",
+      "name": "TAB_RISKS populated",
+      "ok": true,
+      "detail": "Risques à diligenter\n\nChaque risque est relié à une preuve, un responsable, une mesure de réduction "
+    },
+    {
+      "case_id": "PT-008",
+      "name": "TAB_DOCUMENTS populated",
+      "ok": true,
+      "detail": "Documents\n\nInventaire VDR synthétique avec statut, niveau d’accès, métadonnées et ouverture contrôlé"
+    },
+    {
+      "case_id": "PT-008",
+      "name": "TAB_QA populated",
+      "ok": true,
+      "detail": "Questions & réponses\n\nFil de diligence documenté, assigné et journalisé. Les pièces liées ouvrent le"
+    },
+    {
+      "case_id": "PT-008",
+      "name": "document rows >= 28",
+      "ok": true,
+      "detail": "28"
+    },
+    {
+      "case_id": "PT-008",
+      "name": "document viewer synthetic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-008",
+      "name": "Q&A >= 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-008",
+      "name": "guest VDR blocked",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-008",
+      "name": "authorized VDR opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-008",
+      "name": "VDR folders 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-008",
+      "name": "VDR docs visible",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "case_id": "PT-008",
+      "name": "visible controls identified",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-008",
+      "name": "visible controls registered",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-008",
+      "name": "mobile no horizontal overflow",
+      "ok": true,
+      "detail": "390/390"
+    },
+    {
+      "case_id": "PT-008",
+      "name": "runtime errors absent",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-009",
+      "name": "title",
+      "ok": true,
+      "detail": "DealPME · PT-009 · Référence interactive"
+    },
+    {
+      "case_id": "PT-009",
+      "name": "synthetic banner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-009",
+      "name": "six tabs",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "case_id": "PT-009",
+      "name": "TAB_OVERVIEW populated",
+      "ok": true,
+      "detail": "Informations clés\nChiffre d’affaires 2025\n5 100 M FCFA\nEBITDA 2025\n714 M FCFA · 14,0 %\nEffectif\n67\nT"
+    },
+    {
+      "case_id": "PT-009",
+      "name": "TAB_FINANCIALS populated",
+      "ok": true,
+      "detail": "Données financières\n\nVue d’acquisition : compte de résultat, bilan, trésorerie et ratios. Données sy"
+    },
+    {
+      "case_id": "PT-009",
+      "name": "TAB_TRANSACTION populated",
+      "ok": true,
+      "detail": "Transaction\n\nMini Deal Workspace : structure, statut, prochaines étapes et actions contrôlées.\n\nÉtap"
+    },
+    {
+      "case_id": "PT-009",
+      "name": "TAB_RISKS populated",
+      "ok": true,
+      "detail": "Risques à diligenter\n\nChaque risque est relié à une preuve, un responsable, une mesure de réduction "
+    },
+    {
+      "case_id": "PT-009",
+      "name": "TAB_DOCUMENTS populated",
+      "ok": true,
+      "detail": "Documents\n\nInventaire VDR synthétique avec statut, niveau d’accès, métadonnées et ouverture contrôlé"
+    },
+    {
+      "case_id": "PT-009",
+      "name": "TAB_QA populated",
+      "ok": true,
+      "detail": "Questions & réponses\n\nFil de diligence documenté, assigné et journalisé. Les pièces liées ouvrent le"
+    },
+    {
+      "case_id": "PT-009",
+      "name": "document rows >= 28",
+      "ok": true,
+      "detail": "28"
+    },
+    {
+      "case_id": "PT-009",
+      "name": "document viewer synthetic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-009",
+      "name": "Q&A >= 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-009",
+      "name": "guest VDR blocked",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-009",
+      "name": "authorized VDR opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-009",
+      "name": "VDR folders 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-009",
+      "name": "VDR docs visible",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "case_id": "PT-009",
+      "name": "visible controls identified",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-009",
+      "name": "visible controls registered",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-009",
+      "name": "mobile no horizontal overflow",
+      "ok": true,
+      "detail": "390/390"
+    },
+    {
+      "case_id": "PT-009",
+      "name": "runtime errors absent",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-010",
+      "name": "title",
+      "ok": true,
+      "detail": "DealPME · PT-010 · Référence interactive"
+    },
+    {
+      "case_id": "PT-010",
+      "name": "synthetic banner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-010",
+      "name": "six tabs",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "case_id": "PT-010",
+      "name": "TAB_OVERVIEW populated",
+      "ok": true,
+      "detail": "Informations clés\nChiffre d’affaires 2025\n3 650 M FCFA\nEBITDA 2025\n584 M FCFA · 16,0 %\nEffectif\n73\nT"
+    },
+    {
+      "case_id": "PT-010",
+      "name": "TAB_FINANCIALS populated",
+      "ok": true,
+      "detail": "Données financières\n\nVue d’acquisition : compte de résultat, bilan, trésorerie et ratios. Données sy"
+    },
+    {
+      "case_id": "PT-010",
+      "name": "TAB_TRANSACTION populated",
+      "ok": true,
+      "detail": "Transaction\n\nMini Deal Workspace : structure, statut, prochaines étapes et actions contrôlées.\n\nÉtap"
+    },
+    {
+      "case_id": "PT-010",
+      "name": "TAB_RISKS populated",
+      "ok": true,
+      "detail": "Risques à diligenter\n\nChaque risque est relié à une preuve, un responsable, une mesure de réduction "
+    },
+    {
+      "case_id": "PT-010",
+      "name": "TAB_DOCUMENTS populated",
+      "ok": true,
+      "detail": "Documents\n\nInventaire VDR synthétique avec statut, niveau d’accès, métadonnées et ouverture contrôlé"
+    },
+    {
+      "case_id": "PT-010",
+      "name": "TAB_QA populated",
+      "ok": true,
+      "detail": "Questions & réponses\n\nFil de diligence documenté, assigné et journalisé. Les pièces liées ouvrent le"
+    },
+    {
+      "case_id": "PT-010",
+      "name": "document rows >= 28",
+      "ok": true,
+      "detail": "28"
+    },
+    {
+      "case_id": "PT-010",
+      "name": "document viewer synthetic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-010",
+      "name": "Q&A >= 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-010",
+      "name": "guest VDR blocked",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-010",
+      "name": "authorized VDR opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-010",
+      "name": "VDR folders 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-010",
+      "name": "VDR docs visible",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "case_id": "PT-010",
+      "name": "visible controls identified",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-010",
+      "name": "visible controls registered",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-010",
+      "name": "mobile no horizontal overflow",
+      "ok": true,
+      "detail": "390/390"
+    },
+    {
+      "case_id": "PT-010",
+      "name": "runtime errors absent",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-011",
+      "name": "title",
+      "ok": true,
+      "detail": "DealPME · PT-011 · Référence interactive"
+    },
+    {
+      "case_id": "PT-011",
+      "name": "synthetic banner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-011",
+      "name": "six tabs",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "case_id": "PT-011",
+      "name": "TAB_OVERVIEW populated",
+      "ok": true,
+      "detail": "Informations clés\nChiffre d’affaires 2025\n2 950 M FCFA\nEBITDA 2025\n590 M FCFA · 20,0 %\nEffectif\n84\nT"
+    },
+    {
+      "case_id": "PT-011",
+      "name": "TAB_FINANCIALS populated",
+      "ok": true,
+      "detail": "Données financières\n\nVue d’acquisition : compte de résultat, bilan, trésorerie et ratios. Données sy"
+    },
+    {
+      "case_id": "PT-011",
+      "name": "TAB_TRANSACTION populated",
+      "ok": true,
+      "detail": "Transaction\n\nMini Deal Workspace : structure, statut, prochaines étapes et actions contrôlées.\n\nÉtap"
+    },
+    {
+      "case_id": "PT-011",
+      "name": "TAB_RISKS populated",
+      "ok": true,
+      "detail": "Risques à diligenter\n\nChaque risque est relié à une preuve, un responsable, une mesure de réduction "
+    },
+    {
+      "case_id": "PT-011",
+      "name": "TAB_DOCUMENTS populated",
+      "ok": true,
+      "detail": "Documents\n\nInventaire VDR synthétique avec statut, niveau d’accès, métadonnées et ouverture contrôlé"
+    },
+    {
+      "case_id": "PT-011",
+      "name": "TAB_QA populated",
+      "ok": true,
+      "detail": "Questions & réponses\n\nFil de diligence documenté, assigné et journalisé. Les pièces liées ouvrent le"
+    },
+    {
+      "case_id": "PT-011",
+      "name": "document rows >= 28",
+      "ok": true,
+      "detail": "28"
+    },
+    {
+      "case_id": "PT-011",
+      "name": "document viewer synthetic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-011",
+      "name": "Q&A >= 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-011",
+      "name": "guest VDR blocked",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-011",
+      "name": "authorized VDR opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-011",
+      "name": "VDR folders 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-011",
+      "name": "VDR docs visible",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "case_id": "PT-011",
+      "name": "visible controls identified",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-011",
+      "name": "visible controls registered",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-011",
+      "name": "mobile no horizontal overflow",
+      "ok": true,
+      "detail": "390/390"
+    },
+    {
+      "case_id": "PT-011",
+      "name": "runtime errors absent",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-012",
+      "name": "title",
+      "ok": true,
+      "detail": "DealPME · PT-012 · Référence interactive"
+    },
+    {
+      "case_id": "PT-012",
+      "name": "synthetic banner",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-012",
+      "name": "six tabs",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "case_id": "PT-012",
+      "name": "TAB_OVERVIEW populated",
+      "ok": true,
+      "detail": "Informations clés\nChiffre d’affaires 2025\n1 850 M FCFA\nEBITDA 2025\n92 M FCFA · 5,0 %\nEffectif\n103\nTy"
+    },
+    {
+      "case_id": "PT-012",
+      "name": "TAB_FINANCIALS populated",
+      "ok": true,
+      "detail": "Données financières\n\nVue d’acquisition : compte de résultat, bilan, trésorerie et ratios. Données sy"
+    },
+    {
+      "case_id": "PT-012",
+      "name": "TAB_TRANSACTION populated",
+      "ok": true,
+      "detail": "Transaction\n\nMini Deal Workspace : structure, statut, prochaines étapes et actions contrôlées.\n\nÉtap"
+    },
+    {
+      "case_id": "PT-012",
+      "name": "TAB_RISKS populated",
+      "ok": true,
+      "detail": "Risques à diligenter\n\nChaque risque est relié à une preuve, un responsable, une mesure de réduction "
+    },
+    {
+      "case_id": "PT-012",
+      "name": "TAB_DOCUMENTS populated",
+      "ok": true,
+      "detail": "Documents\n\nInventaire VDR synthétique avec statut, niveau d’accès, métadonnées et ouverture contrôlé"
+    },
+    {
+      "case_id": "PT-012",
+      "name": "TAB_QA populated",
+      "ok": true,
+      "detail": "Questions & réponses\n\nFil de diligence documenté, assigné et journalisé. Les pièces liées ouvrent le"
+    },
+    {
+      "case_id": "PT-012",
+      "name": "document rows >= 28",
+      "ok": true,
+      "detail": "28"
+    },
+    {
+      "case_id": "PT-012",
+      "name": "document viewer synthetic",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-012",
+      "name": "Q&A >= 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-012",
+      "name": "guest VDR blocked",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-012",
+      "name": "authorized VDR opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "case_id": "PT-012",
+      "name": "VDR folders 10",
+      "ok": true,
+      "detail": "10"
+    },
+    {
+      "case_id": "PT-012",
+      "name": "VDR docs visible",
+      "ok": true,
+      "detail": "3"
+    },
+    {
+      "case_id": "PT-012",
+      "name": "visible controls identified",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-012",
+      "name": "visible controls registered",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "case_id": "PT-012",
+      "name": "mobile no horizontal overflow",
+      "ok": true,
+      "detail": "390/390"
+    },
+    {
+      "case_id": "PT-012",
+      "name": "runtime errors absent",
+      "ok": true,
+      "detail": "[]"
+    }
+  ]
+}

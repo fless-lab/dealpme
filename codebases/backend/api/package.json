@@ -1,0 +1,44 @@
+{
+  "name": "@dealpme/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "description": "API REST /v1 DealPME : monolithe modulaire NestJS, un module par module fonctionnel, autorisation côté serveur uniquement.",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/main.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
+  },
+  "dependencies": {
+    "@dealpme/contracts": "*",
+    "@dealpme/domain": "*",
+    "@dealpme/i18n": "*",
+    "@dealpme/rules": "*",
+    "@dealpme/connector-registry": "*",
+    "@dealpme/connector-sms": "*",
+    "@dealpme/connector-email": "*",
+    "@dealpme/connector-storage": "*",
+    "@dealpme/connector-remo": "*",
+    "@nestjs/common": "^11.1.6",
+    "@nestjs/core": "^11.1.6",
+    "@nestjs/platform-express": "^11.1.6",
+    "argon2": "^0.44.0",
+    "drizzle-orm": "^0.44.5",
+    "postgres": "^3.4.7",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@dealpme/config": "*",
+    "@dealpme/testing": "*",
+    "@types/express": "^5.0.3",
+    "drizzle-kit": "^0.31.4",
+    "tsx": "^4.20.5"
+  }
+}

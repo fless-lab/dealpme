@@ -1,0 +1,89 @@
+name: dealpme
+
+services:
+  postgres-core:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: dealpme_core
+      POSTGRES_USER: dealpme_core
+      POSTGRES_PASSWORD: dealpme_core
+    ports: ["5432:5432"]
+    volumes:
+      - pg-core:/var/lib/postgresql/data
+      - ./postgres/init/core.sql:/docker-entrypoint-initdb.d/core.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dealpme_core"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  postgres-vdr:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: dealpme_vdr
+      POSTGRES_USER: dealpme_vdr
+      POSTGRES_PASSWORD: dealpme_vdr
+    ports: ["5433:5432"]
+    volumes:
+      - pg-vdr:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dealpme_vdr"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  postgres-rps:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: dealpme_rps
+      POSTGRES_USER: dealpme_rps
+      POSTGRES_PASSWORD: dealpme_rps
+    ports: ["5434:5432"]
+    volumes:
+      - pg-rps:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dealpme_rps"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports: ["6379:6379"]
+    volumes:
+      - redis:/data
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: dealpme
+      MINIO_ROOT_PASSWORD: dealpme-secret
+    ports: ["9000:9000", "9001:9001"]
+    volumes:
+      - minio:/data
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on: [minio]
+    entrypoint: >
+      /bin/sh -c "
+      sleep 3;
+      mc alias set local http://minio:9000 dealpme dealpme-secret;
+      mc mb -p local/dealpme-vdr || true;
+      mc mb -p local/dealpme-identity || true;
+      mc anonymous set none local/dealpme-vdr;
+      mc anonymous set none local/dealpme-identity;
+      exit 0"
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports: ["8025:8025", "1025:1025"]
+
+volumes:
+  pg-core:
+  pg-vdr:
+  pg-rps:
+  redis:
+  minio:

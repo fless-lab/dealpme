@@ -1,0 +1,182 @@
+[
+  {
+    "case_id": "PT-001",
+    "status": "PASS",
+    "rendered_controls": 33,
+    "registered_controls": 38,
+    "missing_contracts": [],
+    "unhandled_actions": [],
+    "contract_only": [
+      "AI_TAB_COMPARE",
+      "AI_TAB_FACTS",
+      "AI_TAB_QA",
+      "AI_TAB_RISKS",
+      "AI_TAB_SUMMARY"
+    ]
+  },
+  {
+    "case_id": "PT-002",
+    "status": "PASS",
+    "rendered_controls": 33,
+    "registered_controls": 38,
+    "missing_contracts": [],
+    "unhandled_actions": [],
+    "contract_only": [
+      "AI_TAB_COMPARE",
+      "AI_TAB_FACTS",
+      "AI_TAB_QA",
+      "AI_TAB_RISKS",
+      "AI_TAB_SUMMARY"
+    ]
+  },
+  {
+    "case_id": "PT-003",
+    "status": "PASS",
+    "rendered_controls": 33,
+    "registered_controls": 38,
+    "missing_contracts": [],
+    "unhandled_actions": [],
+    "contract_only": [
+      "AI_TAB_COMPARE",
+      "AI_TAB_FACTS",
+      "AI_TAB_QA",
+      "AI_TAB_RISKS",
+      "AI_TAB_SUMMARY"
+    ]
+  },
+  {
+    "case_id": "PT-004",
+    "status": "PASS",
+    "rendered_controls": 33,
+    "registered_controls": 38,
+    "missing_contracts": [],
+    "unhandled_actions": [],
+    "contract_only": [
+      "AI_TAB_COMPARE",
+      "AI_TAB_FACTS",
+      "AI_TAB_QA",
+      "AI_TAB_RISKS",
+      "AI_TAB_SUMMARY"
+    ]
+  },
+  {
+    "case_id": "PT-005",
+    "status": "PASS",
+    "rendered_controls": 33,
+    "registered_controls": 38,
+    "missing_contracts": [],
+    "unhandled_actions": [],
+    "contract_only": [
+      "AI_TAB_COMPARE",
+      "AI_TAB_FACTS",
+      "AI_TAB_QA",
+      "AI_TAB_RISKS",
+      "AI_TAB_SUMMARY"
+    ]
+  },
+  {
+    "case_id": "PT-006",
+    "status": "PASS",
+    "rendered_controls": 33,
+    "registered_controls": 38,
+    "missing_contracts": [],
+    "unhandled_actions": [],
+    "contract_only": [
+      "AI_TAB_COMPARE",
+      "AI_TAB_FACTS",
+      "AI_TAB_QA",
+      "AI_TAB_RISKS",
+      "AI_TAB_SUMMARY"
+    ]
+  },
+  {
+    "case_id": "PT-007",
+    "status": "PASS",
+    "rendered_controls": 33,
+    "registered_controls": 38,
+    "missing_contracts": [],
+    "unhandled_actions": [],
+    "contract_only": [
+      "AI_TAB_COMPARE",
+      "AI_TAB_FACTS",
+      "AI_TAB_QA",
+      "AI_TAB_RISKS",
+      "AI_TAB_SUMMARY"
+    ]
+  },
+  {
+    "case_id": "PT-008",
+    "status": "PASS",
+    "rendered_controls": 33,
+    "registered_controls": 38,
+    "missing_contracts": [],
+    "unhandled_actions": [],
+    "contract_only": [
+      "AI_TAB_COMPARE",
+      "AI_TAB_FACTS",
+      "AI_TAB_QA",
+      "AI_TAB_RISKS",
+      "AI_TAB_SUMMARY"
+    ]
+  },
+  {
+    "case_id": "PT-009",
+    "status": "PASS",
+    "rendered_controls": 33,
+    "registered_controls": 38,
+    "missing_contracts": [],
+    "unhandled_actions": [],
+    "contract_only": [
+      "AI_TAB_COMPARE",
+      "AI_TAB_FACTS",
+      "AI_TAB_QA",
+      "AI_TAB_RISKS",
+      "AI_TAB_SUMMARY"
+    ]
+  },
+  {
+    "case_id": "PT-010",
+    "status": "PASS",
+    "rendered_controls": 33,
+    "registered_controls": 38,
+    "missing_contracts": [],
+    "unhandled_actions": [],
+    "contract_only": [
+      "AI_TAB_COMPARE",
+      "AI_TAB_FACTS",
+      "AI_TAB_QA",
+      "AI_TAB_RISKS",
+      "AI_TAB_SUMMARY"
+    ]
+  },
+  {
+    "case_id": "PT-011",
+    "status": "PASS",
+    "rendered_controls": 33,
+    "registered_controls": 38,
+    "missing_contracts": [],
+    "unhandled_actions": [],
+    "contract_only": [
+      "AI_TAB_COMPARE",
+      "AI_TAB_FACTS",
+      "AI_TAB_QA",
+      "AI_TAB_RISKS",
+      "AI_TAB_SUMMARY"
+    ]
+  },
+  {
+    "case_id": "PT-012",
+    "status": "PASS",
+    "rendered_controls": 33,
+    "registered_controls": 38,
+    "missing_contracts": [],
+    "unhandled_actions": [],
+    "contract_only": [
+      "AI_TAB_COMPARE",
+      "AI_TAB_FACTS",
+      "AI_TAB_QA",
+      "AI_TAB_RISKS",
+      "AI_TAB_SUMMARY"
+    ]
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "name": "@dealpme/i18n",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "description": "Français langue source : messages, formats FCFA, dates, typographie française. L'anglais est dérivé, jamais l'inverse.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "@dealpme/config": "*"
+  }
+}

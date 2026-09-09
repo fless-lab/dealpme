@@ -1,0 +1,96 @@
+{
+  "case_id": "PT-005",
+  "overall_pct": 57,
+  "folders": [
+    {
+      "folder": "01_Corporate_Rccm",
+      "label": "01 Corporate & RCCM",
+      "documents": 3,
+      "verified": 1,
+      "coverage_pct": 70,
+      "critical_gaps": 2,
+      "open_risks": 0
+    },
+    {
+      "folder": "02_Actionnariat",
+      "label": "02 Actionnariat & gouvernance",
+      "documents": 2,
+      "verified": 0,
+      "coverage_pct": 55,
+      "critical_gaps": 2,
+      "open_risks": 0
+    },
+    {
+      "folder": "03_Finance_36m",
+      "label": "03 Informations financières",
+      "documents": 6,
+      "verified": 1,
+      "coverage_pct": 62,
+      "critical_gaps": 7,
+      "open_risks": 2
+    },
+    {
+      "folder": "04_Fiscalite",
+      "label": "04 Fiscalité",
+      "documents": 2,
+      "verified": 0,
+      "coverage_pct": 55,
+      "critical_gaps": 2,
+      "open_risks": 0
+    },
+    {
+      "folder": "05_Clients_Contrats",
+      "label": "05 Commercial & clients",
+      "documents": 2,
+      "verified": 0,
+      "coverage_pct": 55,
+      "critical_gaps": 4,
+      "open_risks": 2
+    },
+    {
+      "folder": "06_Fournisseurs",
+      "label": "06 Fournisseurs & achats",
+      "documents": 2,
+      "verified": 0,
+      "coverage_pct": 55,
+      "critical_gaps": 3,
+      "open_risks": 1
+    },
+    {
+      "folder": "07_RH",
+      "label": "07 Ressources humaines",
+      "documents": 2,
+      "verified": 0,
+      "coverage_pct": 55,
+      "critical_gaps": 3,
+      "open_risks": 1
+    },
+    {
+      "folder": "08_Actifs_Assurances",
+      "label": "08 Actifs, immobilier & assurances",
+      "documents": 3,
+      "verified": 0,
+      "coverage_pct": 55,
+      "critical_gaps": 3,
+      "open_risks": 0
+    },
+    {
+      "folder": "09_Litiges_Conformite",
+      "label": "09 Juridique, conformité & opérations",
+      "documents": 3,
+      "verified": 0,
+      "coverage_pct": 55,
+      "critical_gaps": 4,
+      "open_risks": 1
+    },
+    {
+      "folder": "10_Transaction",
+      "label": "10 Transaction",
+      "documents": 3,
+      "verified": 0,
+      "coverage_pct": 55,
+      "critical_gaps": 4,
+      "open_risks": 1
+    }
+  ]
+}

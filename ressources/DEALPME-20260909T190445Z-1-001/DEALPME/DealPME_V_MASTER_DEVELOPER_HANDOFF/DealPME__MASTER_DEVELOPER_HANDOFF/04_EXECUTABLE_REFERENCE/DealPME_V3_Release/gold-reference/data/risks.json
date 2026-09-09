@@ -1,0 +1,169 @@
+[
+  {
+    "risk_id": "R-COM-01",
+    "category": "Commercial",
+    "title": "Concentration clients",
+    "severity": "MEDIUM",
+    "probability": "MEDIUM",
+    "status": "OPEN",
+    "description": "Les cinq premiers clients représentent 46 % du chiffre d’affaires 2025 ; le premier client représente 17 %.",
+    "evidence": [
+      "DOC-COM-001",
+      "DOC-COM-002"
+    ],
+    "owner": "Direction commerciale",
+    "mitigation": "Contrats-cadres, diversification GMS/UEMOA et pipeline export.",
+    "buyer_question": "Quelle part des revenus des cinq premiers clients est contractuellement sécurisée au-delà de 12 mois ?",
+    "linked_qa": "QA-004"
+  },
+  {
+    "risk_id": "R-SUP-01",
+    "category": "Approvisionnement",
+    "title": "Saisonnalité de la matière première",
+    "severity": "MEDIUM",
+    "probability": "HIGH",
+    "status": "MITIGATING",
+    "description": "L’ananas frais est saisonnier ; la disponibilité et le prix peuvent varier selon la campagne agricole.",
+    "evidence": [
+      "DOC-SUP-001",
+      "DOC-SUP-002"
+    ],
+    "owner": "Direction opérations",
+    "mitigation": "Double sourcing, contrats de campagne, stock tampon et extension du bassin fournisseurs.",
+    "buyer_question": "Quel est le niveau de couverture contractuelle de la campagne 2026 ?",
+    "linked_qa": "QA-007"
+  },
+  {
+    "risk_id": "R-FIN-01",
+    "category": "Financier",
+    "title": "Hausse du besoin en fonds de roulement",
+    "severity": "MEDIUM",
+    "probability": "MEDIUM",
+    "status": "OPEN",
+    "description": "Le BFR atteint 317 M FCFA en 2025, avec un DSO d’environ 58 jours et un stock de 57 jours.",
+    "evidence": [
+      "DOC-FIN-003",
+      "DOC-FIN-004"
+    ],
+    "owner": "Direction financière",
+    "mitigation": "Suivi hebdomadaire des créances, limites de crédit et négociation fournisseurs.",
+    "buyer_question": "Pouvez-vous expliquer la hausse du DSO en 2025 et documenter les créances >90 jours ?",
+    "linked_qa": "QA-001"
+  },
+  {
+    "risk_id": "R-FIN-02",
+    "category": "Financier",
+    "title": "Dette bancaire brute",
+    "severity": "LOW",
+    "probability": "MEDIUM",
+    "status": "MONITORED",
+    "description": "Dette brute 410 M FCFA et trésorerie 117 M FCFA, soit une dette nette de 293 M FCFA (0,78x EBITDA 2025).",
+    "evidence": [
+      "DOC-FIN-005"
+    ],
+    "owner": "Direction financière",
+    "mitigation": "Amortissement contractuel et génération de trésorerie opérationnelle.",
+    "buyer_question": "Quelles clauses de changement de contrôle figurent dans les contrats de crédit ?",
+    "linked_qa": "QA-006"
+  },
+  {
+    "risk_id": "R-OPS-01",
+    "category": "Opérations",
+    "title": "Dépendance à la ligne de pasteurisation",
+    "severity": "MEDIUM",
+    "probability": "LOW",
+    "status": "MITIGATING",
+    "description": "Une ligne concentre une part significative de la capacité de production.",
+    "evidence": [
+      "DOC-AST-001",
+      "DOC-AST-002"
+    ],
+    "owner": "Direction industrielle",
+    "mitigation": "Maintenance préventive, pièces critiques et contrat d’assistance fournisseur.",
+    "buyer_question": "Quel est le temps maximal de remise en service sur panne critique ?",
+    "linked_qa": "QA-009"
+  },
+  {
+    "risk_id": "R-HR-01",
+    "category": "Ressources humaines",
+    "title": "Dépendance au fondateur",
+    "severity": "MEDIUM",
+    "probability": "MEDIUM",
+    "status": "MITIGATING",
+    "description": "Le fondateur conserve des relations commerciales et institutionnelles clés.",
+    "evidence": [
+      "DOC-HR-002",
+      "DOC-TRX-002"
+    ],
+    "owner": "Présidence",
+    "mitigation": "Accompagnement 12 mois, délégation documentée et plan de transfert relationnel.",
+    "buyer_question": "Quelles relations-clés doivent être transférées durant les 100 premiers jours ?",
+    "linked_qa": "QA-010"
+  },
+  {
+    "risk_id": "R-TAX-01",
+    "category": "Fiscalité",
+    "title": "Contrôle documentaire sur TVA export",
+    "severity": "LOW",
+    "probability": "LOW",
+    "status": "CLOSED",
+    "description": "Une vérification documentaire interne a identifié deux pièces d’export à compléter ; les éléments ont été régularisés dans le dossier synthétique.",
+    "evidence": [
+      "DOC-TAX-002"
+    ],
+    "owner": "Direction financière",
+    "mitigation": "Checklist export et revue mensuelle des justificatifs.",
+    "buyer_question": "Pouvez-vous fournir le rapprochement TVA/exports 2025 ?",
+    "linked_qa": "QA-011"
+  },
+  {
+    "risk_id": "R-REG-01",
+    "category": "Réglementaire",
+    "title": "Maintien des autorisations qualité",
+    "severity": "MEDIUM",
+    "probability": "LOW",
+    "status": "MONITORED",
+    "description": "La continuité de certaines autorisations et certifications doit être vérifiée dans le cadre d’un changement de contrôle.",
+    "evidence": [
+      "DOC-REG-001",
+      "DOC-REG-002"
+    ],
+    "owner": "Responsable qualité",
+    "mitigation": "Calendrier de renouvellement et revue conseil avant réalisation.",
+    "buyer_question": "Quelles autorisations nécessitent notification ou accord en cas de changement de contrôle ?",
+    "linked_qa": "QA-012"
+  },
+  {
+    "risk_id": "R-IT-01",
+    "category": "Systèmes",
+    "title": "ERP partiellement dépendant de procédures manuelles",
+    "severity": "LOW",
+    "probability": "MEDIUM",
+    "status": "OPEN",
+    "description": "Certaines clôtures de stock et rapprochements fournisseurs reposent encore sur des fichiers complémentaires.",
+    "evidence": [
+      "DOC-OPS-003"
+    ],
+    "owner": "Direction financière",
+    "mitigation": "Projet d’intégration planifié ; procédures documentées.",
+    "buyer_question": "Quels contrôles compensatoires sécurisent les rapprochements manuels ?",
+    "linked_qa": "QA-013"
+  },
+  {
+    "risk_id": "R-TRX-01",
+    "category": "Transaction",
+    "title": "Conditions de transfert des principaux contrats",
+    "severity": "MEDIUM",
+    "probability": "MEDIUM",
+    "status": "OPEN",
+    "description": "Trois contrats significatifs comportent des clauses de notification ou consentement à vérifier.",
+    "evidence": [
+      "DOC-COM-002",
+      "DOC-SUP-001"
+    ],
+    "owner": "Conseil transaction",
+    "mitigation": "Matrice des consentements et plan de notification avant réalisation.",
+    "buyer_question": "Quels contrats constituent des conditions préalables à la réalisation ?",
+    "linked_qa": "QA-005"
+  }
+]

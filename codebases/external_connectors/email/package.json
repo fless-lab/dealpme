@@ -1,0 +1,17 @@
+{
+  "name": "@dealpme/connector-email",
+  "description": "Email transactionnel. En local : Mailpit. Les messages non transactionnels exigent consentement et lien de désinscription.",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "@dealpme/config": "*"
+  }
+}

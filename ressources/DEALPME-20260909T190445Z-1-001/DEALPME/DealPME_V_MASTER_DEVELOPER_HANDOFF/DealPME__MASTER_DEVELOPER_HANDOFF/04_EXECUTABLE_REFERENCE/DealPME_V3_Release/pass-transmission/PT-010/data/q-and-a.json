@@ -1,0 +1,152 @@
+[
+  {
+    "qa_id": "QA-001",
+    "category": "Finance",
+    "document_id": "DOC-FIN-004",
+    "question": "Comment le BFR a-t-il évolué et quelles créances dépassent 90 jours ?",
+    "asked_by": "Acheteur qualifié — démo",
+    "assigned_to": "Direction financière",
+    "status": "OPEN",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-11T09:00:00Z",
+    "answer": null,
+    "answered_at": null,
+    "attachments": []
+  },
+  {
+    "qa_id": "QA-002",
+    "category": "Dette",
+    "document_id": "DOC-FIN-005",
+    "question": "Quelles clauses de changement de contrôle, sûretés et échéances s’appliquent ?",
+    "asked_by": "Acheteur qualifié — démo",
+    "assigned_to": "Direction financière",
+    "status": "ANSWERED",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-12T09:00:00Z",
+    "answer": "Réponse synthétique disponible dans la pièce liée; l’acheteur doit confirmer les hypothèses pendant l’audit.",
+    "answered_at": "2026-01-13T15:00:00Z",
+    "attachments": [
+      "DOC-FIN-005"
+    ]
+  },
+  {
+    "qa_id": "QA-003",
+    "category": "Commercial",
+    "document_id": "DOC-COM-001",
+    "question": "Quelle part du chiffre d’affaires des principaux clients est sécurisée au-delà de 12 mois ?",
+    "asked_by": "Acheteur qualifié — démo",
+    "assigned_to": "Direction commerciale",
+    "status": "IN_REVIEW",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-13T09:00:00Z",
+    "answer": "Analyse en cours dans le scénario de démonstration; aucune conclusion définitive n’est enregistrée.",
+    "answered_at": null,
+    "attachments": [
+      "DOC-COM-001"
+    ]
+  },
+  {
+    "qa_id": "QA-004",
+    "category": "Contrats",
+    "document_id": "DOC-COM-002",
+    "question": "Quels contrats clients clés peuvent être résiliés ou renégociés lors d’un changement de contrôle ?",
+    "asked_by": "Acheteur qualifié — démo",
+    "assigned_to": "Conseil / Commercial",
+    "status": "OPEN",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-14T09:00:00Z",
+    "answer": null,
+    "answered_at": null,
+    "attachments": []
+  },
+  {
+    "qa_id": "QA-005",
+    "category": "Fournisseurs",
+    "document_id": "DOC-SUP-001",
+    "question": "Quels fournisseurs n’ont pas d’alternative qualifiée sous 90 jours ?",
+    "asked_by": "Acheteur qualifié — démo",
+    "assigned_to": "Opérations",
+    "status": "ANSWERED",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-15T09:00:00Z",
+    "answer": "Réponse synthétique disponible dans la pièce liée; l’acheteur doit confirmer les hypothèses pendant l’audit.",
+    "answered_at": "2026-01-16T15:00:00Z",
+    "attachments": [
+      "DOC-SUP-001"
+    ]
+  },
+  {
+    "qa_id": "QA-006",
+    "category": "RH",
+    "document_id": "DOC-HR-002",
+    "question": "Quelles responsabilités et relations doivent être transférées par le cédant ?",
+    "asked_by": "Acheteur qualifié — démo",
+    "assigned_to": "Direction générale",
+    "status": "OPEN",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-16T09:00:00Z",
+    "answer": null,
+    "answered_at": null,
+    "attachments": []
+  },
+  {
+    "qa_id": "QA-007",
+    "category": "Actifs",
+    "document_id": "DOC-AST-003",
+    "question": "Quel capex est indispensable dans les 24 mois suivant la réalisation ?",
+    "asked_by": "Acheteur qualifié — démo",
+    "assigned_to": "Direction opérationnelle",
+    "status": "ANSWERED",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-17T09:00:00Z",
+    "answer": "Réponse synthétique disponible dans la pièce liée; l’acheteur doit confirmer les hypothèses pendant l’audit.",
+    "answered_at": "2026-01-18T15:00:00Z",
+    "attachments": [
+      "DOC-AST-003"
+    ]
+  },
+  {
+    "qa_id": "QA-008",
+    "category": "Fiscalité",
+    "document_id": "DOC-TAX-001",
+    "question": "Quels points fiscaux restent ouverts et quel est leur statut documentaire ?",
+    "asked_by": "Acheteur qualifié — démo",
+    "assigned_to": "Direction financière / fiscaliste",
+    "status": "IN_REVIEW",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-18T09:00:00Z",
+    "answer": "Analyse en cours dans le scénario de démonstration; aucune conclusion définitive n’est enregistrée.",
+    "answered_at": null,
+    "attachments": [
+      "DOC-TAX-001"
+    ]
+  },
+  {
+    "qa_id": "QA-009",
+    "category": "Réglementaire",
+    "document_id": "DOC-REG-001",
+    "question": "Quelles autorisations exigent notification, renouvellement ou consentement ?",
+    "asked_by": "Acheteur qualifié — démo",
+    "assigned_to": "Conformité / conseil",
+    "status": "OPEN",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-19T09:00:00Z",
+    "answer": null,
+    "answered_at": null,
+    "attachments": []
+  },
+  {
+    "qa_id": "QA-010",
+    "category": "Transaction",
+    "document_id": "DOC-TRX-003",
+    "question": "Quelles hypothèses sous-tendent l’attente de prix du cédant et quels ajustements restent à négocier ?",
+    "asked_by": "Acheteur qualifié — démo",
+    "assigned_to": "Conseil transaction",
+    "status": "OPEN",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-20T09:00:00Z",
+    "answer": null,
+    "answered_at": null,
+    "attachments": []
+  }
+]

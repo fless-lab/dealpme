@@ -1,0 +1,38 @@
+{
+  "case_id": "PT-005",
+  "metric_name": "Engagement Pulse",
+  "predictive": false,
+  "disclaimer": "Indicateur comportemental descriptif de démonstration. Il ne prédit ni l’intention d’offrir ni la probabilité de réalisation.",
+  "buyer_groups": [
+    {
+      "name": "Groupe A — Industriel régional",
+      "score": 82,
+      "trend": "+9",
+      "logins_14d": 18,
+      "docs_viewed_pct": 74,
+      "qa_count": 7,
+      "senior_activity": "Élevée",
+      "last_activity": "il y a 38 min"
+    },
+    {
+      "name": "Groupe B — Family office diaspora",
+      "score": 67,
+      "trend": "+3",
+      "logins_14d": 11,
+      "docs_viewed_pct": 59,
+      "qa_count": 4,
+      "senior_activity": "Moyenne",
+      "last_activity": "il y a 4 h"
+    },
+    {
+      "name": "Groupe C — Fonds PME",
+      "score": 51,
+      "trend": "-2",
+      "logins_14d": 7,
+      "docs_viewed_pct": 42,
+      "qa_count": 2,
+      "senior_activity": "Faible",
+      "last_activity": "hier"
+    }
+  ]
+}

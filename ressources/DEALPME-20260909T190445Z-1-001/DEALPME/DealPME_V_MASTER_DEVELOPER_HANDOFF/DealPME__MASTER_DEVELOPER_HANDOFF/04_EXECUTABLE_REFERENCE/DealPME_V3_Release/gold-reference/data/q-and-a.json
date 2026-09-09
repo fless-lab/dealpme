@@ -1,0 +1,228 @@
+[
+  {
+    "qa_id": "QA-001",
+    "category": "Finance",
+    "document_id": "DOC-FIN-004",
+    "question": "Pouvez-vous expliquer la hausse du DSO en 2025 et ventiler les créances supérieures à 90 jours ?",
+    "asked_by": "Acheteur — démo",
+    "assigned_to": "Direction financière",
+    "status": "ANSWERED",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-18T09:12:00Z",
+    "answer": "La hausse provient principalement de deux distributeurs régionaux. Les créances >90 jours représentent 8 % du solde et sont détaillées dans la balance âgée synthétique.",
+    "answered_at": "2026-01-18T15:40:00Z",
+    "attachments": [
+      "DOC-FIN-004"
+    ]
+  },
+  {
+    "qa_id": "QA-002",
+    "category": "Finance",
+    "document_id": "DOC-FIN-003",
+    "question": "Le résultat 2025 comprend-il des éléments non récurrents significatifs ?",
+    "asked_by": "Acheteur — démo",
+    "assigned_to": "Direction financière",
+    "status": "ANSWERED",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-18T09:20:00Z",
+    "answer": "Le fixture ne comprend pas d’élément exceptionnel matériel. Une normalisation de 6 M FCFA de frais de conseil ponctuels est néanmoins signalée séparément pour discussion.",
+    "answered_at": "2026-01-18T16:05:00Z",
+    "attachments": [
+      "DOC-FIN-003"
+    ]
+  },
+  {
+    "qa_id": "QA-003",
+    "category": "Finance",
+    "document_id": "DOC-FIN-005",
+    "question": "Pouvez-vous confirmer la dette nette et fournir les clauses financières des lignes de crédit ?",
+    "asked_by": "Acheteur — démo",
+    "assigned_to": "Direction financière",
+    "status": "OPEN",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-18T09:28:00Z",
+    "answer": null,
+    "answered_at": null,
+    "attachments": [
+      "DOC-FIN-005"
+    ]
+  },
+  {
+    "qa_id": "QA-004",
+    "category": "Commercial",
+    "document_id": "DOC-COM-002",
+    "question": "Quelle part du chiffre d’affaires des cinq premiers clients est contractuellement sécurisée au-delà de 12 mois ?",
+    "asked_by": "Acheteur — démo",
+    "assigned_to": "Direction commerciale",
+    "status": "ANSWERED",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-18T10:03:00Z",
+    "answer": "Environ 31 % du CA 2025 du fixture est couvert par des contrats ou cadres dépassant 12 mois ; le reste est reconduit par commandes récurrentes.",
+    "answered_at": "2026-01-19T08:30:00Z",
+    "attachments": [
+      "DOC-COM-002"
+    ]
+  },
+  {
+    "qa_id": "QA-005",
+    "category": "Transaction",
+    "document_id": "DOC-COM-002",
+    "question": "Quels contrats nécessitent une notification ou un consentement en cas de changement de contrôle ?",
+    "asked_by": "Conseil acheteur — démo",
+    "assigned_to": "Conseil transaction",
+    "status": "IN_REVIEW",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-18T10:20:00Z",
+    "answer": "Trois contrats sont identifiés pour revue ; la matrice synthétique distingue notification, consentement et absence de clause.",
+    "answered_at": null,
+    "attachments": [
+      "DOC-COM-002",
+      "DOC-SUP-001"
+    ]
+  },
+  {
+    "qa_id": "QA-006",
+    "category": "Finance",
+    "document_id": "DOC-FIN-005",
+    "question": "Les financements bancaires comportent-ils des clauses de changement de contrôle ?",
+    "asked_by": "Acheteur — démo",
+    "assigned_to": "Direction financière",
+    "status": "OPEN",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-18T10:34:00Z",
+    "answer": null,
+    "answered_at": null,
+    "attachments": [
+      "DOC-FIN-005"
+    ]
+  },
+  {
+    "qa_id": "QA-007",
+    "category": "Approvisionnement",
+    "document_id": "DOC-SUP-002",
+    "question": "Quel pourcentage du besoin ananas 2026 est déjà couvert par contrat de campagne ?",
+    "asked_by": "Acheteur industriel — démo",
+    "assigned_to": "Direction opérations",
+    "status": "ANSWERED",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-18T11:05:00Z",
+    "answer": "Le scénario synthétique retient 72 % de couverture ferme et 18 % de couverture optionnelle ; 10 % reste à sécuriser.",
+    "answered_at": "2026-01-19T07:45:00Z",
+    "attachments": [
+      "DOC-SUP-002"
+    ]
+  },
+  {
+    "qa_id": "QA-008",
+    "category": "Opérations",
+    "document_id": "DOC-AST-001",
+    "question": "Quelle capacité additionnelle est réalisable sans capex industriel majeur ?",
+    "asked_by": "Acheteur industriel — démo",
+    "assigned_to": "Direction industrielle",
+    "status": "ANSWERED",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-18T11:17:00Z",
+    "answer": "Le fixture documente environ 35 % de capacité disponible à mix produit constant, sous réserve d’approvisionnement et de main-d’œuvre de campagne.",
+    "answered_at": "2026-01-19T08:12:00Z",
+    "attachments": [
+      "DOC-AST-001"
+    ]
+  },
+  {
+    "qa_id": "QA-009",
+    "category": "Opérations",
+    "document_id": "DOC-AST-002",
+    "question": "Quel est le temps maximal de remise en service de la ligne de pasteurisation ?",
+    "asked_by": "Acheteur industriel — démo",
+    "assigned_to": "Direction industrielle",
+    "status": "OPEN",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-18T11:25:00Z",
+    "answer": null,
+    "answered_at": null,
+    "attachments": [
+      "DOC-AST-002"
+    ]
+  },
+  {
+    "qa_id": "QA-010",
+    "category": "RH",
+    "document_id": "DOC-HR-002",
+    "question": "Quelles relations clés restent personnellement portées par le fondateur ?",
+    "asked_by": "Acheteur — démo",
+    "assigned_to": "Présidence",
+    "status": "ANSWERED",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-18T11:42:00Z",
+    "answer": "Cinq relations sont identifiées dans le plan synthétique : deux grands comptes, une banque, un fournisseur agricole et une relation institutionnelle.",
+    "answered_at": "2026-01-19T09:03:00Z",
+    "attachments": [
+      "DOC-HR-002",
+      "DOC-TRX-002"
+    ]
+  },
+  {
+    "qa_id": "QA-011",
+    "category": "Fiscalité",
+    "document_id": "DOC-TAX-002",
+    "question": "Pouvez-vous fournir le rapprochement TVA / export 2025 ?",
+    "asked_by": "Conseil fiscal acheteur — démo",
+    "assigned_to": "Direction financière",
+    "status": "ANSWERED",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-18T12:02:00Z",
+    "answer": "Le rapprochement synthétique est disponible dans DOC-TAX-002. Il ne constitue pas une attestation fiscale ni un avis de conformité.",
+    "answered_at": "2026-01-19T09:18:00Z",
+    "attachments": [
+      "DOC-TAX-002"
+    ]
+  },
+  {
+    "qa_id": "QA-012",
+    "category": "Réglementaire",
+    "document_id": "DOC-REG-001",
+    "question": "Quelles autorisations nécessitent une notification ou validation en cas de changement de contrôle ?",
+    "asked_by": "Conseil juridique acheteur — démo",
+    "assigned_to": "Responsable qualité",
+    "status": "IN_REVIEW",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-18T12:16:00Z",
+    "answer": "Le fixture identifie deux autorisations à confirmer avec le conseil compétent avant réalisation.",
+    "answered_at": null,
+    "attachments": [
+      "DOC-REG-001"
+    ]
+  },
+  {
+    "qa_id": "QA-013",
+    "category": "Systèmes",
+    "document_id": "DOC-OPS-003",
+    "question": "Quels contrôles compensatoires couvrent les rapprochements manuels hors ERP ?",
+    "asked_by": "Acheteur — démo",
+    "assigned_to": "Direction financière",
+    "status": "OPEN",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-18T12:27:00Z",
+    "answer": null,
+    "answered_at": null,
+    "attachments": [
+      "DOC-OPS-003"
+    ]
+  },
+  {
+    "qa_id": "QA-014",
+    "category": "Transaction",
+    "document_id": "DOC-TRX-001",
+    "question": "Quel calendrier est attendu entre LOI et signature de la documentation définitive ?",
+    "asked_by": "Acheteur — démo",
+    "assigned_to": "Conseil transaction",
+    "status": "ANSWERED",
+    "visibility": "ALL_AUTHORIZED",
+    "asked_at": "2026-01-18T12:45:00Z",
+    "answer": "Le scénario de test prévoit 6 à 8 semaines d’audit confirmatoire puis 3 à 4 semaines de documentation, sous réserve des consentements et du financement.",
+    "answered_at": "2026-01-19T09:40:00Z",
+    "attachments": [
+      "DOC-TRX-001"
+    ]
+  }
+]

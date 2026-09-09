@@ -1,0 +1,17 @@
+{
+  "name": "@dealpme/connector-mobile-money",
+  "description": "Paiement mobile money via agrégateur (CinetPay, Hub2, PayDunya, PayGate Global). Rails : T-Money, Flooz, Gozem Money. Prépayé, jamais récurrent.",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "@dealpme/config": "*"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "@dealpme/rules",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "description": "Moteurs de règles purs, sans I/O : machine à états du deal, entitlements par palier, allow-list de divulgation T0/T1/T2, matching explicable, évaluation indicative, porte d'accès data room.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@dealpme/domain": "*"
+  },
+  "devDependencies": {
+    "@dealpme/config": "*",
+    "@dealpme/testing": "*"
+  }
+}

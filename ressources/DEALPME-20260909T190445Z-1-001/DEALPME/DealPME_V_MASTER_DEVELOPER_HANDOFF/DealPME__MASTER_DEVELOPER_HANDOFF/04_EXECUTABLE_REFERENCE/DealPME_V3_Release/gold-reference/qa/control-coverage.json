@@ -1,0 +1,764 @@
+{
+  "visible_controls": [
+    {
+      "tag": "SELECT",
+      "id": "DEV_SET_PROFILE",
+      "text": "GUEST — Non connecté\nVERIFIED_BUYER — Acheteur vérifié, non qualifié\nQUALIFIED — Acheteur qualifié\nADMITTED — Admis au cercle\nNDA_SIGNED — NDA exécuté\nAUTHORIZED — T2 + VDR autorisés\nREVOKED — Accès révoqué"
+    },
+    {
+      "tag": "A",
+      "id": "NAV_OPPORTUNITIES",
+      "text": "Entreprises à céder"
+    },
+    {
+      "tag": "A",
+      "id": "NAV_BUYERS",
+      "text": "Repreneurs"
+    },
+    {
+      "tag": "A",
+      "id": "NAV_SERVICES",
+      "text": "Services"
+    },
+    {
+      "tag": "A",
+      "id": "NAV_RESOURCES",
+      "text": "Ressources"
+    },
+    {
+      "tag": "A",
+      "id": "NAV_ABOUT",
+      "text": "À propos"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "TOGGLE_FAVORITE",
+      "text": "★ Favori"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "CONTACT_SELLER",
+      "text": "Demande envoyée"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "BACK_TO_OPPORTUNITIES",
+      "text": "← Retour aux opportunités · Réf. PT-001"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "TAB_OVERVIEW",
+      "text": "Aperçu"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "TAB_FINANCIALS",
+      "text": "Données financières"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "TAB_TRANSACTION",
+      "text": "Transaction"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "TAB_RISKS",
+      "text": "Risques"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "TAB_DOCUMENTS",
+      "text": "Documents"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "TAB_QA",
+      "text": "Q&R"
+    },
+    {
+      "tag": "BUTTON",
+      "id": "OPEN_VDR",
+      "text": "Ouvrir la VDR →"
+    }
+  ],
+  "exercised": [
+    "ASK_QUESTION",
+    "BACK_TO_OPPORTUNITIES",
+    "CONTACT_SELLER",
+    "DEV_SET_PROFILE",
+    "DOCUMENT_FOLDER_FILTER",
+    "DOCUMENT_SEARCH",
+    "DOWNLOAD_DOCUMENT",
+    "EXPRESS_INTEREST",
+    "MODAL_CLOSE",
+    "NAV_ABOUT",
+    "NAV_BUYERS",
+    "NAV_OPPORTUNITIES",
+    "NAV_RESOURCES",
+    "NAV_SERVICES",
+    "OPEN_DOCUMENT",
+    "OPEN_VDR",
+    "QA_STATUS_FILTER",
+    "QUESTION_SUBMIT",
+    "QUESTION_TEXT_INPUT",
+    "REQUEST_MEETING",
+    "TAB_DOCUMENTS",
+    "TAB_FINANCIALS",
+    "TAB_OVERVIEW",
+    "TAB_QA",
+    "TAB_RISKS",
+    "TAB_TRANSACTION",
+    "TOGGLE_FAVORITE",
+    "VDR_BACK",
+    "VDR_SEARCH",
+    "VDR_SELECT_DOCUMENT",
+    "VDR_SELECT_FOLDER"
+  ],
+  "required_exercised": [
+    "ASK_QUESTION",
+    "BACK_TO_OPPORTUNITIES",
+    "CONTACT_SELLER",
+    "DEV_SET_PROFILE",
+    "DOCUMENT_FOLDER_FILTER",
+    "DOCUMENT_SEARCH",
+    "DOWNLOAD_DOCUMENT",
+    "EXPRESS_INTEREST",
+    "MODAL_CLOSE",
+    "NAV_ABOUT",
+    "NAV_BUYERS",
+    "NAV_OPPORTUNITIES",
+    "NAV_RESOURCES",
+    "NAV_SERVICES",
+    "OPEN_DOCUMENT",
+    "OPEN_VDR",
+    "QA_STATUS_FILTER",
+    "QUESTION_SUBMIT",
+    "QUESTION_TEXT_INPUT",
+    "REQUEST_MEETING",
+    "TAB_DOCUMENTS",
+    "TAB_FINANCIALS",
+    "TAB_OVERVIEW",
+    "TAB_QA",
+    "TAB_RISKS",
+    "TAB_TRANSACTION",
+    "TOGGLE_FAVORITE",
+    "VDR_BACK",
+    "VDR_SEARCH",
+    "VDR_SELECT_DOCUMENT",
+    "VDR_SELECT_FOLDER"
+  ],
+  "runtime_errors": [],
+  "audit_events": [
+    {
+      "event": "FAVORITE_UPDATED",
+      "at": "2026-09-05T20:35:22.414Z",
+      "profile": "AUTHORIZED",
+      "control_id": "TOGGLE_FAVORITE"
+    },
+    {
+      "event": "CONTACT_REQUEST_CREATED",
+      "at": "2026-09-05T20:35:22.461Z",
+      "profile": "AUTHORIZED",
+      "control_id": "CONTACT_SELLER"
+    },
+    {
+      "event": "NAVIGATION",
+      "at": "2026-09-05T20:35:22.512Z",
+      "profile": "AUTHORIZED",
+      "control_id": "NAV_OPPORTUNITIES"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:22.512Z",
+      "profile": "AUTHORIZED",
+      "tab": "overview"
+    },
+    {
+      "event": "NAVIGATION",
+      "at": "2026-09-05T20:35:22.563Z",
+      "profile": "AUTHORIZED",
+      "control_id": "NAV_BUYERS"
+    },
+    {
+      "event": "MODAL_CLOSED",
+      "at": "2026-09-05T20:35:22.610Z",
+      "profile": "AUTHORIZED",
+      "control_id": "MODAL_CLOSE"
+    },
+    {
+      "event": "NAVIGATION",
+      "at": "2026-09-05T20:35:22.643Z",
+      "profile": "AUTHORIZED",
+      "control_id": "NAV_SERVICES"
+    },
+    {
+      "event": "MODAL_CLOSED",
+      "at": "2026-09-05T20:35:22.677Z",
+      "profile": "AUTHORIZED",
+      "control_id": "MODAL_CLOSE"
+    },
+    {
+      "event": "NAVIGATION",
+      "at": "2026-09-05T20:35:22.710Z",
+      "profile": "AUTHORIZED",
+      "control_id": "NAV_RESOURCES"
+    },
+    {
+      "event": "MODAL_CLOSED",
+      "at": "2026-09-05T20:35:22.743Z",
+      "profile": "AUTHORIZED",
+      "control_id": "MODAL_CLOSE"
+    },
+    {
+      "event": "NAVIGATION",
+      "at": "2026-09-05T20:35:22.778Z",
+      "profile": "AUTHORIZED",
+      "control_id": "NAV_ABOUT"
+    },
+    {
+      "event": "MODAL_CLOSED",
+      "at": "2026-09-05T20:35:22.828Z",
+      "profile": "AUTHORIZED",
+      "control_id": "MODAL_CLOSE"
+    },
+    {
+      "event": "NAVIGATION",
+      "at": "2026-09-05T20:35:22.860Z",
+      "profile": "AUTHORIZED",
+      "control_id": "BACK_TO_OPPORTUNITIES"
+    },
+    {
+      "event": "MODAL_CLOSED",
+      "at": "2026-09-05T20:35:22.894Z",
+      "profile": "AUTHORIZED",
+      "control_id": "MODAL_CLOSE"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:22.927Z",
+      "profile": "AUTHORIZED",
+      "control_id": "TAB_FINANCIALS"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:22.928Z",
+      "profile": "AUTHORIZED",
+      "tab": "financials"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:23.027Z",
+      "profile": "AUTHORIZED",
+      "control_id": "TAB_TRANSACTION"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:23.027Z",
+      "profile": "AUTHORIZED",
+      "tab": "transaction"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:23.127Z",
+      "profile": "AUTHORIZED",
+      "control_id": "TAB_RISKS"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:23.127Z",
+      "profile": "AUTHORIZED",
+      "tab": "risks"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:23.226Z",
+      "profile": "AUTHORIZED",
+      "control_id": "TAB_DOCUMENTS"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:23.227Z",
+      "profile": "AUTHORIZED",
+      "tab": "documents"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:23.326Z",
+      "profile": "AUTHORIZED",
+      "control_id": "TAB_QA"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:23.327Z",
+      "profile": "AUTHORIZED",
+      "tab": "qa"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:23.427Z",
+      "profile": "AUTHORIZED",
+      "control_id": "TAB_OVERVIEW"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:23.427Z",
+      "profile": "AUTHORIZED",
+      "tab": "overview"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:23.527Z",
+      "profile": "AUTHORIZED",
+      "control_id": "TAB_DOCUMENTS"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:23.527Z",
+      "profile": "AUTHORIZED",
+      "tab": "documents"
+    },
+    {
+      "event": "FILTER_APPLIED",
+      "at": "2026-09-05T20:35:23.555Z",
+      "profile": "AUTHORIZED",
+      "control_id": "DOCUMENT_SEARCH"
+    },
+    {
+      "event": "FILTER_APPLIED",
+      "at": "2026-09-05T20:35:23.646Z",
+      "profile": "AUTHORIZED",
+      "control_id": "DOCUMENT_SEARCH"
+    },
+    {
+      "event": "FILTER_APPLIED",
+      "at": "2026-09-05T20:35:23.722Z",
+      "profile": "AUTHORIZED",
+      "control_id": "DOCUMENT_FOLDER_FILTER"
+    },
+    {
+      "event": "FILTER_APPLIED",
+      "at": "2026-09-05T20:35:23.814Z",
+      "profile": "AUTHORIZED",
+      "control_id": "DOCUMENT_FOLDER_FILTER"
+    },
+    {
+      "event": "DOCUMENT_VIEWED",
+      "at": "2026-09-05T20:35:23.910Z",
+      "profile": "AUTHORIZED",
+      "control_id": "OPEN_DOCUMENT"
+    },
+    {
+      "event": "DOCUMENT_VIEWED",
+      "at": "2026-09-05T20:35:23.910Z",
+      "profile": "AUTHORIZED",
+      "document_id": "DOC-COR-001"
+    },
+    {
+      "event": "DOWNLOAD_ATTEMPT",
+      "at": "2026-09-05T20:35:23.963Z",
+      "profile": "AUTHORIZED",
+      "control_id": "DOWNLOAD_DOCUMENT"
+    },
+    {
+      "event": "DOWNLOAD_ATTEMPT",
+      "at": "2026-09-05T20:35:23.963Z",
+      "profile": "AUTHORIZED",
+      "document_id": "DOC-COR-001"
+    },
+    {
+      "event": "MODAL_CLOSED",
+      "at": "2026-09-05T20:35:24.027Z",
+      "profile": "AUTHORIZED",
+      "control_id": "MODAL_CLOSE"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:24.060Z",
+      "profile": "AUTHORIZED",
+      "control_id": "TAB_QA"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:24.061Z",
+      "profile": "AUTHORIZED",
+      "tab": "qa"
+    },
+    {
+      "event": "FILTER_APPLIED",
+      "at": "2026-09-05T20:35:24.088Z",
+      "profile": "AUTHORIZED",
+      "control_id": "QA_STATUS_FILTER"
+    },
+    {
+      "event": "FILTER_APPLIED",
+      "at": "2026-09-05T20:35:24.159Z",
+      "profile": "AUTHORIZED",
+      "control_id": "QA_STATUS_FILTER"
+    },
+    {
+      "event": "QUESTION_CREATED",
+      "at": "2026-09-05T20:35:24.194Z",
+      "profile": "AUTHORIZED",
+      "control_id": "ASK_QUESTION"
+    },
+    {
+      "event": "QUESTION_TEXT_CHANGED",
+      "at": "2026-09-05T20:35:24.203Z",
+      "profile": "AUTHORIZED",
+      "control_id": "QUESTION_TEXT_INPUT",
+      "length": 51
+    },
+    {
+      "event": "QUESTION_CREATED",
+      "at": "2026-09-05T20:35:24.244Z",
+      "profile": "AUTHORIZED",
+      "control_id": "QUESTION_SUBMIT"
+    },
+    {
+      "event": "QUESTION_CREATED",
+      "at": "2026-09-05T20:35:24.244Z",
+      "profile": "AUTHORIZED",
+      "qa_id": "QA-DEMO-015"
+    },
+    {
+      "event": "QUESTION_CREATED",
+      "at": "2026-09-05T20:35:24.361Z",
+      "profile": "AUTHORIZED",
+      "control_id": "ASK_QUESTION"
+    },
+    {
+      "event": "MODAL_CLOSED",
+      "at": "2026-09-05T20:35:24.394Z",
+      "profile": "AUTHORIZED",
+      "control_id": "MODAL_CLOSE"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:24.427Z",
+      "profile": "AUTHORIZED",
+      "control_id": "TAB_TRANSACTION"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:24.427Z",
+      "profile": "AUTHORIZED",
+      "tab": "transaction"
+    },
+    {
+      "event": "INTEREST_RECORDED",
+      "at": "2026-09-05T20:35:24.513Z",
+      "profile": "AUTHORIZED",
+      "control_id": "EXPRESS_INTEREST"
+    },
+    {
+      "event": "MEETING_REQUESTED",
+      "at": "2026-09-05T20:35:25.428Z",
+      "profile": "AUTHORIZED",
+      "control_id": "REQUEST_MEETING"
+    },
+    {
+      "event": "DEV_PROFILE_CHANGED",
+      "at": "2026-09-05T20:35:25.437Z",
+      "profile": "AUTHORIZED",
+      "control_id": "DEV_SET_PROFILE"
+    },
+    {
+      "event": "DEV_PROFILE_CHANGED",
+      "at": "2026-09-05T20:35:25.438Z",
+      "profile": "GUEST",
+      "new_profile": "GUEST"
+    },
+    {
+      "event": "VDR_OPEN_ATTEMPT",
+      "at": "2026-09-05T20:35:26.377Z",
+      "profile": "GUEST",
+      "control_id": "OPEN_VDR"
+    },
+    {
+      "event": "ACCESS_GATE_SHOWN",
+      "at": "2026-09-05T20:35:26.377Z",
+      "profile": "GUEST",
+      "control": "OPEN_VDR"
+    },
+    {
+      "event": "MODAL_CLOSED",
+      "at": "2026-09-05T20:35:26.428Z",
+      "profile": "GUEST",
+      "control_id": "MODAL_CLOSE"
+    },
+    {
+      "event": "DEV_PROFILE_CHANGED",
+      "at": "2026-09-05T20:35:26.434Z",
+      "profile": "GUEST",
+      "control_id": "DEV_SET_PROFILE"
+    },
+    {
+      "event": "DEV_PROFILE_CHANGED",
+      "at": "2026-09-05T20:35:26.434Z",
+      "profile": "VERIFIED_BUYER",
+      "new_profile": "VERIFIED_BUYER"
+    },
+    {
+      "event": "VDR_OPEN_ATTEMPT",
+      "at": "2026-09-05T20:35:26.493Z",
+      "profile": "VERIFIED_BUYER",
+      "control_id": "OPEN_VDR"
+    },
+    {
+      "event": "ACCESS_GATE_SHOWN",
+      "at": "2026-09-05T20:35:26.493Z",
+      "profile": "VERIFIED_BUYER",
+      "control": "OPEN_VDR"
+    },
+    {
+      "event": "MODAL_CLOSED",
+      "at": "2026-09-05T20:35:26.543Z",
+      "profile": "VERIFIED_BUYER",
+      "control_id": "MODAL_CLOSE"
+    },
+    {
+      "event": "DEV_PROFILE_CHANGED",
+      "at": "2026-09-05T20:35:26.549Z",
+      "profile": "VERIFIED_BUYER",
+      "control_id": "DEV_SET_PROFILE"
+    },
+    {
+      "event": "DEV_PROFILE_CHANGED",
+      "at": "2026-09-05T20:35:26.549Z",
+      "profile": "QUALIFIED",
+      "new_profile": "QUALIFIED"
+    },
+    {
+      "event": "VDR_OPEN_ATTEMPT",
+      "at": "2026-09-05T20:35:26.593Z",
+      "profile": "QUALIFIED",
+      "control_id": "OPEN_VDR"
+    },
+    {
+      "event": "ACCESS_GATE_SHOWN",
+      "at": "2026-09-05T20:35:26.593Z",
+      "profile": "QUALIFIED",
+      "control": "OPEN_VDR"
+    },
+    {
+      "event": "MODAL_CLOSED",
+      "at": "2026-09-05T20:35:26.643Z",
+      "profile": "QUALIFIED",
+      "control_id": "MODAL_CLOSE"
+    },
+    {
+      "event": "DEV_PROFILE_CHANGED",
+      "at": "2026-09-05T20:35:26.649Z",
+      "profile": "QUALIFIED",
+      "control_id": "DEV_SET_PROFILE"
+    },
+    {
+      "event": "DEV_PROFILE_CHANGED",
+      "at": "2026-09-05T20:35:26.649Z",
+      "profile": "ADMITTED",
+      "new_profile": "ADMITTED"
+    },
+    {
+      "event": "VDR_OPEN_ATTEMPT",
+      "at": "2026-09-05T20:35:26.692Z",
+      "profile": "ADMITTED",
+      "control_id": "OPEN_VDR"
+    },
+    {
+      "event": "ACCESS_GATE_SHOWN",
+      "at": "2026-09-05T20:35:26.692Z",
+      "profile": "ADMITTED",
+      "control": "OPEN_VDR"
+    },
+    {
+      "event": "MODAL_CLOSED",
+      "at": "2026-09-05T20:35:26.743Z",
+      "profile": "ADMITTED",
+      "control_id": "MODAL_CLOSE"
+    },
+    {
+      "event": "DEV_PROFILE_CHANGED",
+      "at": "2026-09-05T20:35:26.749Z",
+      "profile": "ADMITTED",
+      "control_id": "DEV_SET_PROFILE"
+    },
+    {
+      "event": "DEV_PROFILE_CHANGED",
+      "at": "2026-09-05T20:35:26.749Z",
+      "profile": "NDA_SIGNED",
+      "new_profile": "NDA_SIGNED"
+    },
+    {
+      "event": "VDR_OPEN_ATTEMPT",
+      "at": "2026-09-05T20:35:26.793Z",
+      "profile": "NDA_SIGNED",
+      "control_id": "OPEN_VDR"
+    },
+    {
+      "event": "ACCESS_GATE_SHOWN",
+      "at": "2026-09-05T20:35:26.793Z",
+      "profile": "NDA_SIGNED",
+      "control": "OPEN_VDR"
+    },
+    {
+      "event": "MODAL_CLOSED",
+      "at": "2026-09-05T20:35:26.843Z",
+      "profile": "NDA_SIGNED",
+      "control_id": "MODAL_CLOSE"
+    },
+    {
+      "event": "DEV_PROFILE_CHANGED",
+      "at": "2026-09-05T20:35:26.849Z",
+      "profile": "NDA_SIGNED",
+      "control_id": "DEV_SET_PROFILE"
+    },
+    {
+      "event": "DEV_PROFILE_CHANGED",
+      "at": "2026-09-05T20:35:26.849Z",
+      "profile": "REVOKED",
+      "new_profile": "REVOKED"
+    },
+    {
+      "event": "VDR_OPEN_ATTEMPT",
+      "at": "2026-09-05T20:35:26.892Z",
+      "profile": "REVOKED",
+      "control_id": "OPEN_VDR"
+    },
+    {
+      "event": "ACCESS_GATE_SHOWN",
+      "at": "2026-09-05T20:35:26.893Z",
+      "profile": "REVOKED",
+      "control": "OPEN_VDR"
+    },
+    {
+      "event": "MODAL_CLOSED",
+      "at": "2026-09-05T20:35:26.944Z",
+      "profile": "REVOKED",
+      "control_id": "MODAL_CLOSE"
+    },
+    {
+      "event": "DEV_PROFILE_CHANGED",
+      "at": "2026-09-05T20:35:26.950Z",
+      "profile": "REVOKED",
+      "control_id": "DEV_SET_PROFILE"
+    },
+    {
+      "event": "DEV_PROFILE_CHANGED",
+      "at": "2026-09-05T20:35:26.950Z",
+      "profile": "AUTHORIZED",
+      "new_profile": "AUTHORIZED"
+    },
+    {
+      "event": "VDR_OPEN_ATTEMPT",
+      "at": "2026-09-05T20:35:26.994Z",
+      "profile": "AUTHORIZED",
+      "control_id": "OPEN_VDR"
+    },
+    {
+      "event": "VDR_OPEN_ATTEMPT",
+      "at": "2026-09-05T20:35:26.994Z",
+      "profile": "AUTHORIZED"
+    },
+    {
+      "event": "VDR_OPENED",
+      "at": "2026-09-05T20:35:26.995Z",
+      "profile": "AUTHORIZED"
+    },
+    {
+      "event": "VDR_OPEN_ATTEMPT",
+      "at": "2026-09-05T20:35:27.008Z",
+      "profile": "AUTHORIZED"
+    },
+    {
+      "event": "VDR_OPENED",
+      "at": "2026-09-05T20:35:27.008Z",
+      "profile": "AUTHORIZED"
+    },
+    {
+      "event": "FILTER_APPLIED",
+      "at": "2026-09-05T20:35:27.019Z",
+      "profile": "AUTHORIZED",
+      "control_id": "VDR_SEARCH"
+    },
+    {
+      "event": "FILTER_APPLIED",
+      "at": "2026-09-05T20:35:27.108Z",
+      "profile": "AUTHORIZED",
+      "control_id": "VDR_SEARCH"
+    },
+    {
+      "event": "VDR_FOLDER_SELECTED",
+      "at": "2026-09-05T20:35:27.194Z",
+      "profile": "AUTHORIZED",
+      "control_id": "VDR_SELECT_FOLDER"
+    },
+    {
+      "event": "DOCUMENT_VIEWED",
+      "at": "2026-09-05T20:35:27.293Z",
+      "profile": "AUTHORIZED",
+      "control_id": "VDR_SELECT_DOCUMENT"
+    },
+    {
+      "event": "DOCUMENT_VIEWED",
+      "at": "2026-09-05T20:35:27.293Z",
+      "profile": "AUTHORIZED",
+      "document_id": "DOC-EQT-001",
+      "surface": "VDR"
+    },
+    {
+      "event": "DOWNLOAD_ATTEMPT",
+      "at": "2026-09-05T20:35:27.393Z",
+      "profile": "AUTHORIZED",
+      "control_id": "DOWNLOAD_DOCUMENT"
+    },
+    {
+      "event": "DOWNLOAD_ATTEMPT",
+      "at": "2026-09-05T20:35:27.393Z",
+      "profile": "AUTHORIZED",
+      "document_id": "DOC-EQT-001"
+    },
+    {
+      "event": "QUESTION_CREATED",
+      "at": "2026-09-05T20:35:27.478Z",
+      "profile": "AUTHORIZED",
+      "control_id": "ASK_QUESTION"
+    },
+    {
+      "event": "MODAL_CLOSED",
+      "at": "2026-09-05T20:35:27.511Z",
+      "profile": "AUTHORIZED",
+      "control_id": "MODAL_CLOSE"
+    },
+    {
+      "event": "VDR_CLOSED",
+      "at": "2026-09-05T20:35:27.627Z",
+      "profile": "AUTHORIZED",
+      "control_id": "VDR_BACK"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:27.677Z",
+      "profile": "AUTHORIZED",
+      "control_id": "TAB_OVERVIEW"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:27.677Z",
+      "profile": "AUTHORIZED",
+      "tab": "overview"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:27.877Z",
+      "profile": "AUTHORIZED",
+      "control_id": "TAB_FINANCIALS"
+    },
+    {
+      "event": "TAB_VIEWED",
+      "at": "2026-09-05T20:35:27.878Z",
+      "profile": "AUTHORIZED",
+      "tab": "financials"
+    }
+  ],
+  "registry_count": 31
+}
