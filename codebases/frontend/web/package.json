@@ -16,7 +16,7 @@
     "@dealpme/domain": "*",
     "@dealpme/i18n": "*",
     "@dealpme/ui": "*",
-    "next": "^15.5.3",
+    "next": "^16.3.4",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },

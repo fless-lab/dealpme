@@ -6,6 +6,8 @@ API="${1:-http://localhost:4000/v1}"
 CRED="$(dirname "$0")/../.demo-credentials.local.json"
 pw() { python3 -c "import json,sys;print(json.load(open(sys.argv[1]))[sys.argv[2]])" "$CRED" "$1"; }
 ok=0; ko=0
+RUN_ID=$(date +%s)   # email unique par exécution : aucun nettoyage nécessaire entre deux passages
+NEW_EMAIL="nouveau.cedant.${RUN_ID}@demo.dealpme.local"
 check() { # nom, code attendu, code obtenu
   if [ "$2" = "$3" ]; then echo "OK   $1 ($3)"; ok=$((ok+1)); else echo "KO   $1 (attendu $2, obtenu $3)"; ko=$((ko+1)); fi
 }
@@ -21,9 +23,9 @@ mfa=$(curl -s -X POST "$API/auth/login" -H 'content-type: application/json' -d "
 check "un officier CCI-Togo reçoit un défi de second facteur, sans session" "True False" "$mfa"
 OFF=$(login_mfa officier@cci-togo.demo.dealpme.local)
 [ -n "$OFF" ] && check "second facteur validé ouvre la session de l'officier" 1 1 || check "second facteur validé ouvre la session de l'officier" 1 0
-reg=$(curl -s -X POST "$API/auth/register" -H 'content-type: application/json' -d '{"email":"nouveau.cedant@demo.dealpme.local","password":"MotDePasseSolide-2026","phoneE164":"+22890000001","organisationName":"Nouvelle entreprise de fumée","role":"SELLER","consents":{"termsAccepted":true,"privacyAccepted":true,"marketingOptIn":false},"attribution":{"channel":"SMOKE"}}')
+reg=$(curl -s -X POST "$API/auth/register" -H 'content-type: application/json' -d "{\"email\":\"$NEW_EMAIL\",\"password\":\"MotDePasseSolide-2026\",\"phoneE164\":\"+22890000001\",\"organisationName\":\"Nouvelle entreprise de fumée\",\"role\":\"SELLER\",\"consents\":{\"termsAccepted\":true,\"privacyAccepted\":true,\"marketingOptIn\":false},\"attribution\":{\"channel\":\"SMOKE\"}}")
 chal=$(echo "$reg" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("emailChallengeId",""))'); vcode=$(echo "$reg" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("devCode",""))')
-code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'content-type: application/json' -d '{"email":"nouveau.cedant@demo.dealpme.local","password":"MotDePasseSolide-2026"}')
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'content-type: application/json' -d "{\"email\":\"$NEW_EMAIL\",\"password\":\"MotDePasseSolide-2026\"}")
 check "connexion refusée tant que l'email n'est pas vérifié (403)" 403 "$code"
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/email/verify" -H 'content-type: application/json' -d "{\"challengeId\":\"$chal\",\"code\":\"000000\"}")
 check "code de vérification faux refusé (401)" 401 "$code"
@@ -31,7 +33,7 @@ code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/email/verify" -
 check "vérification d'email avec le bon code" 200 "$code"
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/email/verify" -H 'content-type: application/json' -d "{\"challengeId\":\"$chal\",\"code\":\"$vcode\"}")
 check "un code déjà consommé est refusé (401)" 401 "$code"
-code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'content-type: application/json' -d '{"email":"nouveau.cedant@demo.dealpme.local","password":"MotDePasseSolide-2026"}')
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'content-type: application/json' -d "{\"email\":\"$NEW_EMAIL\",\"password\":\"MotDePasseSolide-2026\"}")
 check "connexion possible après vérification de l'email" 200 "$code"
 [ -n "$SELLER" ] && check "login cédant" 1 1 || check "login cédant" 1 0
 
@@ -90,11 +92,12 @@ code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/webhooks/remo/attend
 check "webhook Remo avec signature invalide refusé (403)" 403 "$code"
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/webhooks/remo/attendance" -H 'content-type: application/json' -H "x-remo-signature: $sig" --data-binary "$payload")
 check "webhook sans Idempotency-Key refusé (400)" 400 "$code"
-r1=$(curl -s -X POST "$API/webhooks/remo/attendance" -H 'content-type: application/json' -H 'idempotency-key: smoke-remo-replay' -H "x-remo-signature: $sig" --data-binary "$payload")
-r2=$(curl -s -X POST "$API/webhooks/remo/attendance" -H 'content-type: application/json' -H 'idempotency-key: smoke-remo-replay' -H "x-remo-signature: $sig" --data-binary "$payload")
+before=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select count(*) from audit_event where subject_type='remo_event' and subject_id='evt-1'")
+r1=$(curl -s -X POST "$API/webhooks/remo/attendance" -H 'content-type: application/json' -H "idempotency-key: smoke-remo-replay-$RUN_ID" -H "x-remo-signature: $sig" --data-binary "$payload")
+r2=$(curl -s -X POST "$API/webhooks/remo/attendance" -H 'content-type: application/json' -H "idempotency-key: smoke-remo-replay-$RUN_ID" -H "x-remo-signature: $sig" --data-binary "$payload")
 check "webhook signé accepté et rejoué à l'identique (idempotence)" "$r1" "$r2"
-n=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select count(*) from audit_event where subject_type='remo_event' and subject_id='evt-1'")
-check "le rejeu ne produit pas de double effet (un seul événement d'audit)" 1 "$n"
+after=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select count(*) from audit_event where subject_type='remo_event' and subject_id='evt-1'")
+check "le rejeu ne produit pas de double effet (un seul événement d'audit en plus)" 1 "$((after - before))"
 
 echo "== Intérêt et évaluation"
 first=$(echo "$body" | python3 -c 'import sys,json;print(json.load(sys.stdin)["items"][0]["id"])')
