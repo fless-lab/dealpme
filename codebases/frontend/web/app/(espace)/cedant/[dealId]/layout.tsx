@@ -28,7 +28,10 @@ export default async function DossierLayout({ children, params }: { children: Re
     href: `/cedant/${dealId}/${s.slug}`,
     label: missingByStep.get(s.id) ? `${s.label} (${missingByStep.get(s.id)})` : s.label,
     controlId: `SELLER_STEP_${s.id}`,
-  })).concat([{ href: `/cedant/${dealId}/recapitulatif`, label: "Récapitulatif", controlId: "SELLER_STEP_SUMMARY" }]);
+  })).concat([
+    { href: `/cedant/${dealId}/recapitulatif`, label: "Récapitulatif", controlId: "SELLER_STEP_SUMMARY" },
+    { href: `/cedant/${dealId}/certification`, label: "Certification", controlId: "SELLER_STEP_CERTIFICATION" },
+  ]);
 
   return (
     <>

@@ -7,3 +7,8 @@
 .dp-lab section { margin-bottom: var(--dp-space-8); }
 .dp-lab h2 { margin-bottom: var(--dp-space-3); padding-bottom: var(--dp-space-2); border-bottom: 1px solid var(--dp-line); }
 .dp-lab .dp-variants { display: flex; flex-wrap: wrap; gap: var(--dp-space-3); align-items: flex-start; }
+
+.dp-scope { border-left: 3px solid var(--dp-signal); background: var(--dp-canvas); padding: var(--dp-space-4); border-radius: 0 6px 6px 0; }
+.dp-scope .dp-label { margin-bottom: var(--dp-space-1); }
+.dp-criteria-row { display: flex; gap: var(--dp-space-3); align-items: flex-start; padding: var(--dp-space-3) 0; border-top: 1px solid var(--dp-line); }
+.dp-criteria-row:first-of-type { border-top: none; }

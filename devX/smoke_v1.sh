@@ -15,6 +15,13 @@ login() { curl -s -X POST "$API/auth/login" -H 'content-type: application/json' 
 # Connexion d'un rôle à second facteur obligatoire : le code n'est renvoyé (devCode) qu'en développement.
 login_mfa() { r=$(curl -s -X POST "$API/auth/login" -H 'content-type: application/json' -d "{\"email\":\"$1\",\"password\":\"$(pw "$1")\"}"); ch=$(echo "$r" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("challengeId",""))'); code=$(echo "$r" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("devCode",""))'); curl -s -X POST "$API/auth/mfa/verify" -H 'content-type: application/json' -d "{\"challengeId\":\"$ch\",\"code\":\"$code\"}" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("token",""))'; }
 
+# Le scénario provoque volontairement des échecs de connexion pour éprouver l'anti-force-brute. Les compteurs
+# et verrous restent ensuite en place quelques minutes : on les efface avant de commencer, faute de quoi une
+# seconde exécution rapprochée échouerait sur des 429 sans que rien ne soit cassé. Développement uniquement.
+if command -v docker >/dev/null 2>&1 && docker exec dealpme-redis-1 redis-cli ping >/dev/null 2>&1; then
+  docker exec dealpme-redis-1 sh -c "redis-cli --scan --pattern 'rl:*' | xargs -r redis-cli del; redis-cli --scan --pattern 'fail:*' | xargs -r redis-cli del; redis-cli --scan --pattern 'lock:*' | xargs -r redis-cli del; redis-cli --scan --pattern 'strikes:*' | xargs -r redis-cli del" >/dev/null 2>&1
+fi
+
 echo "== Authentification"
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'content-type: application/json' -d '{"email":"admin@demo.dealpme.local","password":"mauvais"}')
 check "login refusé avec mauvais mot de passe" 401 "$code"
@@ -144,6 +151,21 @@ code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:9000/dealpme-dos
 check "aucun accès public au stockage des pièces (403)" 403 "$code"
 code=$(curl -s -o /dev/null -w '%{http_code}' "$API/deals/$dossier_deal/dossier" -H "authorization: Bearer $INV")
 check "un investisseur n'accède pas au dossier d'un cédant (403)" 403 "$code"
+for f in ACTIVITY_DESCRIPTION:Menuiserie EMPLOYEE_COUNT:24 TRANSFER_REASON:Retraite ASSETS_DESCRIPTION:Fonds INCLUDES_GOODWILL:Oui; do
+  key=${f%%:*}; val=${f##*:}
+  curl -s -o /dev/null -X POST "$API/deals/$dossier_deal/dossier/facts" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d "{\"fieldKey\":\"$key\",\"valueText\":\"$val\"}"
+done
+for f in EBITDA:8000000 NET_DEBT:2000000; do
+  key=${f%%:*}; val=${f##*:}
+  curl -s -o /dev/null -X POST "$API/deals/$dossier_deal/dossier/facts" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d "{\"fieldKey\":\"$key\",\"periodLabel\":\"2025\",\"valueAmountXof\":$val}"
+done
+for cat in RCCM ETATS_FINANCIERS ATTESTATION_FISCALE INVENTAIRE_ACTIFS; do
+  curl -s -o /dev/null -X POST "$API/deals/$dossier_deal/dossier/documents" -H "authorization: Bearer $SELLER" -F "category=$cat" -F "title=Piece $cat" -F "file=@/tmp/dealpme-smoke.pdf;type=application/pdf"
+done
+n=$(curl -s "$API/deals/$dossier_deal/dossier" -H "authorization: Bearer $SELLER" | python3 -c 'import sys,json;print(len(json.load(sys.stdin)["completeness"]["missing"]))')
+check "dossier complété : plus aucun manque" 0 "$n"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$dossier_deal/transitions" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{"to":"PENDING_VERIFICATION"}')
+check "un dossier complet est soumis à vérification" 200 "$code"
 rm -f /tmp/dealpme-smoke.pdf
 
 echo "== Espace CCI-Togo"
@@ -167,6 +189,29 @@ n=$(curl -s "$API/institution/companies/$cid" -H "authorization: Bearer $OFF" | 
 check "historique nominatif des décisions" 1 "$n"
 line=$(curl -s "$API/institution/certifications.csv" -H "authorization: Bearer $OFF" | grep -c "$cid" || true)
 check "export CSV du journal des certifications" 1 "$line"
+
+echo "== Deal-Ready : liste de contrôle et demande"
+n=$(curl -s "$API/companies/$cid/certification" -H "authorization: Bearer $SELLER" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(len(d["checklist"]["criteria"]))')
+check "liste de contrôle servie à l'entreprise" 7 "$n"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$API/companies/$cid/certification" -H "authorization: Bearer $INV")
+check "un investisseur n'accède pas à la certification (403)" 403 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$API/companies/$cid/certification" -H "authorization: Bearer $TV")
+check "un autre cédant ne lit pas l'entreprise d'un concurrent (404 par RLS)" 404 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$API/institution/companies/$cid" -H "authorization: Bearer $TV")
+check "la console institutionnelle reste fermée à un cédant (403)" 403 "$code"
+req=$(curl -s -X POST "$API/companies/$cid/certification-requests" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{"message":"Demande de fumee"}' | python3 -c 'import sys,json;print(json.load(sys.stdin).get("requestId",""))')
+[ -n "$req" ] && check "dépôt d'une demande de certification" 1 1 || check "dépôt d'une demande de certification" 1 0
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/companies/$cid/certification-requests" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{}')
+check "demande en double refusée (409)" 409 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/institution/certification-requests/$req/remediation" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{"items":[{"label":"tentative"}]}')
+check "un cédant ne demande pas de remédiation (403)" 403 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/institution/certification-requests/$req/remediation" -H "authorization: Bearer $OFF" -H 'content-type: application/json' -d '{"items":[{"label":"Attestation fiscale expiree","detail":"Fournir une piece de moins de trois mois"}]}')
+check "remédiation nommée par un officier" 200 "$code"
+state=$(curl -s "$API/companies/$cid/certification" -H "authorization: Bearer $SELLER" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d["open"]["state"] if d["open"] else "aucune")')
+check "l'entreprise voit les compléments demandés" REMEDIATION_REQUIRED "$state"
+curl -s -o /dev/null -X POST "$API/institution/certifications" -H "authorization: Bearer $OFF" -H 'content-type: application/json' -d "{\"companyId\":\"$cid\",\"decision\":\"GRANTED\",\"scopeStatement\":\"Existence, immatriculation et complétude documentaire vérifiées. Ni exactitude financière ni absence de litige.\",\"conflictOfInterestDeclared\":false}"
+open_after=$(curl -s "$API/companies/$cid/certification" -H "authorization: Bearer $SELLER" | python3 -c 'import sys,json;d=json.load(sys.stdin);print("aucune" if d["open"] is None else d["open"]["state"])')
+check "la décision clôt la demande en cours" aucune "$open_after"
 
 echo "== Deal-Connect (Remo)"
 code=$(curl -s -o /dev/null -w '%{http_code}' "$API/events")

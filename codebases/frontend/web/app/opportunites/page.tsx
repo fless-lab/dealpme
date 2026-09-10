@@ -1,5 +1,6 @@
 import type { DealTeaserT0 } from "@dealpme/contracts";
-import { DealRow, StateBanner } from "@dealpme/ui";
+import { DealRow, Panel, StateBanner } from "@dealpme/ui";
+import { DealReadyScope } from "../../components/deal-ready";
 import { api, ApiError } from "../../lib/api";
 import { getSession } from "../../lib/session";
 
@@ -39,6 +40,11 @@ export default async function OpportunitiesPage() {
           />
         ))}
       </div>
+      {items.some((d) => d.isDealReady) ? (
+        <Panel title="Ce que signifie le badge Deal-Ready" controlId="OPP_LIST_DEAL_READY_SCOPE">
+          <DealReadyScope />
+        </Panel>
+      ) : null}
     </div>
   );
 }

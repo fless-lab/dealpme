@@ -8,6 +8,7 @@ import { certifications, companies, deals, membershipConfirmations, organisation
 import { withTenant } from "../../database/tenant.js";
 import { AuditService } from "../../platform/audit.service.js";
 import type { Principal } from "../../platform/auth.js";
+import { CertificationRequestService } from "./certification-request.service.js";
 import { REGISTRY_PORT } from "./registry.provider.js";
 
 export interface CertificationStatus {
@@ -31,6 +32,7 @@ export class InstitutionService {
     @Inject(CORE_DB) private readonly db: CoreDb,
     @Inject(REGISTRY_PORT) private readonly registry: RegistryPort,
     private readonly audit: AuditService,
+    private readonly requests: CertificationRequestService,
   ) {}
 
   /** Confirmation d'adhésion : seule la référence fournie par la CCI-Togo est stockée (DP-CCI). */
@@ -49,7 +51,7 @@ export class InstitutionService {
    * En mode manuel, l'officier saisit ce qu'il a consulté ; sourceRef trace la consultation.
    */
   async verifyRegistry(companyId: string, rccmNumber: string, officer: Principal, correlationId: string, manualResult?: { legalName: string; legalForm: string; status: string; sourceRef: string }) {
-    const company = (await this.db.select().from(companies).where(eq(companies.id, companyId)).limit(1))[0];
+    const company = await withTenant(this.db, officer, async (tx) => (await tx.select().from(companies).where(eq(companies.id, companyId)).limit(1))[0]);
     if (!company) throw new DealPmeError(ErrorCode.NOT_FOUND, "Entreprise introuvable");
 
     const result =
@@ -62,7 +64,7 @@ export class InstitutionService {
       throw new DealPmeError(ErrorCode.NOT_FOUND, "Aucune inscription trouvée au RCCM pour ce numéro");
     }
     const recordId = newId();
-    await this.db.transaction(async (tx) => {
+    await withTenant(this.db, officer, async (tx) => {
       await tx.insert(registryRecords).values({
         id: recordId,
         companyId,
@@ -89,7 +91,7 @@ export class InstitutionService {
    * Préalable : une vérification RCCM / CFE existe pour l'entreprise ; sans elle, l'octroi est refusé.
    */
   async decideCertification(req: CertificationDecisionRequest, officer: Principal, correlationId: string) {
-    const company = (await this.db.select({ id: companies.id, registryRecordId: companies.registryRecordId }).from(companies).where(eq(companies.id, req.companyId)).limit(1))[0];
+    const company = await withTenant(this.db, officer, async (tx) => (await tx.select({ id: companies.id, registryRecordId: companies.registryRecordId }).from(companies).where(eq(companies.id, req.companyId)).limit(1))[0]);
     if (!company) throw new DealPmeError(ErrorCode.NOT_FOUND, "Entreprise introuvable");
     if (req.decision === "GRANTED" && !company.registryRecordId) {
       this.audit.record({ action: "CERTIFICATION_DECIDED", actorUserId: officer.userId, subjectType: "company", subjectId: req.companyId, outcome: "FAILED", correlationId, metadata: { decision: req.decision, reason: "REGISTRY_NOT_VERIFIED" } });
@@ -105,6 +107,8 @@ export class InstitutionService {
       expiresAt: req.expiresAt ? new Date(req.expiresAt) : null,
       revocationReason: req.decision === "REVOKED" ? (req.reason ?? "Motif non renseigné") : null,
     });
+    // Une décision clôt les demandes en cours : l'entreprise voit son instruction aboutie, pas une file muette.
+    await this.requests.closeOpenRequests(req.companyId, id, officer);
     this.audit.record({ action: "CERTIFICATION_DECIDED", actorUserId: officer.userId, subjectType: "company", subjectId: req.companyId, outcome: "OK", correlationId, metadata: { decision: req.decision } });
     return { certificationId: id };
   }
@@ -121,7 +125,7 @@ export class InstitutionService {
   /** Tableau de bord institutionnel : compteurs uniquement (DP-GOV). */
   async overview(officer: Principal) {
     const [orgs] = await this.db.select({ total: sql<number>`count(*)::int`, confirmed: sql<number>`count(distinct ${membershipConfirmations.organisationId})::int` }).from(organisations).leftJoin(membershipConfirmations, eq(membershipConfirmations.organisationId, organisations.id));
-    const [comps] = await this.db.select({ total: sql<number>`count(*)::int`, verified: sql<number>`count(${companies.registryRecordId})::int` }).from(companies);
+    const [comps] = await withTenant(this.db, officer, async (tx) => tx.select({ total: sql<number>`count(*)::int`, verified: sql<number>`count(${companies.registryRecordId})::int` }).from(companies));
     const latest = await this.latestCertifications();
     const certified = latest.filter((c) => statusOf(c).isDealReady).length;
     const monthStart = new Date();
@@ -161,8 +165,8 @@ export class InstitutionService {
   }
 
   /** Entreprises : données déclarées, vérification registre et statut de certification, présentés côte à côte, jamais fusionnés. */
-  async listCompanies() {
-    const rows = await this.db
+  async listCompanies(officer: Principal) {
+    const rows = await withTenant(this.db, officer, async (tx) => tx
       .select({
         id: companies.id,
         legalName: companies.legalName,
@@ -175,11 +179,11 @@ export class InstitutionService {
       })
       .from(companies)
       .innerJoin(organisations, eq(organisations.id, companies.ownerOrganisationId))
-      .orderBy(desc(companies.createdAt));
+      .orderBy(desc(companies.createdAt)));
     const latest = await this.latestCertifications();
     const byCompany = new Map(latest.map((c) => [c.companyId, statusOf(c)]));
     const recordIds = rows.map((r) => r.registryRecordId).filter((x): x is string => !!x);
-    const records = recordIds.length ? await this.db.select().from(registryRecords).where(inArray(registryRecords.id, recordIds)) : [];
+    const records = recordIds.length ? await withTenant(this.db, officer, async (tx) => tx.select().from(registryRecords).where(inArray(registryRecords.id, recordIds))) : [];
     const byRecord = new Map(records.map((r) => [r.id, r]));
     return {
       items: rows.map((r) => {
@@ -197,28 +201,28 @@ export class InstitutionService {
   }
 
   /** Détail d'une entreprise pour l'instruction : déclaré, registre, historique des décisions. */
-  async companyDetail(companyId: string) {
-    const row = (
-      await this.db
+  async companyDetail(companyId: string, officer: Principal) {
+    const row = await withTenant(this.db, officer, async (tx) => (
+      await tx
         .select({ id: companies.id, legalName: companies.legalName, legalForm: companies.legalForm, rccmNumber: companies.rccmNumber, registryRecordId: companies.registryRecordId, ownerId: organisations.id, ownerName: organisations.name, createdAt: companies.createdAt })
         .from(companies)
         .innerJoin(organisations, eq(organisations.id, companies.ownerOrganisationId))
         .where(eq(companies.id, companyId))
         .limit(1)
-    )[0];
+    )[0]);
     if (!row) throw new DealPmeError(ErrorCode.NOT_FOUND, "Entreprise introuvable");
     const [confirmation] = await this.db
       .select({ confirmedAt: sql<Date | null>`max(${membershipConfirmations.confirmedAt})` })
       .from(membershipConfirmations)
       .where(eq(membershipConfirmations.organisationId, row.ownerId));
     const ownerConfirmedAt = confirmation?.confirmedAt ?? null;
-    const rec = row.registryRecordId ? (await this.db.select().from(registryRecords).where(eq(registryRecords.id, row.registryRecordId)).limit(1))[0] : undefined;
-    const history = await this.db
+    const rec = row.registryRecordId ? await withTenant(this.db, officer, async (tx) => (await tx.select().from(registryRecords).where(eq(registryRecords.id, row.registryRecordId!)).limit(1))[0]) : undefined;
+    const history = await withTenant(this.db, officer, async (tx) => tx
       .select({ id: certifications.id, decision: certifications.decision, scopeStatement: certifications.scopeStatement, decidedAt: certifications.decidedAt, expiresAt: certifications.expiresAt, revocationReason: certifications.revocationReason, officerEmail: users.email })
       .from(certifications)
       .leftJoin(users, eq(users.id, certifications.officerUserId))
       .where(eq(certifications.companyId, companyId))
-      .orderBy(desc(certifications.decidedAt));
+      .orderBy(desc(certifications.decidedAt)));
     const latest = (await this.db.select().from(certifications).where(eq(certifications.companyId, companyId)).orderBy(desc(certifications.decidedAt)).limit(1))[0];
     return {
       id: row.id,
@@ -232,8 +236,8 @@ export class InstitutionService {
   }
 
   /** Journal des décisions de certification : chaque décision porte un officier nommé et un horodatage ; exportable. */
-  async listCertifications() {
-    const rows = await this.db
+  async listCertifications(officer: Principal) {
+    const rows = await withTenant(this.db, officer, async (tx) => tx
       .select({
         id: certifications.id,
         companyId: certifications.companyId,
@@ -248,12 +252,12 @@ export class InstitutionService {
       .from(certifications)
       .innerJoin(companies, eq(companies.id, certifications.companyId))
       .leftJoin(users, eq(users.id, certifications.officerUserId))
-      .orderBy(desc(certifications.decidedAt));
+      .orderBy(desc(certifications.decidedAt)));
     return { items: rows };
   }
 
-  async certificationsCsv(): Promise<string> {
-    const { items } = await this.listCertifications();
+  async certificationsCsv(officer: Principal): Promise<string> {
+    const { items } = await this.listCertifications(officer);
     const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
     const head = ["id", "entreprise_id", "entreprise", "decision", "officier", "decide_le", "expire_le", "portee", "motif_retrait"].join(";");
     const lines = items.map((r) => [r.id, r.companyId, r.companyName, r.decision, r.officerEmail, r.decidedAt.toISOString(), r.expiresAt?.toISOString() ?? "", r.scopeStatement, r.revocationReason ?? ""].map(esc).join(";"));

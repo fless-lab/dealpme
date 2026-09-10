@@ -12,7 +12,15 @@ import { Role } from "@dealpme/domain";
 import { CurrentPrincipal, Roles, type Principal } from "../../platform/auth.js";
 import { correlationIdOf } from "../../platform/correlation-id.middleware.js";
 import { validate } from "../../platform/zod.pipe.js";
+import { CertificationRequestService } from "./certification-request.service.js";
 import { InstitutionService } from "./institution.service.js";
+
+const RemediationSchema = z.object({
+  items: z
+    .array(z.object({ label: z.string().min(3).max(200), detail: z.string().max(2000).nullable().default(null) }))
+    .min(1)
+    .max(20),
+});
 
 const ManualRegistrySchema = RegistryVerificationRequestSchema.extend({
   manualResult: z
@@ -24,7 +32,10 @@ const ManualRegistrySchema = RegistryVerificationRequestSchema.extend({
 @Controller("institution")
 @Roles(Role.CCI_OFFICER)
 export class InstitutionController {
-  constructor(private readonly institution: InstitutionService) {}
+  constructor(
+    private readonly institution: InstitutionService,
+    private readonly requests: CertificationRequestService,
+  ) {}
 
   // ---- lectures de la console
 
@@ -39,25 +50,44 @@ export class InstitutionController {
   }
 
   @Get("companies")
-  companies() {
-    return this.institution.listCompanies();
+  companies(@CurrentPrincipal() officer: Principal) {
+    return this.institution.listCompanies(officer);
   }
 
   @Get("companies/:companyId")
-  company(@Param("companyId", validate(IdSchema)) companyId: string) {
-    return this.institution.companyDetail(companyId);
+  company(@Param("companyId", validate(IdSchema)) companyId: string, @CurrentPrincipal() officer: Principal) {
+    return this.institution.companyDetail(companyId, officer);
   }
 
   @Get("certifications")
-  certifications() {
-    return this.institution.listCertifications();
+  certifications(@CurrentPrincipal() officer: Principal) {
+    return this.institution.listCertifications(officer);
+  }
+
+  /** File d'instruction des demandes Deal-Ready, avec la liste de contrôle de chaque entreprise. */
+  @Get("certification-requests")
+  queue(@CurrentPrincipal() officer: Principal) {
+    return this.requests.queue(officer);
+  }
+
+  /** Remédiation : l'officier nomme les points à reprendre, la demande retourne à l'entreprise. */
+  @Post("certification-requests/:requestId/remediation")
+  @HttpCode(200)
+  async remediation(
+    @Param("requestId", validate(IdSchema)) requestId: string,
+    @Body(validate(RemediationSchema)) body: z.infer<typeof RemediationSchema>,
+    @CurrentPrincipal() officer: Principal,
+    @Req() req: Request,
+  ) {
+    await this.requests.requireRemediation(requestId, body.items, officer, correlationIdOf(req));
+    return { state: "REMEDIATION_REQUIRED" };
   }
 
   @Get("certifications.csv")
   @Header("Content-Type", "text/csv; charset=utf-8")
   @Header("Content-Disposition", 'attachment; filename="certifications-deal-ready.csv"')
-  certificationsCsv() {
-    return this.institution.certificationsCsv();
+  certificationsCsv(@CurrentPrincipal() officer: Principal) {
+    return this.institution.certificationsCsv(officer);
   }
 
   // ---- décisions

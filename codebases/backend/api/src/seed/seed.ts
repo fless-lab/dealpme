@@ -102,12 +102,18 @@ async function main(): Promise<void> {
   }
   const officer = ids["officier@cci-togo.demo.dealpme.local"]!;
 
-  const cases: { caseId: string; seller: string; regionCode: RegionCode; rccm: string; status: DealStatus }[] = [
+  // certified : la certification Deal-Ready du jeu de démonstration. Les fixtures de référence ne certifient
+  // aucun des dossiers publiés, si bien que le badge n'apparaîtrait jamais sur la place de marché. PT-003 est
+  // certifié ici pour que la démonstration montre les deux états côte à côte ; les fixtures restent intactes,
+  // elles demeurent l'oracle des tests (décision A12 du classeur).
+  const cases: { caseId: string; seller: string; regionCode: RegionCode; rccm: string; status: DealStatus; certified?: boolean }[] = [
     { caseId: "PT-001", seller: "cedant.tropicvale@demo.dealpme.local", regionCode: RegionCode.GRAND_LOME, rccm: "TG-LOM-2010-B-1001", status: DealStatus.VERIFIED },
-    { caseId: "PT-003", seller: "cedant.froidroute@demo.dealpme.local", regionCode: RegionCode.MARITIME, rccm: "TG-LOM-2015-B-3003", status: DealStatus.LISTED_OPEN },
+    { caseId: "PT-003", seller: "cedant.froidroute@demo.dealpme.local", regionCode: RegionCode.MARITIME, rccm: "TG-LOM-2015-B-3003", status: DealStatus.LISTED_OPEN, certified: true },
     { caseId: "PT-006", seller: "cedant.betonplus@demo.dealpme.local", regionCode: RegionCode.PLATEAUX, rccm: "TG-LOM-2012-B-6006", status: DealStatus.LISTED_OPEN },
     { caseId: "PT-012", seller: "cedant.fleetrelance@demo.dealpme.local", regionCode: RegionCode.GRAND_LOME, rccm: "TG-LOM-2009-B-1212", status: DealStatus.LISTED_OPEN },
   ];
+  const DEMO_SCOPE =
+    "Existence juridique, immatriculation au RCCM et complétude documentaire vérifiées par la CCI-Togo. Ne portent ni sur l'exactitude des états financiers, ni sur l'absence de litige, ni sur la valeur de l'entreprise.";
   for (const c of cases) {
     const fx = loadPassTransmissionFixture<Fixture>(c.caseId);
     const owner = ids[c.seller]!;
@@ -120,6 +126,17 @@ async function main(): Promise<void> {
     await db.insert(s.membershipConfirmations).values({ id: newId(), organisationId: owner.orgId, confirmationRef: `CCIT-MEMBRE-${c.caseId}`, confirmedBy: officer.userId });
     if (fx.deal_ready.certification_awarded) {
       await db.insert(s.certifications).values({ id: newId(), companyId, scopeStatement: fx.deal_ready.scope_statement, decision: "GRANTED", officerUserId: officer.userId, decidedAt: new Date(fx.deal_ready.decision_date), expiresAt: new Date(fx.deal_ready.expiry_date) });
+    } else if (c.certified) {
+      // Décision valable un an à partir de la veille : le badge est en cours de validité pendant la démonstration.
+      await db.insert(s.certifications).values({
+        id: newId(),
+        companyId,
+        scopeStatement: DEMO_SCOPE,
+        decision: "GRANTED",
+        officerUserId: officer.userId,
+        decidedAt: new Date(now.getTime() - 86_400_000),
+        expiresAt: new Date(now.getTime() + 365 * 86_400_000),
+      });
     }
     const dealId = newId();
     const dealType = fx.master.deal_type === "SHARE_DEAL" ? DealType.SHARE_DEAL : DealType.ASSET_DEAL;

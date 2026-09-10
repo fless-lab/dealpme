@@ -157,3 +157,46 @@ DROP TRIGGER IF EXISTS trg_deal_document_versioned ON deal_document;
 CREATE TRIGGER trg_deal_document_versioned BEFORE UPDATE OR DELETE ON deal_document FOR EACH ROW EXECUTE FUNCTION version_chain_only();
 
 GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO dealpme_api;
+
+-- 11. Demandes de certification : visibles par l'entreprise qui les dépose et par l'institution qui les instruit.
+ALTER TABLE certification_request ENABLE ROW LEVEL SECURITY;
+ALTER TABLE certification_request FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS certification_request_owner ON certification_request;
+CREATE POLICY certification_request_owner ON certification_request
+  USING (EXISTS (SELECT 1 FROM company c WHERE c.id = certification_request.company_id AND c.owner_organisation_id::text = current_setting('app.organisation_id', true)));
+DROP POLICY IF EXISTS certification_request_officer ON certification_request;
+CREATE POLICY certification_request_officer ON certification_request
+  USING (position('CCI_OFFICER' in coalesce(current_setting('app.roles', true), '')) > 0
+      OR position('PLATFORM_ADMIN' in coalesce(current_setting('app.roles', true), '')) > 0);
+
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO dealpme_api;
+
+-- 12. Entreprises et vérifications de registre : lisibles par leur détenteur et par l'institution.
+--     Sans cette politique, tout compte authentifié pouvait lire la raison sociale et l'état d'instruction
+--     d'une entreprise qui ne le concerne pas (constat du 24/09/2026, corrigé le jour même).
+ALTER TABLE company ENABLE ROW LEVEL SECURITY;
+ALTER TABLE company FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS company_owner ON company;
+CREATE POLICY company_owner ON company
+  USING (owner_organisation_id::text = current_setting('app.organisation_id', true))
+  WITH CHECK (owner_organisation_id::text = current_setting('app.organisation_id', true));
+DROP POLICY IF EXISTS company_officer ON company;
+CREATE POLICY company_officer ON company
+  USING (position('CCI_OFFICER' in coalesce(current_setting('app.roles', true), '')) > 0
+      OR position('PLATFORM_ADMIN' in coalesce(current_setting('app.roles', true), '')) > 0)
+  WITH CHECK (position('CCI_OFFICER' in coalesce(current_setting('app.roles', true), '')) > 0
+           OR position('PLATFORM_ADMIN' in coalesce(current_setting('app.roles', true), '')) > 0);
+
+ALTER TABLE registry_record ENABLE ROW LEVEL SECURITY;
+ALTER TABLE registry_record FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS registry_record_owner ON registry_record;
+CREATE POLICY registry_record_owner ON registry_record FOR SELECT
+  USING (EXISTS (SELECT 1 FROM company c WHERE c.id = registry_record.company_id AND c.owner_organisation_id::text = current_setting('app.organisation_id', true)));
+DROP POLICY IF EXISTS registry_record_officer ON registry_record;
+CREATE POLICY registry_record_officer ON registry_record
+  USING (position('CCI_OFFICER' in coalesce(current_setting('app.roles', true), '')) > 0
+      OR position('PLATFORM_ADMIN' in coalesce(current_setting('app.roles', true), '')) > 0)
+  WITH CHECK (position('CCI_OFFICER' in coalesce(current_setting('app.roles', true), '')) > 0
+           OR position('PLATFORM_ADMIN' in coalesce(current_setting('app.roles', true), '')) > 0);
+
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO dealpme_api;

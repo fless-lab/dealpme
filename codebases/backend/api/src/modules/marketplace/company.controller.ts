@@ -4,6 +4,7 @@ import { z } from "zod";
 import { LegalForm, Role, newId } from "@dealpme/domain";
 import { CORE_DB, type CoreDb } from "../../database/database.module.js";
 import { companies } from "../../database/schema/core.js";
+import { withTenant } from "../../database/tenant.js";
 import { AuditService } from "../../platform/audit.service.js";
 import { CurrentPrincipal, Roles, type Principal } from "../../platform/auth.js";
 import { correlationIdOf } from "../../platform/correlation-id.middleware.js";
@@ -28,7 +29,9 @@ export class CompanyController {
   @Roles(Role.SELLER, Role.ADVISOR)
   async create(@Body(validate(CreateCompanySchema)) body: z.infer<typeof CreateCompanySchema>, @CurrentPrincipal() seller: Principal, @Req() req: Request) {
     const id = newId();
-    await this.db.insert(companies).values({ id, ownerOrganisationId: seller.organisationId, legalName: body.legalName, legalForm: body.legalForm, rccmNumber: body.rccmNumber ?? null });
+    await withTenant(this.db, seller, async (tx) => {
+      await tx.insert(companies).values({ id, ownerOrganisationId: seller.organisationId, legalName: body.legalName, legalForm: body.legalForm, rccmNumber: body.rccmNumber ?? null });
+    });
     this.audit.record({ action: "DEAL_CREATED", actorUserId: seller.userId, subjectType: "company", subjectId: id, outcome: "OK", correlationId: correlationIdOf(req) });
     return { companyId: id };
   }

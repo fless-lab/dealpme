@@ -103,7 +103,10 @@ PROGRESS = {
     "RegistryRecord stocké séparément": ("Complétée", None, dt.date(2026, 9, 4)),
     "Modèle Certification": ("Complétée", None, dt.date(2026, 9, 7)),
     "Workflow de décision nominative": ("Complétée", None, dt.date(2026, 9, 8)),
-    "Badge Deal-Ready : affichage": ("En cours", 0.8, None),
+    "Badge Deal-Ready : affichage": ("Complétée", None, dt.date(2026, 9, 24)),
+    "Checklist Deal-Ready et pièces attendues": ("Complétée", None, dt.date(2026, 9, 23)),
+    "Écrans côté entreprise : demande, suivi de remédiation": ("Complétée", None, dt.date(2026, 9, 24)),
+    "File d'instruction des demandes et remédiation nommée": ("Complétée", None, dt.date(2026, 9, 24)),
     "Tableau de bord institutionnel agrégé": ("Complétée", None, dt.date(2026, 9, 15)),
     "Écrans console CCI-Togo": ("Complétée", None, dt.date(2026, 9, 15)),
     "Écrans authentification": ("Complétée", None, dt.date(2026, 9, 11)),
@@ -187,7 +190,7 @@ T = []
 def add(v, m, lot, tache, crit, ch, prio="Moyenne", statut=None, bloquant="Non", dep=""):
     T.append((v, m, lot, tache, crit, ch, prio, statut or ("À faire" if v == "V1" else "Backlog"), bloquant, dep))
 
-# ---------------- V1 (259 j/p) ----------------
+# ---------------- V1 (262 j/p) ----------------
 add("V1", "TRV", "Conception", "Architecture cible et décisions structurantes : monolithe modulaire, RPS indépendant, isolation de la data room, TypeScript de bout en bout, connecteurs externes, sessions serveur (ADR 0001 à 0006)", "Chaque décision est un ADR archivé avec contexte, options écartées et conséquences", 3, "Haute", bloquant="Oui")
 add("V1", "FOND", "Conception", "Modèle de domaine et invariants : entités, agrégats, machine à états du deal, immutabilités (type de cession, attribution), isolation par organisation", "Schéma de domaine relu ; chaque invariant est porté par une contrainte ou un déclencheur en base, pas seulement par le code", 3, "Haute", bloquant="Oui")
 add("V1", "FOND", "Conception", "Classification des données et politique de chiffrement : catégories PUBLIC / INTERNAL / PERSONAL / CONFIDENTIAL_DEAL, champs chiffrés, gestion et rotation des clés", "Registre des champs par catégorie ; procédure de rotation écrite", 2, "Haute")
@@ -235,6 +238,7 @@ add("V1", "CCI", "Deal-Ready", "Workflow de décision nominative (octroi, refus,
 add("V1", "CCI", "Deal-Ready", "Checklist Deal-Ready et pièces attendues", "Liste des manques visible par l'entreprise", 3, "Moyenne")
 add("V1", "CCI", "Deal-Ready", "Écrans côté entreprise : demande, suivi de remédiation", "Statut et pièces manquantes visibles", 4, "Moyenne")
 add("V1", "CCI", "Deal-Ready", "Badge Deal-Ready : affichage avec périmètre et limites explicites", "Texte du badge précise ce qui est vérifié et ce qui ne l'est pas", 2, "Haute")
+add("V1", "CCI", "Deal-Ready", "File d'instruction des demandes et remédiation nommée côté officier", "Une demande peut recevoir des compléments libellés sans être refusée ; la décision clôt la demande", 3, "Moyenne")
 add("V1", "CCI", "Deal-Ready", "Journal d'audit des décisions de certification", "Chaque décision exportable avec horodatage et officier", 2, "Moyenne")
 
 add("V1", "MKT", "Dossier cédant", "Assistant de constitution de dossier : étapes, branchement par type de cession dès l'étape 1", "Parcours actif complet, branche titres présente mais bloquée en V1", 6, "Haute")
@@ -429,7 +433,7 @@ add("V5", "VDR-IA", "QA IA", "Performance : viewer progressif, streaming des ré
 add("V5", "VDR-IA", "QA IA", "Recette V5 et corrections", "Zéro anomalie bloquante ouverte", 5, "Haute")
 
 # ------------------------------------------------------------------ contrôle des totaux par version
-expected = {"V1": 259, "V2": 165, "V3": 176, "V4": 102, "V5": 153}
+expected = {"V1": 262, "V2": 165, "V3": 176, "V4": 102, "V5": 153}
 totals = {}
 for t in T:
     totals[t[0]] = totals.get(t[0], 0) + t[5]
@@ -962,6 +966,7 @@ DECISIONS = [
     ("A05", "09/09/2026", "Numérotation P01-P03", "Processus manquants ou numérotation volontaire à partir de P04 ?", "Ouvert", "CCI-Togo", "Faible impact sur le plan", "Confirmer avec le juridique", ""),
     ("A06", "09/09/2026", "Partenaire fiscal", "'TaxeFacile' est-il le partenaire réel, ou faut-il en qualifier un ?", "Ouvert", "M. Bruno", "Impacte le lot Conformité fiscale de V3", "Qualifier avant V3", "30/11/2026"),
     ("A07", "09/09/2026", "Charte du COPIL", "Composition, cadence exacte, règles de vote ?", "Ouvert", "CCI-Togo", "Gouvernance inter-version", "Récupérer l'annexe de la Convention", ""),
+    ("A12", "24/09/2026", "Certification visible dans le jeu de démonstration", "Aucune fixture de référence ne certifie un dossier publié : le badge Deal-Ready n'apparaîtrait jamais sur la place de marché pendant la démonstration. Le chargement de démonstration certifie donc PT-003, avec une portée explicite. Les fixtures restent intactes et demeurent l'oracle des tests.", "Tranché", "Chef de projet", "La démonstration montre les deux états, certifié et non certifié, sans altérer les cas de référence", "Confirmer le choix du dossier certifié avec M. Bruno avant la répétition générale", "12/10/2026"),
     ("A11", "23/09/2026", "Formats acceptés en pièce de dossier", "Documents, tableurs, présentations et images sont acceptés, anciens formats compris (PDF, Word, Excel, PowerPoint, OpenDocument, RTF, CSV, texte, JPEG, PNG, WebP, TIFF, HEIC) : ces formats sont ceux qui circulent réellement au Togo. Tous passent par l'antivirus, ne sont jamais exécutés, et seuls les PDF et images s'ouvrent dans le navigateur, le reste se télécharge. Les archives compressées restent exclues (ADR 0007).", "Tranché", "Chef de projet", "Ergonomie réelle contre surface de risque, arbitrée par l'analyse antivirus obligatoire", "Revoir si le pentest de V3 signale un vecteur bureautique", "18/12/2026"),
     ("A10", "15/09/2026", "Préalable à la certification", "L'octroi Deal-Ready exige une vérification RCCM ou CFE enregistrée pour l'entreprise ; le serveur refuse l'octroi sans elle (INVALID_TRANSITION). Le refus et le retrait restent possibles sans vérification.", "Tranché", "Chef de projet", "Évite un badge accordé sur des données uniquement déclaratives", "Confirmer la règle avec la CCI-Togo lors de la recette", "15/10/2026"),
     ("A09", "10/09/2026", "Palette de l'application", "La charte de marque (Marine Encre #1C2751, Bleu Signal #6678F1, Barlow) et le design system produit (Marine #0B2B52, Signal #1769E8, Inter) diffèrent. L'application suit le design system produit (PT-001 = autorité visuelle) ; la charte régit le site public. À confirmer par le designer.", "Ouvert", "Designer UI/UX", "Cohérence visuelle entre application et site public", "Trancher dès la nomination du designer", "18/09/2026"),
@@ -1511,6 +1516,7 @@ SECU = [
     ("S06", "Idempotence en mémoire ; signatures de webhooks non vérifiées (faux connecteurs)", "Double effet sur rejeu ; webhook forgé accepté", "Idempotence en base, HMAC vérifié sur chaque webhook, test de rejeu", "V1", "Idempotence persistée en base et vérification de signature HMAC sur tous les webhooks"),
     ("S07", "Mot de passe commun du jeu de démonstration", "Accès trivial si le jeu est chargé sur un environnement accessible", "Mots de passe uniques, chargement refusé hors développement", "V1", "Mots de passe de démonstration uniques par compte, jeu de démonstration interdit hors environnement local"),
     ("S08", "Aucun scan de dépendances exécuté", "Vulnérabilité connue embarquée sans alerte", "Scan bloquant en CI sur vulnérabilité critique, revue interne selon la liste de contrôle v0", "V1", "Revue de sécurité interne (liste de contrôle v0 : paliers, URL pré-signées, compteur RPS) et scan de dépendances bloquant en CI"),
+    ("S15", "Les tables entreprise et vérification de registre n'étaient pas couvertes par la RLS : tout compte authentifié pouvait lire la raison sociale et l'état d'instruction d'une entreprise tierce (constat interne du 24/09/2026)", "Fuite d'information entre cédants concurrents", "Corrigé le jour même : RLS activée sur company et registry_record (propriétaire et institution), lectures de la console passées sous contexte officier, contrôle de fumée ajouté", "V1", "Tests négatifs : permissions serveur, accès non autorisés, contrôles morts"),
     ("S09", "Aucun pentest indépendant", "Failles non détectées par l'équipe elle-même", "Reporté en V3 (porte G10) : exige un prestataire externe et un périmètre stabilisé ; mitigation V1 = revue interne S08, aucun environnement public avant V3 ; commander le pentest dès V2", "V3", "Pentest indépendant et remédiation des constats critiques et élevés (G10)"),
     ("S10", "Documents servis sans rendu serveur ni filigrane (data room absente en V1)", "Fuite de documents confidentiels", "Reporté en V2 avec la data room : rendu serveur, filigrane, URL pré-signées courtes, révocation en moins de 60 s ; V1 ne stocke aucun document de data room", "V2", "Visualiseur rendu serveur, page à page, chargement progressif (3G)"),
     ("S11", "Preuve de signature non qualifiée (pas de NDA en V1)", "NDA non opposable", "Reporté en V2 : prestataire PSC accrédité ARCEP, archivage PSAE ; V1 n'exécute aucun NDA", "V2", "Intégration API de signature qualifiée, webhooks à signature vérifiée"),

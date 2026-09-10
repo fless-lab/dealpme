@@ -356,3 +356,28 @@ export const declaredFacts = pgTable(
   },
   (t) => [index("declared_fact_deal_idx").on(t.dealId, t.fieldKey)],
 );
+
+/**
+ * Demande de certification Deal-Ready (P06). L'entreprise dépose une demande, l'officier CCI-Togo
+ * l'instruit : il peut demander une remédiation nommée, puis décider. La décision elle-même reste dans
+ * certification, nominative et jamais automatique ; cette table ne porte que l'instruction.
+ */
+export const certificationRequestStateEnum = pgEnum("certification_request_state", ["REQUESTED", "REMEDIATION_REQUIRED", "DECIDED", "WITHDRAWN"]);
+
+export const certificationRequests = pgTable(
+  "certification_request",
+  {
+    id: id(),
+    companyId: uuid("company_id").notNull().references(() => companies.id),
+    state: certificationRequestStateEnum("state").notNull().default("REQUESTED"),
+    message: text("message"), // INTERNAL : mot du cédant à l'appui de sa demande
+    remediationItems: jsonb("remediation_items").$type<{ label: string; detail: string | null }[]>().notNull().default(sql`'[]'::jsonb`),
+    remediationSetBy: uuid("remediation_set_by"),
+    remediationSetAt: timestamp("remediation_set_at", { withTimezone: true }),
+    certificationId: uuid("certification_id"), // décision qui a clos la demande
+    requestedBy: uuid("requested_by").notNull(),
+    requestedAt: timestamp("requested_at", { withTimezone: true }).notNull().defaultNow(),
+    closedAt: timestamp("closed_at", { withTimezone: true }),
+  },
+  (t) => [index("certification_request_company_idx").on(t.companyId, t.state)],
+);

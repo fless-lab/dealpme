@@ -7,3 +7,4 @@ export * from "./valuation.js";
 export * from "./vdr-gate.js";
 export * from "./fees.js";
 export * from "./dossier-checklist.js";
+export * from "./deal-ready-checklist.js";

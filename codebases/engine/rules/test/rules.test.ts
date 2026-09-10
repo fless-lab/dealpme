@@ -5,7 +5,10 @@ import {
   computeSuccessFee,
   indicativeRange,
   isIndexable,
+  DEAL_READY_LIMITS,
+  DEAL_READY_SCOPE,
   completeness,
+  dealReadyChecklist,
   matchDeal,
   openVdr,
   requirementsFor,
@@ -147,5 +150,45 @@ describe("liste des pièces du dossier cédant", () => {
     });
     expect(r.complete).toBe(false);
     expect(r.missing).toEqual([{ kind: "document", key: "PACTE_ASSOCIES", label: "Pacte d'associés, s'il existe", step: "PIECES" }]);
+  });
+});
+
+describe("liste de contrôle Deal-Ready", () => {
+  const complet = {
+    registryVerified: true,
+    membershipConfirmed: true,
+    dossierSubmitted: true,
+    documentCategories: ["STATUTS", "RCCM", "ETATS_FINANCIERS", "ATTESTATION_FISCALE"],
+  };
+
+  it("une entreprise sans rien ne peut pas demander la certification", () => {
+    const r = dealReadyChecklist({ registryVerified: false, membershipConfirmed: false, dossierSubmitted: false, documentCategories: [] });
+    expect(r.requestable).toBe(false);
+    expect(r.missingBlocking).toBe(6);
+    expect(r.criteria.every((c) => c.state === "MISSING")).toBe(true);
+    expect(r.criteria.filter((c) => c.state === "MISSING").every((c) => (c.remedy ?? "").length > 0)).toBe(true);
+  });
+
+  it("tous les critères bloquants satisfaits rendent la demande possible", () => {
+    const r = dealReadyChecklist(complet);
+    expect(r.requestable).toBe(true);
+    expect(r.missingBlocking).toBe(0);
+  });
+
+  it("l'adhésion n'est pas bloquante", () => {
+    const r = dealReadyChecklist({ ...complet, membershipConfirmed: false });
+    expect(r.requestable).toBe(true);
+    expect(r.criteria.find((c) => c.key === "MEMBERSHIP_CONFIRMED")?.state).toBe("MISSING");
+  });
+
+  it("une pièce manquante bloque la demande et nomme la pièce", () => {
+    const r = dealReadyChecklist({ ...complet, documentCategories: ["STATUTS", "RCCM", "ETATS_FINANCIERS"] });
+    expect(r.requestable).toBe(false);
+    expect(r.criteria.find((c) => c.key === "DOCUMENT_ATTESTATION_FISCALE")?.remedy).toContain("Attestation de régularité fiscale");
+  });
+
+  it("la portée du badge dit ce qui n'est pas vérifié", () => {
+    expect(DEAL_READY_SCOPE).toContain("Ne portent ni sur l'exactitude");
+    expect(DEAL_READY_LIMITS.length).toBeGreaterThanOrEqual(4);
   });
 });

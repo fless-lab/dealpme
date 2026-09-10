@@ -8,9 +8,9 @@ routes, avec une seule session, une seule navigation adaptée au rôle et un seu
 ```
 app/
   (public)/            site vitrine, marketplace T0, connexion, inscription, vérification d'email, second facteur
-  (espace)/cedant/     espace cédant : liste des dossiers, assistant en cinq étapes, récapitulatif, historique
+  (espace)/cedant/     espace cédant : dossiers, assistant en cinq étapes, récapitulatif, historique, certification
   (espace)/investisseur/ opportunités, thèse, demandes d'accès, deals
-  (espace)/cci/        console CCI-Togo : tableau de bord agrégé, adhésions, entreprises, journal des certifications
+  (espace)/cci/        console CCI-Togo : tableau de bord, adhésions, entreprises, demandes, journal des certifications
   (espace)/conformite/ admissions, compteurs de divulgation, blocages (V2)
   (espace)/admin/      opérations, drapeaux, incidents (V3)
   (dataroom)/          poste de travail data room et VDR Intelligence (V2, V5)
@@ -20,6 +20,7 @@ app/
   api/sessions/[id]    BFF : révocation d'un appareil
   api/institution/     BFF de la console CCI-Togo, sur liste blanche d'actions
   api/dossier/         BFF du dossier cédant : valeurs déclarées, dépôt et lecture des pièces
+  api/certification/   BFF de la certification côté entreprise : dépôt et retrait d'une demande
 ```
 
 Le navigateur ne parle qu'au BFF (`app/api/`). Le jeton de session API est posé dans un cookie `dp_session` httpOnly,
@@ -86,3 +87,13 @@ Le laboratoire de composants (`/labo`) affiche chaque composant dans toutes ses 
 données de démonstration. C'est la surface de revue du designer et la référence des captures de régression visuelle
 (1440 x 960 et 390 x 844). Un Storybook peut être ajouté lorsque le designer rejoint le projet ; le laboratoire en
 tient lieu d'ici là sans dépendance supplémentaire.
+
+## Badge Deal-Ready
+
+Le badge n'apparaît jamais seul. `components/deal-ready.tsx` porte le composant unique qui l'accompagne de sa
+portée et de ses limites : ce qui est vérifié, puis ce qui ne l'est pas. La règle vaut sur la place de marché, sur la
+fiche d'instruction de la CCI-Togo et sur l'écran de certification du cédant. Un badge sans portée se lirait comme
+une garantie de la plateforme, ce qu'il n'est pas : la décision appartient à un officier nommé de la CCI-Togo.
+
+Les critères affichés viennent de `@dealpme/rules` (`dealReadyChecklist`) et sont servis identiques aux deux côtés :
+l'entreprise voit exactement ce que l'officier verra, avec ce qu'il reste à produire.

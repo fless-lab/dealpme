@@ -6,6 +6,7 @@ const NAV = [
   { href: "/cci", label: "Tableau de bord", controlId: "CCI_NAV_OVERVIEW" },
   { href: "/cci/adhesions", label: "Adhésions", controlId: "CCI_NAV_MEMBERSHIPS" },
   { href: "/cci/entreprises", label: "Entreprises", controlId: "CCI_NAV_COMPANIES" },
+  { href: "/cci/demandes", label: "Demandes de certification", controlId: "CCI_NAV_REQUESTS" },
   { href: "/cci/certifications", label: "Journal des certifications", controlId: "CCI_NAV_CERTIFICATIONS" },
 ];
 

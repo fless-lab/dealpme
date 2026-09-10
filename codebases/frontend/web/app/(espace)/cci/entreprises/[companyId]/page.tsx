@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { ContextBar, CriteriaMatrix, DecisionGate, Panel, StateBanner, StatusBadge } from "@dealpme/ui";
 import { api, ApiError } from "../../../../../lib/api";
 import { fmtDate, fmtDateTime, requireRole } from "../../../../../lib/guards";
+import { DealReadyScope } from "../../../../../components/deal-ready";
 import { CertificationDecision } from "./certification-decision";
 import { RegistryVerification } from "./registry-verification";
 
@@ -133,7 +134,7 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
                 <StatusBadge status={data.certification.isDealReady ? "verified" : "revoked"} label={DECISION[data.certification.decision] ?? data.certification.decision} controlId="CCI_DETAIL_DECISION" />
                 {data.certification.expiresAt ? <span className="dp-muted" style={{ marginLeft: 8 }}>Expire le {fmtDate(data.certification.expiresAt)}</span> : null}
               </div>
-              {data.certification.scopeStatement ? <p style={{ margin: 0 }}>{data.certification.scopeStatement}</p> : null}
+              <DealReadyScope scopeStatement={data.certification.scopeStatement} />
             </div>
           ) : null}
           {data.registry ? <CertificationDecision companyId={data.id} officerEmail={me.email} hasDecision={!!data.certification.decision} isDealReady={data.certification.isDealReady} /> : null}

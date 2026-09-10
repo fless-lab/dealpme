@@ -7,7 +7,13 @@ import { API_BASE, api, ApiError, SESSION_COOKIE, messageFor } from "../../../..
  * contre un appel authentifié. La liste blanche empêche ce relais de servir de proxy générique vers l'API ;
  * l'autorisation reste évaluée par l'API, qui refuse tout appelant sans le rôle d'officier.
  */
-const POST_ALLOWED = new Set(["membership-confirmations", "registry-verifications", "certifications"]);
+const POST_ALLOWED: RegExp[] = [
+  /^membership-confirmations$/,
+  /^registry-verifications$/,
+  /^certifications$/,
+  /^certification-requests\/[0-9a-f-]{36}\/remediation$/,
+];
+const isAllowed = (target: string) => POST_ALLOWED.some((r) => r.test(target));
 
 async function token(): Promise<string | null> {
   return (await cookies()).get(SESSION_COOKIE)?.value ?? null;
@@ -16,7 +22,7 @@ async function token(): Promise<string | null> {
 export async function POST(req: NextRequest, ctx: { params: Promise<{ path: string[] }> }) {
   const { path } = await ctx.params;
   const target = path.join("/");
-  if (!POST_ALLOWED.has(target)) return NextResponse.json({ ok: false, message: "Action inconnue" }, { status: 404 });
+  if (!isAllowed(target)) return NextResponse.json({ ok: false, message: "Action inconnue" }, { status: 404 });
   const t = await token();
   if (!t) return NextResponse.json({ ok: false, message: "Connexion requise" }, { status: 401 });
   const body = await req.json().catch(() => ({}));
