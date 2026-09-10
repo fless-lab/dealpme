@@ -8,16 +8,8 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
-    services:
-      postgres-core:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_DB: dealpme_core
-          POSTGRES_USER: dealpme_core
-          POSTGRES_PASSWORD: dealpme_core
-        ports: ["5432:5432"]
-        options: >-
-          --health-cmd "pg_isready -U dealpme_core" --health-interval 5s --health-timeout 3s --health-retries 20
+    # Toute l'infrastructure (trois Postgres, Redis, MinIO, Mailpit) vient de infra/docker-compose.yml,
+    # exactement comme en local : aucun conteneur de service GitHub en doublon sur les mêmes ports.
     steps:
       - uses: actions/checkout@v4
         with:
