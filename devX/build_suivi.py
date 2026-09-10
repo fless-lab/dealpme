@@ -97,7 +97,6 @@ PROGRESS = {
     "Rôles et permissions évalués côté serveur": ("Complétée", None, dt.date(2026, 9, 8)),
     "Gestion de session": ("Complétée", None, dt.date(2026, 9, 11)),
     "Consentements séparés": ("Complétée", None, dt.date(2026, 9, 3)),
-    "Paliers d'abonnement": ("En cours", 0.5, None),
     "Workflow de confirmation d'adhésion": ("Complétée", None, dt.date(2026, 9, 14)),
     "Vérification RCCM / CFE": ("En cours", 0.9, None),
     "RegistryRecord stocké séparément": ("Complétée", None, dt.date(2026, 9, 4)),
@@ -131,7 +130,6 @@ PROGRESS = {
     "Alertes sauvegardées opt-in": ("Complétée", None, dt.date(2026, 10, 1)),
     "Tableau de bord cédant (vues, intérêts reçus)": ("Complétée", None, dt.date(2026, 10, 1)),
     "Écrans marketplace (liste, détail, recherche)": ("Complétée", None, dt.date(2026, 10, 2)),
-    "Saisie des données financières minimales": ("En cours", 0.4, None),
     "Calcul de fourchette indicative": ("Complétée", None, dt.date(2026, 9, 7)),
     "Mentions 'indicative, non opposable'": ("Complétée", None, dt.date(2026, 9, 7)),
     "Scénario scripté : dossier titres": ("Complétée", None, dt.date(2026, 10, 2)),
@@ -139,7 +137,6 @@ PROGRESS = {
     "Fixture synthétique dédiée": ("Complétée", None, dt.date(2026, 9, 30)),
     "Écran T1 anonymisé de démonstration": ("Complétée", None, dt.date(2026, 10, 5)),
     "Journal de démonstration : trace lisible": ("Complétée", None, dt.date(2026, 10, 5)),
-    "Tests automatisés": ("En cours", 0.45, None),
     "Intégration du design system": ("Complétée", None, dt.date(2026, 9, 11)),
     "Architecture cible et décisions structurantes": ("Complétée", None, dt.date(2026, 9, 4)),
     "Modèle de domaine et invariants": ("Complétée", None, dt.date(2026, 9, 5)),
@@ -150,9 +147,7 @@ PROGRESS = {
     "Conception de l'intégration Remo.co": ("En cours", 0.6, None),
     "Gabarit applicatif": ("En cours", 0.8, None),
     "Tests négatifs : permissions serveur": ("En cours", 0.7, None),
-    "Jeu de données de démonstration complet": ("En cours", 0.6, None),
     "Journal d'audit des décisions de certification": ("Complétée", None, dt.date(2026, 9, 14)),
-    "Documentation développeur": ("En cours", 0.6, None),
     "Connecteur Remo.co": ("En cours", 0.4, None),
     "Inscriptions DEALPME_FIRST": ("En cours", 0.5, None),
     "Demande de rendez-vous diaspora": ("En cours", 0.3, None),
@@ -166,6 +161,20 @@ PROGRESS = {
     "Chiffrement applicatif des champs CONFIDENTIAL_DEAL": ("Complétée", None, dt.date(2026, 9, 10)),
     "En-têtes de sécurité HTTP": ("Complétée", None, dt.date(2026, 9, 8)),
 }
+# Deux entrées portant la même clé se masquent l'une l'autre en silence : la seconde gagne et l'avancement
+# saisi plus haut disparaît sans erreur. Le contrôle ci-dessous a rattrapé le cas le 12/10/2026.
+def _check_progress_keys() -> None:
+    import re as _re
+    from collections import Counter as _Counter
+    source = open(__file__, encoding="utf-8").read()
+    block = source.split("PROGRESS = {", 1)[1].split("\n}", 1)[0]
+    dups = [k for k, n in _Counter(_re.findall(r'^\s*"([^"]+)":', block, _re.M)).items() if n > 1]
+    if dups:
+        raise SystemExit(f"Clés en double dans PROGRESS : {', '.join(dups)}")
+
+
+_check_progress_keys()
+
 DEFAULT_OWNER = "Abdou-Raouf"
 
 MODULES = [
