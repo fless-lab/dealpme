@@ -1,5 +1,9 @@
 @import "@dealpme/ui/src/tokens.css";
 
-a { color: var(--dp-signal); }
-.dp-card { background: var(--dp-blanc); border: 1px solid var(--dp-border); border-radius: var(--dp-radius); padding: 1rem 1.2rem; }
-.dp-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.dp-auth { max-width: 460px; margin: var(--dp-space-8) auto; }
+.dp-auth h1 { margin-bottom: var(--dp-space-2); }
+.dp-auth .dp-lede { color: var(--dp-muted); margin: 0 0 var(--dp-space-6); }
+.dp-grid { display: grid; gap: var(--dp-space-4); grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.dp-lab section { margin-bottom: var(--dp-space-8); }
+.dp-lab h2 { margin-bottom: var(--dp-space-3); padding-bottom: var(--dp-space-2); border-bottom: 1px solid var(--dp-line); }
+.dp-lab .dp-variants { display: flex; flex-wrap: wrap; gap: var(--dp-space-3); align-items: flex-start; }

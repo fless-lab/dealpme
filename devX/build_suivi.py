@@ -95,7 +95,8 @@ PROGRESS = {
     "Socle i18n": ("En cours", 0.6, None),
     "Inscription email": ("En cours", 0.7, None),
     "Rôles et permissions évalués côté serveur": ("Complétée", None, dt.date(2026, 9, 8)),
-    "Gestion de session": ("En cours", 0.7, None),
+    "Gestion de session": ("En cours", 0.9, None),
+    "Écrans authentification": ("En cours", 0.7, None),
     "Consentements séparés": ("Complétée", None, dt.date(2026, 9, 3)),
     "Paliers d'abonnement": ("En cours", 0.5, None),
     "Workflow de confirmation d'adhésion": ("En cours", 0.8, None),
@@ -112,9 +113,16 @@ PROGRESS = {
     "Calcul de fourchette indicative": ("Complétée", None, dt.date(2026, 9, 7)),
     "Mentions 'indicative, non opposable'": ("Complétée", None, dt.date(2026, 9, 7)),
     "Scénario scripté : dossier titres": ("En cours", 0.3, None),
-    "Intégration du design system": ("En cours", 0.5, None),
-    "Gabarit applicatif": ("En cours", 0.5, None),
     "Tests automatisés": ("En cours", 0.45, None),
+    "Intégration du design system": ("Complétée", None, dt.date(2026, 9, 11)),
+    "Architecture cible et décisions structurantes": ("Complétée", None, dt.date(2026, 9, 4)),
+    "Modèle de domaine et invariants": ("Complétée", None, dt.date(2026, 9, 5)),
+    "Classification des données et politique de chiffrement": ("Complétée", None, dt.date(2026, 9, 10)),
+    "Contrats d'API : enveloppe d'erreur unique": ("Complétée", None, dt.date(2026, 9, 6)),
+    "Modèle de menaces V1": ("Complétée", None, dt.date(2026, 9, 9)),
+    "Conception frontend : une application par groupes de routes": ("Complétée", None, dt.date(2026, 9, 11)),
+    "Conception de l'intégration Remo.co": ("En cours", 0.6, None),
+    "Gabarit applicatif": ("En cours", 0.8, None),
     "Tests négatifs : permissions serveur": ("En cours", 0.7, None),
     "Jeu de données de démonstration complet": ("En cours", 0.6, None),
     "Journal d'audit des décisions de certification": ("En cours", 0.6, None),
@@ -173,7 +181,14 @@ T = []
 def add(v, m, lot, tache, crit, ch, prio="Moyenne", statut=None, bloquant="Non", dep=""):
     T.append((v, m, lot, tache, crit, ch, prio, statut or ("À faire" if v == "V1" else "Backlog"), bloquant, dep))
 
-# ---------------- V1 (195 j/p) ----------------
+# ---------------- V1 (253 j/p) ----------------
+add("V1", "TRV", "Conception", "Architecture cible et décisions structurantes : monolithe modulaire, RPS indépendant, isolation de la data room, TypeScript de bout en bout, connecteurs externes, sessions serveur (ADR 0001 à 0006)", "Chaque décision est un ADR archivé avec contexte, options écartées et conséquences", 3, "Haute", bloquant="Oui")
+add("V1", "FOND", "Conception", "Modèle de domaine et invariants : entités, agrégats, machine à états du deal, immutabilités (type de cession, attribution), isolation par organisation", "Schéma de domaine relu ; chaque invariant est porté par une contrainte ou un déclencheur en base, pas seulement par le code", 3, "Haute", bloquant="Oui")
+add("V1", "FOND", "Conception", "Classification des données et politique de chiffrement : catégories PUBLIC / INTERNAL / PERSONAL / CONFIDENTIAL_DEAL, champs chiffrés, gestion et rotation des clés", "Registre des champs par catégorie ; procédure de rotation écrite", 2, "Haute")
+add("V1", "TRV", "Conception", "Contrats d'API : enveloppe d'erreur unique, codes distincts (NOT_FOUND, FORBIDDEN, PERIMETER_BLOCKED), projection serveur par palier, pagination, idempotence", "Contrats typés partagés entre API et interface ; aucun code d'erreur ambigu", 2, "Haute")
+add("V1", "OPS", "Conception", "Modèle de menaces V1 : acteurs, surfaces (inscription, dossier, publication, certification, webhooks), scénarios d'abus et exigences de sécurité dérivées", "Chaque menace retenue est reliée à une tâche du lot Sécurité ou à une entrée de l'onglet Securite", 3, "Haute")
+add("V1", "TRV", "Conception", "Conception frontend : une application par groupes de routes (public, espaces par rôle, data room), BFF de session à cookie httpOnly, laboratoire de composants, règles d'états d'écran", "Document frontend relu ; toute page connaît ses états vide, chargement, erreur et refus", 2, "Haute")
+add("V1", "CNX", "Conception", "Conception de l'intégration Remo.co : séquences DEALPME_FIRST et REMO_FIRST, rapprochement des identités, sécurité des webhooks, marque blanche", "Diagrammes de séquence validés ; aucun contact échangé sans consentement dans le flux", 2, "Haute", dep="Cadrage Remo.co")
 add("V1", "TRV", "Fondations", "Dépôt monorepo (apps/, packages/), conventions de code, CI de base", "Pipeline CI vert sur une branche vide, lint et tests exécutés", 3, "Haute")
 add("V1", "TRV", "Fondations", "Environnements dev / staging, gestion des secrets, déploiement de base", "Déploiement automatique de staging depuis la branche principale", 4, "Haute")
 add("V1", "FOND", "Fondations", "Modèle de données socle : Organisation, User, Person, Company", "Migrations appliquées, classification de chaque champ renseignée", 4, "Haute")
@@ -256,7 +271,11 @@ add("V1", "TRV", "QA et livraison", "Recette interne et corrections", "Zéro ano
 add("V1", "TRV", "QA et livraison", "Documentation développeur et guide de démonstration", "Nouvel arrivant opérationnel en une journée", 3, "Moyenne")
 add("V1", "TRV", "QA et livraison", "Préparation de la démonstration du 15/10 (script, environnement, données)", "Répétition générale réalisée", 2, "Haute")
 
-# ---------------- V2 (150 j/p) ----------------
+# ---------------- V2 (162 j/p) ----------------
+add("V2", "RPS", "Conception", "Conception du circuit RPS réel : modèle de cercle et de personne unique, plafond et seuils, admission humaine, journal réglementaire à chaîne de hachage, contrat d'API du service", "Spécification relue par le conseil juridique ; chaque règle du v0 (P07, P10) a sa contrepartie technique", 4, "Haute", bloquant="Oui")
+add("V2", "VDR", "Conception", "Conception de la data room : stockage chiffré isolé, rendu serveur, filigrane dynamique, révocation en moins de 60 s, journal d'accès, modèle de permissions par dossier", "Aucun chemin d'accès direct aux fichiers ; schéma de permissions validé sur les 12 cas de référence", 4, "Haute", bloquant="Oui")
+add("V2", "SIG", "Conception", "Conception de la signature électronique : intégration du prestataire PSC, preuve et archivage, repli papier, statuts de signature dans la machine à états", "Séquences de signature et de repli documentées ; contrat de preuve défini", 2, "Haute", dep="Contrat PSC")
+add("V2", "TRV", "Conception", "Revue d'architecture V2 et mise à jour du modèle de menaces (paliers T1/T2, data room, signature)", "ADR mis à jour ; menaces nouvelles reliées aux tests de QA et sécurité", 2, "Haute")
 add("V2", "RPS", "Circuit RPS réel", "Micro-service RPS indépendant : datastore, API, déploiement séparé", "Déployable indépendamment du reste de la plateforme", 6, "Haute")
 add("V2", "RPS", "Circuit RPS réel", "Table Disclosure append-only et compteur par personne (pas par session)", "Révocation crée une ligne, ne supprime jamais", 5, "Haute")
 add("V2", "RPS", "Circuit RPS réel", "Graphe de personnes liées (comptées une seule fois)", "Deux comptes liés comptent pour une personne", 4, "Haute")
@@ -294,7 +313,11 @@ add("V2", "TRV", "QA et sécurité", "Tests de révocation et d'expiration (REVO
 add("V2", "TRV", "QA et sécurité", "Revue de sécurité interne et préparation du périmètre de pentest", "Périmètre de pentest rédigé", 5, "Haute")
 add("V2", "TRV", "QA et sécurité", "Recette V2 et corrections", "Zéro anomalie bloquante ouverte", 5, "Haute")
 
-# ---------------- V3 (160 j/p) ----------------
+# ---------------- V3 (170 j/p) ----------------
+add("V3", "NEG", "Conception", "Conception de la négociation et de la réalisation : machine à états complète (offre, LOI, audit, réalisation), registre des points ouverts, événements de frais", "Chaque transition est spécifiée avec ses préconditions et ses effets journalisés", 3, "Haute", bloquant="Oui")
+add("V3", "FIN", "Conception", "Conception du moteur de frais et de rétrocession : barème versionné sous drapeau juridique, journal de calcul recalculable, rapport trimestriel", "Un calcul peut être rejoué à l'identique à partir du journal ; barème inactif sans avis écrit", 2, "Haute")
+add("V3", "LEG", "Conception", "Conception LegalTech : modèle de gabarit versionné, variables, génération PDF, mention obligatoire, traçabilité de la revue du conseil", "Schéma de gabarit validé avec le conseil juridique", 2, "Moyenne")
+add("V3", "OPS", "Conception", "Conception de l'exploitation et du support : SLA 99,5 %, supervision, sauvegardes et restauration, procédure d'incident, accès privilégiés et mode break-glass journalisé", "Plan d'exploitation relu ; chaque accès privilégié est tracé et limité dans le temps", 3, "Haute")
 add("V3", "LEG", "LegalTech OHADA", "Modèles versionnés : NDA, LOI, pacte simplifié, SPA, cession d'actifs, contrat de travail (Code du travail togolais)", "Chaque modèle porte version et référence du conseil", 8, "Haute")
 add("V3", "LEG", "LegalTech OHADA", "Moteur de génération PDF avec variables et mention 'aide à la rédaction, pas un conseil juridique'", "Mention présente sur chaque document généré", 7, "Haute")
 add("V3", "LEG", "LegalTech OHADA", "Revue des modèles par le conseil juridique (coordination)", "Avis écrit archivé par modèle", 4, "Haute", bloquant="Oui")
@@ -338,7 +361,10 @@ add("V3", "OPS", "Exploitation", "Sauvegardes chiffrées et test de restauration
 add("V3", "OPS", "Exploitation", "Procédure d'incident, analyse de cause racine, rollback", "Procédure testée sur un incident simulé", 4, "Moyenne")
 add("V3", "OPS", "Exploitation", "Rotation des clés, gestion des secrets, scan de dépendances en CI", "Build échoue sur vulnérabilité critique", 5, "Haute")
 
-# ---------------- V4 (110 j/p) ----------------
+# ---------------- V4 (102 j/p) ----------------
+add("V4", "REB", "Conception", "Conception Alerte & Rebond : confidentialité renforcée, signalement, actifs en difficulté et lien avec le périmètre RPS", "Modèle de données et parcours validés ; aucune fuite d'identité d'une entreprise en difficulté", 3, "Haute", bloquant="Oui")
+add("V4", "CNX", "Conception", "Conception Deal-Connect et Guichet Diaspora complets : billetterie et sponsoring via Remo.co, rendez-vous mutuels, profil diaspora, rapport post-événement", "Séquences et contrats d'échange avec Remo.co validés sur la documentation à jour", 2, "Haute")
+add("V4", "EXP", "Conception", "Conception Deal-Experts : mobilisation d'expert indépendant, conflit d'intérêts, périmètre de mission, traçabilité", "Décision d'arbitrage (P13) prise et modèle de mission spécifié", 2, "Moyenne", dep="Arbitrage Deal-Experts")
 add("V4", "REB", "Alerte & Rebond", "Auto-diagnostic : arbre logique et score de santé financière", "Score expliqué, jamais un conseil personnalisé", 6, "Haute")
 add("V4", "REB", "Alerte & Rebond", "Dossier de crise confidentiel, INVITE_ONLY, registre d'investisseurs de retournement", "Dossier absent de toute recherche ouverte (test négatif)", 6, "Haute")
 add("V4", "REB", "Alerte & Rebond", "Signalement statutaire (mandataire de justice) et avertissement sur les clauses bancaires", "Avertissement affiché avant tout changement de visibilité", 3, "Moyenne")
@@ -364,7 +390,9 @@ add("V4", "EXP", "Deal-Experts", "Accès temporaire scopé en lecture, expiratio
 add("V4", "EXP", "Deal-Experts", "Contrat direct client-expert (hors facturation DealPME) et journal", "Aucune facturation de prestation par DealPME", 3, "Moyenne")
 add("V4", "EXP", "Deal-Experts", "Écrans Deal-Experts", "Aucun contenu d'expert imputé à DealPME", 2, "Basse")
 
-# ---------------- V5 (145 j/p) ----------------
+# ---------------- V5 (153 j/p) ----------------
+add("V5", "VDR-IA", "Conception", "Conception VDR Intelligence : pare-feu de divulgation avant récupération, pipeline d'ingestion, indexation filtrée par permission, contrat de réponse avec citations et insuffisance", "Spécification relue sur les 12 cas de référence ; aucune étape 'récupérer puis masquer'", 5, "Haute", bloquant="Oui")
+add("V5", "OPS", "Conception", "Revue de sécurité de conception IA : modèle de menaces (injection par document, fuite inter-dossiers, réutilisation des données par le fournisseur)", "Chaque menace reliée à un test QA IA ou à une clause du contrat fournisseur", 3, "Haute")
 add("V5", "VDR-IA", "Fournisseur IA", "Qualification et contrat du fournisseur IA (confidentialité, hébergement, aucune réutilisation des données)", "Contrat signé avec clauses de confidentialité", 5, "Haute", bloquant="Oui")
 add("V5", "VDR-IA", "Fournisseur IA", "Dossier de conformité IA : politique, drapeaux fonctionnels, journal des politiques", "Chaque changement de politique audité", 5, "Haute")
 add("V5", "VDR-IA", "Ingestion", "Pipeline d'ingestion : classification, OCR, ancres de page, empreinte de version", "États UPLOADED à PUBLISHED implémentés", 8, "Haute")
@@ -389,7 +417,7 @@ add("V5", "VDR-IA", "QA IA", "Performance : viewer progressif, streaming des ré
 add("V5", "VDR-IA", "QA IA", "Recette V5 et corrections", "Zéro anomalie bloquante ouverte", 5, "Haute")
 
 # ------------------------------------------------------------------ contrôle des totaux par version
-expected = {"V1": 236, "V2": 150, "V3": 160, "V4": 95, "V5": 145}
+expected = {"V1": 253, "V2": 162, "V3": 170, "V4": 102, "V5": 153}
 totals = {}
 for t in T:
     totals[t[0]] = totals.get(t[0], 0) + t[5]
@@ -875,7 +903,7 @@ RISQUES = [
     ("R10", "Fournisseur IA sans clauses de confidentialité acceptables", "Dépendance externe", 3, 5, "V5", "Conseil juridique", "Consultation dès V3, clauses de non-réutilisation des données", "Ouvert"),
     ("R11", "Fuite de divulgation T0 / T1 sur un dossier titres en production", "Sécurité", 2, 5, "V2", "Équipe de développement", "Allow-list serveur, tests DISCLOSURE_LEAK sur les 12 cas de référence", "Surveillé"),
     ("R12", "Sur-ingénierie par rapport au plafond du pilote (2 000 comptes)", "Technique", 2, 2, "V2", "Chef de projet", "Revue d'architecture à chaque version contre le plafond de capacité", "Surveillé"),
-    ("R14", "Calendrier V2 à V5 compressé (V5 : 145 j/p en trois semaines) avec lancement commercial au 01/03/2027", "Planning", 4, 4, "V5", "Chef de projet", "Dimensionner l'équipe sur l'ETP requis affiché dans la feuille de route, ou déplacer les surfaces DealLens non essentielles après le lancement ; commander le pentest et le contrat IA dès V2", "Ouvert"),
+    ("R14", "Calendrier V2 à V5 compressé (V5 : 153 j/p en trois semaines) avec lancement commercial au 01/03/2027", "Planning", 4, 4, "V5", "Chef de projet", "Dimensionner l'équipe sur l'ETP requis affiché dans la feuille de route, ou déplacer les surfaces DealLens non essentielles après le lancement ; commander le pentest et le contrat IA dès V2", "Ouvert"),
     ("R13", "Pentest indépendant reporté en V3 : la démonstration V1 tourne sans audit externe", "Sécurité", 3, 4, "V1", "Chef de projet", "Revue de sécurité interne et scan de dépendances en V1 (lot Sécurité) ; aucun environnement accessible publiquement avant V3 ; commander le pentest dès V2", "Ouvert"),
 ]
 hR = ["ID", "Risque", "Catégorie", "Probabilité (1-5)", "Impact (1-5)", "Score", "Niveau", "Version", "Responsable", "Mitigation", "Statut"]
@@ -913,7 +941,7 @@ title(wsD, "Journal des décisions et arbitrages", "Toute demande de changement 
 DECISIONS = [
     ("D01", "09/09/2026", "Périmètre cible", "Le cahier des charges v0 approuvé et le Référentiel P04-P25 sont retenus comme cible finale ; le blueprint v5 n'est pas retenu.", "Tranché", "M. Bruno", "Cadre toute la feuille de route", "", ""),
     ("D02", "09/09/2026", "Deal-Connect / Guichet Diaspora", "Remo.co retenu comme connecteur externe pour les salons et rendez-vous virtuels.", "Tranché", "M. Bruno", "Intégration dès V1 ; périmètre d'intégration à cadrer", "Cadrage écrit sur la documentation API Remo", "18/09/2026"),
-    ("D04", "10/09/2026", "Lot Sécurité en V1", "Huit constats de sécurité traités avant la présentation (RLS effective, anti-force-brute, MFA, chiffrement applicatif, en-têtes, idempotence et signatures, revue interne, mots de passe de démonstration). Le pentest indépendant reste en V3 (porte G10).", "Tranché", "Chef de projet", "+19 j/p sur V1 (total 236) ; voir l'onglet Securite", "Commencer par la RLS effective", "18/09/2026"),
+    ("D04", "10/09/2026", "Lot Sécurité en V1", "Huit constats de sécurité traités avant la présentation (RLS effective, anti-force-brute, MFA, chiffrement applicatif, en-têtes, idempotence et signatures, revue interne, mots de passe de démonstration). Le pentest indépendant reste en V3 (porte G10).", "Tranché", "Chef de projet", "+19 j/p sur V1 ; voir l'onglet Securite", "Commencer par la RLS effective", "18/09/2026"),
     ("D03", "09/09/2026", "Démonstration RPS en V1", "V1 inclut une démonstration maquettée du blocage de publication d'une cession de titres ; le circuit réel reste en V2.", "Tranché", "Chef de projet", "+20 j/p sur V1", "", ""),
     ("A01", "09/09/2026", "Équipe de développement", "Taille et séniorité de l'équipe disponible dès maintenant ?", "Ouvert", "M. Bruno", "Détermine si V1 tient en 5 semaines ou nécessite des coupes", "Réponse attendue avant J01", "14/09/2026"),
     ("A02", "09/09/2026", "API CFE / RCCM", "Une API existe-t-elle, ou faut-il un échange de fichier supervisé ?", "Ouvert", "CCI-Togo", "Bloque le lot Espace CCI-Togo", "Vérifier avant le démarrage du lot", "16/09/2026"),
@@ -922,6 +950,7 @@ DECISIONS = [
     ("A05", "09/09/2026", "Numérotation P01-P03", "Processus manquants ou numérotation volontaire à partir de P04 ?", "Ouvert", "CCI-Togo", "Faible impact sur le plan", "Confirmer avec le juridique", ""),
     ("A06", "09/09/2026", "Partenaire fiscal", "'TaxeFacile' est-il le partenaire réel, ou faut-il en qualifier un ?", "Ouvert", "M. Bruno", "Impacte le lot Conformité fiscale de V3", "Qualifier avant V3", "30/11/2026"),
     ("A07", "09/09/2026", "Charte du COPIL", "Composition, cadence exacte, règles de vote ?", "Ouvert", "CCI-Togo", "Gouvernance inter-version", "Récupérer l'annexe de la Convention", ""),
+    ("A09", "10/09/2026", "Palette de l'application", "La charte de marque (Marine Encre #1C2751, Bleu Signal #6678F1, Barlow) et le design system produit (Marine #0B2B52, Signal #1769E8, Inter) diffèrent. L'application suit le design system produit (PT-001 = autorité visuelle) ; la charte régit le site public. À confirmer par le designer.", "Ouvert", "Designer UI/UX", "Cohérence visuelle entre application et site public", "Trancher dès la nomination du designer", "18/09/2026"),
     ("A08", "09/09/2026", "Fournisseur IA (DealLens)", "Quel fournisseur, avec quelles clauses de confidentialité ?", "Ouvert", "Conseil juridique", "Bloque tout le lot V5", "Lancer la consultation dès V3", "09/04/2027"),
 ]
 hD = ["ID", "Date", "Sujet", "Décision ou question", "Statut", "Décideur", "Impact", "Prochaine action", "Échéance"]
@@ -1320,7 +1349,7 @@ ROADMAP = {
                   "Alerte & Rebond, billetterie et sponsoring Deal-Connect, rendez-vous mutuels, rapport post-événement, profil diaspora complet (V4)"],
         "prerequis": "Équipe de développement confirmée (5 à 6 profils) ; réponse sur l'API CFE/RCCM ; designer UI/UX confirmé.",
         "decision": "La démonstration RPS fait partie de V1. Sans équipe à 5 ou 6 profils, la démonstration RPS est le premier lot à retirer, avant le matching automatisé.",
-        "lots": ["Fondations", "Auth et rôles", "Espace CCI-Togo", "Deal-Ready", "Dossier cédant", "Marketplace actifs", "Évaluation indicative", "Démonstration RPS", "Deal-Connect (Remo)", "Sécurité", "Frontend et design", "QA et livraison"],
+        "lots": ["Conception", "Fondations", "Auth et rôles", "Espace CCI-Togo", "Deal-Ready", "Dossier cédant", "Marketplace actifs", "Évaluation indicative", "Démonstration RPS", "Deal-Connect (Remo)", "Sécurité", "Frontend et design", "QA et livraison"],
     },
     "V2": {
         "focus": "Le cœur du différenciateur produit : le moteur RPS complet pour les cessions de titres et la data room. Prérequis à toute diligence réelle.",
@@ -1331,7 +1360,7 @@ ROADMAP = {
         "exclu": ["Négociation, LOI, audit d'acquisition et réalisation (V3)", "Génération documentaire LegalTech (V3)"],
         "prerequis": "Modèle de données Deal et Organisation de V1 ; contrat avec le prestataire de signature qualifiée.",
         "decision": "",
-        "lots": ["Circuit RPS réel", "Signature électronique", "Data room", "Questions-réponses", "QA et sécurité"],
+        "lots": ["Conception", "Circuit RPS réel", "Signature électronique", "Data room", "Questions-réponses", "QA et sécurité"],
     },
     "V3": {
         "focus": "Ce qui rend une transaction réelle facturable et légalement défendable : négociation et réalisation, LegalTech OHADA, moteur de frais et rétrocession, support, fermeture des dix portes de conformité et durcissement de l'exploitation.",
@@ -1345,7 +1374,7 @@ ROADMAP = {
         "exclu": ["Deal-Experts (V4, sous réserve d'arbitrage)", "Modules réseau : Alerte & Rebond, Deal-Connect, Guichet Diaspora (V4)"],
         "prerequis": "Des transactions peuvent atteindre CLOSED_REPORTED (V2) ; avis juridique écrit sur le barème de frais.",
         "decision": "Le barème de frais et la rétrocession ne s'activent qu'après avis juridique écrit, jamais par simple décision produit.",
-        "lots": ["LegalTech OHADA", "Conformité fiscale", "Négociation", "Audit d'acquisition", "Réalisation", "Finance", "Support", "Portes de conformité", "Exploitation"],
+        "lots": ["Conception", "LegalTech OHADA", "Conformité fiscale", "Négociation", "Audit d'acquisition", "Réalisation", "Finance", "Support", "Portes de conformité", "Exploitation"],
     },
     "V4": {
         "focus": "Les modules réseau. Seul changement d'architecture notable : la brique de salons et rendez-vous virtuels est externalisée vers Remo.co plutôt que construite en propre.",
@@ -1356,7 +1385,7 @@ ROADMAP = {
         "exclu": ["Mécanismes d'enchère en temps réel (non présumés contractuels)", "Tout conseil de change ou d'investissement fourni par la plateforme"],
         "prerequis": "Portes de conformité fermées (V3) ; cadrage écrit de l'intégration Remo.co.",
         "decision": "Remo.co est retenu. Le périmètre exact (SSO natif, webhooks de présence, marque blanche) dépend du plan Remo.co choisi.",
-        "lots": ["Alerte & Rebond", "Actifs en difficulté", "Deal-Connect", "Guichet Diaspora", "Deal-Experts"],
+        "lots": ["Conception", "Alerte & Rebond", "Actifs en difficulté", "Deal-Connect", "Guichet Diaspora", "Deal-Experts"],
     },
     "V5": {
         "focus": "Le module le plus spécifié du corpus existant et pourtant le plus éloigné de la production : aucun fournisseur IA n'est engagé. Placé en dernier car le moins urgent contractuellement et le plus risqué techniquement.",
@@ -1367,7 +1396,7 @@ ROADMAP = {
         "exclu": ["Toute action autonome de l'IA : publication, changement de permission, certification, réponse au cédant"],
         "prerequis": "Data room de production stable (V2) ; contrat fournisseur IA avec clauses de confidentialité.",
         "decision": "DealLens reste assistif et lecture seule : il explique, résume, extrait et propose, il ne décide jamais.",
-        "lots": ["Fournisseur IA", "Ingestion", "DealLens", "Surfaces", "Accès", "QA IA"],
+        "lots": ["Conception", "Fournisseur IA", "Ingestion", "DealLens", "Surfaces", "Accès", "QA IA"],
     },
 }
 r = 5

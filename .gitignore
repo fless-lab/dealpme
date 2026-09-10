@@ -16,3 +16,4 @@ __pycache__/
 *.tsbuildinfo
 .demo-credentials.local.json
 .~lock.*#
+design/
