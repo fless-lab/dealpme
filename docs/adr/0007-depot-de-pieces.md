@@ -16,9 +16,14 @@ tiers non autorisé, et l'introduction d'un fichier malveillant dans la chaîne.
 reconnu par le moteur n'est jamais écrit, ni en base ni sur le stockage objet ; le refus est journalisé avec la
 signature du moteur, et le déposant reçoit un message qui dit que rien n'a été enregistré.
 
-**Liste fermée de types acceptés** : PDF, JPEG, PNG, classeur Excel, document Word. Les bureautiques sont admis
-parce que les états financiers circulent sous cette forme au Togo ; ils passent par l'antivirus comme les autres et
-ne sont jamais exécutés. Un type absent de la liste est refusé en le nommant, jamais accepté puis ignoré.
+**Liste fermée de types acceptés** : documents (PDF, Word, OpenDocument, RTF, texte), tableurs (Excel, OpenDocument,
+CSV), présentations (PowerPoint, OpenDocument) et images (JPEG, PNG, WebP, TIFF, HEIC), anciens formats compris. Les
+bureautiques sont admis parce que les états financiers et les inventaires circulent sous ces formes au Togo ; ils
+passent par l'antivirus comme les autres, ne sont jamais exécutés, et la lecture les sert avec `nosniff` et un
+`Content-Disposition` explicite, de sorte que rien ne s'exécute dans le navigateur depuis notre domaine. Les archives
+compressées (zip, rar, 7z) restent exclues : leur analyse est incertaine, elles véhiculent les bombes de
+décompression, et une pièce de dossier n'a pas de raison d'en être une. Un type absent de la liste est refusé en
+nommant ce qui est accepté, jamais accepté puis ignoré.
 
 **Aucune adresse publique.** Le stockage objet est privé au niveau du compte (`mc anonymous set none`), et le
 contenu d'une pièce se lit par l'API, qui vérifie le périmètre du lecteur et trace la lecture. Le port de stockage

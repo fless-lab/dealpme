@@ -92,8 +92,11 @@ export class DossierController {
     @Res() res: Response,
   ): Promise<void> {
     const doc = await this.dossier.readDocument(dealId, documentId, principal, correlationIdOf(req));
+    // Seuls les PDF et les images s'affichent dans l'onglet ; tout le reste se télécharge, pour qu'aucun
+    // contenu bureautique ou textuel ne soit interprété par le navigateur depuis notre domaine.
+    const inline = doc.contentType === "application/pdf" || doc.contentType.startsWith("image/");
     res.setHeader("Content-Type", doc.contentType);
-    res.setHeader("Content-Disposition", `inline; filename="${encodeURIComponent(doc.fileName)}"`);
+    res.setHeader("Content-Disposition", `${inline ? "inline" : "attachment"}; filename="${encodeURIComponent(doc.fileName)}"`);
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.end(Buffer.from(doc.body));

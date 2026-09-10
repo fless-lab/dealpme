@@ -36,8 +36,9 @@ export function DocumentsPanel({ dealId, requirements, documents, readOnly }: { 
   return (
     <Panel title="Pièces justificatives" controlId="SELLER_DOCS">
       <p className="dp-muted" style={{ marginTop: 0 }}>
-        Formats acceptés : PDF, image JPEG ou PNG, classeur Excel, document Word. Chaque fichier est analysé avant
-        enregistrement. Déposer une nouvelle version conserve la précédente.
+        Documents, tableurs, présentations et images sont acceptés (PDF, Word, Excel, PowerPoint, OpenDocument, CSV,
+        JPEG, PNG). Les archives compressées ne le sont pas. Chaque fichier est analysé avant enregistrement ;
+        déposer une nouvelle version conserve la précédente.
       </p>
       {requirements.map((r) => {
         const category = r.category as string;
@@ -72,7 +73,7 @@ export function DocumentsPanel({ dealId, requirements, documents, readOnly }: { 
                     }}
                     type="file"
                     hidden
-                    accept=".pdf,.jpg,.jpeg,.png,.xlsx,.docx"
+                    accept=".pdf,.jpg,.jpeg,.png,.webp,.tif,.tiff,.heic,.xls,.xlsx,.doc,.docx,.ppt,.pptx,.ods,.odt,.odp,.csv,.txt,.rtf"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) void upload(category, r.label, file);

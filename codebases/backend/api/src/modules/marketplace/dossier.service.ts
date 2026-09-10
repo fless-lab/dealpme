@@ -15,15 +15,34 @@ import { ANTIVIRUS_PORT, STORAGE_PORT } from "./dossier.providers.js";
 
 /**
  * Types de fichiers acceptés pour une pièce de dossier. Liste fermée : un type absent est refusé avec
- * son nom, jamais accepté puis ignoré. Les bureautiques sont admis parce que les états financiers
- * circulent sous cette forme au Togo ; ils passent par l'antivirus comme les autres et ne sont jamais exécutés.
+ * son nom, jamais accepté puis ignoré. Les formats bureautiques sont admis, anciens compris, parce que
+ * les états financiers et les inventaires circulent sous ces formes au Togo (décision A11) ; ils passent
+ * par l'antivirus comme les autres, ne sont jamais exécutés et ne sont jamais rendus par le navigateur
+ * depuis notre domaine (Content-Disposition et nosniff à la lecture).
+ *
+ * Restent exclues les archives (zip, rar, 7z) : leur analyse est incertaine, elles servent de véhicule
+ * aux bombes de décompression, et une pièce de dossier n'a pas de raison d'en être une.
  */
 const ACCEPTED: Record<string, string> = {
   "application/pdf": "PDF",
   "image/jpeg": "image JPEG",
   "image/png": "image PNG",
+  "image/webp": "image WebP",
+  "image/tiff": "image TIFF",
+  "image/heic": "image HEIC",
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "classeur Excel",
+  "application/vnd.ms-excel": "classeur Excel (ancien format)",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "document Word",
+  "application/msword": "document Word (ancien format)",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation": "présentation PowerPoint",
+  "application/vnd.ms-powerpoint": "présentation PowerPoint (ancien format)",
+  "application/vnd.oasis.opendocument.spreadsheet": "classeur OpenDocument",
+  "application/vnd.oasis.opendocument.text": "document OpenDocument",
+  "application/vnd.oasis.opendocument.presentation": "présentation OpenDocument",
+  "text/csv": "fichier CSV",
+  "text/plain": "fichier texte",
+  "application/rtf": "document RTF",
+  "text/rtf": "document RTF",
 };
 
 export interface UploadedFile {
@@ -142,7 +161,7 @@ export class DossierService {
   ): Promise<{ documentId: string; version: number; sha256: string }> {
     const { file } = input;
     if (!ACCEPTED[file.mimeType]) {
-      throw new DealPmeError(ErrorCode.VALIDATION_FAILED, `Type de fichier non accepté (${file.mimeType}). Formats acceptés : ${Object.values(ACCEPTED).join(", ")}.`);
+      throw new DealPmeError(ErrorCode.VALIDATION_FAILED, `Type de fichier non accepté (${file.mimeType}). Documents, tableurs, présentations et images sont acceptés ; les archives compressées ne le sont pas.`);
     }
     if (file.size > this.maxBytes) {
       throw new DealPmeError(ErrorCode.VALIDATION_FAILED, `Fichier trop volumineux : ${Math.round(file.size / 1024 / 1024)} Mo pour un maximum de ${Math.round(this.maxBytes / 1024 / 1024)} Mo.`);

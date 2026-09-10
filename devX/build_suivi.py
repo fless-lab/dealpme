@@ -187,7 +187,7 @@ T = []
 def add(v, m, lot, tache, crit, ch, prio="Moyenne", statut=None, bloquant="Non", dep=""):
     T.append((v, m, lot, tache, crit, ch, prio, statut or ("À faire" if v == "V1" else "Backlog"), bloquant, dep))
 
-# ---------------- V1 (253 j/p) ----------------
+# ---------------- V1 (259 j/p) ----------------
 add("V1", "TRV", "Conception", "Architecture cible et décisions structurantes : monolithe modulaire, RPS indépendant, isolation de la data room, TypeScript de bout en bout, connecteurs externes, sessions serveur (ADR 0001 à 0006)", "Chaque décision est un ADR archivé avec contexte, options écartées et conséquences", 3, "Haute", bloquant="Oui")
 add("V1", "FOND", "Conception", "Modèle de domaine et invariants : entités, agrégats, machine à états du deal, immutabilités (type de cession, attribution), isolation par organisation", "Schéma de domaine relu ; chaque invariant est porté par une contrainte ou un déclencheur en base, pas seulement par le code", 3, "Haute", bloquant="Oui")
 add("V1", "FOND", "Conception", "Classification des données et politique de chiffrement : catégories PUBLIC / INTERNAL / PERSONAL / CONFIDENTIAL_DEAL, champs chiffrés, gestion et rotation des clés", "Registre des champs par catégorie ; procédure de rotation écrite", 2, "Haute")
@@ -213,6 +213,7 @@ add("V1", "OPS", "Sécurité", "Chiffrement applicatif des champs CONFIDENTIAL_D
 add("V1", "OPS", "Sécurité", "En-têtes de sécurité HTTP, CORS strict, cookies sécurisés, taille maximale des corps de requête", "Scan d'en-têtes sans constat, origine inconnue refusée", 1, "Moyenne")
 add("V1", "OPS", "Sécurité", "Idempotence persistée en base et vérification de signature HMAC sur tous les webhooks", "Rejeu d'un webhook sans double effet ; signature invalide rejetée", 2, "Haute")
 add("V1", "OPS", "Sécurité", "Revue de sécurité interne (liste de contrôle v0 : paliers, URL pré-signées, compteur RPS) et scan de dépendances bloquant en CI", "Rapport de revue archivé, CI rouge sur vulnérabilité critique", 3, "Haute")
+add("V1", "OPS", "Sécurité", "Chaîne antivirus éprouvée contre un moteur ClamAV réel (service local et intégration continue)", "Le dépôt d'une pièce reconnue est refusé par ClamAV, pas seulement par le moteur de développement", 2, "Haute", dep="Service ClamAV déployé")
 add("V1", "OPS", "Sécurité", "Mots de passe de démonstration uniques par compte, jeu de démonstration interdit hors environnement local", "Le chargement refuse de s'exécuter si NODE_ENV n'est pas development", 1, "Moyenne")
 
 add("V1", "IDN", "Auth et rôles", "Inscription email + mot de passe (Argon2id), vérification email", "Compte créé, email vérifié, mot de passe jamais en clair", 3, "Haute")
@@ -240,6 +241,7 @@ add("V1", "MKT", "Dossier cédant", "Assistant de constitution de dossier : éta
 add("V1", "MKT", "Dossier cédant", "Upload de documents : scan antivirus, stockage chiffré, jamais d'URL publique", "Fichier infecté rejeté, URL directe inaccessible (test négatif)", 4, "Haute")
 add("V1", "MKT", "Dossier cédant", "Provenance et versionnage des données déclarées", "Chaque valeur porte source et date, mention 'déclaré, non audité'", 3, "Haute")
 add("V1", "MKT", "Dossier cédant", "Contrôle de complétude et liste des manques", "Dossier incomplet reste en DRAFT", 3, "Moyenne")
+add("V1", "MKT", "Dossier cédant", "Retour en préparation après remarque de la CCI-Togo (dossier soumis rendu modifiable, motif conservé)", "Un dossier soumis peut revenir en préparation avec le motif visible du cédant", 2, "Moyenne")
 add("V1", "MKT", "Dossier cédant", "Écrans Pass Transmission (assistant, récapitulatif)", "Récapitulatif fidèle aux données saisies", 5, "Haute")
 
 add("V1", "MKT", "Marketplace actifs", "Fiche opportunité T0 (secteur, région, tranche de CA) et publication", "Aucun champ au-delà de T0 sérialisé (allow-list serveur)", 4, "Haute")
@@ -272,12 +274,13 @@ add("V1", "TRV", "Frontend et design", "Revue visuelle avec le designer UI/UX", 
 
 add("V1", "TRV", "QA et livraison", "Tests automatisés : unitaires et bout en bout sur les parcours critiques", "Couverture des parcours inscription, dossier, publication, certification", 5, "Haute")
 add("V1", "TRV", "QA et livraison", "Tests négatifs : permissions serveur, accès non autorisés, contrôles morts", "Aucun contrôle visible sans réaction définie", 3, "Haute")
+add("V1", "TRV", "QA et livraison", "Captures de régression visuelle sur le laboratoire de composants (1440 x 960 et 390 x 844)", "Un écart visuel non intentionnel fait échouer la chaîne d'intégration", 2, "Moyenne")
 add("V1", "TRV", "QA et livraison", "Jeu de données de démonstration complet (synthétique, étiqueté)", "Aucune donnée réelle, étiquette visible", 3, "Haute")
 add("V1", "TRV", "QA et livraison", "Recette interne et corrections", "Zéro anomalie bloquante ouverte", 4, "Haute")
 add("V1", "TRV", "QA et livraison", "Documentation développeur et guide de démonstration", "Nouvel arrivant opérationnel en une journée", 3, "Moyenne")
 add("V1", "TRV", "QA et livraison", "Préparation de la démonstration du 15/10 (script, environnement, données)", "Répétition générale réalisée", 2, "Haute")
 
-# ---------------- V2 (162 j/p) ----------------
+# ---------------- V2 (165 j/p) ----------------
 add("V2", "RPS", "Conception", "Conception du circuit RPS réel : modèle de cercle et de personne unique, plafond et seuils, admission humaine, journal réglementaire à chaîne de hachage, contrat d'API du service", "Spécification relue par le conseil juridique ; chaque règle du v0 (P07, P10) a sa contrepartie technique", 4, "Haute", bloquant="Oui")
 add("V2", "VDR", "Conception", "Conception de la data room : stockage chiffré isolé, rendu serveur, filigrane dynamique, révocation en moins de 60 s, journal d'accès, modèle de permissions par dossier", "Aucun chemin d'accès direct aux fichiers ; schéma de permissions validé sur les 12 cas de référence", 4, "Haute", bloquant="Oui")
 add("V2", "SIG", "Conception", "Conception de la signature électronique : intégration du prestataire PSC, preuve et archivage, repli papier, statuts de signature dans la machine à états", "Séquences de signature et de repli documentées ; contrat de preuve défini", 2, "Haute", dep="Contrat PSC")
@@ -314,15 +317,18 @@ add("V2", "VDR", "Questions-réponses", "Fils de questions par document, visibil
 add("V2", "VDR", "Questions-réponses", "Statuts, catégories, pièces jointes et journalisation des actions", "Chaque création / réponse / clôture journalisée", 4, "Moyenne")
 add("V2", "VDR", "Questions-réponses", "Écrans Q&R", "Filtre par statut et par document", 5, "Moyenne")
 
+add("V2", "TRV", "QA et sécurité", "Storybook du design system, alimenté par les mêmes composants que le laboratoire", "Le designer revoit chaque variante sans passer par l'application", 3, "Moyenne", dep="Designer UI/UX confirmé")
 add("V2", "TRV", "QA et sécurité", "Tests de contournement de palier et de fuite T0 / T1 (DISCLOSURE_LEAK)", "Zéro fuite sur les 12 cas de référence", 6, "Haute")
 add("V2", "TRV", "QA et sécurité", "Tests de révocation et d'expiration (REVOKED_ACCESS_ALLOWED)", "Utilisateur révoqué sans accès résiduel", 4, "Haute")
 add("V2", "TRV", "QA et sécurité", "Revue de sécurité interne et préparation du périmètre de pentest", "Périmètre de pentest rédigé", 5, "Haute")
 add("V2", "TRV", "QA et sécurité", "Recette V2 et corrections", "Zéro anomalie bloquante ouverte", 5, "Haute")
 
-# ---------------- V3 (170 j/p) ----------------
+# ---------------- V3 (176 j/p) ----------------
 add("V3", "NEG", "Conception", "Conception de la négociation et de la réalisation : machine à états complète (offre, LOI, audit, réalisation), registre des points ouverts, événements de frais", "Chaque transition est spécifiée avec ses préconditions et ses effets journalisés", 3, "Haute", bloquant="Oui")
 add("V3", "FIN", "Conception", "Conception du moteur de frais et de rétrocession : barème versionné sous drapeau juridique, journal de calcul recalculable, rapport trimestriel", "Un calcul peut être rejoué à l'identique à partir du journal ; barème inactif sans avis écrit", 2, "Haute")
 add("V3", "LEG", "Conception", "Conception LegalTech : modèle de gabarit versionné, variables, génération PDF, mention obligatoire, traçabilité de la revue du conseil", "Schéma de gabarit validé avec le conseil juridique", 2, "Moyenne")
+add("V3", "OPS", "Exploitation", "Chiffrement au repos du stockage objet par un KMS géré et rotation documentée des clés", "La clé de développement de MinIO n'existe plus en production ; la rotation est éprouvée", 3, "Haute")
+add("V3", "SUP", "Support", "Procédure de purge et de rétention des pièces et des valeurs déclarées (effacement encadré par le DPO)", "Durées de conservation écrites, effacement tracé et irréversible", 3, "Haute", dep="DPO désigné")
 add("V3", "OPS", "Conception", "Conception de l'exploitation et du support : SLA 99,5 %, supervision, sauvegardes et restauration, procédure d'incident, accès privilégiés et mode break-glass journalisé", "Plan d'exploitation relu ; chaque accès privilégié est tracé et limité dans le temps", 3, "Haute")
 add("V3", "LEG", "LegalTech OHADA", "Modèles versionnés : NDA, LOI, pacte simplifié, SPA, cession d'actifs, contrat de travail (Code du travail togolais)", "Chaque modèle porte version et référence du conseil", 8, "Haute")
 add("V3", "LEG", "LegalTech OHADA", "Moteur de génération PDF avec variables et mention 'aide à la rédaction, pas un conseil juridique'", "Mention présente sur chaque document généré", 7, "Haute")
@@ -423,7 +429,7 @@ add("V5", "VDR-IA", "QA IA", "Performance : viewer progressif, streaming des ré
 add("V5", "VDR-IA", "QA IA", "Recette V5 et corrections", "Zéro anomalie bloquante ouverte", 5, "Haute")
 
 # ------------------------------------------------------------------ contrôle des totaux par version
-expected = {"V1": 253, "V2": 162, "V3": 170, "V4": 102, "V5": 153}
+expected = {"V1": 259, "V2": 165, "V3": 176, "V4": 102, "V5": 153}
 totals = {}
 for t in T:
     totals[t[0]] = totals.get(t[0], 0) + t[5]
@@ -956,7 +962,7 @@ DECISIONS = [
     ("A05", "09/09/2026", "Numérotation P01-P03", "Processus manquants ou numérotation volontaire à partir de P04 ?", "Ouvert", "CCI-Togo", "Faible impact sur le plan", "Confirmer avec le juridique", ""),
     ("A06", "09/09/2026", "Partenaire fiscal", "'TaxeFacile' est-il le partenaire réel, ou faut-il en qualifier un ?", "Ouvert", "M. Bruno", "Impacte le lot Conformité fiscale de V3", "Qualifier avant V3", "30/11/2026"),
     ("A07", "09/09/2026", "Charte du COPIL", "Composition, cadence exacte, règles de vote ?", "Ouvert", "CCI-Togo", "Gouvernance inter-version", "Récupérer l'annexe de la Convention", ""),
-    ("A11", "23/09/2026", "Bureautique acceptée en pièce jointe", "Les classeurs Excel et documents Word sont acceptés en pièce de dossier, en plus des PDF et images : les états financiers circulent sous cette forme au Togo. Ils passent par l'antivirus comme les autres et ne sont jamais exécutés (ADR 0007).", "Tranché", "Chef de projet", "Ergonomie réelle contre surface de risque, arbitrée par l'analyse antivirus obligatoire", "Revoir si le pentest de V3 signale un vecteur bureautique", "18/12/2026"),
+    ("A11", "23/09/2026", "Formats acceptés en pièce de dossier", "Documents, tableurs, présentations et images sont acceptés, anciens formats compris (PDF, Word, Excel, PowerPoint, OpenDocument, RTF, CSV, texte, JPEG, PNG, WebP, TIFF, HEIC) : ces formats sont ceux qui circulent réellement au Togo. Tous passent par l'antivirus, ne sont jamais exécutés, et seuls les PDF et images s'ouvrent dans le navigateur, le reste se télécharge. Les archives compressées restent exclues (ADR 0007).", "Tranché", "Chef de projet", "Ergonomie réelle contre surface de risque, arbitrée par l'analyse antivirus obligatoire", "Revoir si le pentest de V3 signale un vecteur bureautique", "18/12/2026"),
     ("A10", "15/09/2026", "Préalable à la certification", "L'octroi Deal-Ready exige une vérification RCCM ou CFE enregistrée pour l'entreprise ; le serveur refuse l'octroi sans elle (INVALID_TRANSITION). Le refus et le retrait restent possibles sans vérification.", "Tranché", "Chef de projet", "Évite un badge accordé sur des données uniquement déclaratives", "Confirmer la règle avec la CCI-Togo lors de la recette", "15/10/2026"),
     ("A09", "10/09/2026", "Palette de l'application", "La charte de marque (Marine Encre #1C2751, Bleu Signal #6678F1, Barlow) et le design system produit (Marine #0B2B52, Signal #1769E8, Inter) diffèrent. L'application suit le design system produit (PT-001 = autorité visuelle) ; la charte régit le site public. À confirmer par le designer.", "Ouvert", "Designer UI/UX", "Cohérence visuelle entre application et site public", "Trancher dès la nomination du designer", "18/09/2026"),
     ("A08", "09/09/2026", "Fournisseur IA (DealLens)", "Quel fournisseur, avec quelles clauses de confidentialité ?", "Ouvert", "Conseil juridique", "Bloque tout le lot V5", "Lancer la consultation dès V3", "09/04/2027"),
