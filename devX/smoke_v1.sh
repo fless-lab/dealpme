@@ -37,6 +37,17 @@ code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'cont
 check "connexion possible après vérification de l'email" 200 "$code"
 [ -n "$SELLER" ] && check "login cédant" 1 1 || check "login cédant" 1 0
 
+echo "== Sessions et profil"
+me=$(curl -s "$API/me" -H "authorization: Bearer $INV" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("email",""))')
+check "profil du compte connecté" investisseur@demo.dealpme.local "$me"
+ns=$(curl -s "$API/auth/sessions" -H "authorization: Bearer $INV" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(sum(1 for s in d["items"] if s["current"]))')
+check "la session courante figure dans la liste des appareils" 1 "$ns"
+TMP=$(login investisseur@demo.dealpme.local)
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/sessions/logout" -H "authorization: Bearer $TMP")
+check "déconnexion" 204 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$API/me" -H "authorization: Bearer $TMP")
+check "un jeton déconnecté est refusé (401)" 401 "$code"
+
 echo "== Marketplace (T0 uniquement)"
 body=$(curl -s "$API/opportunities?limit=10"); code=$?
 n=$(echo "$body" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(len(d["items"]))')
@@ -87,7 +98,8 @@ check "origine inconnue sans en-tête CORS" 0 "$cors"
 big=$(python3 -c 'print("{\"x\":\"" + "a"*1100000 + "\"}")' | curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'content-type: application/json' --data-binary @-)
 check "corps de requête au-delà de 1 Mo refusé" 413 "$big"
 payload='{"events":[{"remoEventId":"evt-1","externalUserId":"u-1","joinedAt":"2026-10-22T09:05:00Z"}]}'
-sig=$(printf '%s' "$payload" | openssl dgst -sha256 -hmac "demo-webhook-remo-secret-local-0001" | sed 's/^.* //')
+WEBHOOK_SECRET=$(grep -E "^CONNECTOR_REMO_WEBHOOK_SECRET=" "$(dirname "$0")/../.env" | cut -d= -f2-)
+sig=$(printf '%s' "$payload" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" | sed 's/^.* //')
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/webhooks/remo/attendance" -H 'content-type: application/json' -H 'idempotency-key: smoke-remo-1' -H 'x-remo-signature: deadbeef' --data-binary "$payload")
 check "webhook Remo avec signature invalide refusé (403)" 403 "$code"
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/webhooks/remo/attendance" -H 'content-type: application/json' -H "x-remo-signature: $sig" --data-binary "$payload")

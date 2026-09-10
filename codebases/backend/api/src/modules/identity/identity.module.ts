@@ -5,6 +5,8 @@ import { loadEnv } from "../../config/env.js";
 import { ApiRateLimitMiddleware } from "../../platform/api-rate-limit.middleware.js";
 import { IdentityController } from "./identity.controller.js";
 import { IdentityService } from "./identity.service.js";
+import { MeController } from "./me.controller.js";
+import { SessionController } from "./session.controller.js";
 import { EMAIL_PORT, OtpService, SMS_PORT } from "./otp.service.js";
 import { PasswordService } from "./password.service.js";
 import { SessionMiddleware } from "./session.middleware.js";
@@ -16,7 +18,7 @@ import { SessionService } from "./session.service.js";
  * Les connecteurs SMS et email sont choisis par variable d'environnement ; les faux ne sont admis qu'en développement.
  */
 @Module({
-  controllers: [IdentityController],
+  controllers: [IdentityController, SessionController, MeController],
   providers: [
     IdentityService,
     PasswordService,
