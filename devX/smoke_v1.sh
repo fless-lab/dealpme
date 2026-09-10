@@ -122,11 +122,23 @@ echo "== Espace CCI-Togo"
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/institution/certifications" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{}')
 check "un cédant ne peut pas certifier (403)" 403 "$code"
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/institution/certifications" -H "authorization: Bearer $OFF" -H 'content-type: application/json' -d "{\"companyId\":\"$cid\",\"decision\":\"GRANTED\",\"scopeStatement\":\"Existence, immatriculation et complétude documentaire vérifiées. Ni exactitude financière ni absence de litige.\",\"conflictOfInterestDeclared\":false}")
+check "certification refusée sans vérification RCCM préalable (409)" 409 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/institution/registry-verifications" -H "authorization: Bearer $OFF" -H 'content-type: application/json' -d "{\"companyId\":\"$cid\",\"rccmNumber\":\"TG-LOM-2020-B-0001\",\"legalForm\":\"SARL\",\"manualResult\":{\"legalName\":\"Entreprise de fumée SARL\",\"legalForm\":\"SARL\",\"status\":\"ACTIVE\",\"sourceRef\":\"CONSULTATION-DE-FUMEE\"}}")
+check "vérification RCCM en mode manuel, source tracée" 201 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/institution/certifications" -H "authorization: Bearer $OFF" -H 'content-type: application/json' -d "{\"companyId\":\"$cid\",\"decision\":\"GRANTED\",\"scopeStatement\":\"Existence, immatriculation et complétude documentaire vérifiées. Ni exactitude financière ni absence de litige.\",\"conflictOfInterestDeclared\":false}")
 check "décision de certification nominative par un officier" 201 "$code"
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/institution/certifications" -H "authorization: Bearer $OFF" -H 'content-type: application/json' -d "{\"companyId\":\"$cid\",\"decision\":\"GRANTED\",\"scopeStatement\":\"Portée de démonstration suffisamment longue.\",\"conflictOfInterestDeclared\":true}")
 check "conflit d'intérêts déclaré bloque la décision (400)" 400 "$code"
 ready=$(curl -s "$API/institution/certifications/$cid" | python3 -c 'import sys,json;print(json.load(sys.stdin)["isDealReady"])')
 check "badge Deal-Ready visible" True "$ready"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$API/institution/overview" -H "authorization: Bearer $SELLER")
+check "un cédant ne voit pas le tableau de bord institutionnel (403)" 403 "$code"
+n=$(curl -s "$API/institution/companies" -H "authorization: Bearer $OFF" | python3 -c "import sys,json;d=json.load(sys.stdin);print(sum(1 for i in d['items'] if i['id']=='$cid' and i['registry'] and i['certification']['isDealReady']))")
+check "console CCI : déclaré et vérifié présentés séparément" 1 "$n"
+n=$(curl -s "$API/institution/companies/$cid" -H "authorization: Bearer $OFF" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(len(d["history"]))')
+check "historique nominatif des décisions" 1 "$n"
+line=$(curl -s "$API/institution/certifications.csv" -H "authorization: Bearer $OFF" | grep -c "$cid" || true)
+check "export CSV du journal des certifications" 1 "$line"
 
 echo "== Deal-Connect (Remo)"
 code=$(curl -s -o /dev/null -w '%{http_code}' "$API/events")

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Req } from "@nestjs/common";
+import { Body, Controller, Get, Header, HttpCode, Param, Post, Req } from "@nestjs/common";
 import type { Request } from "express";
 import { z } from "zod";
 import {
@@ -26,6 +26,42 @@ const ManualRegistrySchema = RegistryVerificationRequestSchema.extend({
 export class InstitutionController {
   constructor(private readonly institution: InstitutionService) {}
 
+  // ---- lectures de la console
+
+  @Get("overview")
+  overview(@CurrentPrincipal() officer: Principal) {
+    return this.institution.overview(officer);
+  }
+
+  @Get("organisations")
+  organisations() {
+    return this.institution.listOrganisations();
+  }
+
+  @Get("companies")
+  companies() {
+    return this.institution.listCompanies();
+  }
+
+  @Get("companies/:companyId")
+  company(@Param("companyId", validate(IdSchema)) companyId: string) {
+    return this.institution.companyDetail(companyId);
+  }
+
+  @Get("certifications")
+  certifications() {
+    return this.institution.listCertifications();
+  }
+
+  @Get("certifications.csv")
+  @Header("Content-Type", "text/csv; charset=utf-8")
+  @Header("Content-Disposition", 'attachment; filename="certifications-deal-ready.csv"')
+  certificationsCsv() {
+    return this.institution.certificationsCsv();
+  }
+
+  // ---- décisions
+
   @Post("membership-confirmations")
   @HttpCode(201)
   async confirm(@Body(validate(MembershipConfirmationRequestSchema)) body: { organisationId: string; confirmationRef: string }, @CurrentPrincipal() officer: Principal, @Req() req: Request) {
@@ -45,6 +81,7 @@ export class InstitutionController {
     return this.institution.decideCertification(body, officer, correlationIdOf(req));
   }
 
+  /** Statut public du badge : lisible par tous, le texte de portée accompagne toujours le badge. */
   @Get("certifications/:companyId")
   @Roles()
   current(@Param("companyId", validate(IdSchema)) companyId: string) {

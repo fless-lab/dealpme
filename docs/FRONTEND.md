@@ -10,7 +10,7 @@ app/
   (public)/            site vitrine, marketplace T0, connexion, inscription, vérification d'email, second facteur
   (espace)/cedant/     espace cédant : dossier, préparation, acheteurs, transaction
   (espace)/investisseur/ opportunités, thèse, demandes d'accès, deals
-  (espace)/cci/        console CCI-Togo : adhésions, certification, événements, reporting agrégé
+  (espace)/cci/        console CCI-Togo : tableau de bord agrégé, adhésions, entreprises, journal des certifications
   (espace)/conformite/ admissions, compteurs de divulgation, blocages (V2)
   (espace)/admin/      opérations, drapeaux, incidents (V3)
   (dataroom)/          poste de travail data room et VDR Intelligence (V2, V5)
@@ -18,6 +18,7 @@ app/
   labo/                laboratoire de composants : toutes les variantes et tous les états du design system
   api/auth/[action]    BFF : connexion, second facteur, inscription, vérification d'email, déconnexion
   api/sessions/[id]    BFF : révocation d'un appareil
+  api/institution/     BFF de la console CCI-Togo, sur liste blanche d'actions
 ```
 
 Le navigateur ne parle qu'au BFF (`app/api/`). Le jeton de session API est posé dans un cookie `dp_session` httpOnly,
@@ -26,7 +27,13 @@ le cookie (`lib/session.ts`) et appellent l'API avec `Authorization: Bearer`. Le
 conservés et traduits en messages français dans `lib/api.ts` (`messageFor`).
 
 Espaces par rôle : la navigation dépend des rôles renvoyés par `/me`, mais elle n'est jamais la frontière de
-sécurité ; chaque page d'espace vérifie la session côté serveur et l'API refuse de toute façon un rôle non autorisé.
+sécurité ; chaque page d'espace vérifie la session côté serveur (`lib/guards.ts`, `requireRole`) et l'API refuse de
+toute façon un rôle non autorisé. Un rôle insuffisant renvoie vers l'accueil plutôt que vers une page d'erreur, pour
+ne pas révéler l'existence de l'espace.
+
+Les routes `api/` qui relaient des actions vers l'API portent une liste blanche explicite : elles ne sont jamais un
+proxy générique. Le relais échange le cookie contre un appel authentifié, rien de plus ; l'autorisation reste
+évaluée côté API.
 
 Pourquoi une seule application et non plusieurs : une session et une authentification, un design system, une
 navigation par rôle, un déploiement pendant le pilote (2 000 comptes). Si la console CCI-Togo doit un jour être
