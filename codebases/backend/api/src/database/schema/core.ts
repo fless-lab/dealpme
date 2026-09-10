@@ -250,6 +250,50 @@ export const auditEvents = pgTable(
   (t) => [index("audit_subject_idx").on(t.subjectType, t.subjectId)],
 );
 
+/** Deal-Connect (V1, pont Remo.co) : DealPME est la référence des événements et des inscriptions ; Remo héberge la session live. */
+export const events = pgTable("event", {
+  id: id(),
+  title: varchar("title", { length: 200 }).notNull(), // PUBLIC
+  description: text("description"), // PUBLIC
+  startsAt: timestamp("starts_at", { withTimezone: true }).notNull(),
+  endsAt: timestamp("ends_at", { withTimezone: true }).notNull(),
+  capacity: integer("capacity").notNull().default(100),
+  integrationMode: varchar("integration_mode", { length: 16 }).notNull().default("DEALPME_FIRST"), // DEALPME_FIRST | REMO_FIRST
+  remoEventId: varchar("remo_event_id", { length: 128 }), // INTERNAL
+  organiserUserId: uuid("organiser_user_id").notNull(), // officier CCI-Togo ou administrateur
+  campaignId: varchar("campaign_id", { length: 64 }), // attribution des inscriptions issues de l'événement
+  status: varchar("status", { length: 16 }).notNull().default("DRAFT"), // DRAFT | PUBLISHED | CLOSED
+  createdAt: createdAt(),
+});
+
+export const eventRegistrations = pgTable(
+  "event_registration",
+  {
+    id: id(),
+    eventId: uuid("event_id").notNull().references(() => events.id),
+    userId: uuid("user_id").notNull().references(() => users.id),
+    displayName: varchar("display_name", { length: 120 }).notNull(), // seule donnée transmise à Remo
+    consentContactAt: timestamp("consent_contact_at", { withTimezone: true }), // échange de contacts avec consentement (P20)
+    ticketRef: varchar("ticket_ref", { length: 128 }), // référence du paiement mobile money ou du billet Remo
+    joinedAt: timestamp("joined_at", { withTimezone: true }), // présence remontée par webhook
+    createdAt: createdAt(),
+  },
+  (t) => [uniqueIndex("registration_unique_idx").on(t.eventId, t.userId)],
+);
+
+/** Guichet Diaspora (V1 léger) : demande de rendez-vous sécurisé, entretien vidéo via Remo une fois confirmé. */
+export const diasporaAppointments = pgTable("diaspora_appointment", {
+  id: id(),
+  investorUserId: uuid("investor_user_id").notNull().references(() => users.id),
+  dealId: uuid("deal_id"), // optionnel : opportunité concernée (T0 uniquement à ce stade)
+  requestedSlot: timestamp("requested_slot", { withTimezone: true }).notNull(),
+  status: varchar("status", { length: 16 }).notNull().default("REQUESTED"), // REQUESTED | CONFIRMED | HELD | CANCELLED
+  remoEventId: varchar("remo_event_id", { length: 128 }),
+  confirmedBy: uuid("confirmed_by"),
+  crossBorderNoticeShownAt: timestamp("cross_border_notice_shown_at", { withTimezone: true }), // contraintes présentées avant la phase finale (K21.3)
+  createdAt: createdAt(),
+});
+
 /** Idempotence des POST créateurs d'état et des webhooks (rejeu à l'identique). */
 export const idempotencyKeys = pgTable("idempotency_key", {
   key: varchar("key", { length: 256 }).primaryKey(), // méthode:chemin:clé

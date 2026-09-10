@@ -74,7 +74,7 @@ def title(ws, text, sub=None):
 # ------------------------------------------------------------------ données de référence
 VERSIONS = [
     # code, objet, début, fin
-    ("V1", "Premier produit : cessions d'actifs, espace CCI-Togo, Deal-Ready, démonstration du blocage RPS", dt.date(2026, 9, 1), dt.date(2026, 10, 12)),
+    ("V1", "Premier produit : cessions d'actifs, espace CCI-Togo, Deal-Ready, démonstration du blocage RPS, Deal-Connect via Remo.co", dt.date(2026, 9, 1), dt.date(2026, 10, 12)),
     ("V2", "Cession de titres en cercle restreint (RPS réel), signature électronique, data room et Q&R", dt.date(2026, 10, 13), dt.date(2026, 12, 7)),
     ("V3", "Négociation et réalisation, LegalTech OHADA, Finance et rétrocession, support, fermeture des portes de conformité", dt.date(2026, 12, 8), dt.date(2027, 2, 15)),
     ("V4", "Alerte & Rebond, Deal-Connect (Remo.co), Guichet Diaspora, Deal-Experts", dt.date(2027, 2, 16), dt.date(2027, 3, 29)),
@@ -116,6 +116,9 @@ PROGRESS = {
     "Gabarit applicatif": ("En cours", 0.5, None),
     "Tests automatisés": ("En cours", 0.25, None),
     "Documentation développeur": ("En cours", 0.6, None),
+    "Connecteur Remo.co": ("En cours", 0.4, None),
+    "Inscriptions DEALPME_FIRST": ("En cours", 0.5, None),
+    "Demande de rendez-vous diaspora": ("En cours", 0.3, None),
 }
 DEFAULT_OWNER = "Abdou-Raouf"
 
@@ -215,6 +218,11 @@ add("V1", "RPS", "Démonstration RPS", "Écran T1 anonymisé de démonstration",
 add("V1", "RPS", "Démonstration RPS", "Journal de démonstration : trace lisible des décisions simulées", "Journal consultable pendant la démo", 3, "Basse")
 add("V1", "RPS", "Démonstration RPS", "Recette du scénario avec M. Bruno", "Validation écrite du déroulé", 1, "Haute")
 
+add("V1", "CNX", "Deal-Connect (Remo)", "Cadrage de l'intégration Remo.co : plan retenu, API, SSO, webhooks, marque blanche", "Périmètre d'intégration validé par M. Bruno sur la documentation Remo", 3, "Haute", bloquant="Oui")
+add("V1", "CNX", "Deal-Connect (Remo)", "Connecteur Remo.co : création d'événements, lien d'accès unique, webhooks de présence", "Présence remontée et rattachée à l'inscription DealPME", 8, "Haute", dep="Cadrage Remo.co")
+add("V1", "CNX", "Deal-Connect (Remo)", "Inscriptions DEALPME_FIRST : consentement d'échange de contacts, attribution de campagne", "Aucun contact échangé sans consentement explicite", 3, "Haute")
+add("V1", "CNX", "Deal-Connect (Remo)", "Écran Deal-Connect V1 : liste des événements, inscription, bouton d'accès Remo", "Parcours inscription puis accès en moins de trois clics", 4, "Moyenne")
+add("V1", "DIA", "Deal-Connect (Remo)", "Demande de rendez-vous diaspora avec avis transfrontalier, entretien vidéo via Remo après confirmation humaine", "Aucune demande sans reconnaissance de l'avis transfrontalier", 4, "Moyenne", dep="Connecteur Remo.co")
 add("V1", "TRV", "Frontend et design", "Intégration du design system (tokens et composants de base issus de la Tranche 3)", "Tokens couleurs et typographie conformes à la charte", 5, "Haute")
 add("V1", "TRV", "Frontend et design", "Gabarit applicatif : AppShell, navigation, états vide / chargement / erreur", "Chaque écran possède ses trois états", 4, "Haute")
 add("V1", "TRV", "Frontend et design", "Responsive mobile sur les parcours V1", "Aucune casse de mise en page entre 360 et 1920 px", 4, "Moyenne")
@@ -318,15 +326,12 @@ add("V4", "REB", "Actifs en difficulté", "Coupe-circuit opérateur : retrait im
 add("V4", "REB", "Alerte & Rebond", "Ingestion des annonces de dissolution / liquidation (flux CFE)", "Flux importé quotidiennement", 5, "Basse")
 add("V4", "REB", "Alerte & Rebond", "Écrans Alerte & Rebond", "Confidentialité par défaut sur chaque écran", 5, "Moyenne")
 
-add("V4", "CNX", "Deal-Connect", "Cadrage de l'intégration Remo.co : plan retenu, API, SSO, marque blanche", "Périmètre d'intégration validé par M. Bruno", 3, "Haute", bloquant="Oui")
-add("V4", "CNX", "Deal-Connect", "Connecteur Remo.co : création d'événements, SSO, webhooks de présence", "Présence remontée dans le reporting CCI", 8, "Haute", dep="Cadrage Remo.co")
-add("V4", "CNX", "Deal-Connect", "Inscriptions, stands, billetterie et sponsoring avec catégorisation des revenus", "Revenus catégorisés pour la rétrocession", 6, "Moyenne")
+add("V4", "CNX", "Deal-Connect", "Stands, billetterie et sponsoring avec catégorisation des revenus", "Revenus catégorisés pour la rétrocession", 6, "Moyenne")
 add("V4", "CNX", "Deal-Connect", "Rendez-vous mutuels opt-in et suggestions par règles", "Aucun rendez-vous sans double accord", 4, "Moyenne")
 add("V4", "CNX", "Deal-Connect", "Rapport post-événement : participation, rendez-vous, satisfaction", "Rapport agrégé sans donnée nominative", 4, "Moyenne")
 add("V4", "CNX", "Deal-Connect", "Écrans Deal-Connect", "Aucun contenu à caractère de titre financier sur les stands", 5, "Moyenne")
 
 add("V4", "DIA", "Guichet Diaspora", "Profil investisseur diaspora, préférences, liste de suivi", "Preuve de capacité avec date d'expiration", 5, "Haute")
-add("V4", "DIA", "Guichet Diaspora", "Prise de rendez-vous sécurisée (entretien vidéo via Remo.co)", "Rendez-vous créé côté Remo.co depuis DealPME", 4, "Moyenne", dep="Connecteur Remo.co")
 add("V4", "DIA", "Guichet Diaspora", "Présentation des contraintes transfrontalières et taux de change indicatif daté", "Taux affiché avec source et date", 5, "Haute")
 add("V4", "DIA", "Guichet Diaspora", "Renvoi vers banque / conseil pour les aspects réglementés", "Aucun conseil de change fourni par la plateforme", 3, "Haute")
 add("V4", "DIA", "Guichet Diaspora", "Signal de demande diaspora (agrégé, anonymisé)", "Aucune donnée nominative dans le signal", 3, "Basse")
@@ -363,7 +368,7 @@ add("V5", "VDR-IA", "QA IA", "Performance : viewer progressif, streaming des ré
 add("V5", "VDR-IA", "QA IA", "Recette V5 et corrections", "Zéro anomalie bloquante ouverte", 5, "Haute")
 
 # ------------------------------------------------------------------ contrôle des totaux par version
-expected = {"V1": 195, "V2": 150, "V3": 160, "V4": 110, "V5": 145}
+expected = {"V1": 217, "V2": 150, "V3": 160, "V4": 95, "V5": 145}
 totals = {}
 for t in T:
     totals[t[0]] = totals.get(t[0], 0) + t[5]
@@ -784,7 +789,7 @@ JALONS = [
     ("J11", "Pentest indépendant réalisé et remédié", "V3", dt.date(2027, 2, 10), "À venir", "Porte G10"),
     ("J12", "Portes de conformité G1 à G10 fermées", "V3", dt.date(2027, 2, 12), "À venir", "Condition de lancement commercial"),
     ("J13", "Livraison V3", "V3", dt.date(2027, 2, 18), "À venir", ""),
-    ("J14", "Cadrage de l'intégration Remo.co validé", "V4", dt.date(2027, 2, 26), "À venir", ""),
+    ("J14", "Cadrage de l'intégration Remo.co validé", "V1", dt.date(2026, 9, 18), "À venir", "Déplacé en V1 le 10/09/2026 : bloque le connecteur Remo"),
     ("J15", "Livraison V4", "V4", dt.date(2027, 4, 1), "À venir", ""),
     ("J16", "Contrat fournisseur IA signé", "V5", dt.date(2027, 4, 9), "À venir", "Bloquant pour DealLens"),
     ("J17", "Livraison V5", "V5", dt.date(2027, 6, 3), "À venir", ""),
@@ -1251,7 +1256,7 @@ r = section(wsX, r, "7. Hors périmètre v0 (à ne pas construire maintenant)")
 r = small_table(wsX, r, ["Élément", "Statut", "Raison"], [(n, s, c) for n, s, c in HORS_PERIMETRE])
 r = section(wsX, r, "8. Décisions actées le 09/09/2026")
 for d in ("Le cahier des charges v0 et le Référentiel P04 à P25 sont la cible finale ; le blueprint v5 n'est pas retenu.",
-          "Remo.co est retenu comme connecteur externe pour les salons et rendez-vous virtuels (V4).",
+          "Remo.co est retenu comme connecteur externe pour les salons et rendez-vous virtuels ; intégration dès V1 (décision du 10/09/2026), billetterie et sponsoring en V4.",
           "V1 inclut une démonstration maquettée du blocage RPS (+20 j/p) ; le circuit réel reste en V2."):
     r = para(wsX, r, "- " + d, height=18)
 widths(wsX, [3, 30, 44, 34, 12, 12, 12, 12, 12])
@@ -1268,14 +1273,16 @@ ROADMAP = {
                    "Marketplace de cessions d'actifs : recherche et mise en relation simple",
                    "Évaluation financière sommaire et indicative",
                    "Badge Deal-Ready affiché, workflow porté par la CCI-Togo",
-                   "Démonstration maquettée du blocage RPS (bannière de nullité, scénario scripté)"],
+                   "Démonstration maquettée du blocage RPS (bannière de nullité, scénario scripté)",
+                   "Deal-Connect via Remo.co : événements, inscriptions avec consentement, lien d'accès unique, présence par webhook",
+                   "Guichet Diaspora léger : demande de rendez-vous avec avis transfrontalier, entretien vidéo Remo après confirmation humaine"],
         "exclu": ["Circuit RPS réel : admission humaine, compteur, plafond, journal réglementaire (V2)",
                   "Data room chiffrée, filigranée, révocable et Q&R (V2)",
                   "Moteur d'honoraires et rétrocession CCI (V3)",
-                  "Alerte & Rebond, Deal-Connect complet, Guichet Diaspora (V4)"],
+                  "Alerte & Rebond, billetterie et sponsoring Deal-Connect, rendez-vous mutuels, rapport post-événement, profil diaspora complet (V4)"],
         "prerequis": "Équipe de développement confirmée (5 à 6 profils) ; réponse sur l'API CFE/RCCM ; designer UI/UX confirmé.",
         "decision": "Décision du 09/09/2026 : démonstration RPS ajoutée. Sans équipe à 5 ou 6 profils, la démonstration RPS est le premier lot à retirer, avant le matching automatisé.",
-        "lots": ["Fondations", "Auth et rôles", "Espace CCI-Togo", "Deal-Ready", "Dossier cédant", "Marketplace actifs", "Évaluation indicative", "Démonstration RPS", "Frontend et design", "QA et livraison"],
+        "lots": ["Fondations", "Auth et rôles", "Espace CCI-Togo", "Deal-Ready", "Dossier cédant", "Marketplace actifs", "Évaluation indicative", "Démonstration RPS", "Deal-Connect (Remo)", "Frontend et design", "QA et livraison"],
     },
     "V2": {
         "focus": "Le cœur du différenciateur produit : le moteur RPS complet pour les cessions de titres et la data room. Prérequis à toute diligence réelle.",
