@@ -74,12 +74,50 @@ def title(ws, text, sub=None):
 # ------------------------------------------------------------------ données de référence
 VERSIONS = [
     # code, objet, début, fin
-    ("V1", "Premier produit : cessions d'actifs, espace CCI-Togo, Deal-Ready, démonstration du blocage RPS", dt.date(2026, 9, 9), dt.date(2026, 10, 15)),
-    ("V2", "Cession de titres en cercle restreint (RPS réel), signature électronique, data room et Q&R", dt.date(2026, 10, 16), dt.date(2026, 12, 10)),
-    ("V3", "Négociation et réalisation, LegalTech OHADA, Finance et rétrocession, support, fermeture des portes de conformité", dt.date(2026, 12, 11), dt.date(2027, 2, 18)),
-    ("V4", "Alerte & Rebond, Deal-Connect (Remo.co), Guichet Diaspora, Deal-Experts", dt.date(2027, 2, 19), dt.date(2027, 4, 1)),
-    ("V5", "VDR Intelligence : DealLens, Evidence Map, Issue Radar, Clean Team", dt.date(2027, 4, 2), dt.date(2027, 6, 3)),
+    ("V1", "Premier produit : cessions d'actifs, espace CCI-Togo, Deal-Ready, démonstration du blocage RPS", dt.date(2026, 9, 1), dt.date(2026, 10, 12)),
+    ("V2", "Cession de titres en cercle restreint (RPS réel), signature électronique, data room et Q&R", dt.date(2026, 10, 13), dt.date(2026, 12, 7)),
+    ("V3", "Négociation et réalisation, LegalTech OHADA, Finance et rétrocession, support, fermeture des portes de conformité", dt.date(2026, 12, 8), dt.date(2027, 2, 15)),
+    ("V4", "Alerte & Rebond, Deal-Connect (Remo.co), Guichet Diaspora, Deal-Experts", dt.date(2027, 2, 16), dt.date(2027, 3, 29)),
+    ("V5", "VDR Intelligence : DealLens, Evidence Map, Issue Radar, Clean Team", dt.date(2027, 3, 30), dt.date(2027, 5, 31)),
 ]
+
+# Tâches déjà réalisées ou entamées par le squelette du 09/09/2026 (clé : début du libellé de la tâche).
+# (statut, % saisi ou None, fin réelle ou None)
+DONE_AT = dt.date(2026, 9, 9)
+PROGRESS = {
+    "Dépôt monorepo": ("Complétée", None, DONE_AT),
+    "Environnements dev / staging": ("En cours", 0.4, None),
+    "Modèle de données socle": ("Complétée", None, DONE_AT),
+    "Modèle Deal et AssetDealDetail": ("En cours", 0.8, None),
+    "Classification des champs": ("En cours", 0.7, None),
+    "Enregistrement d'attribution immuable": ("En cours", 0.8, None),
+    "Journal DealEvent et machine à états": ("Complétée", None, DONE_AT),
+    "Socle i18n": ("En cours", 0.6, None),
+    "Inscription email": ("En cours", 0.7, None),
+    "Rôles et permissions évalués côté serveur": ("En cours", 0.8, None),
+    "Gestion de session": ("En cours", 0.7, None),
+    "Consentements séparés": ("Complétée", None, DONE_AT),
+    "Paliers d'abonnement": ("En cours", 0.5, None),
+    "Workflow de confirmation d'adhésion": ("En cours", 0.7, None),
+    "Vérification RCCM / CFE": ("En cours", 0.6, None),
+    "RegistryRecord stocké séparément": ("Complétée", None, DONE_AT),
+    "Modèle Certification": ("Complétée", None, DONE_AT),
+    "Workflow de décision nominative": ("En cours", 0.7, None),
+    "Badge Deal-Ready : affichage": ("En cours", 0.4, None),
+    "Assistant de constitution de dossier": ("En cours", 0.15, None),
+    "Fiche opportunité T0": ("En cours", 0.7, None),
+    "Recherche et filtres": ("En cours", 0.7, None),
+    "Mise en relation : manifestation": ("En cours", 0.5, None),
+    "Saisie des données financières minimales": ("En cours", 0.4, None),
+    "Calcul de fourchette indicative": ("Complétée", None, DONE_AT),
+    "Mentions 'indicative, non opposable'": ("Complétée", None, DONE_AT),
+    "Scénario scripté : dossier titres": ("En cours", 0.3, None),
+    "Intégration du design system": ("En cours", 0.5, None),
+    "Gabarit applicatif": ("En cours", 0.5, None),
+    "Tests automatisés": ("En cours", 0.25, None),
+    "Documentation développeur": ("En cours", 0.6, None),
+}
+DEFAULT_OWNER = "Abdou-Raouf"
 
 MODULES = [
     # code, nom, catégorie, processus, version cible, commentaire
@@ -444,9 +482,15 @@ for idx in range(NTASK_ROWS):
         counters[v] = counters.get(v, 0) + 1
         tid = f"{v}-{counters[v]:03d}"
         s, e = DATES[idx]
+        pct, fin_reelle, resp, comment = None, None, None, None
+        for prefix, (st, p, done) in PROGRESS.items():
+            if tache.startswith(prefix):
+                statut, pct, fin_reelle, resp = st, p, done, DEFAULT_OWNER
+                comment = "Posé par le squelette du 09/09/2026" if st == "Complétée" else "Entamé par le squelette du 09/09/2026"
+                break
         vals = {"id": tid, "version": v, "module": m, "lot": lot, "tache": tache, "critere": crit,
-                "charge": ch, "prio": prio, "statut": statut, "pct": None, "resp": None,
-                "debut": s, "fin": e, "fin_reelle": None, "dep": dep, "bloquant": bloquant, "comment": None}
+                "charge": ch, "prio": prio, "statut": statut, "pct": pct, "resp": resp,
+                "debut": s, "fin": e, "fin_reelle": fin_reelle, "dep": dep, "bloquant": bloquant, "comment": comment}
         for k, val in vals.items():
             wsT[f"{TC[k]}{r}"] = val
     # formules (présentes même sur lignes vides pour permettre l'ajout de tâches)
@@ -731,8 +775,8 @@ JALONS = [
     ("J02", "Réponse sur la disponibilité d'une API CFE / RCCM", "V1", dt.date(2026, 9, 16), "À venir", "Sinon saisie manuelle supervisée"),
     ("J03", "Gel du périmètre V1", "V1", dt.date(2026, 9, 18), "À venir", "Plus aucun ajout après cette date"),
     ("J04", "Designer UI/UX confirmé", "V1", dt.date(2026, 9, 18), "À venir", "Proposition Bouley à confirmer"),
-    ("J05", "Recette interne V1 terminée", "V1", dt.date(2026, 10, 8), "À venir", "Zéro anomalie bloquante"),
-    ("J06", "Répétition générale de la démonstration", "V1", dt.date(2026, 10, 13), "À venir", ""),
+    ("J05", "Recette interne V1 terminée", "V1", dt.date(2026, 10, 7), "À venir", "Zéro anomalie bloquante"),
+    ("J06", "Fin de développement V1 et répétition générale", "V1", dt.date(2026, 10, 12), "À venir", "Trois jours de marge avant la présentation"),
     ("J07", "Démonstration V1 à M. Bruno et à la CCI-Togo", "V1", dt.date(2026, 10, 15), "À venir", "Échéance ferme"),
     ("J08", "Contrat prestataire de signature qualifiée (PSC) signé", "V2", dt.date(2026, 10, 30), "À venir", "Bloquant pour l'intégration NDA"),
     ("J09", "Livraison V2", "V2", dt.date(2026, 12, 10), "À venir", ""),
@@ -921,7 +965,7 @@ wsA.column_dimensions["E"].width = 46
 # ================================================================== GANTT
 wsG = wb.create_sheet("Gantt")
 title(wsG, "Planning hebdomadaire", "Barres calculées depuis les dates de l'onglet Taches. Bleu : prévu. Ambre : en cours. Vert : fait. Colonne surlignée : semaine courante.")
-G_START = dt.date(2026, 9, 7)  # lundi
+G_START = dt.date(2026, 8, 31)  # lundi
 N_WEEKS = 41
 gh = ["ID", "Tâche", "Version", "Module", "Début", "Fin", "Statut"]
 for i, h in enumerate(gh):
