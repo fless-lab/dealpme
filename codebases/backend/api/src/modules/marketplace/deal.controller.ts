@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Param, Post, Req } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Param, Post, Req } from "@nestjs/common";
 import type { Request } from "express";
 import { z } from "zod";
 import { CreateDealRequestSchema, IdSchema, type CreateDealRequest } from "@dealpme/contracts";
@@ -23,6 +23,12 @@ export class DealController {
   @Roles(Role.SELLER, Role.ADVISOR)
   create(@Body(validate(CreateDealRequestSchema)) body: CreateDealRequest, @CurrentPrincipal() seller: Principal, @Req() req: Request) {
     return this.dealService.create(body, seller, correlationIdOf(req));
+  }
+
+  @Get(":dealId")
+  @Roles(Role.SELLER, Role.ADVISOR, Role.INVESTOR, Role.INVESTOR_DIASPORA, Role.BANK, Role.CCI_OFFICER, Role.COMPLIANCE_OPERATOR, Role.PLATFORM_ADMIN)
+  get(@Param("dealId", validate(IdSchema)) dealId: string, @CurrentPrincipal() principal: Principal) {
+    return this.dealService.getById(dealId, principal);
   }
 
   @Post(":dealId/transitions")

@@ -39,6 +39,19 @@ resp=$(curl -s -X POST "$API/deals/$tvdeal/transitions" -H "authorization: Beare
 codeval=$(echo "$resp" | python3 -c 'import sys,json;print(json.load(sys.stdin)["error"]["code"])' 2>/dev/null)
 check "publication d'une cession de titres bloquée par PERIMETER_BLOCKED" PERIMETER_BLOCKED "$codeval"
 
+echo "== Sécurité : RLS effective"
+tvdeal=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select d.id from deal d join company c on c.id=d.company_id where c.legal_name like 'TropicVale%' limit 1")
+code=$(curl -s -o /dev/null -w '%{http_code}' "$API/deals/$tvdeal" -H "authorization: Bearer $SELLER")
+check "un cédant ne lit pas le dossier non publié d'un autre cédant (404 par RLS)" 404 "$code"
+own=$(curl -s "$API/deals/$tvdeal" -H "authorization: Bearer $TV" | grep -c askingPriceXof)
+check "le propriétaire lit son dossier complet, prix inclus" 1 "$own"
+frdeal=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select d.id from deal d join company c on c.id=d.company_id where c.legal_name like 'FroidRoute%' limit 1")
+invview=$(curl -s "$API/deals/$frdeal" -H "authorization: Bearer $INV")
+check "un investisseur lit un dossier publié en projection T0, sans prix" 0 "$(echo "$invview" | grep -c askingPriceXof)"
+check "la projection T0 contient bien le secteur" 1 "$(echo "$invview" | grep -c sectorCode)"
+role=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select rolbypassrls from pg_roles where rolname='dealpme_api'")
+check "le rôle applicatif ne contourne pas la RLS" f "$role"
+
 echo "== Intérêt et évaluation"
 first=$(echo "$body" | python3 -c 'import sys,json;print(json.load(sys.stdin)["items"][0]["id"])')
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$first/interests" -H "authorization: Bearer $INV" -H 'content-type: application/json' -d '{"message":"Intéressé par cette opportunité"}')

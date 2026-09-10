@@ -121,7 +121,8 @@ PROGRESS = {
     "Connecteur Remo.co": ("En cours", 0.4, None),
     "Inscriptions DEALPME_FIRST": ("En cours", 0.5, None),
     "Demande de rendez-vous diaspora": ("En cours", 0.3, None),
-    "RLS effective": ("En cours", 0.3, None),
+    "RLS effective": ("Complétée", None, dt.date(2026, 9, 10)),
+    "Mots de passe de démonstration uniques": ("En cours", 0.5, None),
     "Idempotence persistée": ("En cours", 0.2, None),
 }
 DEFAULT_OWNER = "Abdou-Raouf"

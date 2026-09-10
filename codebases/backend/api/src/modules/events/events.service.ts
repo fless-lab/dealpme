@@ -4,6 +4,7 @@ import { DealPmeError, ErrorCode } from "@dealpme/contracts";
 import { newId } from "@dealpme/domain";
 import { CORE_DB, type CoreDb } from "../../database/database.module.js";
 import { diasporaAppointments, eventRegistrations, events } from "../../database/schema/core.js";
+import { withTenant } from "../../database/tenant.js";
 import { AuditService } from "../../platform/audit.service.js";
 import type { Principal } from "../../platform/auth.js";
 import { RemoBridgeService, type RemoIntegrationMode } from "./remo-bridge.service.js";
@@ -68,7 +69,8 @@ export class EventsService {
     const ev = (await this.db.select().from(events).where(eq(events.id, eventId)).limit(1))[0];
     if (!ev || ev.status !== "PUBLISHED") throw new DealPmeError(ErrorCode.NOT_FOUND, "Événement introuvable");
     const id = newId();
-    await this.db.insert(eventRegistrations).values({ id, eventId, userId: participant.userId, displayName, consentContactAt: consentContact ? new Date() : null });
+    // Politique RLS : une inscription n'est visible et modifiable que par son auteur (ou un officier).
+    await withTenant(this.db, participant, (tx) => tx.insert(eventRegistrations).values({ id, eventId, userId: participant.userId, displayName, consentContactAt: consentContact ? new Date() : null }));
     this.audit.record({ action: "INTEREST_EXPRESSED", actorUserId: participant.userId, subjectType: "event", subjectId: eventId, outcome: "OK", correlationId });
     return { registrationId: id };
   }
@@ -76,7 +78,7 @@ export class EventsService {
   /** Lien d'accès unique : réservé aux inscrits d'un événement publié chez Remo. */
   async joinUrl(eventId: string, participant: Principal) {
     const ev = (await this.db.select().from(events).where(eq(events.id, eventId)).limit(1))[0];
-    const reg = (await this.db.select().from(eventRegistrations).where(and(eq(eventRegistrations.eventId, eventId), eq(eventRegistrations.userId, participant.userId))).limit(1))[0];
+    const reg = (await withTenant(this.db, participant, (tx) => tx.select().from(eventRegistrations).where(and(eq(eventRegistrations.eventId, eventId), eq(eventRegistrations.userId, participant.userId))).limit(1)))[0];
     if (!ev || !reg) throw new DealPmeError(ErrorCode.NOT_FOUND, "Inscription introuvable");
     if (!ev.remoEventId) throw new DealPmeError(ErrorCode.CONFLICT, "Événement non encore publié chez Remo");
     const url = await this.bridge.joinUrl({ id: ev.id, title: ev.title, startsAt: ev.startsAt.toISOString(), endsAt: ev.endsAt.toISOString(), capacity: ev.capacity, mode: ev.integrationMode as RemoIntegrationMode, remoEventId: ev.remoEventId }, participant.userId, reg.displayName);
@@ -89,7 +91,7 @@ export class EventsService {
       throw new DealPmeError(ErrorCode.VALIDATION_FAILED, "Les contraintes transfrontalières doivent être présentées et reconnues avant toute demande (P21)");
     }
     const id = newId();
-    await this.db.insert(diasporaAppointments).values({ id, investorUserId: investor.userId, dealId, requestedSlot: new Date(requestedSlot), crossBorderNoticeShownAt: new Date() });
+    await withTenant(this.db, investor, (tx) => tx.insert(diasporaAppointments).values({ id, investorUserId: investor.userId, dealId, requestedSlot: new Date(requestedSlot), crossBorderNoticeShownAt: new Date() }));
     this.audit.record({ action: "INTEREST_EXPRESSED", actorUserId: investor.userId, subjectType: "diaspora_appointment", subjectId: id, outcome: "OK", correlationId });
     return { appointmentId: id, status: "REQUESTED" };
   }

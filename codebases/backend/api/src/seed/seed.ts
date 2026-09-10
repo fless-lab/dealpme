@@ -45,8 +45,12 @@ function legalForm(v: string): LegalForm {
 }
 
 async function main(): Promise<void> {
-  const url = process.env["DATABASE_URL_CORE"];
-  if (!url) throw new Error("DATABASE_URL_CORE manquant");
+  if (process.env["NODE_ENV"] && process.env["NODE_ENV"] !== "development") {
+    throw new Error("Le jeu de démonstration ne se charge qu'en développement local (NODE_ENV=development)");
+  }
+  // Le chargement traverse toutes les organisations : il utilise le rôle propriétaire, pas le rôle applicatif.
+  const url = process.env["DATABASE_URL_CORE_ADMIN"];
+  if (!url) throw new Error("DATABASE_URL_CORE_ADMIN manquant");
   if (!corpusAvailable()) throw new Error("Corpus de référence introuvable (ressources/)");
   const sql = postgres(url, { max: 3, prepare: false });
   const db = drizzle(sql, { schema: s });

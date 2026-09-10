@@ -5,7 +5,8 @@ export default {
   schema: "./src/database/schema/core.ts",
   out: "./drizzle/core",
   dialect: "postgresql",
-  dbCredentials: { url: process.env["DATABASE_URL_CORE"] ?? "postgres://dealpme_core:dealpme_core@localhost:5432/dealpme_core" },
+  // Les migrations s'exécutent avec le rôle propriétaire, jamais avec le rôle applicatif.
+  dbCredentials: { url: process.env["DATABASE_URL_CORE_ADMIN"] ?? "postgres://dealpme_core:dealpme_core@localhost:5432/dealpme_core" },
   strict: true,
   verbose: true,
 } satisfies Config;

@@ -85,3 +85,33 @@ CREATE POLICY valuation_owner ON indicative_valuation
 
 GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO dealpme_api;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO dealpme_api;
+
+-- 6. Droits du rôle applicatif sur les tables futures (toute nouvelle migration est couverte sans intervention).
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE ON TABLES TO dealpme_api;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE ON SEQUENCES TO dealpme_api;
+-- Le rôle applicatif ne supprime jamais rien : l'effacement RGPD passe par une procédure dédiée du DPO.
+REVOKE DELETE ON ALL TABLES IN SCHEMA public FROM dealpme_api;
+
+-- 7. Événements et inscriptions : lecture publique des événements publiés, inscriptions visibles par leur auteur et l'organisateur.
+ALTER TABLE event_registration ENABLE ROW LEVEL SECURITY;
+ALTER TABLE event_registration FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS registration_self ON event_registration;
+CREATE POLICY registration_self ON event_registration
+  USING (EXISTS (SELECT 1 FROM app_user u WHERE u.id = event_registration.user_id AND u.organisation_id::text = current_setting('app.organisation_id', true)));
+DROP POLICY IF EXISTS registration_officer ON event_registration;
+CREATE POLICY registration_officer ON event_registration FOR SELECT
+  USING (position('CCI_OFFICER' in coalesce(current_setting('app.roles', true), '')) > 0
+      OR position('PLATFORM_ADMIN' in coalesce(current_setting('app.roles', true), '')) > 0);
+
+ALTER TABLE diaspora_appointment ENABLE ROW LEVEL SECURITY;
+ALTER TABLE diaspora_appointment FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS appointment_self ON diaspora_appointment;
+CREATE POLICY appointment_self ON diaspora_appointment
+  USING (EXISTS (SELECT 1 FROM app_user u WHERE u.id = diaspora_appointment.investor_user_id AND u.organisation_id::text = current_setting('app.organisation_id', true)));
+DROP POLICY IF EXISTS appointment_officer ON diaspora_appointment;
+CREATE POLICY appointment_officer ON diaspora_appointment
+  USING (position('CCI_OFFICER' in coalesce(current_setting('app.roles', true), '')) > 0
+      OR position('PLATFORM_ADMIN' in coalesce(current_setting('app.roles', true), '')) > 0);
+
+-- 8. Le rôle applicatif ne peut pas modifier les politiques ni les triggers (pas propriétaire des objets).
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO dealpme_api;

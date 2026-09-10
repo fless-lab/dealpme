@@ -13,7 +13,10 @@ const EnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   API_PORT: z.coerce.number().int().default(4000),
   APP_BASE_URL: z.url().default("http://localhost:3000"),
-  DATABASE_URL_CORE: z.string().min(1),
+  DATABASE_URL_CORE: z.string().min(1).refine((u) => !/^postgres:\/\/dealpme_core:/.test(u) || process.env["NODE_ENV"] === "test", {
+    message: "L'API doit se connecter avec le rôle applicatif dealpme_api, pas avec le rôle propriétaire (RLS contournée)",
+  }),
+  DATABASE_URL_CORE_ADMIN: z.string().min(1).optional(),
   DATABASE_URL_VDR: z.string().min(1),
   REDIS_URL: z.string().min(1).default("redis://localhost:6379"),
   RPS_BASE_URL: z.url().default("http://localhost:4100"),
