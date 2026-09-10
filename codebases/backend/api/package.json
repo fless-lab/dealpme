@@ -16,31 +16,33 @@
     "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
+    "@dealpme/connector-antivirus": "*",
+    "@dealpme/connector-email": "*",
+    "@dealpme/connector-registry": "*",
+    "@dealpme/connector-remo": "*",
+    "@dealpme/connector-sms": "*",
+    "@dealpme/connector-storage": "*",
     "@dealpme/contracts": "*",
     "@dealpme/domain": "*",
     "@dealpme/i18n": "*",
     "@dealpme/rules": "*",
-    "@dealpme/connector-registry": "*",
-    "@dealpme/connector-sms": "*",
-    "@dealpme/connector-email": "*",
-    "@dealpme/connector-storage": "*",
-    "@dealpme/connector-remo": "*",
     "@nestjs/common": "^11.1.6",
     "@nestjs/core": "^11.1.6",
     "@nestjs/platform-express": "^11.1.6",
     "argon2": "^0.44.0",
     "drizzle-orm": "^0.45.2",
+    "express": "^5.1.0",
+    "ioredis": "^5.7.0",
     "postgres": "^3.4.7",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
-    "zod": "^4.1.5",
-    "ioredis": "^5.7.0",
-    "express": "^5.1.0"
+    "zod": "^4.1.5"
   },
   "devDependencies": {
     "@dealpme/config": "*",
     "@dealpme/testing": "*",
     "@types/express": "^5.0.3",
+    "@types/multer": "^2.2.0",
     "drizzle-kit": "^0.31.4",
     "tsx": "^4.20.5"
   }

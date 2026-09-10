@@ -115,3 +115,45 @@ CREATE POLICY appointment_officer ON diaspora_appointment
 
 -- 8. Le rôle applicatif ne peut pas modifier les politiques ni les triggers (pas propriétaire des objets).
 GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO dealpme_api;
+
+-- 9. Dossier cédant : pièces déposées et valeurs déclarées. Visibles par le cédant propriétaire du dossier
+--    et par l'institution (officier CCI-Togo, administration) pour l'instruction. Jamais par un repreneur en V1 :
+--    l'accès aux pièces d'un dossier passe par la data room et ses paliers (V2).
+ALTER TABLE deal_document ENABLE ROW LEVEL SECURITY;
+ALTER TABLE deal_document FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS deal_document_owner ON deal_document;
+CREATE POLICY deal_document_owner ON deal_document
+  USING (EXISTS (SELECT 1 FROM deal d WHERE d.id = deal_document.deal_id AND d.seller_organisation_id::text = current_setting('app.organisation_id', true)));
+DROP POLICY IF EXISTS deal_document_officer ON deal_document;
+CREATE POLICY deal_document_officer ON deal_document FOR SELECT
+  USING (position('CCI_OFFICER' in coalesce(current_setting('app.roles', true), '')) > 0
+      OR position('PLATFORM_ADMIN' in coalesce(current_setting('app.roles', true), '')) > 0);
+
+ALTER TABLE declared_fact ENABLE ROW LEVEL SECURITY;
+ALTER TABLE declared_fact FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS declared_fact_owner ON declared_fact;
+CREATE POLICY declared_fact_owner ON declared_fact
+  USING (EXISTS (SELECT 1 FROM deal d WHERE d.id = declared_fact.deal_id AND d.seller_organisation_id::text = current_setting('app.organisation_id', true)));
+DROP POLICY IF EXISTS declared_fact_officer ON declared_fact;
+CREATE POLICY declared_fact_officer ON declared_fact FOR SELECT
+  USING (position('CCI_OFFICER' in coalesce(current_setting('app.roles', true), '')) > 0
+      OR position('PLATFORM_ADMIN' in coalesce(current_setting('app.roles', true), '')) > 0);
+
+-- 10. Provenance non réécrite : une valeur déclarée ou une pièce ne se corrige pas sur place. Une correction
+--     crée une nouvelle version ; seules les colonnes de chaînage de version peuvent évoluer sur l'ancienne ligne.
+CREATE OR REPLACE FUNCTION version_chain_only() RETURNS trigger AS $$
+BEGIN
+  IF TG_OP = 'DELETE' THEN
+    RAISE EXCEPTION 'suppression interdite : la provenance est conservée' USING ERRCODE = 'check_violation';
+  END IF;
+  IF to_jsonb(NEW) - 'superseded_at' <> to_jsonb(OLD) - 'superseded_at' THEN
+    RAISE EXCEPTION 'valeur déclarée immuable : créer une nouvelle version' USING ERRCODE = 'check_violation';
+  END IF;
+  RETURN NEW;
+END $$ LANGUAGE plpgsql;
+DROP TRIGGER IF EXISTS trg_declared_fact_versioned ON declared_fact;
+CREATE TRIGGER trg_declared_fact_versioned BEFORE UPDATE OR DELETE ON declared_fact FOR EACH ROW EXECUTE FUNCTION version_chain_only();
+DROP TRIGGER IF EXISTS trg_deal_document_versioned ON deal_document;
+CREATE TRIGGER trg_deal_document_versioned BEFORE UPDATE OR DELETE ON deal_document FOR EACH ROW EXECUTE FUNCTION version_chain_only();
+
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO dealpme_api;

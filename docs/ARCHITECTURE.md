@@ -92,6 +92,20 @@ REMO_FIRST (option)
 - Triggers : `deal_type` immuable, attribution immuable, `disclosure_count` réservé au RPS, tables append-only.
 - Idempotency-Key obligatoire sur paiements et webhooks ; signatures de webhook vérifiées avant traitement.
 - Drapeaux gouvernés par avis juridique : `FEATURE_TRANSACTION_FEES`, `FEATURE_LICENSED_PARTNER_HANDOFF`, `FEATURE_BIOMETRIC_KYC`.
+- Pièces déposées : analyse antivirus avant écriture, liste fermée de types acceptés, stockage objet privé et chiffré,
+  contenu servi par l'API et jamais par une adresse de stockage, versionnage sans réécriture (ADR 0007).
+
+## Décisions d'architecture
+
+| ADR | Objet |
+|---|---|
+| [0001](adr/0001-monolithe-modulaire.md) | Monolithe modulaire plutôt que microservices, sauf le RPS |
+| [0002](adr/0002-rps-service-independant.md) | Regulatory Perimeter Service déployé séparément |
+| [0003](adr/0003-isolation-data-room.md) | Isolation de la data room : base et stockage distincts |
+| [0004](adr/0004-typescript-bout-en-bout.md) | TypeScript de bout en bout |
+| [0005](adr/0005-connecteurs-externes.md) | Connecteurs externes derrière des ports |
+| [0006](adr/0006-sessions-serveur.md) | Sessions opaques côté serveur plutôt que jetons autoportants |
+| [0007](adr/0007-depot-de-pieces.md) | Dépôt des pièces : antivirus avant stockage, aucune adresse publique |
 
 ## Environnements
 

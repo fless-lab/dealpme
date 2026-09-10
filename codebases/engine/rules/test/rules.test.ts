@@ -5,8 +5,10 @@ import {
   computeSuccessFee,
   indicativeRange,
   isIndexable,
+  completeness,
   matchDeal,
   openVdr,
+  requirementsFor,
   projectForTier,
   transition,
 } from "../src/index.js";
@@ -103,5 +105,47 @@ describe("frais de succès", () => {
     const big = computeSuccessFee(xof(2_000_000_000), SubscriptionTier.ELITE);
     expect(big.ratePercent).toBe(3);
     expect(big.platformShareXof + big.institutionShareXof).toBe(big.feeXof);
+  });
+});
+
+describe("liste des pièces du dossier cédant", () => {
+  it("branche les exigences sur le type de cession dès l'étape 1", () => {
+    const asset = requirementsFor(DealType.ASSET_DEAL).map((r) => (r.kind === "fact" ? r.key : r.category));
+    const share = requirementsFor(DealType.SHARE_DEAL).map((r) => (r.kind === "fact" ? r.key : r.category));
+    expect(asset).toContain("INVENTAIRE_ACTIFS");
+    expect(asset).not.toContain("REGISTRE_TITRES");
+    expect(share).toContain("TRANSFER_RESTRICTIONS");
+    expect(share).not.toContain("ASSETS_DESCRIPTION");
+  });
+
+  it("un dossier vide n'est pas complet et nomme chaque manque", () => {
+    const r = completeness({ dealType: DealType.ASSET_DEAL, factKeys: [], documentCategories: [] });
+    expect(r.complete).toBe(false);
+    expect(r.ratio).toBe(0);
+    expect(r.missing.length).toBe(requirementsFor(DealType.ASSET_DEAL).length);
+    expect(r.missing.every((m) => m.label.length > 0 && m.step.length > 0)).toBe(true);
+  });
+
+  it("un dossier dont toutes les exigences sont satisfaites est complet", () => {
+    const req = requirementsFor(DealType.ASSET_DEAL);
+    const r = completeness({
+      dealType: DealType.ASSET_DEAL,
+      factKeys: req.filter((x) => x.kind === "fact").map((x) => x.key),
+      documentCategories: req.filter((x) => x.kind === "document").map((x) => x.category),
+    });
+    expect(r.complete).toBe(true);
+    expect(r.ratio).toBe(1);
+    expect(r.missing).toEqual([]);
+  });
+
+  it("une pièce manquante suffit à laisser le dossier incomplet", () => {
+    const req = requirementsFor(DealType.SHARE_DEAL);
+    const r = completeness({
+      dealType: DealType.SHARE_DEAL,
+      factKeys: req.filter((x) => x.kind === "fact").map((x) => x.key),
+      documentCategories: req.filter((x) => x.kind === "document" && x.category !== "PACTE_ASSOCIES").map((x) => x.category),
+    });
+    expect(r.complete).toBe(false);
+    expect(r.missing).toEqual([{ kind: "document", key: "PACTE_ASSOCIES", label: "Pacte d'associés, s'il existe", step: "PIECES" }]);
   });
 });

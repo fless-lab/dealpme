@@ -1,15 +1,16 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { and, eq, gt, inArray } from "drizzle-orm";
+import { and, desc, eq, gt, inArray } from "drizzle-orm";
 import { DealPmeError, ErrorCode, type CreateDealRequest, type DealTeaserT0, type SearchDealsQuery } from "@dealpme/contracts";
 import { DealStatus, DealType, DisclosureTier, newId } from "@dealpme/domain";
 import { projectForTier, transition } from "@dealpme/rules";
 import { CORE_DB, type CoreDb } from "../../database/database.module.js";
-import { certifications, dealEvents, deals, interests } from "../../database/schema/core.js";
+import { certifications, companies, dealEvents, deals, interests } from "../../database/schema/core.js";
 import { withTenant } from "../../database/tenant.js";
 import { AuditService } from "../../platform/audit.service.js";
 import type { Principal } from "../../platform/auth.js";
 import { FeatureFlags } from "../../platform/feature-flags.js";
 import { FieldCrypto } from "../../platform/field-crypto.service.js";
+import { DossierService } from "./dossier.service.js";
 
 const LISTED_STATUSES = [DealStatus.LISTED_OPEN, DealStatus.LISTED_RESTRICTED, DealStatus.ENGAGED, DealStatus.DUE_DILIGENCE, DealStatus.NEGOTIATION] as const;
 
@@ -25,6 +26,7 @@ export class DealService {
     private readonly audit: AuditService,
     private readonly flags: FeatureFlags,
     private readonly crypto: FieldCrypto,
+    private readonly dossier: DossierService,
   ) {}
 
   /** Création du dossier : le type de cession est fixé à l'étape 1 et ne changera jamais (DP-MKT-010, trigger en base). */
@@ -74,6 +76,10 @@ export class DealService {
    * la tentative est bloquée et journalisée (c'est le scénario de la démonstration du blocage).
    */
   async changeStatus(dealId: string, to: DealStatus, actor: Principal, correlationId: string, reason?: string): Promise<void> {
+    // Porte de complétude (P04) : un dossier incomplet reste en préparation, avec la liste de ses manques.
+    if (to === DealStatus.PENDING_VERIFICATION) {
+      await this.dossier.assertSubmittable(dealId, actor);
+    }
     await withTenant(this.db, actor, async (tx) => {
       const deal = (await tx.select().from(deals).where(eq(deals.id, dealId)).limit(1))[0];
       if (!deal) throw new DealPmeError(ErrorCode.NOT_FOUND, "Dossier introuvable");
@@ -134,6 +140,21 @@ export class DealService {
         .filter((t) => !q.dealReadyOnly || t.isDealReady);
 
       return { items, nextCursor: rows.length > q.limit ? (page[page.length - 1]?.id ?? null) : null };
+    });
+  }
+
+  /** Dossiers de l'organisation cédante, avec l'état de leur certification. Aucune donnée d'un autre cédant : la RLS y veille. */
+  async listMine(seller: Principal) {
+    return withTenant(this.db, seller, async (tx) => {
+      const rows = await tx
+        .select({ id: deals.id, companyId: deals.companyId, dealType: deals.dealType, status: deals.status, sectorCode: deals.sectorCode, regionCode: deals.regionCode, turnoverBand: deals.turnoverBand, createdAt: deals.createdAt })
+        .from(deals)
+        .where(eq(deals.sellerOrganisationId, seller.organisationId))
+        .orderBy(desc(deals.createdAt));
+      const companyIds = rows.map((r) => r.companyId);
+      const names = companyIds.length ? await tx.select({ id: companies.id, legalName: companies.legalName }).from(companies).where(inArray(companies.id, companyIds)) : [];
+      const byId = new Map(names.map((c) => [c.id, c.legalName]));
+      return { items: rows.map((r) => ({ ...r, companyName: byId.get(r.companyId) ?? "Entreprise" })) };
     });
   }
 

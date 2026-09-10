@@ -301,3 +301,58 @@ export const idempotencyKeys = pgTable("idempotency_key", {
   responseBody: jsonb("response_body").notNull(),
   createdAt: createdAt(),
 });
+
+/**
+ * Dossier cédant (P04). Deux tables : les pièces déposées et les valeurs déclarées.
+ * Les deux sont versionnées et jamais écrasées : une correction crée une version, l'ancienne reste
+ * consultable avec sa date et sa source. C'est ce qui rend l'affirmation "déclaré, non audité" vérifiable.
+ */
+export const documentScanStateEnum = pgEnum("document_scan_state", ["CLEAN", "INFECTED", "ERROR"]);
+export const declaredSourceEnum = pgEnum("declared_source", ["SELLER_DECLARATION", "SUPPORTING_DOCUMENT", "REGISTRY", "EXPERT_REVIEW"]);
+
+export const dealDocuments = pgTable(
+  "deal_document",
+  {
+    id: id(),
+    dealId: uuid("deal_id").notNull().references(() => deals.id),
+    category: varchar("category", { length: 48 }).notNull(), // INTERNAL : rubrique de la liste des pièces attendues
+    title: varchar("title", { length: 200 }).notNull(), // INTERNAL
+    fileName: varchar("file_name", { length: 260 }).notNull(), // INTERNAL
+    contentType: varchar("content_type", { length: 120 }).notNull(),
+    sizeBytes: integer("size_bytes").notNull(),
+    sha256: varchar("sha256", { length: 64 }).notNull(), // empreinte du contenu déposé
+    storageKey: varchar("storage_key", { length: 512 }).notNull(), // CONFIDENTIAL_DEAL : clé objet, jamais une URL
+    storageVersionId: varchar("storage_version_id", { length: 128 }).notNull(),
+    version: integer("version").notNull().default(1),
+    supersedesId: uuid("supersedes_id"), // version précédente, conservée
+    supersededAt: timestamp("superseded_at", { withTimezone: true }),
+    scanState: documentScanStateEnum("scan_state").notNull(),
+    scanEngine: varchar("scan_engine", { length: 48 }).notNull(),
+    scanSignature: varchar("scan_signature", { length: 200 }), // renseignée uniquement si une menace a été trouvée
+    uploadedBy: uuid("uploaded_by").notNull(),
+    uploadedAt: timestamp("uploaded_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("deal_document_deal_idx").on(t.dealId, t.category)],
+);
+
+/** Valeur déclarée par le cédant, avec sa source, sa date et sa version (DP-MKT : provenance obligatoire). */
+export const declaredFacts = pgTable(
+  "declared_fact",
+  {
+    id: id(),
+    dealId: uuid("deal_id").notNull().references(() => deals.id),
+    fieldKey: varchar("field_key", { length: 64 }).notNull(), // INTERNAL : clé du référentiel de champs
+    periodLabel: varchar("period_label", { length: 16 }), // exercice concerné, par exemple 2025
+    valueText: text("value_text"), // INTERNAL : valeur non financière
+    valueAmountXof: bigint("value_amount_xof", { mode: "number" }), // INTERNAL : montant entier en XOF, jamais de décimale
+    source: declaredSourceEnum("source").notNull(),
+    sourceDocumentId: uuid("source_document_id"), // pièce justificative, quand elle existe
+    note: text("note"), // retraitement et sa justification
+    version: integer("version").notNull().default(1),
+    supersedesId: uuid("supersedes_id"),
+    supersededAt: timestamp("superseded_at", { withTimezone: true }),
+    declaredBy: uuid("declared_by").notNull(),
+    declaredAt: timestamp("declared_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("declared_fact_deal_idx").on(t.dealId, t.fieldKey)],
+);

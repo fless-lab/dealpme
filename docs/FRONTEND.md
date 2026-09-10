@@ -8,7 +8,7 @@ routes, avec une seule session, une seule navigation adaptée au rôle et un seu
 ```
 app/
   (public)/            site vitrine, marketplace T0, connexion, inscription, vérification d'email, second facteur
-  (espace)/cedant/     espace cédant : dossier, préparation, acheteurs, transaction
+  (espace)/cedant/     espace cédant : liste des dossiers, assistant en cinq étapes, récapitulatif, historique
   (espace)/investisseur/ opportunités, thèse, demandes d'accès, deals
   (espace)/cci/        console CCI-Togo : tableau de bord agrégé, adhésions, entreprises, journal des certifications
   (espace)/conformite/ admissions, compteurs de divulgation, blocages (V2)
@@ -19,6 +19,7 @@ app/
   api/auth/[action]    BFF : connexion, second facteur, inscription, vérification d'email, déconnexion
   api/sessions/[id]    BFF : révocation d'un appareil
   api/institution/     BFF de la console CCI-Togo, sur liste blanche d'actions
+  api/dossier/         BFF du dossier cédant : valeurs déclarées, dépôt et lecture des pièces
 ```
 
 Le navigateur ne parle qu'au BFF (`app/api/`). Le jeton de session API est posé dans un cookie `dp_session` httpOnly,

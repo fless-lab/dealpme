@@ -118,6 +118,34 @@ check "manifestation d'intérêt" 201 "$code"
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/valuations/indicative" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d "{\"dealId\":\"$did\",\"ebitdaXof\":100000000,\"netDebtXof\":20000000}")
 check "évaluation indicative" 201 "$code"
 
+echo "== Dossier cédant"
+dossier_deal=$(curl -s -X POST "$API/deals" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d "{\"companyId\":\"$cid\",\"dealType\":\"ASSET_DEAL\",\"sectorCode\":\"MANUF\",\"regionCode\":\"KARA\",\"turnoverBand\":\"LT_50M\"}" | python3 -c 'import sys,json;print(json.load(sys.stdin)["dealId"])')
+n=$(curl -s "$API/deals/$dossier_deal/dossier" -H "authorization: Bearer $SELLER" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(len(d["completeness"]["missing"]))')
+check "liste des manques d'un dossier vide" 13 "$n"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$dossier_deal/transitions" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{"to":"PENDING_VERIFICATION"}')
+check "un dossier incomplet reste en préparation (409)" 409 "$code"
+curl -s -o /dev/null -X POST "$API/deals/$dossier_deal/dossier/facts" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{"fieldKey":"TURNOVER","periodLabel":"2025","valueAmountXof":41000000}'
+curl -s -o /dev/null -X POST "$API/deals/$dossier_deal/dossier/facts" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{"fieldKey":"TURNOVER","periodLabel":"2025","valueAmountXof":43500000,"source":"SUPPORTING_DOCUMENT","note":"Corrigé après liasse fiscale"}'
+n=$(curl -s "$API/deals/$dossier_deal/dossier/facts/history?fieldKey=TURNOVER" -H "authorization: Bearer $SELLER" | python3 -c 'import sys,json;print(len(json.load(sys.stdin)["items"]))')
+check "une correction crée une version, l'ancienne est conservée" 2 "$n"
+printf '%%PDF-1.4\nPiece de fumee.\n%%%%EOF\n' > /tmp/dealpme-smoke.pdf
+doc=$(curl -s -X POST "$API/deals/$dossier_deal/dossier/documents" -H "authorization: Bearer $SELLER" -F "category=STATUTS" -F "title=Statuts" -F "file=@/tmp/dealpme-smoke.pdf;type=application/pdf" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("documentId",""))')
+[ -n "$doc" ] && check "dépôt d'une pièce saine" 1 1 || check "dépôt d'une pièce saine" 1 0
+python3 -c "import sys;sys.stdout.buffer.write(b'X5O!P%@AP[4\\\\PZX54(P^)7CC)7}\$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!\$H+H*')" > /tmp/dealpme-smoke-eicar.pdf
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$dossier_deal/dossier/documents" -H "authorization: Bearer $SELLER" -F "category=RCCM" -F "title=Extrait" -F "file=@/tmp/dealpme-smoke-eicar.pdf;type=application/pdf")
+check "fichier reconnu par l'antivirus refusé (400)" 400 "$code"
+rm -f /tmp/dealpme-smoke-eicar.pdf
+n=$(curl -s "$API/deals/$dossier_deal/dossier" -H "authorization: Bearer $SELLER" | python3 -c 'import sys,json;print(len(json.load(sys.stdin)["documents"]))')
+check "la pièce refusée n'est pas enregistrée" 1 "$n"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$dossier_deal/dossier/documents" -H "authorization: Bearer $SELLER" -F "category=RCCM" -F "title=Script" -F "file=@/tmp/dealpme-smoke.pdf;type=application/x-sh")
+check "type de fichier hors liste refusé (400)" 400 "$code"
+key=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select storage_key from deal_document where id='$doc'")
+code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:9000/dealpme-dossier/$key")
+check "aucun accès public au stockage des pièces (403)" 403 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$API/deals/$dossier_deal/dossier" -H "authorization: Bearer $INV")
+check "un investisseur n'accède pas au dossier d'un cédant (403)" 403 "$code"
+rm -f /tmp/dealpme-smoke.pdf
+
 echo "== Espace CCI-Togo"
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/institution/certifications" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{}')
 check "un cédant ne peut pas certifier (403)" 403 "$code"

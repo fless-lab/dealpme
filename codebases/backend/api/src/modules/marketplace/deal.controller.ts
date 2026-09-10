@@ -25,6 +25,13 @@ export class DealController {
     return this.dealService.create(body, seller, correlationIdOf(req));
   }
 
+  /** Mes dossiers (espace cédant). Déclaré avant la route paramétrée pour ne pas être capté par ":dealId". */
+  @Get()
+  @Roles(Role.SELLER, Role.ADVISOR)
+  mine(@CurrentPrincipal() seller: Principal) {
+    return this.dealService.listMine(seller);
+  }
+
   @Get(":dealId")
   @Roles(Role.SELLER, Role.ADVISOR, Role.INVESTOR, Role.INVESTOR_DIASPORA, Role.BANK, Role.CCI_OFFICER, Role.COMPLIANCE_OPERATOR, Role.PLATFORM_ADMIN)
   get(@Param("dealId", validate(IdSchema)) dealId: string, @CurrentPrincipal() principal: Principal) {
