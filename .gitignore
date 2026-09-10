@@ -14,3 +14,4 @@ __pycache__/
 .venv/
 .turbo/
 *.tsbuildinfo
+.demo-credentials.local.json

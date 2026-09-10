@@ -3,17 +3,36 @@
 # Usage : devX/smoke_v1.sh [http://localhost:4000/v1]
 set -u
 API="${1:-http://localhost:4000/v1}"
-PASS="DealPME-demo-2026"
+CRED="$(dirname "$0")/../.demo-credentials.local.json"
+pw() { python3 -c "import json,sys;print(json.load(open(sys.argv[1]))[sys.argv[2]])" "$CRED" "$1"; }
 ok=0; ko=0
 check() { # nom, code attendu, code obtenu
   if [ "$2" = "$3" ]; then echo "OK   $1 ($3)"; ok=$((ok+1)); else echo "KO   $1 (attendu $2, obtenu $3)"; ko=$((ko+1)); fi
 }
-login() { curl -s -X POST "$API/auth/login" -H 'content-type: application/json' -d "{\"email\":\"$1\",\"password\":\"$PASS\"}" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("token",""))'; }
+login() { curl -s -X POST "$API/auth/login" -H 'content-type: application/json' -d "{\"email\":\"$1\",\"password\":\"$(pw "$1")\"}" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("token",""))'; }
+# Connexion d'un rôle à second facteur obligatoire : le code n'est renvoyé (devCode) qu'en développement.
+login_mfa() { r=$(curl -s -X POST "$API/auth/login" -H 'content-type: application/json' -d "{\"email\":\"$1\",\"password\":\"$(pw "$1")\"}"); ch=$(echo "$r" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("challengeId",""))'); code=$(echo "$r" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("devCode",""))'); curl -s -X POST "$API/auth/mfa/verify" -H 'content-type: application/json' -d "{\"challengeId\":\"$ch\",\"code\":\"$code\"}" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("token",""))'; }
 
 echo "== Authentification"
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'content-type: application/json' -d '{"email":"admin@demo.dealpme.local","password":"mauvais"}')
 check "login refusé avec mauvais mot de passe" 401 "$code"
-SELLER=$(login cedant.froidroute@demo.dealpme.local); INV=$(login investisseur@demo.dealpme.local); OFF=$(login officier@cci-togo.demo.dealpme.local); TV=$(login cedant.tropicvale@demo.dealpme.local)
+SELLER=$(login cedant.froidroute@demo.dealpme.local); INV=$(login investisseur@demo.dealpme.local); TV=$(login cedant.tropicvale@demo.dealpme.local)
+mfa=$(curl -s -X POST "$API/auth/login" -H 'content-type: application/json' -d "{\"email\":\"officier@cci-togo.demo.dealpme.local\",\"password\":\"$(pw officier@cci-togo.demo.dealpme.local)\"}" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("mfaRequired", False), "token" in d)')
+check "un officier CCI-Togo reçoit un défi de second facteur, sans session" "True False" "$mfa"
+OFF=$(login_mfa officier@cci-togo.demo.dealpme.local)
+[ -n "$OFF" ] && check "second facteur validé ouvre la session de l'officier" 1 1 || check "second facteur validé ouvre la session de l'officier" 1 0
+reg=$(curl -s -X POST "$API/auth/register" -H 'content-type: application/json' -d '{"email":"nouveau.cedant@demo.dealpme.local","password":"MotDePasseSolide-2026","phoneE164":"+22890000001","organisationName":"Nouvelle entreprise de fumée","role":"SELLER","consents":{"termsAccepted":true,"privacyAccepted":true,"marketingOptIn":false},"attribution":{"channel":"SMOKE"}}')
+chal=$(echo "$reg" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("emailChallengeId",""))'); vcode=$(echo "$reg" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("devCode",""))')
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'content-type: application/json' -d '{"email":"nouveau.cedant@demo.dealpme.local","password":"MotDePasseSolide-2026"}')
+check "connexion refusée tant que l'email n'est pas vérifié (403)" 403 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/email/verify" -H 'content-type: application/json' -d "{\"challengeId\":\"$chal\",\"code\":\"000000\"}")
+check "code de vérification faux refusé (401)" 401 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/email/verify" -H 'content-type: application/json' -d "{\"challengeId\":\"$chal\",\"code\":\"$vcode\"}")
+check "vérification d'email avec le bon code" 200 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/email/verify" -H 'content-type: application/json' -d "{\"challengeId\":\"$chal\",\"code\":\"$vcode\"}")
+check "un code déjà consommé est refusé (401)" 401 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'content-type: application/json' -d '{"email":"nouveau.cedant@demo.dealpme.local","password":"MotDePasseSolide-2026"}')
+check "connexion possible après vérification de l'email" 200 "$code"
 [ -n "$SELLER" ] && check "login cédant" 1 1 || check "login cédant" 1 0
 
 echo "== Marketplace (T0 uniquement)"

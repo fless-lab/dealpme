@@ -1,5 +1,8 @@
 import "reflect-metadata";
 import argon2 from "argon2";
+import { createHash, randomBytes } from "node:crypto";
+import { writeFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { DealStatus, DealType, LegalForm, RegionCode, Role, TurnoverBand, newId } from "@dealpme/domain";
@@ -10,9 +13,13 @@ import { encryptField, encryptInt, keyRingFromEnv } from "../platform/field-cryp
 /**
  * Jeu de données de démonstration V1, dérivé du corpus de référence (PT-001 cas d'or, PT-003 / PT-006 / PT-012 cessions d'actifs).
  * Toutes les données sont synthétiques et étiquetées comme telles. Idempotent : ne recrée rien si l'administrateur existe déjà.
- * Mot de passe commun de démonstration : DealPME-demo-2026 (à ne jamais réutiliser en production).
+ * Mots de passe uniques par compte, dérivés d'un secret local aléatoire et écrits dans .demo-credentials.local.json
+ * (ignoré par git). Aucun mot de passe commun, aucun mot de passe dans le code.
  */
-const DEMO_PASSWORD = "DealPME-demo-2026";
+const CREDENTIALS_FILE = resolve(__dirname, "../../../../../.demo-credentials.local.json"); // racine du dépôt
+function demoPassword(secret: string, email: string): string {
+  return "Demo-" + createHash("sha256").update(`${secret}:${email}`).digest("base64url").slice(0, 18);
+}
 
 interface Master {
   company: string;
@@ -57,7 +64,8 @@ async function main(): Promise<void> {
   if (!process.env["FIELD_ENCRYPTION_KEY"]) throw new Error("FIELD_ENCRYPTION_KEY manquant");
   const sql = postgres(url, { max: 3, prepare: false });
   const db = drizzle(sql, { schema: s });
-  const passwordHash = await argon2.hash(DEMO_PASSWORD, { type: argon2.argon2id });
+  const secret = process.env["DEMO_CREDENTIALS_SECRET"] ?? randomBytes(24).toString("base64url");
+  const credentials: Record<string, string> = {};
   const now = new Date();
 
   const existing = await sql`select 1 from app_user where email = 'admin@demo.dealpme.local' limit 1`;
@@ -85,6 +93,9 @@ async function main(): Promise<void> {
     const userId = newId();
     await db.insert(s.organisations).values({ id: orgId, name: u.org, attributionChannel: u.channel, cciMemberConfirmationRef: u.channel === "CCI_CAMPAIGN" ? `CCIT-${userId.slice(0, 8).toUpperCase()}` : null });
     await db.insert(s.persons).values({ id: personId, legalName: u.person });
+    const password = demoPassword(secret, u.email);
+    credentials[u.email] = password;
+    const passwordHash = await argon2.hash(password, { type: argon2.argon2id });
     await db.insert(s.users).values({ id: userId, organisationId: orgId, personId, email: u.email, emailVerifiedAt: now, phoneE164: "+22890000000", phoneVerifiedAt: now, passwordHash, roles: u.roles, consentTermsAt: now, consentPrivacyAt: now });
     await db.insert(s.subscriptions).values({ id: newId(), organisationId: orgId, tier: u.roles.includes(Role.SELLER) ? "PREMIUM" : "BUSINESS", entitlementsVersion: "2026-06-25", periodStart: now, periodEnd: new Date(now.getTime() + 30 * 86_400_000) });
     ids[u.email] = { userId, orgId, personId };
@@ -150,7 +161,8 @@ async function main(): Promise<void> {
     status: "DRAFT",
   });
 
-  console.log(`Jeu de démonstration créé : ${users.length} comptes, ${cases.length} dossiers. Mot de passe commun : ${DEMO_PASSWORD}`);
+  writeFileSync(CREDENTIALS_FILE, JSON.stringify(credentials, null, 2) + "\n", { mode: 0o600 });
+  console.log(`Jeu de démonstration créé : ${users.length} comptes, ${cases.length} dossiers. Mots de passe uniques écrits dans ${CREDENTIALS_FILE} (lecture propriétaire seulement).`);
   await sql.end();
 }
 
