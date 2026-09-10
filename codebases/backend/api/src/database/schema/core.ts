@@ -150,8 +150,8 @@ export const deals = pgTable(
     sectorCode: varchar("sector_code", { length: 16 }).notNull(), // PUBLIC
     regionCode: regionEnum("region_code").notNull(), // PUBLIC
     turnoverBand: turnoverBandEnum("turnover_band").notNull(), // PUBLIC : jamais le montant exact sous T2
-    askingPriceXof: bigint("asking_price_xof", { mode: "number" }), // CONFIDENTIAL_DEAL, T2 uniquement, chiffrement applicatif prévu
-    valuationBasis: text("valuation_basis"), // CONFIDENTIAL_DEAL, T2 uniquement
+    askingPriceEnc: text("asking_price_enc"), // CONFIDENTIAL_DEAL, T2 uniquement, chiffré AES-256-GCM (FieldCrypto), jamais en clair en base
+    valuationBasisEnc: text("valuation_basis_enc"), // CONFIDENTIAL_DEAL, T2 uniquement, chiffré
     disclosureCount: integer("disclosure_count").notNull().default(0), // INTERNAL : maintenu par le RPS uniquement
     circleCap: integer("circle_cap").notNull().default(50), // INTERNAL
     createdAt: createdAt(),
@@ -170,8 +170,8 @@ export const shareDealDetails = pgTable("share_deal_detail", {
   legalForm: legalFormEnum("legal_form").notNull(), // INTERNAL
   apeEligible: boolean("ape_eligible").notNull().default(false), // dérivé
   securityType: varchar("security_type", { length: 32 }).notNull(), // CONFIDENTIAL_DEAL : ACTIONS | PARTS_SOCIALES
-  stakePercent: integer("stake_percent").notNull(), // CONFIDENTIAL_DEAL, T2 uniquement
-  transferRestrictions: text("transfer_restrictions"), // CONFIDENTIAL_DEAL : clauses d'agrément, préemption
+  stakePercentEnc: text("stake_percent_enc").notNull(), // CONFIDENTIAL_DEAL, T2 uniquement, chiffré
+  transferRestrictionsEnc: text("transfer_restrictions_enc"), // CONFIDENTIAL_DEAL : clauses d'agrément, préemption, chiffré
 });
 
 export const dealEvents = pgTable(
@@ -213,8 +213,8 @@ export const indicativeValuations = pgTable("indicative_valuation", {
   id: id(),
   dealId: uuid("deal_id").notNull().references(() => deals.id),
   method: varchar("method", { length: 32 }).notNull(),
-  equityLowXof: bigint("equity_low_xof", { mode: "number" }).notNull(), // CONFIDENTIAL_DEAL
-  equityHighXof: bigint("equity_high_xof", { mode: "number" }).notNull(), // CONFIDENTIAL_DEAL
+  equityLowEnc: text("equity_low_enc").notNull(), // CONFIDENTIAL_DEAL, chiffré
+  equityHighEnc: text("equity_high_enc").notNull(), // CONFIDENTIAL_DEAL, chiffré
   calculationLog: jsonb("calculation_log").notNull(), // journal de calcul versionné, rejouable
   sources: jsonb("sources").$type<string[]>().notNull(),
   computedBy: uuid("computed_by").notNull(),

@@ -5,6 +5,7 @@ import { indicativeRange, type IndicativeRange } from "@dealpme/rules";
 import { CORE_DB, type CoreDb } from "../../database/database.module.js";
 import { indicativeValuations } from "../../database/schema/core.js";
 import { withTenant } from "../../database/tenant.js";
+import { FieldCrypto } from "../../platform/field-crypto.service.js";
 import { AuditService } from "../../platform/audit.service.js";
 import type { Principal } from "../../platform/auth.js";
 
@@ -19,6 +20,7 @@ export class ValuationService {
   constructor(
     @Inject(CORE_DB) private readonly db: CoreDb,
     private readonly audit: AuditService,
+    private readonly crypto: FieldCrypto,
   ) {}
 
   async compute(req: IndicativeValuationRequest, actor: Principal, correlationId: string): Promise<IndicativeRange> {
@@ -28,8 +30,8 @@ export class ValuationService {
       id: newId(),
       dealId: req.dealId,
       method: range.method,
-      equityLowXof: range.equityValueLowXof,
-      equityHighXof: range.equityValueHighXof,
+      equityLowEnc: this.crypto.encryptInt(range.equityValueLowXof)!,
+      equityHighEnc: this.crypto.encryptInt(range.equityValueHighXof)!,
       calculationLog: range.calculationLog,
       sources: range.sources,
       computedBy: actor.userId,

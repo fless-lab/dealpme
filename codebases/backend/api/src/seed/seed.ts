@@ -5,6 +5,7 @@ import postgres from "postgres";
 import { DealStatus, DealType, LegalForm, RegionCode, Role, TurnoverBand, newId } from "@dealpme/domain";
 import { corpusAvailable, loadPassTransmissionFixture } from "@dealpme/testing";
 import * as s from "../database/schema/core.js";
+import { encryptField, encryptInt, keyRingFromEnv } from "../platform/field-crypto.js";
 
 /**
  * Jeu de données de démonstration V1, dérivé du corpus de référence (PT-001 cas d'or, PT-003 / PT-006 / PT-012 cessions d'actifs).
@@ -52,6 +53,8 @@ async function main(): Promise<void> {
   const url = process.env["DATABASE_URL_CORE_ADMIN"];
   if (!url) throw new Error("DATABASE_URL_CORE_ADMIN manquant");
   if (!corpusAvailable()) throw new Error("Corpus de référence introuvable (ressources/)");
+  const ring = keyRingFromEnv({ FIELD_ENCRYPTION_KEY: process.env["FIELD_ENCRYPTION_KEY"] ?? "", FIELD_ENCRYPTION_KEY_ID: process.env["FIELD_ENCRYPTION_KEY_ID"] });
+  if (!process.env["FIELD_ENCRYPTION_KEY"]) throw new Error("FIELD_ENCRYPTION_KEY manquant");
   const sql = postgres(url, { max: 3, prepare: false });
   const db = drizzle(sql, { schema: s });
   const passwordHash = await argon2.hash(DEMO_PASSWORD, { type: argon2.argon2id });
@@ -119,13 +122,13 @@ async function main(): Promise<void> {
       sectorCode: sectorCode(fx.master.sector),
       regionCode: c.regionCode,
       turnoverBand: band(fx.master.revenue_2025),
-      askingPriceXof: fx.master.asking * 1_000_000,
-      valuationBasis: "Attente du cédant (SELLER_EXPECTATION), pas une valorisation DealPME ; source : fixture synthétique " + c.caseId,
+      askingPriceEnc: encryptInt(ring, fx.master.asking * 1_000_000),
+      valuationBasisEnc: encryptField(ring, "Attente du cédant (SELLER_EXPECTATION), pas une valorisation DealPME ; source : fixture synthétique " + c.caseId),
     });
     if (dealType === DealType.ASSET_DEAL) {
       await db.insert(s.assetDealDetails).values({ dealId, assetsDescription: `Fonds de commerce et actifs d'exploitation (synthétique ${c.caseId})`, includesGoodwill: true });
     } else {
-      await db.insert(s.shareDealDetails).values({ dealId, legalForm: lf, apeEligible: false, securityType: "ACTIONS", stakePercent: fx.transaction_workspace.stake_offered_pct, transferRestrictions: "Clause d'agrément statutaire (synthétique)" });
+      await db.insert(s.shareDealDetails).values({ dealId, legalForm: lf, apeEligible: false, securityType: "ACTIONS", stakePercentEnc: encryptInt(ring, fx.transaction_workspace.stake_offered_pct)!, transferRestrictionsEnc: encryptField(ring, "Clause d'agrément statutaire (synthétique)") });
     }
     await db.insert(s.dealEvents).values({ id: newId(), dealId, fromStatus: null, toStatus: DealStatus.DRAFT, actorUserId: owner.userId, reason: "Création du dossier (jeu de démonstration)" });
     if (c.status !== DealStatus.DRAFT) {

@@ -51,6 +51,10 @@ check "un investisseur lit un dossier publié en projection T0, sans prix" 0 "$(
 check "la projection T0 contient bien le secteur" 1 "$(echo "$invview" | grep -c sectorCode)"
 role=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select rolbypassrls from pg_roles where rolname='dealpme_api'")
 check "le rôle applicatif ne contourne pas la RLS" f "$role"
+clear=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select count(*) from deal where asking_price_enc like '%2850000000%' or asking_price_enc not like 'v1:%'")
+check "le prix n'est jamais en clair en base (chiffrement applicatif)" 0 "$clear"
+price=$(curl -s "$API/deals/$tvdeal" -H "authorization: Bearer $TV" | python3 -c 'import sys,json;print(json.load(sys.stdin)["askingPriceXof"])')
+check "le propriétaire obtient le prix déchiffré" 2850000000 "$price"
 
 echo "== Sécurité : force brute, en-têtes, CORS, webhooks"
 for i in 1 2 3 4 5 6; do last=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'content-type: application/json' -d '{"email":"force@demo.dealpme.local","password":"mauvais"}'); done

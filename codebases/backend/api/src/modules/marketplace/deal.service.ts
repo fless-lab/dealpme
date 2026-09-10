@@ -9,6 +9,7 @@ import { withTenant } from "../../database/tenant.js";
 import { AuditService } from "../../platform/audit.service.js";
 import type { Principal } from "../../platform/auth.js";
 import { FeatureFlags } from "../../platform/feature-flags.js";
+import { FieldCrypto } from "../../platform/field-crypto.service.js";
 
 const LISTED_STATUSES = [DealStatus.LISTED_OPEN, DealStatus.LISTED_RESTRICTED, DealStatus.ENGAGED, DealStatus.DUE_DILIGENCE, DealStatus.NEGOTIATION] as const;
 
@@ -23,6 +24,7 @@ export class DealService {
     @Inject(CORE_DB) private readonly db: CoreDb,
     private readonly audit: AuditService,
     private readonly flags: FeatureFlags,
+    private readonly crypto: FieldCrypto,
   ) {}
 
   /** Création du dossier : le type de cession est fixé à l'étape 1 et ne changera jamais (DP-MKT-010, trigger en base). */
@@ -56,8 +58,12 @@ export class DealService {
       const isOwner = deal.sellerOrganisationId === principal.organisationId;
       const isOfficer = principal.roles.includes("CCI_OFFICER") || principal.roles.includes("PLATFORM_ADMIN");
       const isDealReady = await this.isDealReady(tx, deal.companyId);
-      const full = { ...deal, isDealReady, disclosureTier: isOwner || isOfficer ? DisclosureTier.T2 : DisclosureTier.T0 };
-      if (isOwner || isOfficer) return full;
+      const { askingPriceEnc, valuationBasisEnc, ...rest } = deal;
+      const full = { ...rest, isDealReady, disclosureTier: isOwner || isOfficer ? DisclosureTier.T2 : DisclosureTier.T0 };
+      if (isOwner || isOfficer) {
+        // Déchiffrement uniquement pour le propriétaire ou l'institution : la valeur en clair ne quitte le serveur qu'ici.
+        return { ...full, askingPriceXof: this.crypto.decryptInt(askingPriceEnc), valuationBasis: this.crypto.decrypt(valuationBasisEnc) };
+      }
       return projectForTier(full, DisclosureTier.T0);
     });
   }
@@ -121,7 +127,7 @@ export class DealService {
       const items = page
         .map((r) =>
           projectForTier(
-            { id: r.id, dealType: r.dealType, sectorCode: r.sectorCode, regionCode: r.regionCode, turnoverBand: r.turnoverBand, isDealReady: ready.has(r.companyId), disclosureTier: DisclosureTier.T0, askingPrice: r.askingPriceXof, valuationBasis: r.valuationBasis },
+            { id: r.id, dealType: r.dealType, sectorCode: r.sectorCode, regionCode: r.regionCode, turnoverBand: r.turnoverBand, isDealReady: ready.has(r.companyId), disclosureTier: DisclosureTier.T0 },
             DisclosureTier.T0,
           ) as DealTeaserT0,
         )

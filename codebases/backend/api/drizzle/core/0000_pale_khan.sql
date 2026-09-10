@@ -67,10 +67,48 @@ CREATE TABLE "deal" (
 	"sector_code" varchar(16) NOT NULL,
 	"region_code" "region_code" NOT NULL,
 	"turnover_band" "turnover_band" NOT NULL,
-	"asking_price_xof" bigint,
-	"valuation_basis" text,
+	"asking_price_enc" text,
+	"valuation_basis_enc" text,
 	"disclosure_count" integer DEFAULT 0 NOT NULL,
 	"circle_cap" integer DEFAULT 50 NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "diaspora_appointment" (
+	"id" uuid PRIMARY KEY NOT NULL,
+	"investor_user_id" uuid NOT NULL,
+	"deal_id" uuid,
+	"requested_slot" timestamp with time zone NOT NULL,
+	"status" varchar(16) DEFAULT 'REQUESTED' NOT NULL,
+	"remo_event_id" varchar(128),
+	"confirmed_by" uuid,
+	"cross_border_notice_shown_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "event_registration" (
+	"id" uuid PRIMARY KEY NOT NULL,
+	"event_id" uuid NOT NULL,
+	"user_id" uuid NOT NULL,
+	"display_name" varchar(120) NOT NULL,
+	"consent_contact_at" timestamp with time zone,
+	"ticket_ref" varchar(128),
+	"joined_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "event" (
+	"id" uuid PRIMARY KEY NOT NULL,
+	"title" varchar(200) NOT NULL,
+	"description" text,
+	"starts_at" timestamp with time zone NOT NULL,
+	"ends_at" timestamp with time zone NOT NULL,
+	"capacity" integer DEFAULT 100 NOT NULL,
+	"integration_mode" varchar(16) DEFAULT 'DEALPME_FIRST' NOT NULL,
+	"remo_event_id" varchar(128),
+	"organiser_user_id" uuid NOT NULL,
+	"campaign_id" varchar(64),
+	"status" varchar(16) DEFAULT 'DRAFT' NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
@@ -97,8 +135,8 @@ CREATE TABLE "indicative_valuation" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"deal_id" uuid NOT NULL,
 	"method" varchar(32) NOT NULL,
-	"equity_low_xof" bigint NOT NULL,
-	"equity_high_xof" bigint NOT NULL,
+	"equity_low_enc" text NOT NULL,
+	"equity_high_enc" text NOT NULL,
 	"calculation_log" jsonb NOT NULL,
 	"sources" jsonb NOT NULL,
 	"computed_by" uuid NOT NULL,
@@ -184,8 +222,8 @@ CREATE TABLE "share_deal_detail" (
 	"legal_form" "legal_form" NOT NULL,
 	"ape_eligible" boolean DEFAULT false NOT NULL,
 	"security_type" varchar(32) NOT NULL,
-	"stake_percent" integer NOT NULL,
-	"transfer_restrictions" text
+	"stake_percent_enc" text NOT NULL,
+	"transfer_restrictions_enc" text
 );
 --> statement-breakpoint
 CREATE TABLE "subscription" (
@@ -221,6 +259,9 @@ ALTER TABLE "company" ADD CONSTRAINT "company_owner_organisation_id_organisation
 ALTER TABLE "deal_event" ADD CONSTRAINT "deal_event_deal_id_deal_id_fk" FOREIGN KEY ("deal_id") REFERENCES "public"."deal"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "deal" ADD CONSTRAINT "deal_company_id_company_id_fk" FOREIGN KEY ("company_id") REFERENCES "public"."company"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "deal" ADD CONSTRAINT "deal_seller_organisation_id_organisation_id_fk" FOREIGN KEY ("seller_organisation_id") REFERENCES "public"."organisation"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "diaspora_appointment" ADD CONSTRAINT "diaspora_appointment_investor_user_id_app_user_id_fk" FOREIGN KEY ("investor_user_id") REFERENCES "public"."app_user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "event_registration" ADD CONSTRAINT "event_registration_event_id_event_id_fk" FOREIGN KEY ("event_id") REFERENCES "public"."event"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "event_registration" ADD CONSTRAINT "event_registration_user_id_app_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."app_user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "fee_event" ADD CONSTRAINT "fee_event_deal_id_deal_id_fk" FOREIGN KEY ("deal_id") REFERENCES "public"."deal"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "indicative_valuation" ADD CONSTRAINT "indicative_valuation_deal_id_deal_id_fk" FOREIGN KEY ("deal_id") REFERENCES "public"."deal"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "interest" ADD CONSTRAINT "interest_deal_id_deal_id_fk" FOREIGN KEY ("deal_id") REFERENCES "public"."deal"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
@@ -236,6 +277,7 @@ ALTER TABLE "app_user" ADD CONSTRAINT "app_user_person_id_person_id_fk" FOREIGN 
 CREATE INDEX "audit_subject_idx" ON "audit_event" USING btree ("subject_type","subject_id");--> statement-breakpoint
 CREATE INDEX "deal_event_deal_idx" ON "deal_event" USING btree ("deal_id","occurred_at");--> statement-breakpoint
 CREATE INDEX "deal_search_idx" ON "deal" USING btree ("status","sector_code","region_code","turnover_band");--> statement-breakpoint
+CREATE UNIQUE INDEX "registration_unique_idx" ON "event_registration" USING btree ("event_id","user_id");--> statement-breakpoint
 CREATE INDEX "session_user_idx" ON "session" USING btree ("user_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "session_token_idx" ON "session" USING btree ("token_hash");--> statement-breakpoint
 CREATE UNIQUE INDEX "app_user_email_idx" ON "app_user" USING btree ("email");

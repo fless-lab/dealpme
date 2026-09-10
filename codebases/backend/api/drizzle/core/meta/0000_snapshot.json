@@ -1,5 +1,5 @@
 {
-  "id": "8d9b352d-3241-41b0-ae87-a6af7debb221",
+  "id": "7c62f370-2cf3-4e33-a74c-7dd75a40cbf4",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -447,14 +447,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "asking_price_xof": {
-          "name": "asking_price_xof",
-          "type": "bigint",
+        "asking_price_enc": {
+          "name": "asking_price_enc",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "valuation_basis": {
-          "name": "valuation_basis",
+        "valuation_basis_enc": {
+          "name": "valuation_basis_enc",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -544,6 +544,289 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.diaspora_appointment": {
+      "name": "diaspora_appointment",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "investor_user_id": {
+          "name": "investor_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "deal_id": {
+          "name": "deal_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "requested_slot": {
+          "name": "requested_slot",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'REQUESTED'"
+        },
+        "remo_event_id": {
+          "name": "remo_event_id",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "confirmed_by": {
+          "name": "confirmed_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cross_border_notice_shown_at": {
+          "name": "cross_border_notice_shown_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "diaspora_appointment_investor_user_id_app_user_id_fk": {
+          "name": "diaspora_appointment_investor_user_id_app_user_id_fk",
+          "tableFrom": "diaspora_appointment",
+          "tableTo": "app_user",
+          "columnsFrom": [
+            "investor_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.event_registration": {
+      "name": "event_registration",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "event_id": {
+          "name": "event_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "display_name": {
+          "name": "display_name",
+          "type": "varchar(120)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "consent_contact_at": {
+          "name": "consent_contact_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ticket_ref": {
+          "name": "ticket_ref",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "joined_at": {
+          "name": "joined_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "registration_unique_idx": {
+          "name": "registration_unique_idx",
+          "columns": [
+            {
+              "expression": "event_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "event_registration_event_id_event_id_fk": {
+          "name": "event_registration_event_id_event_id_fk",
+          "tableFrom": "event_registration",
+          "tableTo": "event",
+          "columnsFrom": [
+            "event_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "event_registration_user_id_app_user_id_fk": {
+          "name": "event_registration_user_id_app_user_id_fk",
+          "tableFrom": "event_registration",
+          "tableTo": "app_user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.event": {
+      "name": "event",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "starts_at": {
+          "name": "starts_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ends_at": {
+          "name": "ends_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "capacity": {
+          "name": "capacity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 100
+        },
+        "integration_mode": {
+          "name": "integration_mode",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'DEALPME_FIRST'"
+        },
+        "remo_event_id": {
+          "name": "remo_event_id",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "organiser_user_id": {
+          "name": "organiser_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "campaign_id": {
+          "name": "campaign_id",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'DRAFT'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -694,15 +977,15 @@
           "primaryKey": false,
           "notNull": true
         },
-        "equity_low_xof": {
-          "name": "equity_low_xof",
-          "type": "bigint",
+        "equity_low_enc": {
+          "name": "equity_low_enc",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "equity_high_xof": {
-          "name": "equity_high_xof",
-          "type": "bigint",
+        "equity_high_enc": {
+          "name": "equity_high_enc",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -1319,14 +1602,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "stake_percent": {
-          "name": "stake_percent",
-          "type": "integer",
+        "stake_percent_enc": {
+          "name": "stake_percent_enc",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "transfer_restrictions": {
-          "name": "transfer_restrictions",
+        "transfer_restrictions_enc": {
+          "name": "transfer_restrictions_enc",
           "type": "text",
           "primaryKey": false,
           "notNull": false
