@@ -7,7 +7,7 @@ import { DealType, newId } from "@dealpme/domain";
 import { completeness, requirementsFor, type Completeness, type Requirement } from "@dealpme/rules";
 import { loadEnv } from "../../config/env.js";
 import { CORE_DB, type CoreDb } from "../../database/database.module.js";
-import { dealDocuments, deals, declaredFacts } from "../../database/schema/core.js";
+import { dealDocuments, dealEvents, deals, declaredFacts } from "../../database/schema/core.js";
 import { withTenant, type CoreTx } from "../../database/tenant.js";
 import { AuditService } from "../../platform/audit.service.js";
 import type { Principal } from "../../platform/auth.js";
@@ -74,10 +74,20 @@ export class DossierService {
       const facts = await this.currentFacts(tx, dealId);
       const documents = await this.currentDocuments(tx, dealId);
       const status = this.completenessOf(deal.dealType as DealType, facts, documents);
+      // Motif du dernier renvoi en préparation : le cédant doit savoir ce qu'on lui demande de reprendre.
+      const lastReturn = (
+        await tx
+          .select({ reason: dealEvents.reason, occurredAt: dealEvents.occurredAt })
+          .from(dealEvents)
+          .where(and(eq(dealEvents.dealId, dealId), eq(dealEvents.fromStatus, "PENDING_VERIFICATION"), eq(dealEvents.toStatus, "DRAFT")))
+          .orderBy(desc(dealEvents.occurredAt))
+          .limit(1)
+      )[0];
       return {
         dealId,
         dealType: deal.dealType,
         status: deal.status,
+        lastReturn: deal.status === "DRAFT" && lastReturn ? lastReturn : null,
         requirements: requirementsFor(deal.dealType as DealType),
         facts,
         documents,

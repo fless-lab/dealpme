@@ -31,6 +31,10 @@ jobs:
           sed -i "s|^SESSION_SECRET=.*|SESSION_SECRET=$(openssl rand -base64 32)|; s|^FIELD_ENCRYPTION_KEY=.*|FIELD_ENCRYPTION_KEY=$(openssl rand -base64 32)|" .env
           docker compose -f infra/docker-compose.yml up -d
           for c in core vdr rps; do until docker exec dealpme-postgres-$c-1 pg_isready -U dealpme_$c >/dev/null 2>&1; do sleep 1; done; done
+          # Le moteur antivirus télécharge ses signatures au premier démarrage. La chaîne de dépôt est
+          # éprouvée contre ClamAV réel, pas contre le faux moteur : c'est le chemin de production.
+          for i in $(seq 1 60); do docker exec dealpme-clamav-1 clamdcheck.sh >/dev/null 2>&1 && break; sleep 5; done
+          docker exec dealpme-clamav-1 clamdcheck.sh
           set -a; . ./.env; set +a
           npm run db:migrate -w codebases/backend/api && (cd codebases/backend/api && npx drizzle-kit migrate --config drizzle.vdr.config.ts) && npm run db:migrate -w codebases/engine/rps
           docker exec -i dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -v ON_ERROR_STOP=1 < codebases/backend/api/drizzle/core/rls.sql

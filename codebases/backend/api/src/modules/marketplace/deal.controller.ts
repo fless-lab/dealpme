@@ -38,9 +38,13 @@ export class DealController {
     return this.dealService.getById(dealId, principal);
   }
 
+  /**
+   * Transitions d'état. Le rôle d'officier CCI-Togo est admis ici parce qu'il peut renvoyer un dossier
+   * soumis en préparation ; le service restreint ce droit à cette seule transition, motif obligatoire.
+   */
   @Post(":dealId/transitions")
   @HttpCode(200)
-  @Roles(Role.SELLER, Role.ADVISOR, Role.COMPLIANCE_OPERATOR)
+  @Roles(Role.SELLER, Role.ADVISOR, Role.COMPLIANCE_OPERATOR, Role.CCI_OFFICER)
   async transition(@Param("dealId", validate(IdSchema)) dealId: string, @Body(validate(TransitionSchema)) body: z.infer<typeof TransitionSchema>, @CurrentPrincipal() actor: Principal, @Req() req: Request) {
     await this.dealService.changeStatus(dealId, body.to, actor, correlationIdOf(req), body.reason);
     return { status: body.to };

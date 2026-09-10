@@ -7,11 +7,11 @@ export function IdentityPanel({ dossier }: { dossier: Dossier }) {
   return (
     <>
       <Panel title="Nature de l'opération" controlId="SELLER_IDENTITY">
-        <dl style={{ display: "grid", gridTemplateColumns: "max-content 1fr", gap: "6px 24px", margin: 0 }}>
+        <dl className="dp-deflist">
           <dt className="dp-label">Type de cession</dt>
-          <dd style={{ margin: 0 }}>{isShare ? "Cession de titres (actions ou parts sociales)" : "Cession d'actifs (fonds de commerce, matériel, contrats)"}</dd>
+          <dd>{isShare ? "Cession de titres (actions ou parts sociales)" : "Cession d'actifs (fonds de commerce, matériel, contrats)"}</dd>
           <dt className="dp-label">État du dossier</dt>
-          <dd style={{ margin: 0 }}>{dossier.status === "DRAFT" ? "En préparation" : "Soumis à vérification"}</dd>
+          <dd>{dossier.status === "DRAFT" ? "En préparation" : "Soumis à vérification"}</dd>
         </dl>
         <p className="dp-muted" style={{ marginBottom: 0 }}>
           Le type de cession a été fixé à la création et ne peut plus changer : il commande les pièces attendues et le

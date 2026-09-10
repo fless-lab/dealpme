@@ -53,6 +53,7 @@ export interface Dossier {
   dealId: string;
   dealType: "ASSET_DEAL" | "SHARE_DEAL";
   status: string;
+  lastReturn: { reason: string | null; occurredAt: string } | null;
   requirements: Requirement[];
   facts: DeclaredFact[];
   documents: DossierDocument[];

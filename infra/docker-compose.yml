@@ -82,11 +82,28 @@ services:
       mc anonymous set none local/dealpme-dossier;
       exit 0"
 
+  clamav:
+    image: clamav/clamav:stable
+    # Le moteur télécharge ses signatures au premier démarrage : compter deux à trois minutes avant
+    # que le port 3310 réponde. L'API refuse tout dépôt tant que le moteur ne répond pas.
+    environment:
+      CLAMAV_NO_FRESHCLAMD: "false"
+    ports: ["3310:3310"]
+    volumes:
+      - clamav:/var/lib/clamav
+    healthcheck:
+      test: ["CMD-SHELL", "clamdcheck.sh || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 180s
+
   mailpit:
     image: axllent/mailpit:latest
     ports: ["8025:8025", "1025:1025"]
 
 volumes:
+  clamav:
   pg-core:
   pg-vdr:
   pg-rps:

@@ -46,13 +46,17 @@ a { color: var(--dp-signal); }
 .dp-sidenav a { padding: var(--dp-space-2) var(--dp-space-3); border-radius: var(--dp-radius-md); color: var(--dp-text); text-decoration: none; font-size: 0.92rem; }
 .dp-sidenav a[aria-current="page"] { background: var(--dp-info-soft); color: var(--dp-navy); font-weight: 600; }
 .dp-sidenav a:hover { background: var(--dp-canvas); }
+.dp-deflist { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px var(--dp-space-5); margin: 0; }
+.dp-deflist dd { margin: 0; }
+@media (max-width: 640px) { .dp-deflist { grid-template-columns: 1fr; gap: 0; } .dp-deflist dt { margin-top: var(--dp-space-3); } }
 @media (max-width: 1024px) {
   .dp-workspace { grid-template-columns: 1fr; }
   .dp-sidenav { flex-direction: row; flex-wrap: wrap; gap: var(--dp-space-2); }
-  .dp-menu-button { display: inline-flex; }
 }
 @media (max-width: 640px) {
   .dp-main { padding: var(--dp-space-4); }
+  /* Le bouton n'apparaît qu'avec la navigation repliée : ailleurs, ce serait un contrôle sans effet. */
+  .dp-menu-button { display: inline-flex; }
   .dp-topbar nav { display: none; }
   .dp-topbar nav.dp-open { display: flex; position: absolute; top: 56px; left: 0; right: 0; flex-direction: column; background: var(--dp-navy-2); padding: var(--dp-space-4); z-index: 20; }
 }

@@ -6,11 +6,13 @@ import { RolesGuard } from "./auth.js";
 import { RateLimitService } from "./rate-limit.service.js";
 import { RedisModule } from "./redis.js";
 import { FieldCrypto } from "./field-crypto.service.js";
+import { HealthController } from "./health.controller.js";
 
 /** Services transverses disponibles dans tous les modules : audit, drapeaux, garde de rôles. */
 @Global()
 @Module({
   imports: [RedisModule],
+  controllers: [HealthController],
   providers: [AuditService, FeatureFlags, RateLimitService, FieldCrypto, { provide: APP_GUARD, useClass: RolesGuard }],
   exports: [AuditService, FeatureFlags, RateLimitService, FieldCrypto],
 })

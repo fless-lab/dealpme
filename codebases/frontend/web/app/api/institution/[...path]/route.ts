@@ -12,6 +12,7 @@ const POST_ALLOWED: RegExp[] = [
   /^registry-verifications$/,
   /^certifications$/,
   /^certification-requests\/[0-9a-f-]{36}\/remediation$/,
+  /^deals\/[0-9a-f-]{36}\/return$/,
 ];
 const isAllowed = (target: string) => POST_ALLOWED.some((r) => r.test(target));
 
@@ -27,7 +28,12 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ path: stri
   if (!t) return NextResponse.json({ ok: false, message: "Connexion requise" }, { status: 401 });
   const body = await req.json().catch(() => ({}));
   try {
-    const result = await api<Record<string, unknown>>(`/institution/${target}`, { method: "POST", token: t, body: JSON.stringify(body) });
+    // Le renvoi en préparation est une transition de dossier : il passe par l'endpoint de transition,
+    // que l'API n'ouvre à un officier que depuis l'état soumis et vers la préparation.
+    const returnMatch = target.match(/^deals\/([0-9a-f-]{36})\/return$/);
+    const path = returnMatch ? `/deals/${returnMatch[1]}/transitions` : `/institution/${target}`;
+    const payload = returnMatch ? { to: "DRAFT", reason: (body as { reason?: string }).reason } : body;
+    const result = await api<Record<string, unknown>>(path, { method: "POST", token: t, body: JSON.stringify(payload) });
     return NextResponse.json({ ok: true, ...result });
   } catch (e) {
     const status = e instanceof ApiError ? e.status : 502;

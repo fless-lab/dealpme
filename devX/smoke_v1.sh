@@ -95,6 +95,14 @@ check "le prix n'est jamais en clair en base (chiffrement applicatif)" 0 "$clear
 price=$(curl -s "$API/deals/$tvdeal" -H "authorization: Bearer $TV" | python3 -c 'import sys,json;print(json.load(sys.stdin)["askingPriceXof"])')
 check "le propriétaire obtient le prix déchiffré" 2850000000 "$price"
 
+echo "== Supervision"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$API/health")
+check "sonde de vie accessible sans authentification" 200 "$code"
+ready=$(curl -s "$API/ready" | python3 -c 'import sys,json;print(json.load(sys.stdin)["ready"])')
+check "sonde de disponibilité : bases et Redis joignables" True "$ready"
+n=$(curl -s "$API/ready" | python3 -c 'import sys,json;print(len(json.load(sys.stdin)["checks"]))')
+check "trois dépendances contrôlées" 3 "$n"
+
 echo "== Sécurité : force brute, en-têtes, CORS, webhooks"
 for i in 1 2 3 4 5 6; do last=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'content-type: application/json' -d '{"email":"force@demo.dealpme.local","password":"mauvais"}'); done
 check "sixième échec de connexion sur un compte renvoie 429" 429 "$last"
@@ -189,6 +197,19 @@ n=$(curl -s "$API/institution/companies/$cid" -H "authorization: Bearer $OFF" | 
 check "historique nominatif des décisions" 1 "$n"
 line=$(curl -s "$API/institution/certifications.csv" -H "authorization: Bearer $OFF" | grep -c "$cid" || true)
 check "export CSV du journal des certifications" 1 "$line"
+
+echo "== Renvoi en préparation par la CCI-Togo"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$dossier_deal/transitions" -H "authorization: Bearer $OFF" -H 'content-type: application/json' -d '{"to":"DRAFT"}')
+check "renvoi sans motif refusé (400)" 400 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$dossier_deal/transitions" -H "authorization: Bearer $OFF" -H 'content-type: application/json' -d '{"to":"DRAFT","reason":"Attestation fiscale a reprendre"}')
+check "renvoi motivé par un officier" 200 "$code"
+st=$(curl -s "$API/deals/$dossier_deal/dossier" -H "authorization: Bearer $SELLER" | python3 -c 'import sys,json;print(json.load(sys.stdin)["status"])')
+check "le dossier est effectivement revenu en préparation" DRAFT "$st"
+motif=$(curl -s "$API/deals/$dossier_deal/dossier" -H "authorization: Bearer $SELLER" | python3 -c 'import sys,json;d=json.load(sys.stdin);print("oui" if (d["lastReturn"] or {}).get("reason") else "non")')
+check "le cédant lit le motif du renvoi" oui "$motif"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$dossier_deal/transitions" -H "authorization: Bearer $OFF" -H 'content-type: application/json' -d '{"to":"LISTED_OPEN","reason":"tentative"}')
+check "un officier ne fait aucune autre transition (403)" 403 "$code"
+curl -s -o /dev/null -X POST "$API/deals/$dossier_deal/transitions" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{"to":"PENDING_VERIFICATION"}'
 
 echo "== Place de marché"
 teaser=$(curl -s "$API/opportunities/$first")

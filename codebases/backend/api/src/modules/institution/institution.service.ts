@@ -224,8 +224,16 @@ export class InstitutionService {
       .where(eq(certifications.companyId, companyId))
       .orderBy(desc(certifications.decidedAt)));
     const latest = (await this.db.select().from(certifications).where(eq(certifications.companyId, companyId)).orderBy(desc(certifications.decidedAt)).limit(1))[0];
+    const companyDeals = await withTenant(this.db, officer, async (tx) =>
+      tx
+        .select({ id: deals.id, dealType: deals.dealType, status: deals.status, sectorCode: deals.sectorCode, createdAt: deals.createdAt })
+        .from(deals)
+        .where(eq(deals.companyId, companyId))
+        .orderBy(desc(deals.createdAt)),
+    );
     return {
       id: row.id,
+      deals: companyDeals,
       declared: { legalName: row.legalName, legalForm: row.legalForm, rccmNumber: row.rccmNumber, createdAt: row.createdAt },
       owner: { id: row.ownerId, name: row.ownerName, membershipConfirmed: !!ownerConfirmedAt, membershipConfirmedAt: ownerConfirmedAt },
       registry: rec ? { legalName: rec.legalName, legalForm: rec.legalForm, status: rec.status, registeredAddress: rec.registeredAddress, officers: rec.officers, verifiedAt: rec.verifiedAt, mode: rec.mode, sourceRef: rec.sourceRef } : null,

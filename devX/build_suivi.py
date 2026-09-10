@@ -115,6 +115,13 @@ PROGRESS = {
     "Provenance et versionnage des données déclarées": ("Complétée", None, dt.date(2026, 9, 22)),
     "Contrôle de complétude et liste des manques": ("Complétée", None, dt.date(2026, 9, 23)),
     "Écrans Pass Transmission": ("Complétée", None, dt.date(2026, 9, 23)),
+    "Retour en préparation après remarque": ("Complétée", None, dt.date(2026, 10, 2)),
+    "Chaîne antivirus éprouvée": ("Complétée", None, dt.date(2026, 10, 1)),
+    "Saisie des données financières minimales": ("Complétée", None, dt.date(2026, 10, 6)),
+    "Paliers d'abonnement": ("Complétée", None, dt.date(2026, 10, 6)),
+    "Responsive mobile sur les parcours V1": ("Complétée", None, dt.date(2026, 10, 7)),
+    "Supervision et journaux applicatifs": ("Complétée", None, dt.date(2026, 10, 7)),
+    "Sauvegardes de base de la base de données": ("Complétée", None, dt.date(2026, 10, 8)),
     "Fiche opportunité T0": ("Complétée", None, dt.date(2026, 9, 28)),
     "Recherche et filtres": ("Complétée", None, dt.date(2026, 9, 29)),
     "Mise en relation : manifestation": ("Complétée", None, dt.date(2026, 9, 30)),
@@ -336,10 +343,11 @@ add("V2", "TRV", "QA et sécurité", "Tests de révocation et d'expiration (REVO
 add("V2", "TRV", "QA et sécurité", "Revue de sécurité interne et préparation du périmètre de pentest", "Périmètre de pentest rédigé", 5, "Haute")
 add("V2", "TRV", "QA et sécurité", "Recette V2 et corrections", "Zéro anomalie bloquante ouverte", 5, "Haute")
 
-# ---------------- V3 (176 j/p) ----------------
+# ---------------- V3 (179 j/p) ----------------
 add("V3", "NEG", "Conception", "Conception de la négociation et de la réalisation : machine à états complète (offre, LOI, audit, réalisation), registre des points ouverts, événements de frais", "Chaque transition est spécifiée avec ses préconditions et ses effets journalisés", 3, "Haute", bloquant="Oui")
 add("V3", "FIN", "Conception", "Conception du moteur de frais et de rétrocession : barème versionné sous drapeau juridique, journal de calcul recalculable, rapport trimestriel", "Un calcul peut être rejoué à l'identique à partir du journal ; barème inactif sans avis écrit", 2, "Haute")
 add("V3", "LEG", "Conception", "Conception LegalTech : modèle de gabarit versionné, variables, génération PDF, mention obligatoire, traçabilité de la revue du conseil", "Schéma de gabarit validé avec le conseil juridique", 2, "Moyenne")
+add("V3", "OPS", "Exploitation", "Acheminement des alertes d'exploitation : seuils, canal d'astreinte, accusé de prise en charge", "Une erreur serveur répétée réveille quelqu'un, sans dépendre d'une console consultée à la main", 3, "Haute")
 add("V3", "OPS", "Exploitation", "Chiffrement au repos du stockage objet par un KMS géré et rotation documentée des clés", "La clé de développement de MinIO n'existe plus en production ; la rotation est éprouvée", 3, "Haute")
 add("V3", "SUP", "Support", "Procédure de purge et de rétention des pièces et des valeurs déclarées (effacement encadré par le DPO)", "Durées de conservation écrites, effacement tracé et irréversible", 3, "Haute", dep="DPO désigné")
 add("V3", "OPS", "Conception", "Conception de l'exploitation et du support : SLA 99,5 %, supervision, sauvegardes et restauration, procédure d'incident, accès privilégiés et mode break-glass journalisé", "Plan d'exploitation relu ; chaque accès privilégié est tracé et limité dans le temps", 3, "Haute")
@@ -442,7 +450,7 @@ add("V5", "VDR-IA", "QA IA", "Performance : viewer progressif, streaming des ré
 add("V5", "VDR-IA", "QA IA", "Recette V5 et corrections", "Zéro anomalie bloquante ouverte", 5, "Haute")
 
 # ------------------------------------------------------------------ contrôle des totaux par version
-expected = {"V1": 262, "V2": 172, "V3": 176, "V4": 102, "V5": 153}
+expected = {"V1": 262, "V2": 172, "V3": 179, "V4": 102, "V5": 153}
 totals = {}
 for t in T:
     totals[t[0]] = totals.get(t[0], 0) + t[5]
@@ -1527,6 +1535,7 @@ SECU = [
     ("S07", "Mot de passe commun du jeu de démonstration", "Accès trivial si le jeu est chargé sur un environnement accessible", "Mots de passe uniques, chargement refusé hors développement", "V1", "Mots de passe de démonstration uniques par compte, jeu de démonstration interdit hors environnement local"),
     ("S08", "Aucun scan de dépendances exécuté", "Vulnérabilité connue embarquée sans alerte", "Scan bloquant en CI sur vulnérabilité critique, revue interne selon la liste de contrôle v0", "V1", "Revue de sécurité interne (liste de contrôle v0 : paliers, URL pré-signées, compteur RPS) et scan de dépendances bloquant en CI"),
     ("S15", "Les tables entreprise et vérification de registre n'étaient pas couvertes par la RLS : tout compte authentifié pouvait lire la raison sociale et l'état d'instruction d'une entreprise tierce (constat interne du 24/09/2026)", "Fuite d'information entre cédants concurrents", "Corrigé le jour même : RLS activée sur company et registry_record (propriétaire et institution), lectures de la console passées sous contexte officier, contrôle de fumée ajouté", "V1", "Tests négatifs : permissions serveur, accès non autorisés, contrôles morts"),
+    ("S16", "Une écriture refusée par la RLS ne lève pas d'erreur : elle ne touche aucune ligne. L'API annonçait une transition d'état qui n'avait pas eu lieu (constat interne du 02/10/2026)", "Décision affichée comme prise alors que rien n'a changé en base", "Corrigé le jour même : toute transition vérifie le nombre de lignes touchées et échoue en FORBIDDEN sinon ; politique RLS étroite ajoutée pour le renvoi en préparation par un officier ; contrôles de fumée ajoutés", "V1", "Tests négatifs : permissions serveur, accès non autorisés, contrôles morts"),
     ("S09", "Aucun pentest indépendant", "Failles non détectées par l'équipe elle-même", "Reporté en V3 (porte G10) : exige un prestataire externe et un périmètre stabilisé ; mitigation V1 = revue interne S08, aucun environnement public avant V3 ; commander le pentest dès V2", "V3", "Pentest indépendant et remédiation des constats critiques et élevés (G10)"),
     ("S10", "Documents servis sans rendu serveur ni filigrane (data room absente en V1)", "Fuite de documents confidentiels", "Reporté en V2 avec la data room : rendu serveur, filigrane, URL pré-signées courtes, révocation en moins de 60 s ; V1 ne stocke aucun document de data room", "V2", "Visualiseur rendu serveur, page à page, chargement progressif (3G)"),
     ("S11", "Preuve de signature non qualifiée (pas de NDA en V1)", "NDA non opposable", "Reporté en V2 : prestataire PSC accrédité ARCEP, archivage PSAE ; V1 n'exécute aucun NDA", "V2", "Intégration API de signature qualifiée, webhooks à signature vérifiée"),

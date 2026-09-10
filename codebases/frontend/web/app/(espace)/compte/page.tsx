@@ -29,19 +29,25 @@ export default async function AccountPage() {
     <div className="dp-stack" style={{ maxWidth: 820 }}>
       <h1>Mon compte</h1>
       <Panel title="Identité" controlId="ACCOUNT_IDENTITY">
-        <dl style={{ display: "grid", gridTemplateColumns: "max-content 1fr", gap: "6px 24px", margin: 0 }}>
+        <dl className="dp-deflist">
           <dt className="dp-label">Organisation</dt>
-          <dd style={{ margin: 0 }}>{me.organisation}</dd>
+          <dd>{me.organisation}</dd>
           <dt className="dp-label">Email</dt>
-          <dd style={{ margin: 0 }}>
+          <dd>
             {me.email} {me.emailVerifiedAt ? <span className="dp-badge" data-tone="success">Vérifié</span> : <span className="dp-badge" data-tone="warning">Non vérifié</span>}
           </dd>
           <dt className="dp-label">Téléphone</dt>
-          <dd style={{ margin: 0 }}>{me.phoneE164 ?? "Non renseigné"}</dd>
+          <dd>{me.phoneE164 ?? "Non renseigné"}</dd>
           <dt className="dp-label">Rôle</dt>
-          <dd style={{ margin: 0 }}>{me.roles.map((r) => ROLE_LABEL[r] ?? r).join(", ")}</dd>
+          <dd>{me.roles.map((r) => ROLE_LABEL[r] ?? r).join(", ")}</dd>
         </dl>
       </Panel>
+      <div className="dp-actions">
+        <a className="dp-btn dp-btn-secondary" href="/compte/abonnement" data-control-id="ACCOUNT_SUBSCRIPTION">
+          Voir mon abonnement
+        </a>
+      </div>
+
       <Panel title="Appareils connectés" controlId="ACCOUNT_SESSIONS">
         <p className="dp-muted" style={{ marginTop: 0 }}>
           Chaque session expire après 30 minutes d'inactivité. Vous pouvez révoquer à distance un appareil que vous ne reconnaissez pas.

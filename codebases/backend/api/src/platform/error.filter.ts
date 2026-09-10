@@ -1,5 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from "@nestjs/common";
 import type { Request, Response } from "express";
+import { errorRate } from "./observability.js";
 import { ZodError } from "zod";
 import { DealPmeError, ErrorCode, type ErrorEnvelope } from "@dealpme/contracts";
 import { correlationIdOf } from "./correlation-id.middleware.js";
@@ -41,6 +42,8 @@ export class DealPmeExceptionFilter implements ExceptionFilter {
     }
     if (status >= 500) {
       // Toute erreur serveur est journalisée avec sa corrélation ; jamais renvoyée au client.
+      // Toute erreur serveur alimente le compteur lu par /health : une rafale de 5xx se voit sans attendre un appel.
+      errorRate.record();
       // eslint-disable-next-line no-console
       console.error(`[${correlationId}]`, exception instanceof Error ? (exception.stack ?? exception.message) : exception);
     }

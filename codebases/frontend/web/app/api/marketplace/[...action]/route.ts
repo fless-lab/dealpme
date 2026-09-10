@@ -13,6 +13,7 @@ const POST_ROUTES: { pattern: RegExp; path: (m: RegExpMatchArray) => string }[] 
   { pattern: new RegExp(`^deals/(${UUID})/publish$`), path: (m) => `/deals/${m[1]}/transitions` },
   { pattern: /^alerts$/, path: () => "/alerts" },
   { pattern: new RegExp(`^alerts/(${UUID})/opt-in$`), path: (m) => `/alerts/${m[1]}/opt-in` },
+  { pattern: new RegExp(`^valuations/(${UUID})$`), path: () => "/valuations/indicative" },
 ];
 
 export async function POST(req: NextRequest, ctx: { params: Promise<{ action: string[] }> }) {

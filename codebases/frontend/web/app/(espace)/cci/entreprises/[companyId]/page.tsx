@@ -5,6 +5,7 @@ import { fmtDate, fmtDateTime, requireRole } from "../../../../../lib/guards";
 import { DealReadyScope } from "../../../../../components/deal-ready";
 import { CertificationDecision } from "./certification-decision";
 import { RegistryVerification } from "./registry-verification";
+import { ReturnDossier } from "./return-dossier";
 
 interface CompanyDetail {
   id: string;
@@ -14,7 +15,21 @@ interface CompanyDetail {
   registryMode: "api" | "manual";
   certification: { isDealReady: boolean; decision: string | null; scopeStatement: string | null; decidedAt: string | null; expiresAt: string | null };
   history: { id: string; decision: string; scopeStatement: string; decidedAt: string; expiresAt: string | null; revocationReason: string | null; officerEmail: string | null }[];
+  deals: { id: string; dealType: string; status: string; sectorCode: string; createdAt: string }[];
 }
+
+const DEAL_STATUS: Record<string, string> = {
+  DRAFT: "En préparation",
+  PENDING_VERIFICATION: "Soumis à vérification",
+  VERIFIED: "Vérifié",
+  LISTED_OPEN: "Publié",
+  LISTED_RESTRICTED: "Publié en cercle restreint",
+  ENGAGED: "Mise en relation engagée",
+  DUE_DILIGENCE: "Audit d'acquisition",
+  NEGOTIATION: "Négociation",
+  CLOSED_REPORTED: "Transmission déclarée",
+  ABANDONED: "Abandonné",
+};
 
 const DECISION: Record<string, string> = { GRANTED: "Accordée", REFUSED: "Refusée", REVOKED: "Retirée", EXPIRED: "Expirée" };
 
@@ -66,15 +81,15 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
 
         <div className="dp-grid">
           <Panel title="Déclaré par le cédant" controlId="CCI_DETAIL_DECLARED">
-            <dl style={{ display: "grid", gridTemplateColumns: "max-content 1fr", gap: "6px 20px", margin: 0 }}>
+            <dl className="dp-deflist">
               <dt className="dp-label">Raison sociale</dt>
-              <dd style={{ margin: 0 }}>{data.declared.legalName}</dd>
+              <dd>{data.declared.legalName}</dd>
               <dt className="dp-label">Forme juridique</dt>
-              <dd style={{ margin: 0 }}>{data.declared.legalForm}</dd>
+              <dd>{data.declared.legalForm}</dd>
               <dt className="dp-label">Numéro RCCM</dt>
-              <dd style={{ margin: 0 }}>{data.declared.rccmNumber ?? "Non renseigné"}</dd>
+              <dd>{data.declared.rccmNumber ?? "Non renseigné"}</dd>
               <dt className="dp-label">Créée le</dt>
-              <dd style={{ margin: 0 }}>{fmtDate(data.declared.createdAt)}</dd>
+              <dd>{fmtDate(data.declared.createdAt)}</dd>
             </dl>
             <p className="dp-muted" style={{ fontSize: "0.78rem", marginBottom: 0 }}>Déclaré, non audité.</p>
           </Panel>
@@ -82,21 +97,21 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
           <Panel title="Vérifié au registre (RCCM / CFE)" controlId="CCI_DETAIL_REGISTRY">
             {data.registry ? (
               <>
-                <dl style={{ display: "grid", gridTemplateColumns: "max-content 1fr", gap: "6px 20px", margin: 0 }}>
+                <dl className="dp-deflist">
                   <dt className="dp-label">Raison sociale</dt>
-                  <dd style={{ margin: 0 }}>{data.registry.legalName}</dd>
+                  <dd>{data.registry.legalName}</dd>
                   <dt className="dp-label">Forme juridique</dt>
-                  <dd style={{ margin: 0 }}>{data.registry.legalForm}</dd>
+                  <dd>{data.registry.legalForm}</dd>
                   <dt className="dp-label">Situation</dt>
-                  <dd style={{ margin: 0 }}>{data.registry.status}</dd>
+                  <dd>{data.registry.status}</dd>
                   <dt className="dp-label">Siège</dt>
-                  <dd style={{ margin: 0 }}>{data.registry.registeredAddress ?? "Non renseigné"}</dd>
+                  <dd>{data.registry.registeredAddress ?? "Non renseigné"}</dd>
                   <dt className="dp-label">Dirigeants</dt>
-                  <dd style={{ margin: 0 }}>{data.registry.officers.length ? data.registry.officers.join(", ") : "Non renseignés"}</dd>
+                  <dd>{data.registry.officers.length ? data.registry.officers.join(", ") : "Non renseignés"}</dd>
                   <dt className="dp-label">Vérifié le</dt>
-                  <dd style={{ margin: 0 }}>{fmtDateTime(data.registry.verifiedAt)}</dd>
+                  <dd>{fmtDateTime(data.registry.verifiedAt)}</dd>
                   <dt className="dp-label">Source</dt>
-                  <dd style={{ margin: 0 }}>
+                  <dd>
                     {data.registry.sourceRef} ({data.registry.mode === "manual" ? "consultation opérateur" : "API registre"})
                   </dd>
                 </dl>
@@ -139,6 +154,43 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
           ) : null}
           {data.registry ? <CertificationDecision companyId={data.id} officerEmail={me.email} hasDecision={!!data.certification.decision} isDealReady={data.certification.isDealReady} /> : null}
         </DecisionGate>
+
+        <Panel title="Dossiers de transmission" controlId="CCI_DETAIL_DEALS">
+          {data.deals.length === 0 ? (
+            <StateBanner tone="info" title="Aucun dossier ouvert pour cette entreprise" controlId="CCI_DETAIL_DEALS_EMPTY" />
+          ) : (
+            <div className="dp-tablewrap">
+              <table className="dp-table">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Secteur</th>
+                    <th>État</th>
+                    <th>Ouvert le</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.deals.map((d) => (
+                    <tr key={d.id} data-control-id="CCI_DETAIL_DEAL_ROW">
+                      <td>{d.dealType === "ASSET_DEAL" ? "Cession d'actifs" : "Cession de titres"}</td>
+                      <td>{d.sectorCode}</td>
+                      <td>
+                        <StatusBadge status={d.status === "PENDING_VERIFICATION" ? "pending" : d.status === "DRAFT" ? "neutral" : "verified"} label={DEAL_STATUS[d.status] ?? d.status} />
+                      </td>
+                      <td>{fmtDate(d.createdAt)}</td>
+                      <td>{d.status === "PENDING_VERIFICATION" ? <ReturnDossier dealId={d.id} /> : null}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <p className="dp-muted" style={{ marginBottom: 0, fontSize: "0.82rem" }}>
+            La console donne l'état des dossiers, jamais leur contenu confidentiel. L'instruction des pièces se fait
+            depuis le dossier lui-même, avec la trace de qui a lu quoi.
+          </p>
+        </Panel>
 
         <Panel title="Historique des décisions" controlId="CCI_DETAIL_HISTORY">
           {data.history.length === 0 ? (

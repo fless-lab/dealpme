@@ -27,6 +27,12 @@ export default async function StepPage({ params }: { params: Promise<{ dealId: s
         <p className="dp-muted">{definition.help}</p>
       </div>
 
+      {dossier.lastReturn ? (
+        <StateBanner tone="warning" title="Dossier renvoyé en préparation par la CCI-Togo" controlId="SELLER_STEP_RETURNED">
+          {dossier.lastReturn.reason}
+        </StateBanner>
+      ) : null}
+
       {readOnly ? (
         <StateBanner tone="info" title="Dossier soumis à vérification" controlId="SELLER_STEP_READONLY">
           Le dossier n'est plus modifiable pendant l'instruction de la CCI-Togo. Les valeurs et les pièces restent

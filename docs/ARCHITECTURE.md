@@ -111,4 +111,16 @@ REMO_FIRST (option)
 
 - Local : `infra/docker-compose.yml` (trois Postgres, Redis, MinIO, Mailpit).
 - Pilote : un hôte Docker par environnement (staging, production) suffit pour 2 000 comptes ; RPS et data room sur des instances Postgres distinctes avec identifiants distincts.
-- CI : `.github/workflows/ci.yml` (build, typecheck, lint, tests, audit des vulnérabilités critiques).
+- CI : `.github/workflows/ci.yml` (build, typecheck, lint, tests, audit des vulnérabilités critiques, pile réelle avec antivirus ClamAV).
+
+## Exploitation
+
+- Sondes : `GET /v1/health` (le processus vit, compteur d'erreurs serveur sur cinq minutes, état dégradé au-delà de dix)
+  et `GET /v1/ready` (bases core et data room, Redis). Un déploiement qui ne passe pas `/ready` ne prend pas de trafic.
+- Journaux : une ligne JSON par requête sur la sortie standard, avec méthode, chemin, code, durée et identifiant de
+  corrélation. Aucun corps, aucun jeton, aucune adresse email ; les valeurs sensibles des URL sont masquées.
+- Sauvegardes : `devX/backup.sh` (trois bases en format personnalisé, objets stockés en miroir, empreintes SHA-256)
+  et `devX/restore-test.sh`, qui restaure dans une base jetable et compare les décomptes. Une sauvegarde jamais
+  restaurée n'est pas une sauvegarde.
+- Antivirus : ClamAV en service local et en intégration continue ; l'API refuse de démarrer en production avec le
+  faux moteur, et refuse tout dépôt si le moteur ne répond pas.

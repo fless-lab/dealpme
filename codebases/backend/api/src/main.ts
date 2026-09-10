@@ -7,6 +7,7 @@ import { loadEnv } from "./config/env.js";
 import { DealPmeExceptionFilter } from "./platform/error.filter.js";
 import { correlationIdMiddleware } from "./platform/correlation-id.middleware.js";
 import { securityHeaders } from "./platform/security-headers.middleware.js";
+import { requestLogger } from "./platform/observability.js";
 import type { RequestWithRawBody } from "./platform/webhook-signature.js";
 
 async function bootstrap(): Promise<void> {
@@ -30,6 +31,7 @@ async function bootstrap(): Promise<void> {
   app.use(express.urlencoded({ extended: false, limit: "64kb" }));
   app.use(securityHeaders(production));
   app.use(correlationIdMiddleware);
+  app.use(requestLogger(production));
 
   // CORS strict : uniquement l'origine de l'application web, méthodes et en-têtes explicites.
   app.enableCors({

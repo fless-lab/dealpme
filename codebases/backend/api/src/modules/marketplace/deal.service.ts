@@ -83,8 +83,14 @@ export class DealService {
     await withTenant(this.db, actor, async (tx) => {
       const deal = (await tx.select().from(deals).where(eq(deals.id, dealId)).limit(1))[0];
       if (!deal) throw new DealPmeError(ErrorCode.NOT_FOUND, "Dossier introuvable");
-      if (deal.sellerOrganisationId !== actor.organisationId && !actor.roles.includes("COMPLIANCE_OPERATOR")) {
+      // Un officier CCI-Togo instruit : il peut renvoyer un dossier soumis en préparation, avec un motif,
+      // et rien d'autre. Toute autre transition reste au cédant ou à la conformité.
+      const officerReturn = actor.roles.includes("CCI_OFFICER") && deal.status === DealStatus.PENDING_VERIFICATION && to === DealStatus.DRAFT;
+      if (deal.sellerOrganisationId !== actor.organisationId && !actor.roles.includes("COMPLIANCE_OPERATOR") && !officerReturn) {
         throw new DealPmeError(ErrorCode.FORBIDDEN, "Seul le cédant ou la conformité peut faire évoluer ce dossier");
+      }
+      if (officerReturn && !reason?.trim()) {
+        throw new DealPmeError(ErrorCode.VALIDATION_FAILED, "Un renvoi en préparation nomme ce qui doit être repris");
       }
 
       if (deal.dealType === DealType.SHARE_DEAL && (to === DealStatus.LISTED_OPEN || to === DealStatus.LISTED_RESTRICTED)) {
@@ -106,7 +112,16 @@ export class DealService {
       if (!result.ok) {
         throw new DealPmeError(ErrorCode.INVALID_TRANSITION, result.reason, { from: deal.status, to });
       }
-      await tx.update(deals).set({ status: to, visibility: to === DealStatus.LISTED_OPEN ? "OPEN" : deal.visibility }).where(eq(deals.id, dealId));
+      const updated = await tx
+        .update(deals)
+        .set({ status: to, visibility: to === DealStatus.LISTED_OPEN ? "OPEN" : deal.visibility })
+        .where(eq(deals.id, dealId))
+        .returning({ id: deals.id });
+      // Sous RLS, une mise à jour hors périmètre ne lève pas d'erreur : elle ne touche aucune ligne.
+      // Sans ce contrôle, l'API annoncerait une transition qui n'a pas eu lieu.
+      if (updated.length === 0) {
+        throw new DealPmeError(ErrorCode.FORBIDDEN, "Cette transition n'est pas autorisée pour votre rôle sur ce dossier");
+      }
       await tx.insert(dealEvents).values({ id: newId(), dealId, fromStatus: deal.status, toStatus: to, actorUserId: actor.userId, reason: reason ?? null });
       // result.createsFeeEvent : la création du FeeEvent (PENDING ou SUSPENDED) arrive avec le module finance (V3).
       this.audit.record({ action: "DEAL_TRANSITION", actorUserId: actor.userId, subjectType: "deal", subjectId: dealId, outcome: "OK", correlationId, metadata: { from: deal.status, to } });

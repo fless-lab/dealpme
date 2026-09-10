@@ -234,3 +234,17 @@ DROP TRIGGER IF EXISTS trg_deal_message_append_only ON deal_message;
 CREATE TRIGGER trg_deal_message_append_only BEFORE UPDATE OR DELETE ON deal_message FOR EACH ROW EXECUTE FUNCTION append_only();
 
 GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO dealpme_api;
+
+-- 14. Renvoi d'un dossier en préparation par un officier CCI-Togo. Droit étroit : il ne peut toucher un dossier
+--     que depuis l'état soumis, et seulement pour le ramener en préparation. Sans cette politique, la mise à jour
+--     était refusée silencieusement par la RLS et l'API croyait avoir agi (constat interne du 02/10/2026).
+DROP POLICY IF EXISTS deal_officer_return ON deal;
+CREATE POLICY deal_officer_return ON deal FOR UPDATE
+  USING ((position('CCI_OFFICER' in coalesce(current_setting('app.roles', true), '')) > 0
+       OR position('PLATFORM_ADMIN' in coalesce(current_setting('app.roles', true), '')) > 0)
+      AND status = 'PENDING_VERIFICATION')
+  WITH CHECK ((position('CCI_OFFICER' in coalesce(current_setting('app.roles', true), '')) > 0
+            OR position('PLATFORM_ADMIN' in coalesce(current_setting('app.roles', true), '')) > 0)
+           AND status = 'DRAFT');
+
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO dealpme_api;
