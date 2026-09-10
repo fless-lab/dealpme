@@ -498,7 +498,7 @@ for idx in range(NTASK_ROWS):
         for prefix, (st, p, done) in PROGRESS.items():
             if tache.startswith(prefix):
                 statut, pct, fin_reelle, resp = st, p, done, DEFAULT_OWNER
-                comment = "Posé par le squelette du 09/09/2026" if st == "Complétée" else "Entamé par le squelette du 09/09/2026"
+                comment = None
                 break
         vals = {"id": tid, "version": v, "module": m, "lot": lot, "tache": tache, "critere": crit,
                 "charge": ch, "prio": prio, "statut": statut, "pct": pct, "resp": resp,
@@ -796,7 +796,7 @@ JALONS = [
     ("J11", "Pentest indépendant réalisé et remédié", "V3", dt.date(2027, 2, 10), "À venir", "Porte G10"),
     ("J12", "Portes de conformité G1 à G10 fermées", "V3", dt.date(2027, 2, 12), "À venir", "Condition de lancement commercial"),
     ("J13", "Livraison V3", "V3", dt.date(2027, 2, 18), "À venir", ""),
-    ("J14", "Cadrage de l'intégration Remo.co validé", "V1", dt.date(2026, 9, 18), "À venir", "Déplacé en V1 le 10/09/2026 : bloque le connecteur Remo"),
+    ("J14", "Cadrage de l'intégration Remo.co validé", "V1", dt.date(2026, 9, 18), "À venir", "Bloque le connecteur Remo"),
     ("J15", "Livraison V4", "V4", dt.date(2027, 4, 1), "À venir", ""),
     ("J16", "Contrat fournisseur IA signé", "V5", dt.date(2027, 4, 9), "À venir", "Bloquant pour DealLens"),
     ("J17", "Livraison V5", "V5", dt.date(2027, 6, 3), "À venir", ""),
@@ -883,8 +883,8 @@ wsD = wb.create_sheet("Decisions")
 title(wsD, "Journal des décisions et arbitrages", "Toute demande de changement de périmètre passe par ce journal. Statut à mettre à jour au fil des réponses.")
 DECISIONS = [
     ("D01", "09/09/2026", "Périmètre cible", "Le cahier des charges v0 approuvé et le Référentiel P04-P25 sont retenus comme cible finale ; le blueprint v5 n'est pas retenu.", "Tranché", "M. Bruno", "Cadre toute la feuille de route", "", ""),
-    ("D02", "09/09/2026", "Deal-Connect / Guichet Diaspora", "Remo.co retenu comme connecteur externe pour les salons et rendez-vous virtuels.", "Tranché", "M. Bruno", "Réduit la charge V4 ; périmètre d'intégration à cadrer", "Cadrage écrit avant chiffrage définitif", "26/02/2027"),
-    ("D03", "09/09/2026", "Démonstration RPS en V1", "V1 inclut une démonstration maquettée du blocage de publication d'une cession de titres ; le circuit réel reste en V2.", "Tranché", "Chef de projet", "+20 j/p sur V1 (total 195)", "", ""),
+    ("D02", "09/09/2026", "Deal-Connect / Guichet Diaspora", "Remo.co retenu comme connecteur externe pour les salons et rendez-vous virtuels.", "Tranché", "M. Bruno", "Intégration dès V1 ; périmètre d'intégration à cadrer", "Cadrage écrit sur la documentation API Remo", "18/09/2026"),
+    ("D03", "09/09/2026", "Démonstration RPS en V1", "V1 inclut une démonstration maquettée du blocage de publication d'une cession de titres ; le circuit réel reste en V2.", "Tranché", "Chef de projet", "+20 j/p sur V1", "", ""),
     ("A01", "09/09/2026", "Équipe de développement", "Taille et séniorité de l'équipe disponible dès maintenant ?", "Ouvert", "M. Bruno", "Détermine si V1 tient en 5 semaines ou nécessite des coupes", "Réponse attendue avant J01", "14/09/2026"),
     ("A02", "09/09/2026", "API CFE / RCCM", "Une API existe-t-elle, ou faut-il un échange de fichier supervisé ?", "Ouvert", "CCI-Togo", "Bloque le lot Espace CCI-Togo", "Vérifier avant le démarrage du lot", "16/09/2026"),
     ("A03", "09/09/2026", "Designer UI/UX", "Confirmation d'un designer de bout en bout (proposition Bouley) ?", "Ouvert", "M. Bruno", "Sans lui, la charge frontend absorbe la conception", "Décision avant J04", "18/09/2026"),
@@ -1248,7 +1248,7 @@ r = small_table(wsX, r, ["Besoin", "Vendeurs retenus", "Note"], [
     ("Vérification d'identité", "Capture documentaire, revue humaine, OTP", "Aucune biométrie en v0"),
     ("Registre des entreprises", "CFE / RCCM", "Si aucune API : échange de fichier supervisé"),
     ("Archivage de preuve", "PSAE accrédité", "Valeur probante du NDA"),
-    ("Événements et rendez-vous virtuels", "Remo.co (décision du 09/09/2026)", "Connecteur externe pour Deal-Connect et Guichet Diaspora"),
+    ("Événements et rendez-vous virtuels", "Remo.co", "Connecteur externe pour Deal-Connect et Guichet Diaspora"),
     ("Fiscalité", "Partenaire tiers à confirmer", "Le nom TaxeFacile n'apparaît que dans le blueprint v5"),
 ])
 r = section(wsX, r, "6. Exigences transverses")
@@ -1261,9 +1261,9 @@ r = small_table(wsX, r, ["Domaine", "Exigence"], [
 ])
 r = section(wsX, r, "7. Hors périmètre v0 (à ne pas construire maintenant)")
 r = small_table(wsX, r, ["Élément", "Statut", "Raison"], [(n, s, c) for n, s, c in HORS_PERIMETRE])
-r = section(wsX, r, "8. Décisions actées le 09/09/2026")
+r = section(wsX, r, "8. Décisions actées")
 for d in ("Le cahier des charges v0 et le Référentiel P04 à P25 sont la cible finale ; le blueprint v5 n'est pas retenu.",
-          "Remo.co est retenu comme connecteur externe pour les salons et rendez-vous virtuels ; intégration dès V1 (décision du 10/09/2026), billetterie et sponsoring en V4.",
+          "Remo.co est retenu comme connecteur externe pour les salons et rendez-vous virtuels ; intégration dès V1, billetterie et sponsoring en V4.",
           "V1 inclut une démonstration maquettée du blocage RPS (+20 j/p) ; le circuit réel reste en V2."):
     r = para(wsX, r, "- " + d, height=18)
 widths(wsX, [3, 30, 44, 34, 12, 12, 12, 12, 12])
@@ -1288,7 +1288,7 @@ ROADMAP = {
                   "Moteur d'honoraires et rétrocession CCI (V3)",
                   "Alerte & Rebond, billetterie et sponsoring Deal-Connect, rendez-vous mutuels, rapport post-événement, profil diaspora complet (V4)"],
         "prerequis": "Équipe de développement confirmée (5 à 6 profils) ; réponse sur l'API CFE/RCCM ; designer UI/UX confirmé.",
-        "decision": "Décision du 09/09/2026 : démonstration RPS ajoutée. Sans équipe à 5 ou 6 profils, la démonstration RPS est le premier lot à retirer, avant le matching automatisé.",
+        "decision": "La démonstration RPS fait partie de V1. Sans équipe à 5 ou 6 profils, la démonstration RPS est le premier lot à retirer, avant le matching automatisé.",
         "lots": ["Fondations", "Auth et rôles", "Espace CCI-Togo", "Deal-Ready", "Dossier cédant", "Marketplace actifs", "Évaluation indicative", "Démonstration RPS", "Deal-Connect (Remo)", "Frontend et design", "QA et livraison"],
     },
     "V2": {
@@ -1324,7 +1324,7 @@ ROADMAP = {
                    "Deal-Experts : registre d'experts, routage, accès temporaire scopé (sous réserve de l'arbitrage P13)"],
         "exclu": ["Mécanismes d'enchère en temps réel (non présumés contractuels)", "Tout conseil de change ou d'investissement fourni par la plateforme"],
         "prerequis": "Portes de conformité fermées (V3) ; cadrage écrit de l'intégration Remo.co.",
-        "decision": "Décision du 09/09/2026 : Remo.co retenu. Le périmètre exact (SSO natif, webhooks de présence, marque blanche) dépend du plan Remo.co choisi.",
+        "decision": "Remo.co est retenu. Le périmètre exact (SSO natif, webhooks de présence, marque blanche) dépend du plan Remo.co choisi.",
         "lots": ["Alerte & Rebond", "Actifs en difficulté", "Deal-Connect", "Guichet Diaspora", "Deal-Experts"],
     },
     "V5": {
