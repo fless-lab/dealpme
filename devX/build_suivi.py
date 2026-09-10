@@ -75,10 +75,10 @@ def title(ws, text, sub=None):
 VERSIONS = [
     # code, objet, début, fin
     ("V1", "Premier produit : cessions d'actifs, espace CCI-Togo, Deal-Ready, démonstration du blocage RPS, Deal-Connect via Remo.co", dt.date(2026, 9, 3), dt.date(2026, 10, 15)),
-    ("V2", "Cession de titres en cercle restreint (RPS réel), signature électronique, data room et Q&R", dt.date(2026, 10, 16), dt.date(2026, 12, 10)),
-    ("V3", "Négociation et réalisation, LegalTech OHADA, Finance et rétrocession, support, fermeture des portes de conformité", dt.date(2026, 12, 11), dt.date(2027, 2, 18)),
-    ("V4", "Alerte & Rebond, Deal-Connect (Remo.co), Guichet Diaspora, Deal-Experts", dt.date(2027, 2, 19), dt.date(2027, 4, 1)),
-    ("V5", "VDR Intelligence : DealLens, Evidence Map, Issue Radar, Clean Team", dt.date(2027, 4, 2), dt.date(2027, 6, 3)),
+    ("V2", "Cession de titres en cercle restreint (RPS réel), signature électronique, data room et Q&R", dt.date(2026, 10, 16), dt.date(2026, 11, 25)),
+    ("V3", "Négociation et réalisation, LegalTech OHADA, Finance et rétrocession, support, fermeture des portes de conformité", dt.date(2026, 11, 26), dt.date(2026, 12, 30)),
+    ("V4", "Alerte & Rebond, Deal-Connect (Remo.co), Guichet Diaspora, Deal-Experts", dt.date(2026, 12, 31), dt.date(2027, 2, 5)),
+    ("V5", "VDR Intelligence : DealLens, Evidence Map, Issue Radar, Clean Team", dt.date(2027, 2, 6), dt.date(2027, 2, 28)),
 ]
 
 # Tâches déjà réalisées ou entamées par le squelette du 09/09/2026 (clé : début du libellé de la tâche).
@@ -812,15 +812,17 @@ JALONS = [
     ("J06", "Fin de développement V1 (hors QA)", "V1", dt.date(2026, 10, 12), "À venir", "Le développement s'arrête, la QA prend le relais du 13 au 15/10"),
     ("J07", "Démonstration V1 à M. Bruno et à la CCI-Togo", "V1", dt.date(2026, 10, 15), "À venir", "Échéance ferme"),
     ("J08", "Contrat prestataire de signature qualifiée (PSC) signé", "V2", dt.date(2026, 10, 30), "À venir", "Bloquant pour l'intégration NDA"),
-    ("J09", "Livraison V2", "V2", dt.date(2026, 12, 10), "À venir", ""),
-    ("J10", "Avis juridique écrit sur le RPS et le barème de frais", "V3", dt.date(2027, 1, 15), "À venir", "Conditionne l'activation du barème"),
-    ("J11", "Pentest indépendant réalisé et remédié", "V3", dt.date(2027, 2, 10), "À venir", "Porte G10"),
-    ("J12", "Portes de conformité G1 à G10 fermées", "V3", dt.date(2027, 2, 12), "À venir", "Condition de lancement commercial"),
-    ("J13", "Livraison V3", "V3", dt.date(2027, 2, 18), "À venir", ""),
+    ("J19", "Pentest indépendant commandé", "V2", dt.date(2026, 11, 10), "À venir", "Doit être réalisé avant la fermeture des portes en V3"),
+    ("J09", "Livraison V2", "V2", dt.date(2026, 11, 25), "À venir", "Date fixée le 10/09/2026"),
+    ("J10", "Avis juridique écrit sur le RPS et le barème de frais", "V3", dt.date(2026, 12, 11), "À venir", "Conditionne l'activation du barème"),
+    ("J11", "Pentest indépendant réalisé et remédié", "V3", dt.date(2026, 12, 18), "À venir", "Porte G10"),
+    ("J12", "Portes de conformité G1 à G10 fermées", "V3", dt.date(2026, 12, 23), "À venir", "Condition de lancement commercial"),
+    ("J13", "Livraison V3", "V3", dt.date(2026, 12, 30), "À venir", "Date fixée le 10/09/2026"),
     ("J14", "Cadrage de l'intégration Remo.co validé", "V1", dt.date(2026, 9, 18), "À venir", "Bloque le connecteur Remo"),
-    ("J15", "Livraison V4", "V4", dt.date(2027, 4, 1), "À venir", ""),
-    ("J16", "Contrat fournisseur IA signé", "V5", dt.date(2027, 4, 9), "À venir", "Bloquant pour DealLens"),
-    ("J17", "Livraison V5", "V5", dt.date(2027, 6, 3), "À venir", ""),
+    ("J15", "Livraison V4", "V4", dt.date(2027, 2, 5), "À venir", "Date fixée le 10/09/2026"),
+    ("J16", "Contrat fournisseur IA signé", "V5", dt.date(2027, 1, 15), "À venir", "Bloquant pour DealLens ; consultation à lancer dès V2"),
+    ("J17", "Livraison V5", "V5", dt.date(2027, 2, 28), "À venir", "Date fixée le 10/09/2026"),
+    ("J18", "Mise en service complète (lancement commercial)", "V5", dt.date(2027, 3, 1), "À venir", "Exige les portes G1 à G10 fermées (J12) et le pentest remédié (J11)"),
 ]
 hJ = ["ID", "Jalon", "Version", "Date cible", "Statut", "Jours restants", "Avancement version", "Alerte", "Prochain (calcul)", "Commentaire"]
 for i, h in enumerate(hJ):
@@ -869,6 +871,7 @@ RISQUES = [
     ("R10", "Fournisseur IA sans clauses de confidentialité acceptables", "Dépendance externe", 3, 5, "V5", "Conseil juridique", "Consultation dès V3, clauses de non-réutilisation des données", "Ouvert"),
     ("R11", "Fuite de divulgation T0 / T1 sur un dossier titres en production", "Sécurité", 2, 5, "V2", "Équipe de développement", "Allow-list serveur, tests DISCLOSURE_LEAK sur les 12 cas de référence", "Surveillé"),
     ("R12", "Sur-ingénierie par rapport au plafond du pilote (2 000 comptes)", "Technique", 2, 2, "V2", "Chef de projet", "Revue d'architecture à chaque version contre le plafond de capacité", "Surveillé"),
+    ("R14", "Calendrier V2 à V5 compressé (V5 : 145 j/p en trois semaines) avec lancement commercial au 01/03/2027", "Planning", 4, 4, "V5", "Chef de projet", "Dimensionner l'équipe sur l'ETP requis affiché dans la feuille de route, ou déplacer les surfaces DealLens non essentielles après le lancement ; commander le pentest et le contrat IA dès V2", "Ouvert"),
     ("R13", "Pentest indépendant reporté en V3 : la démonstration V1 tourne sans audit externe", "Sécurité", 3, 4, "V1", "Chef de projet", "Revue de sécurité interne et scan de dépendances en V1 (lot Sécurité) ; aucun environnement accessible publiquement avant V3 ; commander le pentest dès V2", "Ouvert"),
 ]
 hR = ["ID", "Risque", "Catégorie", "Probabilité (1-5)", "Impact (1-5)", "Score", "Niveau", "Version", "Responsable", "Mitigation", "Statut"]
