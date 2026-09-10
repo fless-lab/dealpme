@@ -646,7 +646,6 @@ wsT.conditional_formatting.add(f"L{T_FIRST}:L{T_LAST}", DataBarRule(start_type="
 
 widths(wsT, [3, 9, 8, 8, 18, 52, 44, 9, 9, 10, 10, 10, 9, 9, 14, 11, 11, 11, 22, 9, 10, 30])
 wsT.freeze_panes = "G6"
-wsT.column_dimensions["R"].hidden = True  # Fin réelle : masquée par défaut, à afficher au moment des bilans
 wsT.auto_filter.ref = f"B5:V{T_LAST}"
 
 # ================================================================== MODULES
