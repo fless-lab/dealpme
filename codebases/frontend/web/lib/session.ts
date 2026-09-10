@@ -54,5 +54,9 @@ export function navFor(roles: string[]): { href: string; label: string; controlI
   if (roles.includes("COMPLIANCE_OPERATOR")) nav.push({ href: "/conformite", label: "Conformité", controlId: "NAV_COMPLIANCE" });
   if (roles.includes("PLATFORM_ADMIN")) nav.push({ href: "/admin", label: "Administration", controlId: "NAV_ADMIN" });
   nav.push({ href: "/evenements", label: "Deal-Connect", controlId: "NAV_EVENTS" });
+  // Surface de démonstration du blocage réglementaire : visible des comptes qui présentent le produit.
+  if (roles.some((r) => ["SELLER", "ADVISOR", "CCI_OFFICER", "COMPLIANCE_OPERATOR", "PLATFORM_ADMIN"].includes(r))) {
+    nav.push({ href: "/demonstration", label: "Démonstration RPS", controlId: "NAV_DEMONSTRATION" });
+  }
   return nav;
 }

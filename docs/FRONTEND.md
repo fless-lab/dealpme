@@ -15,6 +15,7 @@ app/
   (espace)/admin/      opérations, drapeaux, incidents (V3)
   (dataroom)/          poste de travail data room et VDR Intelligence (V2, V5)
   compte/              page Compte : identité, rôle, appareils connectés, révocation à distance
+  (espace)/demonstration/ scénario du blocage réglementaire, réservé aux comptes qui présentent
   labo/                laboratoire de composants : toutes les variantes et tous les états du design system
   api/auth/[action]    BFF : connexion, second facteur, inscription, vérification d'email, déconnexion
   api/sessions/[id]    BFF : révocation d'un appareil

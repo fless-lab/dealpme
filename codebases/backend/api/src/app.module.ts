@@ -4,6 +4,7 @@ import { DatabaseModule } from "./database/database.module.js";
 import { IdentityModule } from "./modules/identity/identity.module.js";
 import { InstitutionModule } from "./modules/institution/institution.module.js";
 import { MarketplaceModule } from "./modules/marketplace/marketplace.module.js";
+import { DemonstrationModule } from "./modules/demonstration/demonstration.module.js";
 import { SignatureModule } from "./modules/signature/signature.module.js";
 import { DataroomModule } from "./modules/dataroom/dataroom.module.js";
 import { NegotiationModule } from "./modules/negotiation/negotiation.module.js";
@@ -26,6 +27,7 @@ import { ExpertsModule } from "./modules/experts/experts.module.js";
     IdentityModule,
     InstitutionModule,
     MarketplaceModule,
+    DemonstrationModule,
     // V2
     SignatureModule,
     DataroomModule,

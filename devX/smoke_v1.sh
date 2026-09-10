@@ -240,6 +240,22 @@ curl -s -o /dev/null -X POST "$API/institution/certifications" -H "authorization
 open_after=$(curl -s "$API/companies/$cid/certification" -H "authorization: Bearer $SELLER" | python3 -c 'import sys,json;d=json.load(sys.stdin);print("aucune" if d["open"] is None else d["open"]["state"])')
 check "la décision clôt la demande en cours" aucune "$open_after"
 
+echo "== Démonstration du scénario RPS"
+demo=$(curl -s "$API/demonstration/rps" -H "authorization: Bearer $TV")
+n=$(echo "$demo" | python3 -c "import sys,json;d=json.load(sys.stdin);print(len([k for k in d['circleView'] if k in ('companyLegalName','rccmNumber','askingPrice','stakePercent','valuationBasis')]))")
+check "la vue T1 du scénario ne contient aucun champ réservé à T2" 0 "$n"
+tier=$(echo "$demo" | python3 -c 'import sys,json;print(json.load(sys.stdin)["maxTierWithoutAdmission"])')
+check "palier maximal sans admission pour une cession de titres" T0 "$tier"
+flag=$(echo "$demo" | python3 -c 'import sys,json;print(json.load(sys.stdin)["shareDealListingEnabled"])')
+check "le drapeau de publication des cessions de titres reste fermé" False "$flag"
+demo_deal=$(echo "$demo" | python3 -c 'import sys,json;print(json.load(sys.stdin)["deal"]["id"])')
+before=$(curl -s "$API/demonstration/rps/$demo_deal/journal" -H "authorization: Bearer $TV" | python3 -c 'import sys,json;print(len(json.load(sys.stdin)["audit"]))')
+curl -s -o /dev/null -X POST "$API/deals/$demo_deal/transitions" -H "authorization: Bearer $TV" -H 'content-type: application/json' -d '{"to":"LISTED_OPEN"}'
+after=$(curl -s "$API/demonstration/rps/$demo_deal/journal" -H "authorization: Bearer $TV" | python3 -c 'import sys,json;print(len(json.load(sys.stdin)["audit"]))')
+check "le refus laisse une trace dans le journal" 1 "$((after - before))"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$API/demonstration/rps" -H "authorization: Bearer $INV")
+check "un investisseur n'accède pas à la surface de démonstration (403)" 403 "$code"
+
 echo "== Deal-Connect (Remo)"
 code=$(curl -s -o /dev/null -w '%{http_code}' "$API/events")
 check "liste des événements publiés" 200 "$code"

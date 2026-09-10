@@ -42,7 +42,8 @@ export function messageFor(err: unknown): string {
       case "FORBIDDEN":
         return (err.envelope.details as { reason?: string } | undefined)?.reason === "EMAIL_NOT_VERIFIED" ? "Votre adresse email n'est pas encore vérifiée. Saisissez le code reçu par email." : "Action non autorisée pour votre compte.";
       case "PERIMETER_BLOCKED":
-        return "Publication bloquée par le périmètre réglementaire.";
+        // Le serveur explique le motif réglementaire en toutes lettres : c'est ce message qu'il faut lire.
+        return err.envelope.message || "Publication bloquée par le périmètre réglementaire.";
       case "CONFLICT":
         return "Un compte existe déjà avec cet email. Connectez-vous ou utilisez une autre adresse.";
       case "VALIDATION_FAILED":
