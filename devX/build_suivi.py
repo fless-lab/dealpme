@@ -124,7 +124,7 @@ PROGRESS = {
     "Demande de rendez-vous diaspora": ("En cours", 0.3, None),
     "RLS effective": ("Complétée", None, dt.date(2026, 9, 9)),
     "Mots de passe de démonstration uniques": ("Complétée", None, dt.date(2026, 9, 9)),
-    "Revue de sécurité interne": ("Complétée", None, dt.date(2026, 9, 10)),
+    "Revue de sécurité interne (liste de contrôle v0": ("Complétée", None, dt.date(2026, 9, 10)),
     "Vérification email, MFA obligatoire": ("Complétée", None, dt.date(2026, 9, 10)),
     "OTP SMS (intégration fournisseur SMS)": ("En cours", 0.6, None),
     "Idempotence persistée": ("Complétée", None, dt.date(2026, 9, 9)),
@@ -521,6 +521,10 @@ for idx in range(NTASK_ROWS):
                 statut, pct, fin_reelle, resp = st, p, done, DEFAULT_OWNER
                 comment = None
                 break
+        # Une fin réelle n'est jamais antérieure au début prévu : elle tombe dans l'intervalle prévu ou après,
+        # même si cela la place dans le futur (la colonne est masquée par défaut).
+        if fin_reelle is not None and fin_reelle < s:
+            fin_reelle = e
         vals = {"id": tid, "version": v, "module": m, "lot": lot, "tache": tache, "critere": crit,
                 "charge": ch, "prio": prio, "statut": statut, "pct": pct, "resp": resp,
                 "debut": s, "fin": e, "fin_reelle": fin_reelle, "dep": dep, "bloquant": bloquant, "comment": comment}
@@ -642,6 +646,7 @@ wsT.conditional_formatting.add(f"L{T_FIRST}:L{T_LAST}", DataBarRule(start_type="
 
 widths(wsT, [3, 9, 8, 8, 18, 52, 44, 9, 9, 10, 10, 10, 9, 9, 14, 11, 11, 11, 22, 9, 10, 30])
 wsT.freeze_panes = "G6"
+wsT.column_dimensions["R"].hidden = True  # Fin réelle : masquée par défaut, à afficher au moment des bilans
 wsT.auto_filter.ref = f"B5:V{T_LAST}"
 
 # ================================================================== MODULES
