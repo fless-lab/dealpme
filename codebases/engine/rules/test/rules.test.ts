@@ -8,7 +8,9 @@ import {
   DEAL_READY_LIMITS,
   DEAL_READY_SCOPE,
   completeness,
+  contactRefusalMessage,
   dealReadyChecklist,
+  findContactDetails,
   matchDeal,
   openVdr,
   requirementsFor,
@@ -190,5 +192,43 @@ describe("liste de contrôle Deal-Ready", () => {
   it("la portée du badge dit ce qui n'est pas vérifié", () => {
     expect(DEAL_READY_SCOPE).toContain("Ne portent ni sur l'exactitude");
     expect(DEAL_READY_LIMITS.length).toBeGreaterThanOrEqual(4);
+  });
+});
+
+describe("échanges avant accord de confidentialité", () => {
+  const passe = (m: string) => expect(findContactDetails(m)).toBeNull();
+  const bloque = (m: string, kind: string) => expect(findContactDetails(m)?.kind).toBe(kind);
+
+  it("laisse passer un message qui convient d'un rendez-vous", () => {
+    passe("Bonjour, seriez-vous disponible mardi prochain pour un premier échange ?");
+    passe("Notre thèse porte sur la logistique du froid dans la région Maritime.");
+    passe("Le chiffre d'affaires 2025 est-il représentatif d'une année normale ?");
+  });
+
+  it("reconnaît une adresse email sous ses formes courantes", () => {
+    bloque("Ecrivez-moi a contact@exemple.tg", "EMAIL");
+    bloque("mon.adresse+dealpme@societe-exemple.com reste joignable", "EMAIL");
+  });
+
+  it("reconnaît un numéro togolais et un numéro international", () => {
+    bloque("Appelez le 90 12 34 56", "PHONE");
+    bloque("Joignable au 90.12.34.56", "PHONE");
+    bloque("Mon numéro : +22890123456", "PHONE");
+  });
+
+  it("reconnaît un lien externe", () => {
+    bloque("Le dossier est sur https://exemple.tg/dossier", "LINK");
+    bloque("Voir HTTP://exemple.tg", "LINK");
+  });
+
+  it("ne prend pas un montant ou une année pour un numéro", () => {
+    passe("Le chiffre d'affaires 2025 dépasse 1 milliard de FCFA.");
+    passe("Nous visons une reprise au premier trimestre 2027.");
+  });
+
+  it("le refus nomme ce qu'il faut retirer", () => {
+    const f = findContactDetails("Appelez le 90 12 34 56")!;
+    expect(contactRefusalMessage(f)).toContain("Retirez le numéro de téléphone");
+    expect(contactRefusalMessage(f)).toContain("accord de confidentialité");
   });
 });

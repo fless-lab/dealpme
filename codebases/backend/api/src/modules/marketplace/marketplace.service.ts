@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { and, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { DealPmeError, ErrorCode, type DealTeaserT0 } from "@dealpme/contracts";
 import { DealStatus, DisclosureTier, newId } from "@dealpme/domain";
-import { projectForTier } from "@dealpme/rules";
+import { contactRefusalMessage, findContactDetails, projectForTier } from "@dealpme/rules";
 import { CORE_DB, type CoreDb } from "../../database/database.module.js";
 import { certifications, dealMessages, dealViews, deals, interests, savedAlerts, users } from "../../database/schema/core.js";
 import { withTenant } from "../../database/tenant.js";
@@ -10,16 +10,6 @@ import { AuditService } from "../../platform/audit.service.js";
 import type { Principal } from "../../platform/auth.js";
 
 const LISTED = [DealStatus.LISTED_OPEN, DealStatus.LISTED_RESTRICTED, DealStatus.ENGAGED, DealStatus.DUE_DILIGENCE, DealStatus.NEGOTIATION] as const;
-
-/**
- * Motifs de refus d'un message avant NDA. La messagerie de mise en relation sert à convenir d'un rendez-vous,
- * pas à contourner les paliers de divulgation : les coordonnées directes attendent l'accord de confidentialité.
- */
-const CONTACT_PATTERNS: { pattern: RegExp; reason: string; remove: string }[] = [
-  { pattern: /[\w.+-]+@[\w-]+\.[\w.]{2,}/, reason: "adresse email", remove: "l'adresse email" },
-  { pattern: /(?:\+\d{6,}|\b\d{2}[\s.-]?\d{2}[\s.-]?\d{2}[\s.-]?\d{2}\b)/, reason: "numéro de téléphone", remove: "le numéro de téléphone" },
-  { pattern: /https?:\/\/\S+/i, reason: "lien externe", remove: "le lien" },
-];
 
 @Injectable()
 export class MarketplaceService {
@@ -57,13 +47,10 @@ export class MarketplaceService {
    * coordonnées directes sont refusées en nommant ce qui bloque, plutôt que silencieusement caviardées.
    */
   async sendMessage(dealId: string, body: string, sender: Principal, correlationId: string): Promise<{ messageId: string }> {
-    const found = CONTACT_PATTERNS.find((p) => p.pattern.test(body));
+    const found = findContactDetails(body);
     if (found) {
-      this.audit.record({ action: "MESSAGE_BLOCKED", actorUserId: sender.userId, subjectType: "deal", subjectId: dealId, outcome: "BLOCKED", correlationId, metadata: { reason: found.reason } });
-      throw new DealPmeError(ErrorCode.VALIDATION_FAILED, `Les échanges de coordonnées directes attendent la signature d'un accord de confidentialité. Retirez ${found.remove} du message.`, {
-        reason: "CONTACT_DETAILS_BLOCKED",
-        detected: found.reason,
-      });
+      this.audit.record({ action: "MESSAGE_BLOCKED", actorUserId: sender.userId, subjectType: "deal", subjectId: dealId, outcome: "BLOCKED", correlationId, metadata: { reason: found.kind } });
+      throw new DealPmeError(ErrorCode.VALIDATION_FAILED, contactRefusalMessage(found), { reason: "CONTACT_DETAILS_BLOCKED", detected: found.reason });
     }
     const id = newId();
     await withTenant(this.db, sender, async (tx) => {

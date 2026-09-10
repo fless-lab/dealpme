@@ -114,6 +114,7 @@ async function main(): Promise<void> {
   ];
   const DEMO_SCOPE =
     "Existence juridique, immatriculation au RCCM et complétude documentaire vérifiées par la CCI-Togo. Ne portent ni sur l'exactitude des états financiers, ni sur l'absence de litige, ni sur la valeur de l'entreprise.";
+  const created: { caseId: string; dealId: string; companyId: string; ownerOrgId: string; status: DealStatus; dealType: DealType }[] = [];
   for (const c of cases) {
     const fx = loadPassTransmissionFixture<Fixture>(c.caseId);
     const owner = ids[c.seller]!;
@@ -162,7 +163,78 @@ async function main(): Promise<void> {
     if (c.status !== DealStatus.DRAFT) {
       await db.insert(s.dealEvents).values({ id: newId(), dealId, fromStatus: DealStatus.DRAFT, toStatus: c.status, actorUserId: officer.userId, reason: "Jeu de démonstration" });
     }
+    created.push({ caseId: c.caseId, dealId, companyId, ownerOrgId: owner.orgId, status: c.status, dealType });
     console.log(`${c.caseId} ${fx.master.company} : ${dealType} ${c.status}`);
+  }
+
+  // Activité de démonstration : sans elle, les écrans d'audience, de messagerie et d'instruction sont vides
+  // et la présentation ne montre que des états initiaux. Tout est synthétique et daté de la veille.
+  const investor = ids["investisseur@demo.dealpme.local"];
+  const listed = created.filter((c) => c.status === DealStatus.LISTED_OPEN);
+  if (investor && listed.length > 0) {
+    const veille = new Date(now.getTime() - 86_400_000);
+    for (const [index, deal] of listed.entries()) {
+      // Consultations : quelques passages anonymes et un passage identifié.
+      for (let i = 0; i < 3 + index * 2; i += 1) {
+        await db.insert(s.dealViews).values({ id: newId(), dealId: deal.dealId, viewerUserId: null, viewerOrganisationId: null, viewedAt: new Date(veille.getTime() + i * 3_600_000) });
+      }
+      await db.insert(s.dealViews).values({ id: newId(), dealId: deal.dealId, viewerUserId: investor.userId, viewerOrganisationId: investor.orgId, viewedAt: veille });
+    }
+    const premier = listed[0]!;
+    const interestId = newId();
+    await db.insert(s.interests).values({
+      id: interestId,
+      dealId: premier.dealId,
+      investorUserId: investor.userId,
+      message: "Reprise envisagée au premier semestre 2027, financement bancaire en cours de montage.",
+      createdAt: veille,
+    });
+    await db.insert(s.dealMessages).values({
+      id: newId(),
+      dealId: premier.dealId,
+      interestId,
+      senderUserId: investor.userId,
+      senderOrganisationId: investor.orgId,
+      body: "Bonjour, votre dossier correspond à notre thèse. Seriez-vous disponible pour un échange la semaine prochaine ?",
+      createdAt: veille,
+    });
+    const vendeur = users.find((u) => u.org.startsWith(premier.caseId) || true);
+    void vendeur;
+    await db.insert(s.savedAlerts).values({
+      id: newId(),
+      userId: investor.userId,
+      organisationId: investor.orgId,
+      label: "Logistique et transport, région Maritime",
+      sectorCode: "LOGIST",
+      regionCode: "MARITIME",
+      turnoverBand: null,
+      dealReadyOnly: true,
+      notifyOptIn: false,
+      optInAt: null,
+      createdAt: veille,
+    });
+  }
+
+  // Une demande de certification en attente de compléments : la file de l'officier n'est pas vide.
+  const enInstruction = created.find((c) => c.caseId === "PT-006");
+  if (enInstruction) {
+    const owner = Object.values(ids).find((v) => v.orgId === enInstruction.ownerOrgId);
+    if (owner) {
+      await db.insert(s.certificationRequests).values({
+        id: newId(),
+        companyId: enInstruction.companyId,
+        state: "REMEDIATION_REQUIRED",
+        message: "Transmission prévue au premier trimestre 2027.",
+        remediationItems: [
+          { label: "Attestation de régularité fiscale expirée", detail: "La pièce déposée date de 2024. Fournir une attestation de moins de trois mois." },
+          { label: "Statuts non signés", detail: "L'exemplaire déposé ne porte pas la signature du gérant." },
+        ],
+        remediationSetBy: officer.userId,
+        remediationSetAt: new Date(now.getTime() - 43_200_000),
+        requestedBy: owner.userId,
+        requestedAt: new Date(now.getTime() - 172_800_000),
+      });
+    }
   }
 
   await db.insert(s.events).values({
