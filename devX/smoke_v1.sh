@@ -190,6 +190,33 @@ check "historique nominatif des décisions" 1 "$n"
 line=$(curl -s "$API/institution/certifications.csv" -H "authorization: Bearer $OFF" | grep -c "$cid" || true)
 check "export CSV du journal des certifications" 1 "$line"
 
+echo "== Place de marché"
+teaser=$(curl -s "$API/opportunities/$first")
+n=$(echo "$teaser" | python3 -c "import sys,json;d=json.load(sys.stdin);print(len([k for k in d if k in ('askingPriceXof','valuationBasis','companyId','sellerOrganisationId','legalName')]))")
+check "fiche T0 en visiteur : aucun champ au-delà de T0" 0 "$n"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$API/opportunities/$did")
+check "un dossier non publié est introuvable en fiche publique (404)" 404 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$first/messages" -H "authorization: Bearer $INV" -H 'content-type: application/json' -d '{"body":"Rappelez-moi au 90 11 22 33"}')
+check "message contenant un téléphone refusé (400)" 400 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$first/messages" -H "authorization: Bearer $INV" -H 'content-type: application/json' -d '{"body":"Ecrivez a contact@exemple.tg"}')
+check "message contenant un email refusé (400)" 400 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$first/messages" -H "authorization: Bearer $INV" -H 'content-type: application/json' -d '{"body":"Bonjour, seriez-vous disponible pour un echange la semaine prochaine ?"}')
+check "message sans coordonnées accepté" 201 "$code"
+n=$(curl -s "$API/deals/$first/messages" -H "authorization: Bearer $TV" | python3 -c 'import sys,json;print(len(json.load(sys.stdin)["items"]))')
+check "un cédant tiers ne voit aucun message du fil" 0 "$n"
+alert=$(curl -s -X POST "$API/alerts" -H "authorization: Bearer $INV" -H 'content-type: application/json' -d '{"label":"Alerte de fumee","sectorCode":"LOGIST"}' | python3 -c 'import sys,json;print(json.load(sys.stdin).get("alertId",""))')
+opt=$(curl -s "$API/alerts" -H "authorization: Bearer $INV" | python3 -c "import sys,json;d=[a for a in json.load(sys.stdin)['items'] if a['id']=='$alert'][0];print(d['notifyOptIn'])")
+check "alerte créée sans consentement de notification" False "$opt"
+curl -s -o /dev/null -X POST "$API/alerts/$alert/opt-in" -H "authorization: Bearer $INV" -H 'content-type: application/json' -d '{"notifyOptIn":true}'
+opt=$(curl -s "$API/alerts" -H "authorization: Bearer $INV" | python3 -c "import sys,json;d=[a for a in json.load(sys.stdin)['items'] if a['id']=='$alert'][0];print(d['notifyOptIn'])")
+check "consentement explicite enregistré et daté" True "$opt"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/alerts" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{"label":"tentative"}')
+check "un cédant ne crée pas d'alerte de repreneur (403)" 403 "$code"
+before=$(curl -s "$API/seller/dashboard" -H "authorization: Bearer $SELLER" | python3 -c "import sys,json;d=[x for x in json.load(sys.stdin)['items'] if x['id']=='$first'];print(d[0]['views'] if d else 0)")
+curl -s -o /dev/null "$API/opportunities/$first"
+after=$(curl -s "$API/seller/dashboard" -H "authorization: Bearer $SELLER" | python3 -c "import sys,json;d=[x for x in json.load(sys.stdin)['items'] if x['id']=='$first'];print(d[0]['views'] if d else 0)")
+check "une consultation incrémente le compteur du cédant" 1 "$((after - before))"
+
 echo "== Deal-Ready : liste de contrôle et demande"
 n=$(curl -s "$API/companies/$cid/certification" -H "authorization: Bearer $SELLER" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(len(d["checklist"]["criteria"]))')
 check "liste de contrôle servie à l'entreprise" 7 "$n"

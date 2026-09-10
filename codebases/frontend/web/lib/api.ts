@@ -46,9 +46,10 @@ export function messageFor(err: unknown): string {
       case "CONFLICT":
         return "Un compte existe déjà avec cet email. Connectez-vous ou utilisez une autre adresse.";
       case "VALIDATION_FAILED":
-        return "Certains champs sont invalides. Corrigez les champs signalés.";
       default:
-        return err.envelope.message;
+        // Les services renvoient des messages précis, qui disent quoi corriger : ils priment.
+        // Le repli générique ne sert qu'aux erreurs de schéma, dont le message serveur est technique.
+        return err.envelope.message && err.envelope.message.length > 30 ? err.envelope.message : "Certains champs sont invalides. Corrigez les champs signalés.";
     }
   }
   return "Service momentanément indisponible. Réessayez dans un instant.";

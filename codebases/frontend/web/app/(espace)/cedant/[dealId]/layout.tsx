@@ -31,6 +31,7 @@ export default async function DossierLayout({ children, params }: { children: Re
   })).concat([
     { href: `/cedant/${dealId}/recapitulatif`, label: "Récapitulatif", controlId: "SELLER_STEP_SUMMARY" },
     { href: `/cedant/${dealId}/certification`, label: "Certification", controlId: "SELLER_STEP_CERTIFICATION" },
+    { href: `/cedant/${dealId}/audience`, label: "Audience", controlId: "SELLER_STEP_AUDIENCE" },
   ]);
 
   return (

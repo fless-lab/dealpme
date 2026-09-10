@@ -381,3 +381,55 @@ export const certificationRequests = pgTable(
   },
   (t) => [index("certification_request_company_idx").on(t.companyId, t.state)],
 );
+
+/**
+ * Place de marché (P09). Trois tables complètent la mise en relation :
+ * les consultations (pour un compteur honnête côté cédant), les messages (sans pièce jointe avant NDA)
+ * et les alertes enregistrées (jamais sans consentement explicite).
+ */
+export const dealViews = pgTable(
+  "deal_view",
+  {
+    id: id(),
+    dealId: uuid("deal_id").notNull().references(() => deals.id),
+    viewerUserId: uuid("viewer_user_id"), // nul pour un visiteur non connecté
+    viewerOrganisationId: uuid("viewer_organisation_id"), // INTERNAL : jamais montré au cédant, sert au comptage distinct
+    viewedAt: timestamp("viewed_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("deal_view_deal_idx").on(t.dealId, t.viewedAt)],
+);
+
+/** Messagerie de mise en relation : texte seul. Aucune pièce jointe avant l'exécution d'un NDA (DP-MKT). */
+export const dealMessages = pgTable(
+  "deal_message",
+  {
+    id: id(),
+    dealId: uuid("deal_id").notNull().references(() => deals.id),
+    interestId: uuid("interest_id").references(() => interests.id),
+    senderUserId: uuid("sender_user_id").notNull(),
+    senderOrganisationId: uuid("sender_organisation_id").notNull(),
+    body: text("body").notNull(), // INTERNAL : contenu filtré côté serveur, jamais de coordonnées avant NDA
+    createdAt: createdAt(),
+  },
+  (t) => [index("deal_message_deal_idx").on(t.dealId, t.createdAt)],
+);
+
+/** Alerte enregistrée : critères T0 uniquement, envoi conditionné à un consentement explicite et révocable. */
+export const savedAlerts = pgTable(
+  "saved_alert",
+  {
+    id: id(),
+    userId: uuid("user_id").notNull().references(() => users.id),
+    organisationId: uuid("organisation_id").notNull().references(() => organisations.id),
+    label: varchar("label", { length: 120 }).notNull(),
+    sectorCode: varchar("sector_code", { length: 16 }),
+    regionCode: regionEnum("region_code"),
+    turnoverBand: turnoverBandEnum("turnover_band"),
+    dealReadyOnly: boolean("deal_ready_only").notNull().default(false),
+    notifyOptIn: boolean("notify_opt_in").notNull().default(false), // jamais vrai par défaut
+    optInAt: timestamp("opt_in_at", { withTimezone: true }),
+    revokedAt: timestamp("revoked_at", { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [index("saved_alert_user_idx").on(t.userId)],
+);

@@ -27,6 +27,12 @@ export const CurrentPrincipal = createParamDecorator((_data: unknown, ctx: Execu
   return req.principal;
 });
 
+/** Principal facultatif : une page publique sert un visiteur non connecté sans erreur. */
+export const OptionalPrincipal = createParamDecorator((_data: unknown, ctx: ExecutionContext): Principal | null => {
+  const req = ctx.switchToHttp().getRequest<Request & { principal?: Principal }>();
+  return req.principal ?? null;
+});
+
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}

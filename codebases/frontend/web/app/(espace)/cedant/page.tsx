@@ -46,6 +46,9 @@ export default async function CedantHomePage() {
         <a className="dp-btn dp-btn-primary" href="/cedant/nouveau" data-control-id="SELLER_NEW_DOSSIER">
           Commencer un dossier
         </a>
+        <a className="dp-btn dp-btn-secondary" href="/cedant/tableau-de-bord" data-control-id="SELLER_DASHBOARD">
+          Audience de mes dossiers
+        </a>
       </div>
       {!error && items.length === 0 ? (
         <StateBanner tone="info" title="Aucun dossier pour le moment" controlId="SELLER_LIST_EMPTY">

@@ -115,9 +115,12 @@ PROGRESS = {
     "Provenance et versionnage des données déclarées": ("Complétée", None, dt.date(2026, 9, 22)),
     "Contrôle de complétude et liste des manques": ("Complétée", None, dt.date(2026, 9, 23)),
     "Écrans Pass Transmission": ("Complétée", None, dt.date(2026, 9, 23)),
-    "Fiche opportunité T0": ("En cours", 0.85, None),
-    "Recherche et filtres": ("En cours", 0.8, None),
-    "Mise en relation : manifestation": ("En cours", 0.6, None),
+    "Fiche opportunité T0": ("Complétée", None, dt.date(2026, 9, 28)),
+    "Recherche et filtres": ("Complétée", None, dt.date(2026, 9, 29)),
+    "Mise en relation : manifestation": ("Complétée", None, dt.date(2026, 9, 30)),
+    "Alertes sauvegardées opt-in": ("Complétée", None, dt.date(2026, 10, 1)),
+    "Tableau de bord cédant (vues, intérêts reçus)": ("Complétée", None, dt.date(2026, 10, 1)),
+    "Écrans marketplace (liste, détail, recherche)": ("Complétée", None, dt.date(2026, 10, 2)),
     "Saisie des données financières minimales": ("En cours", 0.4, None),
     "Calcul de fourchette indicative": ("Complétée", None, dt.date(2026, 9, 7)),
     "Mentions 'indicative, non opposable'": ("Complétée", None, dt.date(2026, 9, 7)),
@@ -284,7 +287,9 @@ add("V1", "TRV", "QA et livraison", "Recette interne et corrections", "Zéro ano
 add("V1", "TRV", "QA et livraison", "Documentation développeur et guide de démonstration", "Nouvel arrivant opérationnel en une journée", 3, "Moyenne")
 add("V1", "TRV", "QA et livraison", "Préparation de la démonstration du 15/10 (script, environnement, données)", "Répétition générale réalisée", 2, "Haute")
 
-# ---------------- V2 (165 j/p) ----------------
+# ---------------- V2 (172 j/p) ----------------
+add("V2", "MKT", "Mise en relation", "Qualification d'un repreneur par le cédant : décision tracée qui ouvre le palier suivant", "Aucune ouverture de palier sans décision nommée du cédant", 4, "Haute")
+add("V2", "MKT", "Mise en relation", "Suspension réversible d'une publication (amendement de la machine à états du v0)", "Un dossier suspendu redevient invisible sans être abandonné ; la transition est journalisée", 3, "Moyenne", bloquant="Oui", dep="Accord de M. Bruno sur l'amendement")
 add("V2", "RPS", "Conception", "Conception du circuit RPS réel : modèle de cercle et de personne unique, plafond et seuils, admission humaine, journal réglementaire à chaîne de hachage, contrat d'API du service", "Spécification relue par le conseil juridique ; chaque règle du v0 (P07, P10) a sa contrepartie technique", 4, "Haute", bloquant="Oui")
 add("V2", "VDR", "Conception", "Conception de la data room : stockage chiffré isolé, rendu serveur, filigrane dynamique, révocation en moins de 60 s, journal d'accès, modèle de permissions par dossier", "Aucun chemin d'accès direct aux fichiers ; schéma de permissions validé sur les 12 cas de référence", 4, "Haute", bloquant="Oui")
 add("V2", "SIG", "Conception", "Conception de la signature électronique : intégration du prestataire PSC, preuve et archivage, repli papier, statuts de signature dans la machine à états", "Séquences de signature et de repli documentées ; contrat de preuve défini", 2, "Haute", dep="Contrat PSC")
@@ -433,7 +438,7 @@ add("V5", "VDR-IA", "QA IA", "Performance : viewer progressif, streaming des ré
 add("V5", "VDR-IA", "QA IA", "Recette V5 et corrections", "Zéro anomalie bloquante ouverte", 5, "Haute")
 
 # ------------------------------------------------------------------ contrôle des totaux par version
-expected = {"V1": 262, "V2": 165, "V3": 176, "V4": 102, "V5": 153}
+expected = {"V1": 262, "V2": 172, "V3": 176, "V4": 102, "V5": 153}
 totals = {}
 for t in T:
     totals[t[0]] = totals.get(t[0], 0) + t[5]
@@ -966,6 +971,7 @@ DECISIONS = [
     ("A05", "09/09/2026", "Numérotation P01-P03", "Processus manquants ou numérotation volontaire à partir de P04 ?", "Ouvert", "CCI-Togo", "Faible impact sur le plan", "Confirmer avec le juridique", ""),
     ("A06", "09/09/2026", "Partenaire fiscal", "'TaxeFacile' est-il le partenaire réel, ou faut-il en qualifier un ?", "Ouvert", "M. Bruno", "Impacte le lot Conformité fiscale de V3", "Qualifier avant V3", "30/11/2026"),
     ("A07", "09/09/2026", "Charte du COPIL", "Composition, cadence exacte, règles de vote ?", "Ouvert", "CCI-Togo", "Gouvernance inter-version", "Récupérer l'annexe de la Convention", ""),
+    ("A13", "02/10/2026", "Retrait d'une publication", "La machine à états du v0 ne prévoit aucun retour depuis LISTED_OPEN : un dossier publié ne peut être fermé qu'en l'abandonnant, ce qui est définitif. L'écran le dit désormais au lieu de promettre un retrait. Une suspension réversible est inscrite en V2, sous réserve d'un amendement accepté par M. Bruno.", "Ouvert", "M. Bruno", "Un cédant qui suspend une vente ne doit pas avoir à abandonner son dossier", "Trancher avant le début de V2", "16/10/2026"),
     ("A12", "24/09/2026", "Certification visible dans le jeu de démonstration", "Aucune fixture de référence ne certifie un dossier publié : le badge Deal-Ready n'apparaîtrait jamais sur la place de marché pendant la démonstration. Le chargement de démonstration certifie donc PT-003, avec une portée explicite. Les fixtures restent intactes et demeurent l'oracle des tests.", "Tranché", "Chef de projet", "La démonstration montre les deux états, certifié et non certifié, sans altérer les cas de référence", "Confirmer le choix du dossier certifié avec M. Bruno avant la répétition générale", "12/10/2026"),
     ("A11", "23/09/2026", "Formats acceptés en pièce de dossier", "Documents, tableurs, présentations et images sont acceptés, anciens formats compris (PDF, Word, Excel, PowerPoint, OpenDocument, RTF, CSV, texte, JPEG, PNG, WebP, TIFF, HEIC) : ces formats sont ceux qui circulent réellement au Togo. Tous passent par l'antivirus, ne sont jamais exécutés, et seuls les PDF et images s'ouvrent dans le navigateur, le reste se télécharge. Les archives compressées restent exclues (ADR 0007).", "Tranché", "Chef de projet", "Ergonomie réelle contre surface de risque, arbitrée par l'analyse antivirus obligatoire", "Revoir si le pentest de V3 signale un vecteur bureautique", "18/12/2026"),
     ("A10", "15/09/2026", "Préalable à la certification", "L'octroi Deal-Ready exige une vérification RCCM ou CFE enregistrée pour l'entreprise ; le serveur refuse l'octroi sans elle (INVALID_TRANSITION). Le refus et le retrait restent possibles sans vérification.", "Tranché", "Chef de projet", "Évite un badge accordé sur des données uniquement déclaratives", "Confirmer la règle avec la CCI-Togo lors de la recette", "15/10/2026"),

@@ -2,6 +2,8 @@ import { Module } from "@nestjs/common";
 import { ANTIVIRUS_PORT, STORAGE_PORT, antivirusPortFactory, storagePortFactory } from "./dossier.providers.js";
 import { CompanyController } from "./company.controller.js";
 import { DossierController } from "./dossier.controller.js";
+import { MarketplaceController } from "./marketplace.controller.js";
+import { MarketplaceService } from "./marketplace.service.js";
 import { DossierService } from "./dossier.service.js";
 import { DealController } from "./deal.controller.js";
 import { DealService } from "./deal.service.js";
@@ -19,10 +21,11 @@ import { InstitutionModule } from "../institution/institution.module.js";
  */
 @Module({
   imports: [InstitutionModule],
-  controllers: [CompanyController, DealController, DossierController, SearchController, ValuationController],
+  controllers: [CompanyController, DealController, DossierController, MarketplaceController, SearchController, ValuationController],
   providers: [
     DealService,
     DossierService,
+    MarketplaceService,
     ValuationService,
     { provide: STORAGE_PORT, useFactory: storagePortFactory },
     { provide: ANTIVIRUS_PORT, useFactory: antivirusPortFactory },

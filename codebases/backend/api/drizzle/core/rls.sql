@@ -200,3 +200,37 @@ CREATE POLICY registry_record_officer ON registry_record
            OR position('PLATFORM_ADMIN' in coalesce(current_setting('app.roles', true), '')) > 0);
 
 GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO dealpme_api;
+
+-- 13. Place de marché : consultations, messages et alertes.
+--     Les consultations sont insérables par tous (y compris un visiteur), lisibles par le cédant propriétaire.
+--     Les messages sont lisibles par les deux parties d'un dossier ; les alertes n'appartiennent qu'à leur auteur.
+ALTER TABLE deal_view ENABLE ROW LEVEL SECURITY;
+ALTER TABLE deal_view FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS deal_view_insert ON deal_view;
+CREATE POLICY deal_view_insert ON deal_view FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS deal_view_owner ON deal_view;
+CREATE POLICY deal_view_owner ON deal_view FOR SELECT
+  USING (EXISTS (SELECT 1 FROM deal d WHERE d.id = deal_view.deal_id AND d.seller_organisation_id::text = current_setting('app.organisation_id', true)));
+
+ALTER TABLE deal_message ENABLE ROW LEVEL SECURITY;
+ALTER TABLE deal_message FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS deal_message_party ON deal_message;
+CREATE POLICY deal_message_party ON deal_message
+  USING (deal_message.sender_organisation_id::text = current_setting('app.organisation_id', true)
+      OR EXISTS (SELECT 1 FROM deal d WHERE d.id = deal_message.deal_id AND d.seller_organisation_id::text = current_setting('app.organisation_id', true)))
+  WITH CHECK (deal_message.sender_organisation_id::text = current_setting('app.organisation_id', true));
+
+ALTER TABLE saved_alert ENABLE ROW LEVEL SECURITY;
+ALTER TABLE saved_alert FORCE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS saved_alert_owner ON saved_alert;
+CREATE POLICY saved_alert_owner ON saved_alert
+  USING (saved_alert.organisation_id::text = current_setting('app.organisation_id', true))
+  WITH CHECK (saved_alert.organisation_id::text = current_setting('app.organisation_id', true));
+
+-- Les consultations et les messages ne se réécrivent pas : un compteur qui se corrige n'est plus un compteur.
+DROP TRIGGER IF EXISTS trg_deal_view_append_only ON deal_view;
+CREATE TRIGGER trg_deal_view_append_only BEFORE UPDATE OR DELETE ON deal_view FOR EACH ROW EXECUTE FUNCTION append_only();
+DROP TRIGGER IF EXISTS trg_deal_message_append_only ON deal_message;
+CREATE TRIGGER trg_deal_message_append_only BEFORE UPDATE OR DELETE ON deal_message FOR EACH ROW EXECUTE FUNCTION append_only();
+
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO dealpme_api;
