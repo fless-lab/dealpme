@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray } from "drizzle-orm";
 import { DealPmeError, ErrorCode } from "@dealpme/contracts";
 import { newId } from "@dealpme/domain";
 import { CORE_DB, type CoreDb } from "../../database/database.module.js";
@@ -56,23 +56,114 @@ export class EventsService {
     return { eventId, remoEventId: published.remoEventId ?? null };
   }
 
-  listPublished() {
-    return this.db
-      .select({ id: events.id, title: events.title, description: events.description, startsAt: events.startsAt, endsAt: events.endsAt, capacity: events.capacity })
+  /**
+   * Événements publiés, avec les places restantes et, pour un compte connecté, sa propre inscription.
+   * Le nombre d'inscrits est un décompte, jamais une liste : les autres participants ne se voient pas
+   * tant qu'ils n'ont pas consenti à l'échange de contacts pendant l'événement.
+   */
+  async listPublished(principal: Principal | null) {
+    const rows = await this.db
+      .select({
+        id: events.id,
+        title: events.title,
+        description: events.description,
+        startsAt: events.startsAt,
+        endsAt: events.endsAt,
+        capacity: events.capacity,
+        campaignId: events.campaignId,
+        integrationMode: events.integrationMode,
+        liveReady: events.remoEventId,
+      })
       .from(events)
       .where(eq(events.status, "PUBLISHED"))
-      .orderBy(desc(events.startsAt));
+      .orderBy(asc(events.startsAt));
+    if (rows.length === 0) return { items: [] };
+    const ids = rows.map((r) => r.id);
+    const counts = await this.db
+      .select({ eventId: eventRegistrations.eventId, n: count() })
+      .from(eventRegistrations)
+      .where(inArray(eventRegistrations.eventId, ids))
+      .groupBy(eventRegistrations.eventId);
+    const byEvent = new Map(counts.map((c) => [c.eventId, Number(c.n)]));
+    const mine = principal
+      ? await withTenant(this.db, principal, (tx) =>
+          tx
+            .select({ eventId: eventRegistrations.eventId, displayName: eventRegistrations.displayName, consentContactAt: eventRegistrations.consentContactAt })
+            .from(eventRegistrations)
+            .where(and(inArray(eventRegistrations.eventId, ids), eq(eventRegistrations.userId, principal.userId))),
+        )
+      : [];
+    const mineByEvent = new Map(mine.map((m) => [m.eventId, m]));
+    return {
+      items: rows.map((r) => {
+        const registered = mineByEvent.get(r.id);
+        const taken = byEvent.get(r.id) ?? 0;
+        return {
+          id: r.id,
+          title: r.title,
+          description: r.description,
+          startsAt: r.startsAt,
+          endsAt: r.endsAt,
+          capacity: r.capacity,
+          registered: taken,
+          seatsLeft: Math.max(0, r.capacity - taken),
+          campaignId: r.campaignId,
+          integrationMode: r.integrationMode,
+          /** L'événement existe chez l'hébergeur de la session live : le lien d'accès peut être délivré. */
+          liveReady: !!r.liveReady,
+          myRegistration: registered ? { displayName: registered.displayName, consentContact: !!registered.consentContactAt } : null,
+        };
+      }),
+    };
   }
 
   /** Inscription DEALPME_FIRST : consentement d'échange de contacts explicite, jamais pré-coché. */
   async register(eventId: string, participant: Principal, displayName: string, consentContact: boolean, correlationId: string) {
     const ev = (await this.db.select().from(events).where(eq(events.id, eventId)).limit(1))[0];
     if (!ev || ev.status !== "PUBLISHED") throw new DealPmeError(ErrorCode.NOT_FOUND, "Événement introuvable");
+
+    const [taken] = await this.db.select({ n: count() }).from(eventRegistrations).where(eq(eventRegistrations.eventId, eventId));
+    if (Number(taken?.n ?? 0) >= ev.capacity) {
+      throw new DealPmeError(ErrorCode.CONFLICT, "L'événement est complet. Aucune inscription supplémentaire n'est enregistrée.", { capacity: ev.capacity });
+    }
+    const already = (
+      await withTenant(this.db, participant, (tx) =>
+        tx.select({ id: eventRegistrations.id }).from(eventRegistrations).where(and(eq(eventRegistrations.eventId, eventId), eq(eventRegistrations.userId, participant.userId))).limit(1),
+      )
+    )[0];
+    if (already) throw new DealPmeError(ErrorCode.CONFLICT, "Vous êtes déjà inscrit à cet événement");
+
     const id = newId();
     // Politique RLS : une inscription n'est visible et modifiable que par son auteur (ou un officier).
     await withTenant(this.db, participant, (tx) => tx.insert(eventRegistrations).values({ id, eventId, userId: participant.userId, displayName, consentContactAt: consentContact ? new Date() : null }));
-    this.audit.record({ action: "INTEREST_EXPRESSED", actorUserId: participant.userId, subjectType: "event", subjectId: eventId, outcome: "OK", correlationId });
-    return { registrationId: id };
+    // L'attribution de campagne suit l'inscription : c'est elle qui rattachera plus tard une transaction à
+    // l'événement qui l'a provoquée. Elle est portée par l'événement et journalisée, jamais saisie par le participant.
+    this.audit.record({
+      action: "EVENT_REGISTERED",
+      actorUserId: participant.userId,
+      subjectType: "event",
+      subjectId: eventId,
+      outcome: "OK",
+      correlationId,
+      metadata: { campaignId: ev.campaignId, consentContact, integrationMode: ev.integrationMode },
+    });
+    return { registrationId: id, campaignId: ev.campaignId };
+  }
+
+  /**
+   * Consentement à l'échange de contacts : révocable dans les deux sens jusqu'à la tenue de l'événement.
+   * Sans lui, le nom d'affichage circule mais aucune coordonnée n'est échangée.
+   */
+  async setContactConsent(eventId: string, participant: Principal, consent: boolean, correlationId: string): Promise<void> {
+    const updated = await withTenant(this.db, participant, (tx) =>
+      tx
+        .update(eventRegistrations)
+        .set({ consentContactAt: consent ? new Date() : null })
+        .where(and(eq(eventRegistrations.eventId, eventId), eq(eventRegistrations.userId, participant.userId)))
+        .returning({ id: eventRegistrations.id }),
+    );
+    if (updated.length === 0) throw new DealPmeError(ErrorCode.NOT_FOUND, "Inscription introuvable");
+    this.audit.record({ action: "EVENT_CONSENT_CHANGED", actorUserId: participant.userId, subjectType: "event", subjectId: eventId, outcome: "OK", correlationId, metadata: { consent } });
   }
 
   /** Lien d'accès unique : réservé aux inscrits d'un événement publié chez Remo. */

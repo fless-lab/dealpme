@@ -282,6 +282,23 @@ code=$(curl -s -o /dev/null -w '%{http_code}' "$API/events")
 check "liste des événements publiés" 200 "$code"
 eid=$(curl -s -X POST "$API/events" -H "authorization: Bearer $OFF" -H 'content-type: application/json' -d '{"title":"Rencontre B2B de fumée","startsAt":"2026-10-22T09:00:00Z","endsAt":"2026-10-22T12:00:00Z","capacity":50}' | python3 -c 'import sys,json;print(json.load(sys.stdin).get("eventId",""))')
 [ -n "$eid" ] && check "création d'événement par un officier" 1 1 || check "création d'événement" 1 0
+curl -s -o /dev/null -X POST "$API/events/$eid/publish" -H "authorization: Bearer $OFF"
+n=$(curl -s "$API/events" | python3 -c "import sys,json;d=json.load(sys.stdin)['items'];print(sum(1 for e in d if e['id']=='$eid' and e['liveReady']))")
+check "publication : la salle du partenaire est créée" 1 "$n"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/events/$eid/registrations" -H "authorization: Bearer $INV" -H 'content-type: application/json' -d '{"displayName":"Repreneur de fumee","consentContact":false}')
+check "inscription à un événement publié" 201 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/events/$eid/registrations" -H "authorization: Bearer $INV" -H 'content-type: application/json' -d '{"displayName":"Repreneur de fumee","consentContact":false}')
+check "inscription en double refusée (409)" 409 "$code"
+consent=$(curl -s "$API/events" -H "authorization: Bearer $INV" | python3 -c "import sys,json;d=[e for e in json.load(sys.stdin)['items'] if e['id']=='$eid'][0];print(d['myRegistration']['consentContact'])")
+check "inscription sans consentement d'échange de contacts" False "$consent"
+curl -s -o /dev/null -X POST "$API/events/$eid/contact-consent" -H "authorization: Bearer $INV" -H 'content-type: application/json' -d '{"consentContact":true}'
+consent=$(curl -s "$API/events" -H "authorization: Bearer $INV" | python3 -c "import sys,json;d=[e for e in json.load(sys.stdin)['items'] if e['id']=='$eid'][0];print(d['myRegistration']['consentContact'])")
+check "consentement donné explicitement" True "$consent"
+curl -s -o /dev/null -X POST "$API/events/$eid/contact-consent" -H "authorization: Bearer $INV" -H 'content-type: application/json' -d '{"consentContact":false}'
+consent=$(curl -s "$API/events" -H "authorization: Bearer $INV" | python3 -c "import sys,json;d=[e for e in json.load(sys.stdin)['items'] if e['id']=='$eid'][0];print(d['myRegistration']['consentContact'])")
+check "consentement retiré aussi simplement qu'il est donné" False "$consent"
+n=$(curl -s "$API/events" | python3 -c "import sys,json;d=[e for e in json.load(sys.stdin)['items'] if e['id']=='$eid'][0];print('myRegistration' in d and d['myRegistration'] is None)")
+check "un visiteur ne voit aucune inscription nominative" True "$n"
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/events/diaspora/appointments" -H "authorization: Bearer $INV" -H 'content-type: application/json' -d '{"requestedSlot":"2026-10-01T10:00:00Z","crossBorderNoticeAcknowledged":false}')
 check "rendez-vous diaspora refusé sans avis transfrontalier (400)" 400 "$code"
 

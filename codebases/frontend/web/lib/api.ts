@@ -45,7 +45,8 @@ export function messageFor(err: unknown): string {
         // Le serveur explique le motif réglementaire en toutes lettres : c'est ce message qu'il faut lire.
         return err.envelope.message || "Publication bloquée par le périmètre réglementaire.";
       case "CONFLICT":
-        return "Un compte existe déjà avec cet email. Connectez-vous ou utilisez une autre adresse.";
+        // Le serveur dit ce qui entre en conflit ; le repli ne sert qu'à l'inscription, où le message est technique.
+        return err.envelope.message && err.envelope.message.length > 30 ? err.envelope.message : "Un compte existe déjà avec cet email. Connectez-vous ou utilisez une autre adresse.";
       case "VALIDATION_FAILED":
       default:
         // Les services renvoient des messages précis, qui disent quoi corriger : ils priment.

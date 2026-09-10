@@ -13,15 +13,15 @@ export async function requireRole(...roles: string[]): Promise<{ token: string; 
   return session;
 }
 
-/** Date et heure au format togolais : 15/10/2026 09:30. */
-export function fmtDateTime(value: string | Date | null | undefined): string {
-  if (!value) return "-";
-  const d = typeof value === "string" ? new Date(value) : value;
-  return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-}
-
+/** Dates d'interface : JJ/MM/AAAA, convention du v0. L'heure est celle du lecteur. */
 export function fmtDate(value: string | Date | null | undefined): string {
   if (!value) return "-";
   const d = typeof value === "string" ? new Date(value) : value;
   return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
+}
+
+export function fmtDateTime(value: string | Date | null | undefined): string {
+  if (!value) return "-";
+  const d = typeof value === "string" ? new Date(value) : value;
+  return `${fmtDate(d)} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }

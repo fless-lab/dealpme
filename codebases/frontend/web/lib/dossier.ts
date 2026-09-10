@@ -1,4 +1,5 @@
 /** Référentiel partagé par les écrans du dossier cédant. Les libellés viennent de l'API (@dealpme/rules). */
+import { formatXof } from "@dealpme/i18n";
 
 export type DossierStep = "IDENTITE" | "ACTIVITE" | "FINANCES" | "PIECES" | "CESSION";
 
@@ -109,10 +110,13 @@ export const SECTORS: { code: string; label: string }[] = [
   { code: "TOUR", label: "Hôtellerie et tourisme" },
 ];
 
-/** Montants en FCFA entiers, sans décimale (convention v0). */
+/**
+ * Montants en FCFA : une seule implémentation, celle de @dealpme/i18n, avec ses espaces fines insécables
+ * et sans décimale. L'écran ne reformate jamais un montant à sa façon.
+ */
 export function fmtXof(value: number | null | undefined): string {
   if (value === null || value === undefined) return "-";
-  return `${value.toLocaleString("fr-FR").replace(/ | /g, " ")} FCFA`;
+  return formatXof(value);
 }
 
 export function fmtSize(bytes: number): string {
