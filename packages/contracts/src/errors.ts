@@ -17,6 +17,7 @@ export const ErrorCode = {
   IDEMPOTENCY_KEY_REQUIRED: "IDEMPOTENCY_KEY_REQUIRED",
   FEATURE_DISABLED: "FEATURE_DISABLED",
   RATE_LIMITED: "RATE_LIMITED",
+  PAYLOAD_TOO_LARGE: "PAYLOAD_TOO_LARGE",
   INTERNAL: "INTERNAL",
 } as const;
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
@@ -32,6 +33,7 @@ export const httpStatusForCode: Record<ErrorCode, number> = {
   IDEMPOTENCY_KEY_REQUIRED: 400,
   FEATURE_DISABLED: 403,
   RATE_LIMITED: 429,
+  PAYLOAD_TOO_LARGE: 413,
   INTERNAL: 500,
 };
 

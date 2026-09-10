@@ -1,12 +1,14 @@
-import { Controller, Headers, HttpCode, Post, Req, UseInterceptors } from "@nestjs/common";
-import type { Request } from "express";
+import { Controller, HttpCode, Post, Req, UseInterceptors } from "@nestjs/common";
+import { loadEnv } from "../../config/env.js";
 import { correlationIdOf } from "../../platform/correlation-id.middleware.js";
 import { IdempotencyInterceptor } from "../../platform/idempotency.interceptor.js";
+import { assertValidSignature, type RequestWithRawBody } from "../../platform/webhook-signature.js";
 import { RemoBridgeService } from "./remo-bridge.service.js";
 
 /**
- * Réception des webhooks Remo (présence, fin d'événement). Idempotent : Remo peut renvoyer un même événement.
- * Le corps brut est nécessaire à la vérification de signature ; en production, configurer express.raw() sur cette route.
+ * Réception des webhooks Remo (présence, fin d'événement).
+ * Ordre des contrôles : signature HMAC sur le corps brut, puis idempotence (Remo peut renvoyer un même événement),
+ * puis traitement. Un secret absent équivaut à un refus.
  */
 @Controller("webhooks/remo")
 export class RemoWebhookController {
@@ -15,9 +17,9 @@ export class RemoWebhookController {
   @Post("attendance")
   @HttpCode(202)
   @UseInterceptors(IdempotencyInterceptor)
-  attendance(@Req() req: Request, @Headers("x-remo-signature") signature?: string) {
-    const raw = typeof req.body === "string" ? req.body : JSON.stringify(req.body ?? {});
-    const items = this.bridge.ingestAttendance(raw, signature ?? "", correlationIdOf(req));
+  attendance(@Req() req: RequestWithRawBody) {
+    const raw = assertValidSignature(req, "x-remo-signature", loadEnv().CONNECTOR_REMO_WEBHOOK_SECRET);
+    const items = this.bridge.ingestAttendance(raw.toString("utf8"), req.header("x-remo-signature") ?? "", correlationIdOf(req));
     return { received: items.length };
   }
 }

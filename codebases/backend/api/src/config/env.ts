@@ -32,6 +32,7 @@ const EnvSchema = z.object({
   CONNECTOR_SMS_PROVIDER: z.string().default("fake"),
   CONNECTOR_EMAIL_PROVIDER: z.string().default("mailpit"),
   CONNECTOR_REMO_API_KEY: z.string().default(""),
+  CONNECTOR_REMO_WEBHOOK_SECRET: z.string().min(16).optional(),
   FEATURE_TRANSACTION_FEES: bool,
   FEATURE_LICENSED_PARTNER_HANDOFF: bool,
   FEATURE_BIOMETRIC_KYC: bool,

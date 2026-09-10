@@ -3,6 +3,7 @@ import { IdentityController } from "./identity.controller.js";
 import { IdentityService } from "./identity.service.js";
 import { PasswordService } from "./password.service.js";
 import { SessionMiddleware } from "./session.middleware.js";
+import { ApiRateLimitMiddleware } from "../../platform/api-rate-limit.middleware.js";
 import { SessionService } from "./session.service.js";
 
 /**
@@ -17,6 +18,6 @@ import { SessionService } from "./session.service.js";
 })
 export class IdentityModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(SessionMiddleware).forRoutes("*");
+    consumer.apply(ApiRateLimitMiddleware, SessionMiddleware).forRoutes("*");
   }
 }

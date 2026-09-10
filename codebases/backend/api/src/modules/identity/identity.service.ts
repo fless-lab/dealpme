@@ -5,6 +5,7 @@ import { newId } from "@dealpme/domain";
 import { CORE_DB, type CoreDb } from "../../database/database.module.js";
 import { organisations, persons, users } from "../../database/schema/core.js";
 import { AuditService } from "../../platform/audit.service.js";
+import { RULES, RateLimitService } from "../../platform/rate-limit.service.js";
 import { PasswordService } from "./password.service.js";
 import { SessionService } from "./session.service.js";
 
@@ -15,6 +16,7 @@ export class IdentityService {
     private readonly passwords: PasswordService,
     private readonly sessions: SessionService,
     private readonly audit: AuditService,
+    private readonly limiter: RateLimitService,
   ) {}
 
   /**
@@ -22,7 +24,8 @@ export class IdentityService {
    * L'attribution est capturée ici et devient immuable (trigger en base).
    * Les consentements sont horodatés séparément ; le marketing n'est jamais pré-coché.
    */
-  async register(req: RegisterRequest, correlationId: string): Promise<{ userId: string; organisationId: string }> {
+  async register(req: RegisterRequest, ip: string, correlationId: string): Promise<{ userId: string; organisationId: string }> {
+    await this.limiter.hit("register:ip", ip, RULES.REGISTER_PER_IP);
     const existing = await this.db.select({ id: users.id }).from(users).where(eq(users.email, req.email)).limit(1);
     if (existing.length > 0) {
       throw new DealPmeError(ErrorCode.CONFLICT, "Un compte existe déjà avec cet email");
@@ -60,15 +63,38 @@ export class IdentityService {
     return { userId, organisationId };
   }
 
-  async login(email: string, password: string, deviceLabel: string | null, correlationId: string): Promise<{ token: string; expiresAt: Date }> {
-    const row = (await this.db.select().from(users).where(eq(users.email, email)).limit(1))[0];
-    // Réponse identique que l'email existe ou non : pas d'énumération de comptes.
+  /**
+   * Connexion protégée contre la force brute (S02) : limite par IP, limite d'échecs par compte,
+   * verrouillage progressif, échec journalisé avec empreinte d'IP. Réponse identique que l'email existe ou non.
+   */
+  async login(email: string, password: string, ip: string, deviceLabel: string | null, correlationId: string): Promise<{ token: string; expiresAt: Date }> {
+    const account = email.toLowerCase();
+    const ipFp = RateLimitService.fingerprint(ip);
+    await this.limiter.hit("login:ip", ip, RULES.LOGIN_PER_IP);
+    await this.limiter.assertNotLocked(account);
+
+    const row = (await this.db.select().from(users).where(eq(users.email, account)).limit(1))[0];
     const ok = row ? await this.passwords.verify(row.passwordHash, password) : false;
     if (!row || !ok) {
+      this.audit.record({ action: "LOGIN_FAILED", actorUserId: row?.id ?? null, subjectType: "account", subjectId: RateLimitService.fingerprint(account), outcome: "FAILED", correlationId, metadata: { ipFp } });
+      const locked = await this.limiter.recordFailure(account);
+      if (locked > 0) {
+        this.audit.record({ action: "ACCOUNT_LOCKED", actorUserId: row?.id ?? null, subjectType: "account", subjectId: RateLimitService.fingerprint(account), outcome: "BLOCKED", correlationId, metadata: { lockSeconds: locked } });
+      }
+      try {
+        await this.limiter.hit("login:account", account, RULES.LOGIN_FAILURES_PER_ACCOUNT);
+      } catch (e) {
+        if (e instanceof DealPmeError && e.code === ErrorCode.RATE_LIMITED) {
+          this.audit.record({ action: "RATE_LIMITED", actorUserId: null, subjectType: "account", subjectId: RateLimitService.fingerprint(account), outcome: "BLOCKED", correlationId });
+          throw e;
+        }
+        throw e;
+      }
       throw new DealPmeError(ErrorCode.UNAUTHENTICATED, "Identifiants invalides");
     }
-    const session = await this.sessions.create(row.id, deviceLabel, null);
-    this.audit.record({ action: "SESSION_CREATED", actorUserId: row.id, subjectType: "user", subjectId: row.id, outcome: "OK", correlationId });
+    await this.limiter.clearFailures(account);
+    const session = await this.sessions.create(row.id, deviceLabel, ipFp);
+    this.audit.record({ action: "SESSION_CREATED", actorUserId: row.id, subjectType: "user", subjectId: row.id, outcome: "OK", correlationId, metadata: { ipFp } });
     return session;
   }
 }

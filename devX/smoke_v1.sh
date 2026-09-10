@@ -52,6 +52,27 @@ check "la projection T0 contient bien le secteur" 1 "$(echo "$invview" | grep -c
 role=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select rolbypassrls from pg_roles where rolname='dealpme_api'")
 check "le rôle applicatif ne contourne pas la RLS" f "$role"
 
+echo "== Sécurité : force brute, en-têtes, CORS, webhooks"
+for i in 1 2 3 4 5 6; do last=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'content-type: application/json' -d '{"email":"force@demo.dealpme.local","password":"mauvais"}'); done
+check "sixième échec de connexion sur un compte renvoie 429" 429 "$last"
+hdr=$(curl -s -D - -o /dev/null "$API/events" | grep -ciE "content-security-policy|x-content-type-options|referrer-policy")
+check "en-têtes de sécurité présents (CSP, nosniff, referrer)" 3 "$hdr"
+cors=$(curl -s -D - -o /dev/null "$API/events" -H "Origin: https://site-inconnu.example" | grep -ci "access-control-allow-origin")
+check "origine inconnue sans en-tête CORS" 0 "$cors"
+big=$(python3 -c 'print("{\"x\":\"" + "a"*1100000 + "\"}")' | curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'content-type: application/json' --data-binary @-)
+check "corps de requête au-delà de 1 Mo refusé" 413 "$big"
+payload='{"events":[{"remoEventId":"evt-1","externalUserId":"u-1","joinedAt":"2026-10-22T09:05:00Z"}]}'
+sig=$(printf '%s' "$payload" | openssl dgst -sha256 -hmac "demo-webhook-remo-secret-local-0001" | sed 's/^.* //')
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/webhooks/remo/attendance" -H 'content-type: application/json' -H 'idempotency-key: smoke-remo-1' -H 'x-remo-signature: deadbeef' --data-binary "$payload")
+check "webhook Remo avec signature invalide refusé (403)" 403 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/webhooks/remo/attendance" -H 'content-type: application/json' -H "x-remo-signature: $sig" --data-binary "$payload")
+check "webhook sans Idempotency-Key refusé (400)" 400 "$code"
+r1=$(curl -s -X POST "$API/webhooks/remo/attendance" -H 'content-type: application/json' -H 'idempotency-key: smoke-remo-replay' -H "x-remo-signature: $sig" --data-binary "$payload")
+r2=$(curl -s -X POST "$API/webhooks/remo/attendance" -H 'content-type: application/json' -H 'idempotency-key: smoke-remo-replay' -H "x-remo-signature: $sig" --data-binary "$payload")
+check "webhook signé accepté et rejoué à l'identique (idempotence)" "$r1" "$r2"
+n=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select count(*) from audit_event where subject_type='remo_event' and subject_id='evt-1'")
+check "le rejeu ne produit pas de double effet (un seul événement d'audit)" 1 "$n"
+
 echo "== Intérêt et évaluation"
 first=$(echo "$body" | python3 -c 'import sys,json;print(json.load(sys.stdin)["items"][0]["id"])')
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$first/interests" -H "authorization: Bearer $INV" -H 'content-type: application/json' -d '{"message":"Intéressé par cette opportunité"}')

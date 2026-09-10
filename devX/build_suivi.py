@@ -123,7 +123,9 @@ PROGRESS = {
     "Demande de rendez-vous diaspora": ("En cours", 0.3, None),
     "RLS effective": ("Complétée", None, dt.date(2026, 9, 10)),
     "Mots de passe de démonstration uniques": ("En cours", 0.5, None),
-    "Idempotence persistée": ("En cours", 0.2, None),
+    "Idempotence persistée": ("Complétée", None, dt.date(2026, 9, 10)),
+    "Anti-force-brute": ("Complétée", None, dt.date(2026, 9, 10)),
+    "En-têtes de sécurité HTTP": ("Complétée", None, dt.date(2026, 9, 10)),
 }
 DEFAULT_OWNER = "Abdou-Raouf"
 

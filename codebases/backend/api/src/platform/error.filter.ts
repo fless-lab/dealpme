@@ -4,6 +4,10 @@ import { ZodError } from "zod";
 import { DealPmeError, ErrorCode, type ErrorEnvelope } from "@dealpme/contracts";
 import { correlationIdOf } from "./correlation-id.middleware.js";
 
+function isBodyParserError(e: unknown): e is { status: number; type?: string } {
+  return typeof e === "object" && e !== null && "status" in e && typeof (e as { status: unknown }).status === "number" && (e as { status: number }).status >= 400 && (e as { status: number }).status < 500;
+}
+
 /**
  * Enveloppe d'erreur unique : { error: { code, message, details, correlationId } }.
  * Aucune trace interne ne sort. PERIMETER_BLOCKED reste distinct de FORBIDDEN.
@@ -29,6 +33,11 @@ export class DealPmeExceptionFilter implements ExceptionFilter {
       status = exception.getStatus();
       const code = status === 404 ? ErrorCode.NOT_FOUND : status === 401 ? ErrorCode.UNAUTHENTICATED : status === 403 ? ErrorCode.FORBIDDEN : ErrorCode.INTERNAL;
       body = { error: { code, message: exception.message, correlationId } };
+    } else if (isBodyParserError(exception)) {
+      // Erreurs du parseur de corps (taille, JSON invalide) : levées avant Nest, jamais des erreurs serveur.
+      status = exception.status === 413 ? 413 : 400;
+      const code = status === 413 ? ErrorCode.PAYLOAD_TOO_LARGE : ErrorCode.VALIDATION_FAILED;
+      body = { error: { code, message: status === 413 ? "Corps de requête trop volumineux (1 Mo maximum)" : "Corps de requête illisible", correlationId } };
     }
     if (status >= 500) {
       // Toute erreur serveur est journalisée avec sa corrélation ; jamais renvoyée au client.

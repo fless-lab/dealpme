@@ -1,58 +1,46 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
+import { CallHandler, ExecutionContext, Inject, Injectable, NestInterceptor } from "@nestjs/common";
+import { eq } from "drizzle-orm";
 import type { Request } from "express";
-import { Observable, from, of, tap } from "rxjs";
+import { Observable, from, of, switchMap, tap } from "rxjs";
 import { DealPmeError, ErrorCode } from "@dealpme/contracts";
+import { CORE_DB, type CoreDb } from "../database/database.module.js";
+import { idempotencyKeys } from "../database/schema/core.js";
 
 /**
- * Idempotence des POST créateurs d'état (convention v0) : l'en-tête Idempotency-Key est obligatoire
- * sur les endpoints de paiement et de webhook, et la réponse d'origine est rejouée à l'identique.
- * Le stockage en mémoire ci-dessous est un point de départ ; la table idempotency_key de la base core
- * est la cible (voir schema/core.ts) pour survivre aux redémarrages et aux répliques.
+ * Idempotence des POST créateurs d'état (registre S06) : l'en-tête Idempotency-Key est obligatoire
+ * sur les endpoints de paiement et de webhook ; la réponse d'origine est rejouée à l'identique.
+ * Persistance dans la table idempotency_key (base core) : survit aux redémarrages et aux répliques.
  */
-export interface IdempotencyStore {
-  get(key: string): Promise<unknown | undefined>;
-  set(key: string, value: unknown): Promise<void>;
-}
-
-export class MemoryIdempotencyStore implements IdempotencyStore {
-  private readonly map = new Map<string, unknown>();
-  async get(key: string): Promise<unknown | undefined> {
-    return this.map.get(key);
-  }
-  async set(key: string, value: unknown): Promise<void> {
-    this.map.set(key, value);
-  }
-}
-
 @Injectable()
 export class IdempotencyInterceptor implements NestInterceptor {
-  // Magasin mémoire au démarrage ; à remplacer par un fournisseur injecté (table idempotency_key) avant la production.
-  private readonly store: IdempotencyStore = new MemoryIdempotencyStore();
+  constructor(@Inject(CORE_DB) private readonly db: CoreDb) {}
 
   intercept(ctx: ExecutionContext, next: CallHandler): Observable<unknown> {
     const req = ctx.switchToHttp().getRequest<Request>();
     const key = req.header("idempotency-key");
-    if (!key) {
+    if (!key || key.length > 128) {
       throw new DealPmeError(ErrorCode.IDEMPOTENCY_KEY_REQUIRED, "En-tête Idempotency-Key obligatoire sur cet endpoint");
     }
     const scoped = `${req.method}:${req.path}:${key}`;
-    return from(this.store.get(scoped)).pipe(
-      (source) =>
-        new Observable((subscriber) => {
-          source.subscribe({
-            next: (cached) => {
-              if (cached !== undefined) {
-                of(cached).subscribe(subscriber);
-              } else {
-                next
-                  .handle()
-                  .pipe(tap((value) => void this.store.set(scoped, value)))
-                  .subscribe(subscriber);
-              }
-            },
-            error: (e) => subscriber.error(e),
-          });
-        }),
+    return from(this.db.select().from(idempotencyKeys).where(eq(idempotencyKeys.key, scoped)).limit(1)).pipe(
+      switchMap((rows) => {
+        const cached = rows[0];
+        if (cached) {
+          return of(cached.responseBody);
+        }
+        return next.handle().pipe(
+          tap((value) => {
+            void this.db
+              .insert(idempotencyKeys)
+              .values({ key: scoped, responseStatus: 200, responseBody: value as object })
+              .onConflictDoNothing()
+              .catch((err: unknown) => {
+                // eslint-disable-next-line no-console
+                console.error("[idempotence] écriture impossible :", err);
+              });
+          }),
+        );
+      }),
     );
   }
 }
