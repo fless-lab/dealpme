@@ -6,9 +6,10 @@
   "description": "API REST /v1 DealPME : monolithe modulaire NestJS, un module par module fonctionnel, autorisation côté serveur uniquement.",
   "main": "dist/main.js",
   "scripts": {
-    "dev": "tsx watch src/main.ts",
+    "dev": "tsc -p tsconfig.json -w --preserveWatchOutput & node --env-file=../../../.env --watch dist/main.js",
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/main.js",
+    "start": "node --env-file=../../../.env dist/main.js",
+    "db:seed": "node --env-file=../../../.env --require tsx/cjs src/seed/seed.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run --passWithNoTests",
     "db:generate": "drizzle-kit generate",

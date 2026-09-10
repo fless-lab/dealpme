@@ -1,10 +1,10 @@
-CREATE TYPE "public"."admission_decision" AS ENUM('ADMITTED', 'REFUSED', 'WAITLISTED', 'REVOKED');--> statement-breakpoint
+CREATE TYPE "public"."admission_decision_kind" AS ENUM('ADMITTED', 'REFUSED', 'WAITLISTED', 'REVOKED');--> statement-breakpoint
 CREATE TYPE "public"."disclosure_tier" AS ENUM('T0', 'T1', 'T2');--> statement-breakpoint
 CREATE TABLE "admission_decision" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"deal_id" uuid NOT NULL,
 	"person_id" uuid NOT NULL,
-	"decision" "admission_decision" NOT NULL,
+	"decision" "admission_decision_kind" NOT NULL,
 	"decided_by" uuid NOT NULL,
 	"justification" text NOT NULL,
 	"decided_at" timestamp with time zone DEFAULT now() NOT NULL

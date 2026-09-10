@@ -26,7 +26,8 @@ export class MemoryIdempotencyStore implements IdempotencyStore {
 
 @Injectable()
 export class IdempotencyInterceptor implements NestInterceptor {
-  constructor(private readonly store: IdempotencyStore = new MemoryIdempotencyStore()) {}
+  // Magasin mémoire au démarrage ; à remplacer par un fournisseur injecté (table idempotency_key) avant la production.
+  private readonly store: IdempotencyStore = new MemoryIdempotencyStore();
 
   intercept(ctx: ExecutionContext, next: CallHandler): Observable<unknown> {
     const req = ctx.switchToHttp().getRequest<Request>();

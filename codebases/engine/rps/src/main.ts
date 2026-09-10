@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
 import { RpsAppModule } from "./app.module.js";
+import { RpsExceptionFilter } from "./error.filter.js";
 
 /**
  * Regulatory Perimeter Service : déployable seul, base séparée, exposé uniquement sur le réseau privé.
@@ -9,6 +10,7 @@ import { RpsAppModule } from "./app.module.js";
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(RpsAppModule);
   app.setGlobalPrefix("v1");
+  app.useGlobalFilters(new RpsExceptionFilter());
   app.enableShutdownHooks();
   const port = Number(process.env["RPS_PORT"] ?? 4100);
   await app.listen(port);

@@ -1,10 +1,12 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { newId } from "@dealpme/domain";
+import { CORE_DB, type CoreDb } from "../database/database.module.js";
+import { auditEvents } from "../database/schema/core.js";
 
 /**
- * Journal d'audit des actions sensibles (append-only). Ne contient jamais le corps d'un document,
- * une pièce d'identité ni le texte complet d'une réponse IA : identifiants, action, résultat, corrélation.
- * La persistance cible est la table audit_event de la base core ; le tampon mémoire sert au démarrage.
+ * Journal d'audit des actions sensibles, persisté dans la table append-only audit_event (base core).
+ * Ne contient jamais le corps d'un document, une pièce d'identité ni le texte complet d'une réponse IA :
+ * identifiants, action, résultat, corrélation. Un échec d'écriture est journalisé, jamais silencieux.
  */
 export type AuditAction =
   | "USER_REGISTERED"
@@ -34,16 +36,36 @@ export interface AuditEvent {
 
 @Injectable()
 export class AuditService {
-  private readonly buffer: AuditEvent[] = [];
+  private readonly recent: AuditEvent[] = [];
+
+  constructor(@Inject(CORE_DB) private readonly db: CoreDb) {}
 
   record(event: Omit<AuditEvent, "id" | "occurredAt">): AuditEvent {
     const full: AuditEvent = { ...event, id: newId(), occurredAt: new Date() };
-    this.buffer.push(full);
+    this.recent.push(full);
+    if (this.recent.length > 500) this.recent.shift();
+    void this.db
+      .insert(auditEvents)
+      .values({
+        id: full.id,
+        action: full.action,
+        actorUserId: full.actorUserId,
+        subjectType: full.subjectType,
+        subjectId: full.subjectId,
+        outcome: full.outcome,
+        correlationId: full.correlationId,
+        metadata: full.metadata ?? null,
+        occurredAt: full.occurredAt,
+      })
+      .catch((err: unknown) => {
+        // eslint-disable-next-line no-console
+        console.error(`[audit] écriture impossible pour ${full.action} ${full.subjectId} :`, err);
+      });
     return full;
   }
 
   /** Utilisé par les tests pour vérifier qu'une action sensible a bien produit son événement (MISSING_AUDIT_EVENT). */
   find(action: AuditAction, subjectId?: string): AuditEvent[] {
-    return this.buffer.filter((e) => e.action === action && (subjectId === undefined || e.subjectId === subjectId));
+    return this.recent.filter((e) => e.action === action && (subjectId === undefined || e.subjectId === subjectId));
   }
 }

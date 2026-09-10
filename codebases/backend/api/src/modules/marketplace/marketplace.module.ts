@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { CompanyController } from "./company.controller.js";
 import { DealController } from "./deal.controller.js";
 import { DealService } from "./deal.service.js";
 import { SearchController } from "./search.controller.js";
@@ -15,7 +16,7 @@ import { InstitutionModule } from "../institution/institution.module.js";
  */
 @Module({
   imports: [InstitutionModule],
-  controllers: [DealController, SearchController, ValuationController],
+  controllers: [CompanyController, DealController, SearchController, ValuationController],
   providers: [DealService, ValuationService],
 })
 export class MarketplaceModule {}

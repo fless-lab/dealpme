@@ -6,7 +6,8 @@ import { index, integer, jsonb, pgEnum, pgTable, text, timestamp, uuid, varchar 
  * Le journal est chaîné par hachage : chaque entrée contient le hash de la précédente.
  */
 export const tierEnum = pgEnum("disclosure_tier", ["T0", "T1", "T2"]);
-export const admissionDecisionEnum = pgEnum("admission_decision", ["ADMITTED", "REFUSED", "WAITLISTED", "REVOKED"]);
+// Nom distinct de la table admission_decision : Postgres refuse un type et une table homonymes.
+export const admissionDecisionEnum = pgEnum("admission_decision_kind", ["ADMITTED", "REFUSED", "WAITLISTED", "REVOKED"]);
 
 const id = () => uuid("id").primaryKey();
 

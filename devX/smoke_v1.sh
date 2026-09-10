@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# Vérification de fumée des endpoints V1 contre une API démarrée en local (jeu de démonstration chargé).
+# Usage : devX/smoke_v1.sh [http://localhost:4000/v1]
+set -u
+API="${1:-http://localhost:4000/v1}"
+PASS="DealPME-demo-2026"
+ok=0; ko=0
+check() { # nom, code attendu, code obtenu
+  if [ "$2" = "$3" ]; then echo "OK   $1 ($3)"; ok=$((ok+1)); else echo "KO   $1 (attendu $2, obtenu $3)"; ko=$((ko+1)); fi
+}
+login() { curl -s -X POST "$API/auth/login" -H 'content-type: application/json' -d "{\"email\":\"$1\",\"password\":\"$PASS\"}" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("token",""))'; }
+
+echo "== Authentification"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'content-type: application/json' -d '{"email":"admin@demo.dealpme.local","password":"mauvais"}')
+check "login refusé avec mauvais mot de passe" 401 "$code"
+SELLER=$(login cedant.froidroute@demo.dealpme.local); INV=$(login investisseur@demo.dealpme.local); OFF=$(login officier@cci-togo.demo.dealpme.local); TV=$(login cedant.tropicvale@demo.dealpme.local)
+[ -n "$SELLER" ] && check "login cédant" 1 1 || check "login cédant" 1 0
+
+echo "== Marketplace (T0 uniquement)"
+body=$(curl -s "$API/opportunities?limit=10"); code=$?
+n=$(echo "$body" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(len(d["items"]))')
+check "liste des opportunités renvoie des cessions d'actifs" 3 "$n"
+leak=$(echo "$body" | grep -c 'askingPrice\|companyLegalName\|valuationBasis')
+check "aucun champ T2 dans la liste (DISCLOSURE_LEAK)" 0 "$leak"
+
+echo "== Dossier cédant"
+cid=$(curl -s -X POST "$API/companies" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{"legalName":"Entreprise de fumée SARL","legalForm":"SARL"}' | python3 -c 'import sys,json;print(json.load(sys.stdin).get("companyId",""))')
+[ -n "$cid" ] && check "création d'entreprise" 1 1 || check "création d'entreprise" 1 0
+did=$(curl -s -X POST "$API/deals" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d "{\"companyId\":\"$cid\",\"dealType\":\"ASSET_DEAL\",\"sectorCode\":\"AGRO\",\"regionCode\":\"KARA\",\"turnoverBand\":\"LT_50M\"}" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("dealId",""))')
+[ -n "$did" ] && check "création d'un dossier actifs" 1 1 || check "création d'un dossier actifs" 1 0
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$did/transitions" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{"to":"CLOSED_REPORTED"}')
+check "transition invalide refusée (409)" 409 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$did/transitions" -H "authorization: Bearer $INV" -H 'content-type: application/json' -d '{"to":"PENDING_VERIFICATION"}')
+check "un investisseur ne peut pas faire transiter un dossier (403)" 403 "$code"
+
+echo "== Démonstration du blocage RPS"
+tvdeal=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select d.id from deal d join company c on c.id=d.company_id where c.legal_name like 'TropicVale%' limit 1")
+resp=$(curl -s -X POST "$API/deals/$tvdeal/transitions" -H "authorization: Bearer $TV" -H 'content-type: application/json' -d '{"to":"LISTED_OPEN"}')
+codeval=$(echo "$resp" | python3 -c 'import sys,json;print(json.load(sys.stdin)["error"]["code"])' 2>/dev/null)
+check "publication d'une cession de titres bloquée par PERIMETER_BLOCKED" PERIMETER_BLOCKED "$codeval"
+
+echo "== Intérêt et évaluation"
+first=$(echo "$body" | python3 -c 'import sys,json;print(json.load(sys.stdin)["items"][0]["id"])')
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$first/interests" -H "authorization: Bearer $INV" -H 'content-type: application/json' -d '{"message":"Intéressé par cette opportunité"}')
+check "manifestation d'intérêt" 201 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/valuations/indicative" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d "{\"dealId\":\"$did\",\"ebitdaXof\":100000000,\"netDebtXof\":20000000}")
+check "évaluation indicative" 201 "$code"
+
+echo "== Espace CCI-Togo"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/institution/certifications" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{}')
+check "un cédant ne peut pas certifier (403)" 403 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/institution/certifications" -H "authorization: Bearer $OFF" -H 'content-type: application/json' -d "{\"companyId\":\"$cid\",\"decision\":\"GRANTED\",\"scopeStatement\":\"Existence, immatriculation et complétude documentaire vérifiées. Ni exactitude financière ni absence de litige.\",\"conflictOfInterestDeclared\":false}")
+check "décision de certification nominative par un officier" 201 "$code"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/institution/certifications" -H "authorization: Bearer $OFF" -H 'content-type: application/json' -d "{\"companyId\":\"$cid\",\"decision\":\"GRANTED\",\"scopeStatement\":\"Portée de démonstration suffisamment longue.\",\"conflictOfInterestDeclared\":true}")
+check "conflit d'intérêts déclaré bloque la décision (400)" 400 "$code"
+ready=$(curl -s "$API/institution/certifications/$cid" | python3 -c 'import sys,json;print(json.load(sys.stdin)["isDealReady"])')
+check "badge Deal-Ready visible" True "$ready"
+
+echo "== Deal-Connect (Remo)"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$API/events")
+check "liste des événements publiés" 200 "$code"
+eid=$(curl -s -X POST "$API/events" -H "authorization: Bearer $OFF" -H 'content-type: application/json' -d '{"title":"Rencontre B2B de fumée","startsAt":"2026-10-22T09:00:00Z","endsAt":"2026-10-22T12:00:00Z","capacity":50}' | python3 -c 'import sys,json;print(json.load(sys.stdin).get("eventId",""))')
+[ -n "$eid" ] && check "création d'événement par un officier" 1 1 || check "création d'événement" 1 0
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/events/diaspora/appointments" -H "authorization: Bearer $INV" -H 'content-type: application/json' -d '{"requestedSlot":"2026-10-01T10:00:00Z","crossBorderNoticeAcknowledged":false}')
+check "rendez-vous diaspora refusé sans avis transfrontalier (400)" 400 "$code"
+
+echo; echo "Résultat : $ok OK, $ko KO"
+[ "$ko" -eq 0 ]

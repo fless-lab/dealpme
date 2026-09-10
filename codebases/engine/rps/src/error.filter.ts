@@ -2,23 +2,17 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from "@nestjs/co
 import type { Request, Response } from "express";
 import { ZodError } from "zod";
 import { DealPmeError, ErrorCode, type ErrorEnvelope } from "@dealpme/contracts";
-import { correlationIdOf } from "./correlation-id.middleware.js";
 
-/**
- * Enveloppe d'erreur unique : { error: { code, message, details, correlationId } }.
- * Aucune trace interne ne sort. PERIMETER_BLOCKED reste distinct de FORBIDDEN.
- */
+/** Même enveloppe d'erreur que l'API plateforme ; PERIMETER_BLOCKED (403) reste distinct de FORBIDDEN. */
 @Catch()
-export class DealPmeExceptionFilter implements ExceptionFilter {
+export class RpsExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<Response>();
     const req = ctx.getRequest<Request>();
-    const correlationId = correlationIdOf(req);
-
+    const correlationId = req.header("x-correlation-id") ?? "rps";
     let status = 500;
     let body: ErrorEnvelope = { error: { code: ErrorCode.INTERNAL, message: "Erreur interne", correlationId } };
-
     if (exception instanceof DealPmeError) {
       status = exception.httpStatus;
       body = { error: { code: exception.code, message: exception.message, details: exception.details, correlationId } };
@@ -27,11 +21,9 @@ export class DealPmeExceptionFilter implements ExceptionFilter {
       body = { error: { code: ErrorCode.VALIDATION_FAILED, message: "Requête invalide", details: exception.issues, correlationId } };
     } else if (exception instanceof HttpException) {
       status = exception.getStatus();
-      const code = status === 404 ? ErrorCode.NOT_FOUND : status === 401 ? ErrorCode.UNAUTHENTICATED : status === 403 ? ErrorCode.FORBIDDEN : ErrorCode.INTERNAL;
-      body = { error: { code, message: exception.message, correlationId } };
+      body = { error: { code: status === 404 ? ErrorCode.NOT_FOUND : ErrorCode.INTERNAL, message: exception.message, correlationId } };
     }
     if (status >= 500) {
-      // Toute erreur serveur est journalisée avec sa corrélation ; jamais renvoyée au client.
       // eslint-disable-next-line no-console
       console.error(`[${correlationId}]`, exception instanceof Error ? (exception.stack ?? exception.message) : exception);
     }

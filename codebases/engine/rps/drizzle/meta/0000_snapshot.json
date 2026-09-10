@@ -1,5 +1,5 @@
 {
-  "id": "a4134876-7ce6-465c-b040-2bab37a1aa24",
+  "id": "d8041c8b-8593-48b1-931e-4d5ffe16427a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -28,7 +28,7 @@
         },
         "decision": {
           "name": "decision",
-          "type": "admission_decision",
+          "type": "admission_decision_kind",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
@@ -323,8 +323,8 @@
     }
   },
   "enums": {
-    "public.admission_decision": {
-      "name": "admission_decision",
+    "public.admission_decision_kind": {
+      "name": "admission_decision_kind",
       "schema": "public",
       "values": [
         "ADMITTED",
