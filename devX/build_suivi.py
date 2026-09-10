@@ -121,6 +121,8 @@ PROGRESS = {
     "Connecteur Remo.co": ("En cours", 0.4, None),
     "Inscriptions DEALPME_FIRST": ("En cours", 0.5, None),
     "Demande de rendez-vous diaspora": ("En cours", 0.3, None),
+    "RLS effective": ("En cours", 0.3, None),
+    "Idempotence persistée": ("En cours", 0.2, None),
 }
 DEFAULT_OWNER = "Abdou-Raouf"
 
@@ -174,6 +176,15 @@ add("V1", "FOND", "Fondations", "Journal DealEvent et machine à états du deal 
 add("V1", "TRV", "Fondations", "Socle i18n français-source, formats FCFA (entier, sans décimale), dates, typographie", "Aucune chaîne anglaise dans l'interface, montants en XOF entiers", 3, "Moyenne")
 add("V1", "OPS", "Fondations", "Supervision et journaux applicatifs de base", "Journaux centralisés, alerte sur erreur 5xx", 3, "Moyenne")
 add("V1", "OPS", "Fondations", "Sauvegardes de base de la base de données", "Sauvegarde quotidienne, restauration testée une fois", 2, "Moyenne")
+
+add("V1", "OPS", "Sécurité", "RLS effective : rôle applicatif sans contournement, contexte app.organisation_id et app.roles par transaction", "Test négatif : un cédant ne lit pas le dossier d'un autre cédant", 4, "Haute", bloquant="Oui")
+add("V1", "OPS", "Sécurité", "Anti-force-brute : limitation de débit par IP et par compte, verrouillage progressif, journal des échecs", "Cinquième échec en une minute renvoie 429 et laisse une trace", 2, "Haute")
+add("V1", "OPS", "Sécurité", "Vérification email, MFA obligatoire pour les officiers CCI-Togo et les administrateurs, liaison OTP", "Officier sans second facteur ne peut pas certifier", 3, "Haute", dep="OTP SMS")
+add("V1", "OPS", "Sécurité", "Chiffrement applicatif des champs CONFIDENTIAL_DEAL, clé gérée hors base, rotation documentée", "Prix illisible dans un dump de la base", 3, "Haute")
+add("V1", "OPS", "Sécurité", "En-têtes de sécurité HTTP, CORS strict, cookies sécurisés, taille maximale des corps de requête", "Scan d'en-têtes sans constat, origine inconnue refusée", 1, "Moyenne")
+add("V1", "OPS", "Sécurité", "Idempotence persistée en base et vérification de signature HMAC sur tous les webhooks", "Rejeu d'un webhook sans double effet ; signature invalide rejetée", 2, "Haute")
+add("V1", "OPS", "Sécurité", "Revue de sécurité interne (liste de contrôle v0 : paliers, URL pré-signées, compteur RPS) et scan de dépendances bloquant en CI", "Rapport de revue archivé, CI rouge sur vulnérabilité critique", 3, "Haute")
+add("V1", "OPS", "Sécurité", "Mots de passe de démonstration uniques par compte, jeu de démonstration interdit hors environnement local", "Le chargement refuse de s'exécuter si NODE_ENV n'est pas development", 1, "Moyenne")
 
 add("V1", "IDN", "Auth et rôles", "Inscription email + mot de passe (Argon2id), vérification email", "Compte créé, email vérifié, mot de passe jamais en clair", 3, "Haute")
 add("V1", "IDN", "Auth et rôles", "OTP SMS (intégration fournisseur SMS)", "Code reçu et validé en moins de 60 s en test", 3, "Haute")
@@ -370,7 +381,7 @@ add("V5", "VDR-IA", "QA IA", "Performance : viewer progressif, streaming des ré
 add("V5", "VDR-IA", "QA IA", "Recette V5 et corrections", "Zéro anomalie bloquante ouverte", 5, "Haute")
 
 # ------------------------------------------------------------------ contrôle des totaux par version
-expected = {"V1": 217, "V2": 150, "V3": 160, "V4": 95, "V5": 145}
+expected = {"V1": 236, "V2": 150, "V3": 160, "V4": 95, "V5": 145}
 totals = {}
 for t in T:
     totals[t[0]] = totals.get(t[0], 0) + t[5]
@@ -850,6 +861,7 @@ RISQUES = [
     ("R10", "Fournisseur IA sans clauses de confidentialité acceptables", "Dépendance externe", 3, 5, "V5", "Conseil juridique", "Consultation dès V3, clauses de non-réutilisation des données", "Ouvert"),
     ("R11", "Fuite de divulgation T0 / T1 sur un dossier titres en production", "Sécurité", 2, 5, "V2", "Équipe de développement", "Allow-list serveur, tests DISCLOSURE_LEAK sur les 12 cas de référence", "Surveillé"),
     ("R12", "Sur-ingénierie par rapport au plafond du pilote (2 000 comptes)", "Technique", 2, 2, "V2", "Chef de projet", "Revue d'architecture à chaque version contre le plafond de capacité", "Surveillé"),
+    ("R13", "Pentest indépendant reporté en V3 : la démonstration V1 tourne sans audit externe", "Sécurité", 3, 4, "V1", "Chef de projet", "Revue de sécurité interne et scan de dépendances en V1 (lot Sécurité) ; aucun environnement accessible publiquement avant V3 ; commander le pentest dès V2", "Ouvert"),
 ]
 hR = ["ID", "Risque", "Catégorie", "Probabilité (1-5)", "Impact (1-5)", "Score", "Niveau", "Version", "Responsable", "Mitigation", "Statut"]
 for i, h in enumerate(hR):
@@ -886,6 +898,7 @@ title(wsD, "Journal des décisions et arbitrages", "Toute demande de changement 
 DECISIONS = [
     ("D01", "09/09/2026", "Périmètre cible", "Le cahier des charges v0 approuvé et le Référentiel P04-P25 sont retenus comme cible finale ; le blueprint v5 n'est pas retenu.", "Tranché", "M. Bruno", "Cadre toute la feuille de route", "", ""),
     ("D02", "09/09/2026", "Deal-Connect / Guichet Diaspora", "Remo.co retenu comme connecteur externe pour les salons et rendez-vous virtuels.", "Tranché", "M. Bruno", "Intégration dès V1 ; périmètre d'intégration à cadrer", "Cadrage écrit sur la documentation API Remo", "18/09/2026"),
+    ("D04", "10/09/2026", "Lot Sécurité en V1", "Huit constats de sécurité traités avant la présentation (RLS effective, anti-force-brute, MFA, chiffrement applicatif, en-têtes, idempotence et signatures, revue interne, mots de passe de démonstration). Le pentest indépendant reste en V3 (porte G10).", "Tranché", "Chef de projet", "+19 j/p sur V1 (total 236) ; voir l'onglet Securite", "Commencer par la RLS effective", "18/09/2026"),
     ("D03", "09/09/2026", "Démonstration RPS en V1", "V1 inclut une démonstration maquettée du blocage de publication d'une cession de titres ; le circuit réel reste en V2.", "Tranché", "Chef de projet", "+20 j/p sur V1", "", ""),
     ("A01", "09/09/2026", "Équipe de développement", "Taille et séniorité de l'équipe disponible dès maintenant ?", "Ouvert", "M. Bruno", "Détermine si V1 tient en 5 semaines ou nécessite des coupes", "Réponse attendue avant J01", "14/09/2026"),
     ("A02", "09/09/2026", "API CFE / RCCM", "Une API existe-t-elle, ou faut-il un échange de fichier supervisé ?", "Ouvert", "CCI-Togo", "Bloque le lot Espace CCI-Togo", "Vérifier avant le démarrage du lot", "16/09/2026"),
@@ -1284,14 +1297,15 @@ ROADMAP = {
                    "Badge Deal-Ready affiché, workflow porté par la CCI-Togo",
                    "Démonstration maquettée du blocage RPS (bannière de nullité, scénario scripté)",
                    "Deal-Connect via Remo.co : événements, inscriptions avec consentement, lien d'accès unique, présence par webhook",
-                   "Guichet Diaspora léger : demande de rendez-vous avec avis transfrontalier, entretien vidéo Remo après confirmation humaine"],
+                   "Guichet Diaspora léger : demande de rendez-vous avec avis transfrontalier, entretien vidéo Remo après confirmation humaine",
+                   "Lot Sécurité : RLS effective, anti-force-brute, MFA officiers et administrateurs, chiffrement applicatif, en-têtes, idempotence et signatures de webhooks, revue interne"],
         "exclu": ["Circuit RPS réel : admission humaine, compteur, plafond, journal réglementaire (V2)",
                   "Data room chiffrée, filigranée, révocable et Q&R (V2)",
                   "Moteur d'honoraires et rétrocession CCI (V3)",
                   "Alerte & Rebond, billetterie et sponsoring Deal-Connect, rendez-vous mutuels, rapport post-événement, profil diaspora complet (V4)"],
         "prerequis": "Équipe de développement confirmée (5 à 6 profils) ; réponse sur l'API CFE/RCCM ; designer UI/UX confirmé.",
         "decision": "La démonstration RPS fait partie de V1. Sans équipe à 5 ou 6 profils, la démonstration RPS est le premier lot à retirer, avant le matching automatisé.",
-        "lots": ["Fondations", "Auth et rôles", "Espace CCI-Togo", "Deal-Ready", "Dossier cédant", "Marketplace actifs", "Évaluation indicative", "Démonstration RPS", "Deal-Connect (Remo)", "Frontend et design", "QA et livraison"],
+        "lots": ["Fondations", "Auth et rôles", "Espace CCI-Togo", "Deal-Ready", "Dossier cédant", "Marketplace actifs", "Évaluation indicative", "Démonstration RPS", "Deal-Connect (Remo)", "Sécurité", "Frontend et design", "QA et livraison"],
     },
     "V2": {
         "focus": "Le cœur du différenciateur produit : le moteur RPS complet pour les cessions de titres et la data room. Prérequis à toute diligence réelle.",
@@ -1427,6 +1441,56 @@ for vi, v in enumerate(VERSIONS):
 widths(wsF, [3, 30, 16, 16, 14, 14, 14, 14, 30])
 wsF.freeze_panes = "B5"
 
+# ================================================================== SECURITE
+wsS = wb.create_sheet("Securite")
+title(wsS, "Registre de sécurité", "Chaque constat, son traitement, sa version cible et la tâche qui le porte. Le statut de la tâche est lu automatiquement dans l'onglet Taches.")
+SECU = [
+    ("S01", "L'API se connecte avec le rôle propriétaire de la base : les politiques RLS existent mais ne s'exercent pas", "Un défaut d'autorisation applicatif expose les dossiers d'un autre cédant", "Rôle dealpme_api sans contournement, contexte par transaction, test négatif", "V1", "RLS effective : rôle applicatif sans contournement, contexte app.organisation_id et app.roles par transaction"),
+    ("S02", "Aucune limitation de débit ni verrouillage après échecs de connexion", "Force brute sur /auth/login et sur les codes OTP", "Limitation par IP et par compte, verrouillage progressif, journal des échecs", "V1", "Anti-force-brute : limitation de débit par IP et par compte, verrouillage progressif, journal des échecs"),
+    ("S03", "Pas de vérification email ni de second facteur effectif", "Usurpation d'un compte officier ou administrateur", "Vérification email, MFA obligatoire pour les officiers CCI-Togo et les administrateurs", "V1", "Vérification email, MFA obligatoire pour les officiers CCI-Togo et les administrateurs, liaison OTP"),
+    ("S04", "Champs CONFIDENTIAL_DEAL (prix, valorisation) en clair en base", "Un dump de la base révèle les conditions des cessions", "Chiffrement applicatif, clé hors base, rotation documentée", "V1", "Chiffrement applicatif des champs CONFIDENTIAL_DEAL, clé gérée hors base, rotation documentée"),
+    ("S05", "Pas d'en-têtes de sécurité HTTP, pas de CORS explicite", "Injection de contenu, appels depuis des origines inconnues", "CSP, HSTS, CORS strict, cookies sécurisés, taille maximale des requêtes", "V1", "En-têtes de sécurité HTTP, CORS strict, cookies sécurisés, taille maximale des corps de requête"),
+    ("S06", "Idempotence en mémoire ; signatures de webhooks non vérifiées (faux connecteurs)", "Double effet sur rejeu ; webhook forgé accepté", "Idempotence en base, HMAC vérifié sur chaque webhook, test de rejeu", "V1", "Idempotence persistée en base et vérification de signature HMAC sur tous les webhooks"),
+    ("S07", "Mot de passe commun du jeu de démonstration", "Accès trivial si le jeu est chargé sur un environnement accessible", "Mots de passe uniques, chargement refusé hors développement", "V1", "Mots de passe de démonstration uniques par compte, jeu de démonstration interdit hors environnement local"),
+    ("S08", "Aucun scan de dépendances exécuté", "Vulnérabilité connue embarquée sans alerte", "Scan bloquant en CI sur vulnérabilité critique, revue interne selon la liste de contrôle v0", "V1", "Revue de sécurité interne (liste de contrôle v0 : paliers, URL pré-signées, compteur RPS) et scan de dépendances bloquant en CI"),
+    ("S09", "Aucun pentest indépendant", "Failles non détectées par l'équipe elle-même", "Reporté en V3 (porte G10) : exige un prestataire externe et un périmètre stabilisé ; mitigation V1 = revue interne S08, aucun environnement public avant V3 ; commander le pentest dès V2", "V3", "Pentest indépendant et remédiation des constats critiques et élevés (G10)"),
+    ("S10", "Documents servis sans rendu serveur ni filigrane (data room absente en V1)", "Fuite de documents confidentiels", "Reporté en V2 avec la data room : rendu serveur, filigrane, URL pré-signées courtes, révocation en moins de 60 s ; V1 ne stocke aucun document de data room", "V2", "Visualiseur rendu serveur, page à page, chargement progressif (3G)"),
+    ("S11", "Preuve de signature non qualifiée (pas de NDA en V1)", "NDA non opposable", "Reporté en V2 : prestataire PSC accrédité ARCEP, archivage PSAE ; V1 n'exécute aucun NDA", "V2", "Intégration API de signature qualifiée, webhooks à signature vérifiée"),
+    ("S12", "Accès administrateur non tracé par mode break-glass", "Accès silencieux à des dossiers confidentiels", "Reporté en V3 avec le module support ; V1 : journal d'audit persisté sur toute action sensible, aucun endpoint d'accès aux données confidentielles pour l'administrateur", "V3", "Mode 'break-glass' journalisé pour l'administration"),
+    ("S13", "Vérification d'identité documentaire sans biométrie", "Usurpation d'identité au-delà de ce que le document capture", "Voulu par le v0 : biométrie interdite sans autorisation IPDCP (drapeau FEATURE_BIOMETRIC_KYC fermé) ; revue humaine et recoupement RCCM en V1", "P2", ""),
+    ("S14", "Portes de conformité G1 à G10 non fermées (IPDCP, DPO, avis juridiques)", "Lancement commercial juridiquement exposé", "Reporté en V3 : condition explicite de lancement ; V1 est une démonstration à données synthétiques, jamais un service public", "V3", "Déclaration IPDCP et autorisation de transfert transfrontalier (G1, G2)"),
+]
+hS = ["ID", "Constat", "Risque si non traité", "Traitement et justification du calendrier", "Version cible", "Tâche liée (onglet Taches)", "Statut de la tâche", "Avancement", "Commentaire"]
+for i, h in enumerate(hS):
+    wsS.cell(row=5, column=2 + i, value=h)
+head(wsS, 5, 2, 10, height=30)
+S_FIRST = 6
+for i, row_ in enumerate(SECU):
+    r = S_FIRST + i
+    sid, constat, risque, traitement, ver, tache = row_
+    wsS[f"B{r}"], wsS[f"C{r}"], wsS[f"D{r}"], wsS[f"E{r}"], wsS[f"F{r}"], wsS[f"G{r}"] = sid, constat, risque, traitement, ver, tache
+    wsS[f"H{r}"] = f'=IF($G{r}="","Sans tâche",IFERROR(INDEX({rng("statut")},MATCH($G{r},{rng("tache")},0)),"À planifier"))'
+    wsS[f"I{r}"] = f'=IF($G{r}="","",IFERROR(INDEX({rng("avancement")},MATCH($G{r},{rng("tache")},0)),0))'
+    body(wsS, r, 2, 10)
+    wsS[f"H{r}"].fill = FILL_CALC; wsS[f"I{r}"].fill = FILL_CALC; wsS[f"J{r}"].fill = FILL_INPUT
+    wsS[f"I{r}"].number_format = "0%"
+    for c in "BFHI":
+        wsS[f"{c}{r}"].alignment = A_CENTER
+    wsS.row_dimensions[r].height = 58
+S_LAST = S_FIRST + len(SECU) - 1
+wsS.conditional_formatting.add(f"H{S_FIRST}:H{S_LAST}", FormulaRule(formula=[f'H{S_FIRST}="Complétée"'], fill=PatternFill("solid", fgColor=OK_BG), font=Font(color=OK, bold=True)))
+wsS.conditional_formatting.add(f"H{S_FIRST}:H{S_LAST}", FormulaRule(formula=[f'H{S_FIRST}="En cours"'], fill=PatternFill("solid", fgColor=WARN_BG), font=Font(color=WARN, bold=True)))
+wsS.conditional_formatting.add(f"H{S_FIRST}:H{S_LAST}", FormulaRule(formula=[f'H{S_FIRST}="Bloquée"'], fill=PatternFill("solid", fgColor=DANGER_BG), font=Font(color=DANGER, bold=True)))
+wsS.conditional_formatting.add(f"I{S_FIRST}:I{S_LAST}", DataBarRule(start_type="num", start_value=0, end_type="num", end_value=1, color=ACCENT))
+wsS.conditional_formatting.add(f"F{S_FIRST}:F{S_LAST}", FormulaRule(formula=[f'F{S_FIRST}<>"V1"'], fill=PatternFill("solid", fgColor=WARN_BG)))
+r = S_LAST + 2
+wsS.cell(row=r, column=2, value="Règle").font = F_LABEL
+c = wsS.cell(row=r, column=3, value="Aucune tâche ne passe en Complétée sans son test négatif. Tout report de sécurité doit figurer ici avec sa justification, sa mitigation intermédiaire et sa version cible ; un report sans mitigation est refusé.")
+c.font = F_NORMAL; c.alignment = A_WRAP
+wsS.merge_cells(start_row=r, start_column=3, end_row=r, end_column=10); wsS.row_dimensions[r].height = 32
+widths(wsS, [3, 6, 40, 34, 52, 10, 44, 14, 11, 24])
+wsS.freeze_panes = "C6"
+
 # ================================================================== GUIDE
 wsGd = wb.create_sheet("Guide")
 title(wsGd, "Mode d'emploi du classeur")
@@ -1440,6 +1504,7 @@ GUIDE = [
     ("Versions", "Les dates de début et de fin se saisissent ici. L'état passe automatiquement à 'En dépassement' si la date de fin est passée sans 100 %."),
     ("Jalons", "Saisir la date cible et le statut. La colonne Alerte signale 'Dépassé' ou 'Cette semaine'. Le tableau de bord affiche le prochain jalon non atteint."),
     ("Risques", "Saisir probabilité et impact de 1 à 5. Le score et le niveau se calculent. Passer le statut à 'Clos' quand le risque est levé."),
+    ("Securite", "Registre des constats de sécurité : chaque ligne renvoie à la tâche qui la traite ; le statut et l'avancement se lisent automatiquement. Un report vers une version ultérieure doit être justifié et accompagné d'une mitigation."),
     ("Decisions", "Toute demande de changement de périmètre s'inscrit ici avant d'être traduite en tâches. Statut : Ouvert, En discussion, Tranché."),
     ("Gantt", "Barres hebdomadaires calculées depuis 'Début prévu' et 'Fin prévue' de chaque tâche. Modifier les dates dans Taches, pas dans le Gantt. La colonne de la semaine courante est surlignée."),
     ("Unités", "Charges en jours-personne (j/p). 5 j/p = 1 semaine-personne. Le calendrier réel dépend du nombre de personnes réellement affectées."),
@@ -1457,14 +1522,14 @@ for i, (k, v) in enumerate(GUIDE):
 widths(wsGd, [3, 22, 110])
 
 # ordre des onglets
-order = ["Tableau_de_bord", "Presentation", "Feuille_de_route", "Guide", "Taches", "Equipe", "Modules", "Versions", "Gantt", "Jalons", "Risques", "Decisions", "Processus", "Acteurs", "Parametres"]
+order = ["Tableau_de_bord", "Presentation", "Feuille_de_route", "Guide", "Taches", "Equipe", "Modules", "Versions", "Gantt", "Jalons", "Risques", "Securite", "Decisions", "Processus", "Acteurs", "Parametres"]
 wb._sheets = [wb[n] for n in order]
 wb.active = 0
 
 # couleurs d'onglet
 tabcol = {"Tableau_de_bord": INK, "Presentation": INK, "Feuille_de_route": INK, "Guide": STEEL, "Taches": ACCENT, "Equipe": ACCENT,
           "Modules": OK, "Versions": OK, "Gantt": ACCENT,
-          "Jalons": WARN, "Risques": DANGER, "Decisions": WARN, "Processus": STEEL, "Acteurs": STEEL, "Parametres": "AAAAAA"}
+          "Jalons": WARN, "Risques": DANGER, "Securite": DANGER, "Decisions": WARN, "Processus": STEEL, "Acteurs": STEEL, "Parametres": "AAAAAA"}
 for n, c in tabcol.items():
     wb[n].sheet_properties.tabColor = c
 
