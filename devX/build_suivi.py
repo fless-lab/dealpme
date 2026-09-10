@@ -74,11 +74,11 @@ def title(ws, text, sub=None):
 # ------------------------------------------------------------------ données de référence
 VERSIONS = [
     # code, objet, début, fin
-    ("V1", "Premier produit : cessions d'actifs, espace CCI-Togo, Deal-Ready, démonstration du blocage RPS, Deal-Connect via Remo.co", dt.date(2026, 9, 1), dt.date(2026, 10, 12)),
-    ("V2", "Cession de titres en cercle restreint (RPS réel), signature électronique, data room et Q&R", dt.date(2026, 10, 13), dt.date(2026, 12, 7)),
-    ("V3", "Négociation et réalisation, LegalTech OHADA, Finance et rétrocession, support, fermeture des portes de conformité", dt.date(2026, 12, 8), dt.date(2027, 2, 15)),
-    ("V4", "Alerte & Rebond, Deal-Connect (Remo.co), Guichet Diaspora, Deal-Experts", dt.date(2027, 2, 16), dt.date(2027, 3, 29)),
-    ("V5", "VDR Intelligence : DealLens, Evidence Map, Issue Radar, Clean Team", dt.date(2027, 3, 30), dt.date(2027, 5, 31)),
+    ("V1", "Premier produit : cessions d'actifs, espace CCI-Togo, Deal-Ready, démonstration du blocage RPS, Deal-Connect via Remo.co", dt.date(2026, 9, 3), dt.date(2026, 10, 15)),
+    ("V2", "Cession de titres en cercle restreint (RPS réel), signature électronique, data room et Q&R", dt.date(2026, 10, 16), dt.date(2026, 12, 10)),
+    ("V3", "Négociation et réalisation, LegalTech OHADA, Finance et rétrocession, support, fermeture des portes de conformité", dt.date(2026, 12, 11), dt.date(2027, 2, 18)),
+    ("V4", "Alerte & Rebond, Deal-Connect (Remo.co), Guichet Diaspora, Deal-Experts", dt.date(2027, 2, 19), dt.date(2027, 4, 1)),
+    ("V5", "VDR Intelligence : DealLens, Evidence Map, Issue Radar, Clean Team", dt.date(2027, 4, 2), dt.date(2027, 6, 3)),
 ]
 
 # Tâches déjà réalisées ou entamées par le squelette du 09/09/2026 (clé : début du libellé de la tâche).
@@ -383,6 +383,13 @@ def plan_dates():
     for t in T:
         v = t[0]
         start, end = vwin[v]
+        if v == "V1":
+            # Décision du 10/09/2026 : développement du 03/09 au 12/10, QA et livraison du 13 au 15/10.
+            if t[2] == "QA et livraison":
+                out.append((dt.date(2026, 10, 13), dt.date(2026, 10, 15)))
+                cum[v] = cum.get(v, 0) + t[5]
+                continue
+            end = dt.date(2026, 10, 12)
         win = (end - start).days
         before = cum.get(v, 0)
         frac = before / expected[v]
@@ -780,8 +787,8 @@ JALONS = [
     ("J02", "Réponse sur la disponibilité d'une API CFE / RCCM", "V1", dt.date(2026, 9, 16), "À venir", "Sinon saisie manuelle supervisée"),
     ("J03", "Gel du périmètre V1", "V1", dt.date(2026, 9, 18), "À venir", "Plus aucun ajout après cette date"),
     ("J04", "Designer UI/UX confirmé", "V1", dt.date(2026, 9, 18), "À venir", "Proposition Bouley à confirmer"),
-    ("J05", "Recette interne V1 terminée", "V1", dt.date(2026, 10, 7), "À venir", "Zéro anomalie bloquante"),
-    ("J06", "Fin de développement V1 et répétition générale", "V1", dt.date(2026, 10, 12), "À venir", "Trois jours de marge avant la présentation"),
+    ("J05", "Recette interne V1 terminée", "V1", dt.date(2026, 10, 14), "À venir", "Zéro anomalie bloquante ; QA du 13 au 15/10"),
+    ("J06", "Fin de développement V1 (hors QA)", "V1", dt.date(2026, 10, 12), "À venir", "Le développement s'arrête, la QA prend le relais du 13 au 15/10"),
     ("J07", "Démonstration V1 à M. Bruno et à la CCI-Togo", "V1", dt.date(2026, 10, 15), "À venir", "Échéance ferme"),
     ("J08", "Contrat prestataire de signature qualifiée (PSC) signé", "V2", dt.date(2026, 10, 30), "À venir", "Bloquant pour l'intégration NDA"),
     ("J09", "Livraison V2", "V2", dt.date(2026, 12, 10), "À venir", ""),
