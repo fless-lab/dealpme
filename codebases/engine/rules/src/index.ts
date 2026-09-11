@@ -9,3 +9,4 @@ export * from "./fees.js";
 export * from "./dossier-checklist.js";
 export * from "./deal-ready-checklist.js";
 export * from "./message-policy.js";
+export * from "./transaction-stages.js";

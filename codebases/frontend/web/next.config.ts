@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  transpilePackages: ["@dealpme/ui", "@dealpme/domain", "@dealpme/contracts", "@dealpme/i18n"],
+  transpilePackages: ["@dealpme/ui", "@dealpme/domain", "@dealpme/contracts", "@dealpme/i18n", "@dealpme/rules"],
   async headers() {
     return [
       {

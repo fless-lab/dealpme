@@ -1,17 +1,8 @@
 import { Metric, Metrics, PermissionLens, TransactionRail } from "@dealpme/ui";
+import { TRANSACTION_STAGES } from "@dealpme/rules";
 import { getSession } from "../lib/session";
 
-const STAGES = [
-  { id: "INTERESTED", label: "Intérêt" },
-  { id: "QUALIFIED", label: "Qualification" },
-  { id: "ADMITTED", label: "Admission" },
-  { id: "NDA", label: "NDA" },
-  { id: "T2", label: "T2" },
-  { id: "VDR", label: "Data room" },
-  { id: "LOI", label: "LOI" },
-  { id: "DUE_DILIGENCE", label: "Audit" },
-  { id: "OUTCOME", label: "Résultat" },
-];
+
 
 export default async function HomePage() {
   const session = await getSession();
@@ -42,7 +33,7 @@ export default async function HomePage() {
       </Metrics>
       <section className="dp-panel dp-stack">
         <p className="dp-label">Parcours d'une transaction</p>
-        <TransactionRail stages={STAGES} current="INTERESTED" />
+        <TransactionRail stages={TRANSACTION_STAGES.map((s) => ({ id: s.id, label: s.label }))} current="INTERESTED" />
         <PermissionLens model={{ tier: "T0", state: "granted", reason: "Existence de l'opportunité : secteur, région, tranche de chiffre d'affaires. L'identité et le prix exigent un NDA." }} />
       </section>
     </div>

@@ -11,6 +11,9 @@ import {
   contactRefusalMessage,
   dealReadyChecklist,
   findContactDetails,
+  TRANSACTION_STAGES,
+  stageIndex,
+  stagesAvailableIn,
   matchDeal,
   openVdr,
   requirementsFor,
@@ -230,5 +233,40 @@ describe("échanges avant accord de confidentialité", () => {
     const f = findContactDetails("Appelez le 90 12 34 56")!;
     expect(contactRefusalMessage(f)).toContain("Retirez le numéro de téléphone");
     expect(contactRefusalMessage(f)).toContain("accord de confidentialité");
+  });
+});
+
+describe("progression canonique d'une transaction", () => {
+  it("suit exactement la progression du standard d'implémentation", () => {
+    expect(TRANSACTION_STAGES.map((s) => s.id)).toEqual([
+      "INTERESTED",
+      "QUALIFIED",
+      "ADMITTED",
+      "NDA",
+      "T2",
+      "VDR",
+      "LOI",
+      "CONFIRMATORY_AUDIT",
+      "DOCUMENTATION",
+      "OUTCOME",
+    ]);
+  });
+
+  it("dit ce que chaque stade ouvre, sans stade muet", () => {
+    expect(TRANSACTION_STAGES.every((s) => s.ouvre.length > 20)).toBe(true);
+  });
+
+  it("n'ouvre que le premier stade en V1", () => {
+    expect(stagesAvailableIn("V1").map((s) => s.id)).toEqual(["INTERESTED"]);
+  });
+
+  it("ouvre la qualification, l'admission, le NDA, le palier T2 et la data room en V2", () => {
+    expect(stagesAvailableIn("V2").map((s) => s.id)).toEqual(["INTERESTED", "QUALIFIED", "ADMITTED", "NDA", "T2", "VDR"]);
+  });
+
+  it("conserve l'ordre : aucun stade ne se saute", () => {
+    expect(stageIndex("NDA")).toBeGreaterThan(stageIndex("ADMITTED"));
+    expect(stageIndex("T2")).toBeGreaterThan(stageIndex("NDA"));
+    expect(stageIndex("VDR")).toBeGreaterThan(stageIndex("T2"));
   });
 });

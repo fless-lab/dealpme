@@ -4,6 +4,7 @@ import { api, ApiError } from "../../../lib/api";
 import { getSession } from "../../../lib/session";
 import { fmtDate } from "../../../lib/guards";
 import { BAND_LABEL, REGION_LABEL, SECTORS } from "../../../lib/dossier";
+import { TRANSACTION_STAGES } from "@dealpme/rules";
 import { DealReadyBadge, DealReadyScope } from "../../../components/deal-ready";
 import { ExpressInterest } from "./express-interest";
 
@@ -19,15 +20,7 @@ interface Teaser {
 
 const SECTOR_LABEL = new Map(SECTORS.map((s) => [s.code, s.label]));
 
-const STAGES = [
-  { id: "INTERESTED", label: "Intérêt" },
-  { id: "QUALIFIED", label: "Qualification" },
-  { id: "NDA", label: "NDA" },
-  { id: "T2", label: "Détail complet" },
-  { id: "VDR", label: "Data room" },
-  { id: "LOI", label: "LOI" },
-  { id: "OUTCOME", label: "Réalisation" },
-];
+
 
 /**
  * Fiche d'une opportunité au palier T0. Ce que l'écran ne montre pas est aussi important que ce qu'il montre :
@@ -103,7 +96,7 @@ export default async function OpportunityPage({ params }: { params: Promise<{ de
         ) : null}
 
         <Panel title="Parcours d'une transaction" controlId="OPP_DETAIL_RAIL">
-          <TransactionRail stages={STAGES} current="INTERESTED" />
+          <TransactionRail stages={TRANSACTION_STAGES.map((s) => ({ id: s.id, label: s.label }))} current="INTERESTED" />
           <p className="dp-muted" style={{ marginBottom: 0 }}>
             Chaque étape ouvre un peu plus d'information, et seulement à ceux qui l'ont franchie. Rien ne s'ouvre
             automatiquement : le cédant qualifie, la conformité admet, l'accord de confidentialité se signe.
