@@ -42,7 +42,7 @@ propriétaire seulement, jamais versionné. Chaque chargement en génère de nou
 bash devX/smoke_v1.sh
 ```
 
-Quatre-vingt-quatorze contrôles contre la pile réelle : authentification, second facteur, isolation entre cédants,
+Cent un contrôles contre la pile réelle : authentification, second facteur, isolation entre cédants,
 paliers de divulgation, chiffrement, antivirus, limitation de débit, signatures de webhooks, dossier cédant,
 certification, place de marché, blocage réglementaire, supervision. Le script efface d'abord les compteurs
 anti-force-brute : il est rejouable immédiatement.
@@ -96,8 +96,9 @@ Français pour les commentaires, les libellés et les messages d'erreur. TypeScr
 `exactOptionalPropertyTypes` compris. Montants en entiers de FCFA, sans décimale. Identifiants UUIDv7 générés par
 l'application. Horodatages en UTC avec fuseau. Détail dans `docs/CONVENTIONS.md`.
 
-Chaque contrôle visible porte un `data-control-id` : c'est ce qui permet de vérifier qu'aucun bouton n'existe sans
-réaction définie.
+Chaque contrôle visible porte un `data-control-id` inscrit à `qa/registre-interactions.json`. Le test du registre
+refuse tout identifiant inconnu : c'est ce qui empêche qu'un bouton existe sans contrat. Ajouter un contrôle,
+c'est ajouter son entrée au registre dans le même commit.
 
 ## Exploitation locale
 

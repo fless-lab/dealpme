@@ -68,7 +68,7 @@ Le paquet est consommé depuis ses sources (`main: src/index.ts`, `transpilePack
 composants serveur. `npm run typecheck -w codebases/frontend/ui` vérifie le paquet.
 
 Règles (guides Tranche 3) : composants partagés avec variantes explicites, jamais de copie du HTML de référence ;
-chaque contrôle visible porte un `data-control-id` du registre d'interactions ; le client affiche les permissions
+chaque contrôle visible porte un `data-control-id` de `qa/registre-interactions.json`, vérifié par un test ; le client affiche les permissions
 et ne les calcule jamais ; `FORBIDDEN`, `PERIMETER_BLOCKED`, `NOT_FOUND` et `INVALID_TRANSITION` restent des états
 distincts ; tables et rails avant grilles de cartes ; aucune page ne défile horizontalement ; cibles tactiles 44 px ;
 `prefers-reduced-motion` respecté ; WCAG 2.2 AA visé.

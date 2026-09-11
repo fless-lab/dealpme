@@ -35,7 +35,11 @@ Issues du cahier des charges v0 (section 9) et du standard d'implémentation du 
 
 ## Interface
 
-- Chaque contrôle visible porte un `data-control-id` présent dans le registre d'interactions ; un contrôle sans contrat bloque la release.
+- Chaque contrôle visible porte un `data-control-id` présent dans `qa/registre-interactions.json` ; un contrôle sans
+  contrat bloque la release. Le test `codebases/frontend/web/test/interaction-registry.test.ts` refuse tout
+  identifiant absent du registre et produit `qa/control-coverage.json`, preuve attendue par le Release Gate.
+- Les identifiants du corpus font autorité sur les surfaces qu'il couvre ; les autres sont inscrits au registre
+  avec l'origine `depot`. Le registre ne référence que des éléments actionnables, jamais des zones d'affichage.
 - Chaque écran possède ses états vide, chargement, bloqué, erreur.
 - Aucune allégation de sécurité, de certification ou de valorisation au-delà de ce qui est construit et prouvé.
 - Toute donnée de démonstration est étiquetée synthétique.
