@@ -60,8 +60,8 @@ export default async function AudiencePage({ params }: { params: Promise<{ dealI
             <table className="dp-table">
               <thead>
                 <tr>
-                  <th>Reçue le</th>
-                  <th>Message d'accompagnement</th>
+                  <th scope="col">Reçue le</th>
+                  <th scope="col">Message d'accompagnement</th>
                 </tr>
               </thead>
               <tbody>

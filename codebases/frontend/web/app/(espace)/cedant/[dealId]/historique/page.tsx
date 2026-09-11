@@ -33,13 +33,13 @@ export default async function FactHistoryPage({ params, searchParams }: { params
             <table className="dp-table">
               <thead>
                 <tr>
-                  <th className="dp-num">Version</th>
-                  <th>Valeur</th>
-                  <th>Exercice</th>
-                  <th>Source</th>
-                  <th>Justification</th>
-                  <th>Enregistrée le</th>
-                  <th>État</th>
+                  <th scope="col" className="dp-num">Version</th>
+                  <th scope="col">Valeur</th>
+                  <th scope="col">Exercice</th>
+                  <th scope="col">Source</th>
+                  <th scope="col">Justification</th>
+                  <th scope="col">Enregistrée le</th>
+                  <th scope="col">État</th>
                 </tr>
               </thead>
               <tbody>

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ServiceNav } from "@dealpme/ui";
+import { headers } from "next/headers";
 import { requireRole } from "../../../lib/guards";
 
 const NAV = [
@@ -11,5 +12,10 @@ const NAV = [
 /** Espace investisseur : intérêts manifestés et alertes enregistrées. */
 export default async function InvestorLayout({ children }: { children: ReactNode }) {
   await requireRole("INVESTOR", "INVESTOR_DIASPORA", "BANK", "ADVISOR");
-  return <ServiceNav nav={NAV}>{children}</ServiceNav>;
+  const pathname = (await headers()).get("x-chemin") ?? "";
+  return (
+    <ServiceNav nav={NAV} pathname={pathname}>
+      {children}
+    </ServiceNav>
+  );
 }

@@ -4,6 +4,8 @@ import { api } from "../../../lib/api";
 import { getSession, ROLE_LABEL } from "../../../lib/session";
 import { SessionList } from "./session-list";
 
+export const metadata = { title: "Mon compte", description: "Identité, rôle et appareils connectés." };
+
 interface SessionRow {
   id: string;
   deviceLabel: string | null;

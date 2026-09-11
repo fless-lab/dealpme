@@ -31,6 +31,8 @@ import {
   VDRFolder,
 } from "@dealpme/ui";
 
+export const metadata = { title: "Laboratoire de composants", description: "Variantes et états du design system." };
+
 /**
  * Laboratoire de composants : chaque composant dans toutes ses variantes et tous ses états
  * (COMPONENT_VARIANT_MATRIX de la Tranche 3). Surface de revue du designer et référence des captures de régression.

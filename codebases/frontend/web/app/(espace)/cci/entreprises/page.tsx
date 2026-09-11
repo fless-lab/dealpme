@@ -2,6 +2,8 @@ import { StateBanner, StatusBadge } from "@dealpme/ui";
 import { api, ApiError } from "../../../../lib/api";
 import { fmtDate, requireRole } from "../../../../lib/guards";
 
+export const metadata = { title: "Entreprises", description: "Données déclarées et vérifications au registre." };
+
 interface CompanyRow {
   id: string;
   declared: { legalName: string; legalForm: string; rccmNumber: string | null };
@@ -43,11 +45,11 @@ export default async function CompaniesPage() {
           <table className="dp-table">
             <thead>
               <tr>
-                <th>Déclaré par le cédant</th>
-                <th>Organisation</th>
-                <th>Vérifié au registre</th>
-                <th>Deal-Ready</th>
-                <th>Action</th>
+                <th scope="col">Déclaré par le cédant</th>
+                <th scope="col">Organisation</th>
+                <th scope="col">Vérifié au registre</th>
+                <th scope="col">Deal-Ready</th>
+                <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody>

@@ -10,12 +10,27 @@ export interface NavItem {
 }
 
 /**
+ * Élément courant d'une navigation. Le chemin exact l'emporte ; à défaut, le préfixe le plus long gagne,
+ * pour qu'une sous-page marque sa rubrique sans que la racine "/" marque tout.
+ */
+export function markCurrent(items: NavItem[], pathname: string | null | undefined): NavItem[] {
+  if (!pathname) return items;
+  const candidats = items
+    .map((item, index) => ({ index, href: item.href.split("?")[0] ?? item.href }))
+    .filter((c) => pathname === c.href || (c.href !== "/" && pathname.startsWith(`${c.href}/`)));
+  if (candidats.length === 0) return items;
+  const gagnant = candidats.reduce((a, b) => (b.href.length > a.href.length ? b : a));
+  return items.map((item, index) => (index === gagnant.index ? { ...item, current: true } : item));
+}
+
+/**
  * AppShell : barre supérieure Marine (marque, navigation principale, compte), barre de contexte, contenu.
  * Le gabarit possède la navigation ; les pages composent les primitives et ne dupliquent jamais
  * la logique de permission, de preuve ou de cycle de vie.
  */
 export function AppShell({
   brand = "DealPME",
+  pathname,
   nav,
   account,
   strip,
@@ -25,6 +40,8 @@ export function AppShell({
   onToggleMenu,
 }: {
   brand?: string;
+  /** Chemin courant, transmis par l'application : il sert à marquer l'élément de navigation actif. */
+  pathname?: string;
   nav: NavItem[];
   account?: ReactNode;
   strip?: ReactNode;
@@ -35,6 +52,9 @@ export function AppShell({
 }) {
   return (
     <div className="dp-shell">
+      <a className="dp-skip" href="#contenu" data-control-id="NAV_SKIP">
+        Aller au contenu
+      </a>
       <div>
         {strip}
         <header className="dp-topbar">
@@ -45,7 +65,7 @@ export function AppShell({
             Menu
           </button>
           <nav aria-label="Navigation principale" className={menuOpen ? "dp-open" : undefined}>
-            {nav.map((n) => (
+            {markCurrent(nav, pathname).map((n) => (
               <a key={n.href} href={n.href} data-control-id={n.controlId} aria-current={n.current ? "page" : undefined}>
                 {n.label}
               </a>
@@ -55,7 +75,7 @@ export function AppShell({
         </header>
       </div>
       {context ?? <div />}
-      <main className="dp-main">{children}</main>
+      <main className="dp-main" id="contenu" tabIndex={-1}>{children}</main>
     </div>
   );
 }
@@ -78,11 +98,11 @@ export function ContextBar({ crumbs, children }: { crumbs: { label: string; href
 }
 
 /** Espace de travail avec navigation latérale (tiroir sous 1024 px). TransactionNav et ServiceNav en sont deux usages. */
-export function Workspace({ nav, ariaLabel, children }: { nav: NavItem[]; ariaLabel: string; children: ReactNode }) {
+export function Workspace({ nav, ariaLabel, pathname, children }: { nav: NavItem[]; ariaLabel: string; pathname?: string; children: ReactNode }) {
   return (
     <div className="dp-workspace">
       <nav className="dp-sidenav" aria-label={ariaLabel}>
-        {nav.map((n) => (
+        {markCurrent(nav, pathname).map((n) => (
           <a key={n.href} href={n.href} data-control-id={n.controlId} aria-current={n.current ? "page" : undefined}>
             {n.label}
           </a>
@@ -93,17 +113,17 @@ export function Workspace({ nav, ariaLabel, children }: { nav: NavItem[]; ariaLa
   );
 }
 
-export function TransactionNav({ nav, children }: { nav: NavItem[]; children: ReactNode }) {
+export function TransactionNav({ nav, pathname, children }: { nav: NavItem[]; pathname?: string; children: ReactNode }) {
   return (
-    <Workspace nav={nav} ariaLabel="Navigation de la transaction">
+    <Workspace nav={nav} ariaLabel="Navigation de la transaction" {...(pathname ? { pathname } : {})}>
       {children}
     </Workspace>
   );
 }
 
-export function ServiceNav({ nav, children }: { nav: NavItem[]; children: ReactNode }) {
+export function ServiceNav({ nav, pathname, children }: { nav: NavItem[]; pathname?: string; children: ReactNode }) {
   return (
-    <Workspace nav={nav} ariaLabel="Navigation du service">
+    <Workspace nav={nav} ariaLabel="Navigation du service" {...(pathname ? { pathname } : {})}>
       {children}
     </Workspace>
   );

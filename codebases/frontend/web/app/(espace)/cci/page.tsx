@@ -2,6 +2,8 @@ import { Metric, Metrics, Panel, StateBanner } from "@dealpme/ui";
 import { api, ApiError } from "../../../lib/api";
 import { requireRole } from "../../../lib/guards";
 
+export const metadata = { title: "Console CCI-Togo", description: "Vue agrégée du pilote." };
+
 interface Overview {
   organisations: { total: number; membershipConfirmed: number };
   companies: { total: number; registryVerified: number; dealReady: number };
@@ -57,8 +59,8 @@ export default async function CciOverviewPage() {
                 <table className="dp-table">
                   <thead>
                     <tr>
-                      <th>État</th>
-                      <th className="dp-num">Dossiers</th>
+                      <th scope="col">État</th>
+                      <th scope="col" className="dp-num">Dossiers</th>
                     </tr>
                   </thead>
                   <tbody>

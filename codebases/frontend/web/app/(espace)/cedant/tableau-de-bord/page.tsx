@@ -3,6 +3,8 @@ import { api, ApiError } from "../../../../lib/api";
 import { requireRole } from "../../../../lib/guards";
 import { BAND_LABEL, DEAL_STATUS_LABEL, REGION_LABEL, SECTORS } from "../../../../lib/dossier";
 
+export const metadata = { title: "Audience de mes dossiers", description: "Consultations et manifestations d'intérêt reçues." };
+
 interface Row {
   id: string;
   status: string;
@@ -60,13 +62,13 @@ export default async function SellerDashboardPage() {
               <table className="dp-table">
                 <thead>
                   <tr>
-                    <th>Dossier</th>
-                    <th>État</th>
-                    <th className="dp-num">Consultations</th>
-                    <th className="dp-num">Dont identifiées</th>
-                    <th className="dp-num">Intérêts</th>
-                    <th className="dp-num">Messages</th>
-                    <th></th>
+                    <th scope="col">Dossier</th>
+                    <th scope="col">État</th>
+                    <th scope="col" className="dp-num">Consultations</th>
+                    <th scope="col" className="dp-num">Dont identifiées</th>
+                    <th scope="col" className="dp-num">Intérêts</th>
+                    <th scope="col" className="dp-num">Messages</th>
+                    <th scope="col"></th>
                   </tr>
                 </thead>
                 <tbody>

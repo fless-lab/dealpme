@@ -35,10 +35,10 @@ export function SessionList({ sessions }: { sessions: SessionRow[] }) {
       <table className="dp-table">
         <thead>
           <tr>
-            <th>Appareil</th>
-            <th>Dernière activité</th>
-            <th>Ouverte le</th>
-            <th></th>
+            <th scope="col">Appareil</th>
+            <th scope="col">Dernière activité</th>
+            <th scope="col">Ouverte le</th>
+            <th scope="col"></th>
           </tr>
         </thead>
         <tbody>

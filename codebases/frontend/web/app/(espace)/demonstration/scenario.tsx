@@ -198,11 +198,11 @@ export function Scenario({ state }: { state: ScenarioState }) {
               <table className="dp-table">
                 <thead>
                   <tr>
-                    <th>Horodatage</th>
-                    <th>Événement</th>
-                    <th>Issue</th>
-                    <th>Compte</th>
-                    <th>Détail</th>
+                    <th scope="col">Horodatage</th>
+                    <th scope="col">Événement</th>
+                    <th scope="col">Issue</th>
+                    <th scope="col">Compte</th>
+                    <th scope="col">Détail</th>
                   </tr>
                 </thead>
                 <tbody>

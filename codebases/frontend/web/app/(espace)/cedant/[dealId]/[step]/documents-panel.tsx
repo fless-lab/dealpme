@@ -51,7 +51,7 @@ export function DocumentsPanel({ dealId, requirements, documents, readOnly }: { 
                 {existing ? (
                   <>
                     <div>
-                      <a href={`/api/dossier/${dealId}/documents/${existing.id}/content`} target="_blank" rel="noreferrer" data-control-id="SELLER_DOC_OPEN">
+                      <a href={`/api/dossier/${dealId}/documents/${existing.id}/content`} target="_blank" rel="noreferrer" title="Ouvre un nouvel onglet" data-control-id="SELLER_DOC_OPEN">
                         {existing.fileName}
                       </a>{" "}
                       <span className="dp-muted">({fmtSize(existing.sizeBytes)})</span>

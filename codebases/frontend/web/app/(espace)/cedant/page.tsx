@@ -3,6 +3,8 @@ import { api, ApiError } from "../../../lib/api";
 import { fmtDate, requireRole } from "../../../lib/guards";
 import { BAND_LABEL, DEAL_STATUS_LABEL, REGION_LABEL, SECTORS } from "../../../lib/dossier";
 
+export const metadata = { title: "Mes dossiers", description: "Dossiers de transmission de votre organisation." };
+
 interface DealRow {
   id: string;
   companyName: string;
@@ -60,13 +62,13 @@ export default async function CedantHomePage() {
           <table className="dp-table">
             <thead>
               <tr>
-                <th>Entreprise</th>
-                <th>Type de cession</th>
-                <th>Secteur et région</th>
-                <th>Tranche de chiffre d'affaires</th>
-                <th>État</th>
-                <th>Créé le</th>
-                <th></th>
+                <th scope="col">Entreprise</th>
+                <th scope="col">Type de cession</th>
+                <th scope="col">Secteur et région</th>
+                <th scope="col">Tranche de chiffre d'affaires</th>
+                <th scope="col">État</th>
+                <th scope="col">Créé le</th>
+                <th scope="col"></th>
               </tr>
             </thead>
             <tbody>

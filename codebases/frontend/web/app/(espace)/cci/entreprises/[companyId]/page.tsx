@@ -163,11 +163,11 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
               <table className="dp-table">
                 <thead>
                   <tr>
-                    <th>Type</th>
-                    <th>Secteur</th>
-                    <th>État</th>
-                    <th>Ouvert le</th>
-                    <th>Action</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Secteur</th>
+                    <th scope="col">État</th>
+                    <th scope="col">Ouvert le</th>
+                    <th scope="col">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -200,10 +200,10 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
               <table className="dp-table">
                 <thead>
                   <tr>
-                    <th>Décision</th>
-                    <th>Officier</th>
-                    <th>Date</th>
-                    <th>Portée déclarée</th>
+                    <th scope="col">Décision</th>
+                    <th scope="col">Officier</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Portée déclarée</th>
                   </tr>
                 </thead>
                 <tbody>

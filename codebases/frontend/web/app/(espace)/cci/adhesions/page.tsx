@@ -3,6 +3,8 @@ import { api, ApiError } from "../../../../lib/api";
 import { fmtDate, requireRole } from "../../../../lib/guards";
 import { ConfirmMembership } from "./confirm-membership";
 
+export const metadata = { title: "Adhésions", description: "Confirmation d'adhésion par référence CCI-Togo." };
+
 interface OrganisationRow {
   id: string;
   name: string;
@@ -50,12 +52,12 @@ export default async function MembershipsPage() {
           <table className="dp-table">
             <thead>
               <tr>
-                <th>Organisation</th>
-                <th>Origine</th>
-                <th>Inscrite le</th>
-                <th className="dp-num">Entreprises</th>
-                <th>Adhésion</th>
-                <th>Action</th>
+                <th scope="col">Organisation</th>
+                <th scope="col">Origine</th>
+                <th scope="col">Inscrite le</th>
+                <th scope="col" className="dp-num">Entreprises</th>
+                <th scope="col">Adhésion</th>
+                <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody>

@@ -3,6 +3,8 @@ import { api, ApiError } from "../../../../lib/api";
 import { fmtDateTime, requireRole } from "../../../../lib/guards";
 import { Remediation } from "./remediation";
 
+export const metadata = { title: "Demandes de certification", description: "File d'instruction Deal-Ready." };
+
 interface Criterion {
   key: string;
   label: string;
@@ -110,10 +112,10 @@ export default async function RequestsPage() {
             <table className="dp-table">
               <thead>
                 <tr>
-                  <th>Entreprise</th>
-                  <th>Issue</th>
-                  <th>Déposée le</th>
-                  <th>Close le</th>
+                  <th scope="col">Entreprise</th>
+                  <th scope="col">Issue</th>
+                  <th scope="col">Déposée le</th>
+                  <th scope="col">Close le</th>
                 </tr>
               </thead>
               <tbody>

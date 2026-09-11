@@ -4,6 +4,8 @@ import { fmtDate, requireRole } from "../../../../lib/guards";
 import { BAND_LABEL, REGION_LABEL, SECTORS } from "../../../../lib/dossier";
 import { AlertRow } from "./alert-row";
 
+export const metadata = { title: "Mes alertes", description: "Recherches enregistrées et consentement de notification." };
+
 interface Alert {
   id: string;
   label: string;
@@ -51,11 +53,11 @@ export default async function AlertsPage() {
             <table className="dp-table">
               <thead>
                 <tr>
-                  <th>Nom</th>
-                  <th>Critères</th>
-                  <th>Créée le</th>
-                  <th>Notification</th>
-                  <th></th>
+                  <th scope="col">Nom</th>
+                  <th scope="col">Critères</th>
+                  <th scope="col">Créée le</th>
+                  <th scope="col">Notification</th>
+                  <th scope="col"></th>
                 </tr>
               </thead>
               <tbody>

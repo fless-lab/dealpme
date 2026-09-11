@@ -51,12 +51,12 @@ export default async function SummaryPage({ params }: { params: Promise<{ dealId
             <table className="dp-table">
               <thead>
                 <tr>
-                  <th>Information</th>
-                  <th>Valeur</th>
-                  <th>Exercice</th>
-                  <th>Source</th>
-                  <th>Version</th>
-                  <th>Enregistrée le</th>
+                  <th scope="col">Information</th>
+                  <th scope="col">Valeur</th>
+                  <th scope="col">Exercice</th>
+                  <th scope="col">Source</th>
+                  <th scope="col">Version</th>
+                  <th scope="col">Enregistrée le</th>
                 </tr>
               </thead>
               <tbody>
@@ -91,12 +91,12 @@ export default async function SummaryPage({ params }: { params: Promise<{ dealId
             <table className="dp-table">
               <thead>
                 <tr>
-                  <th>Pièce</th>
-                  <th>Fichier</th>
-                  <th>Taille</th>
-                  <th>Analyse</th>
-                  <th>Version</th>
-                  <th>Déposée le</th>
+                  <th scope="col">Pièce</th>
+                  <th scope="col">Fichier</th>
+                  <th scope="col">Taille</th>
+                  <th scope="col">Analyse</th>
+                  <th scope="col">Version</th>
+                  <th scope="col">Déposée le</th>
                 </tr>
               </thead>
               <tbody>
@@ -104,7 +104,7 @@ export default async function SummaryPage({ params }: { params: Promise<{ dealId
                   <tr key={d.id}>
                     <td>{labelOf.get(d.category) ?? d.category}</td>
                     <td>
-                      <a href={`/api/dossier/${dealId}/documents/${d.id}/content`} target="_blank" rel="noreferrer" data-control-id="SELLER_SUMMARY_DOC_OPEN">
+                      <a href={`/api/dossier/${dealId}/documents/${d.id}/content`} target="_blank" rel="noreferrer" title="Ouvre un nouvel onglet" data-control-id="SELLER_SUMMARY_DOC_OPEN">
                         {d.fileName}
                       </a>
                     </td>

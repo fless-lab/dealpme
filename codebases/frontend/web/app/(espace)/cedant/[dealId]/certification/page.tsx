@@ -127,10 +127,10 @@ export default async function CertificationPage({ params }: { params: Promise<{ 
             <table className="dp-table">
               <thead>
                 <tr>
-                  <th>Événement</th>
-                  <th>État</th>
-                  <th>Date</th>
-                  <th>Détail</th>
+                  <th scope="col">Événement</th>
+                  <th scope="col">État</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Détail</th>
                 </tr>
               </thead>
               <tbody>

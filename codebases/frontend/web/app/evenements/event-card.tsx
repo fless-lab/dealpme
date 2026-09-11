@@ -86,7 +86,7 @@ export function EventCard({ event, canRegister, connected }: { event: DealConnec
               {event.myRegistration.consentContact ? "Retirer mon consentement" : "Accepter l'échange de contacts"}
             </Button>
             {event.liveReady ? (
-              <a className="dp-btn dp-btn-primary" href={`/api/events/${event.id}/join`} target="_blank" rel="noreferrer" data-control-id="EVENT_JOIN">
+              <a className="dp-btn dp-btn-primary" href={`/api/events/${event.id}/join`} target="_blank" rel="noreferrer" title="Ouvre un nouvel onglet" data-control-id="EVENT_JOIN">
                 Rejoindre la salle
               </a>
             ) : null}

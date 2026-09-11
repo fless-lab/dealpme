@@ -7,6 +7,8 @@ import { BAND_LABEL, REGION_LABEL, SECTORS } from "../../lib/dossier";
 import { Filters } from "./filters";
 import { SaveAlert } from "./save-alert";
 
+export const metadata = { title: "Opportunités", description: "Cessions publiées au palier T0 : secteur, région et tranche de chiffre d'affaires." };
+
 const SECTOR_LABEL = new Map(SECTORS.map((s) => [s.code, s.label]));
 
 /**

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ServiceNav } from "@dealpme/ui";
+import { headers } from "next/headers";
 import { requireRole } from "../../../lib/guards";
 
 const NAV = [
@@ -13,5 +14,10 @@ const NAV = [
 /** Console CCI-Togo : réservée aux officiers. Rôles et journal séparés du back-office plateforme (DP-GOV). */
 export default async function CciLayout({ children }: { children: ReactNode }) {
   await requireRole("CCI_OFFICER");
-  return <ServiceNav nav={NAV}>{children}</ServiceNav>;
+  const pathname = (await headers()).get("x-chemin") ?? "";
+  return (
+    <ServiceNav nav={NAV} pathname={pathname}>
+      {children}
+    </ServiceNav>
+  );
 }

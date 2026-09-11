@@ -1,6 +1,7 @@
 "use client";
 
-import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
+import { cloneElement, isValidElement } from "react";
+import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
 import type { Tone } from "./tokens";
 
 /**
@@ -48,11 +49,24 @@ export interface FieldProps {
 }
 
 /** Champ de formulaire : libellé, aide, erreur (l'erreur nomme l'action et le chemin de récupération). */
+/**
+ * Un champ et ses annexes. L'aide et l'erreur portent un identifiant, et le champ le référence :
+ * sans cela, un lecteur d'écran annonce l'étiquette seule et laisse l'utilisateur deviner la contrainte.
+ * La liaison est posée ici, sur l'enfant, pour qu'aucun écran n'ait à y penser.
+ */
 export function Field({ id, label, hint, error, children }: FieldProps) {
+  const described = [hint && !error ? `${id}-hint` : null, error ? `${id}-error` : null].filter(Boolean).join(" ");
+  const enfant =
+    isValidElement(children) && described
+      ? cloneElement(children as ReactElement<{ "aria-describedby"?: string; "aria-invalid"?: boolean }>, {
+          "aria-describedby": described,
+          ...(error ? { "aria-invalid": true } : {}),
+        })
+      : children;
   return (
     <div className="dp-field">
       <label htmlFor={id}>{label}</label>
-      {children}
+      {enfant}
       {hint && !error ? <span className="dp-hint" id={`${id}-hint`}>{hint}</span> : null}
       {error ? <span className="dp-error" id={`${id}-error`} role="alert">{error}</span> : null}
     </div>

@@ -187,3 +187,8 @@ a { color: var(--dp-signal); }
 @keyframes dp-rise { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
 .dp-modal-backdrop { position: fixed; inset: 0; background: rgba(16, 35, 61, 0.45); display: grid; place-items: center; z-index: 40; padding: var(--dp-space-4); }
 .dp-modal { background: var(--dp-paper); border-radius: var(--dp-radius-xl); max-width: 560px; width: 100%; padding: var(--dp-space-6); animation: dp-rise var(--dp-motion-base) var(--dp-ease); }
+
+/* Lien d'évitement : hors écran tant qu'il n'a pas le focus, premier arrêt de tabulation quand il l'a. */
+.dp-skip { position: absolute; left: -9999px; top: 0; z-index: 50; background: var(--dp-signal); color: #fff; padding: var(--dp-space-3) var(--dp-space-4); border-radius: 0 0 var(--dp-radius-md) 0; text-decoration: none; }
+.dp-skip:focus-visible { left: 0; }
+.dp-main:focus { outline: none; }

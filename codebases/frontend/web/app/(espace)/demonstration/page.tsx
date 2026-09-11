@@ -3,6 +3,8 @@ import { api } from "../../../lib/api";
 import { requireRole } from "../../../lib/guards";
 import { Scenario } from "./scenario";
 
+export const metadata = { title: "Démonstration du blocage réglementaire", description: "Paliers de divulgation et refus de publication." };
+
 interface ScenarioState {
   label: string;
   deal: { id: string; status: string; visibility: string; dealType: string; createdAt: string };

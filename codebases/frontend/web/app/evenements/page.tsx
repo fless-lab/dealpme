@@ -4,6 +4,8 @@ import { fmtDateTime } from "../../lib/guards";
 import { getSession } from "../../lib/session";
 import { EventCard } from "./event-card";
 
+export const metadata = { title: "Deal-Connect", description: "Rencontres B2B entre cédants, repreneurs et partenaires financiers." };
+
 export interface DealConnectEvent {
   id: string;
   title: string;

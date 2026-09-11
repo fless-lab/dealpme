@@ -2,6 +2,8 @@ import { StateBanner, StatusBadge } from "@dealpme/ui";
 import { api, ApiError } from "../../../../lib/api";
 import { fmtDate, fmtDateTime, requireRole } from "../../../../lib/guards";
 
+export const metadata = { title: "Journal des certifications", description: "Décisions Deal-Ready, nominatives et horodatées." };
+
 interface CertificationRow {
   id: string;
   companyId: string;
@@ -48,12 +50,12 @@ export default async function CertificationsJournalPage() {
             <table className="dp-table">
               <thead>
                 <tr>
-                  <th>Entreprise</th>
-                  <th>Décision</th>
-                  <th>Officier</th>
-                  <th>Prise le</th>
-                  <th>Expire le</th>
-                  <th>Portée déclarée</th>
+                  <th scope="col">Entreprise</th>
+                  <th scope="col">Décision</th>
+                  <th scope="col">Officier</th>
+                  <th scope="col">Prise le</th>
+                  <th scope="col">Expire le</th>
+                  <th scope="col">Portée déclarée</th>
                 </tr>
               </thead>
               <tbody>

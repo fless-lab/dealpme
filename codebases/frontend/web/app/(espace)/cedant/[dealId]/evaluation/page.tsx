@@ -86,9 +86,9 @@ export default async function ValuationPage({ params }: { params: Promise<{ deal
             <table className="dp-table">
               <thead>
                 <tr>
-                  <th>Calculée le</th>
-                  <th>Fourchette</th>
-                  <th>Méthode</th>
+                  <th scope="col">Calculée le</th>
+                  <th scope="col">Fourchette</th>
+                  <th scope="col">Méthode</th>
                 </tr>
               </thead>
               <tbody>

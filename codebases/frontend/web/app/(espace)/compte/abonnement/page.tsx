@@ -5,6 +5,8 @@ import { fmtDate } from "../../../../lib/guards";
 import { fmtXof } from "../../../../lib/dossier";
 import { getSession } from "../../../../lib/session";
 
+export const metadata = { title: "Abonnement", description: "Palier de votre organisation et droits associés." };
+
 type Tier = "STARTER" | "BUSINESS" | "PREMIUM" | "ELITE";
 
 interface Entitlements {
@@ -135,9 +137,9 @@ export default async function SubscriptionPage() {
               <table className="dp-table">
                 <thead>
                   <tr>
-                    <th>Service</th>
+                    <th scope="col">Service</th>
                     {TIERS.map((t) => (
-                      <th key={t} style={t === sub.tier ? { background: "var(--dp-canvas)" } : undefined}>
+                      <th scope="col" key={t} style={t === sub.tier ? { background: "var(--dp-canvas)" } : undefined}>
                         {t}
                         {t === sub.tier ? <div className="dp-muted" style={{ fontSize: "0.72rem" }}>votre palier</div> : null}
                       </th>

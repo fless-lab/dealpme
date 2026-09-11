@@ -3,6 +3,8 @@ import { api, ApiError } from "../../../lib/api";
 import { fmtDateTime, requireRole } from "../../../lib/guards";
 import { BAND_LABEL, DEAL_STATUS_LABEL, REGION_LABEL, SECTORS } from "../../../lib/dossier";
 
+export const metadata = { title: "Mes intérêts", description: "Opportunités sur lesquelles vous vous êtes manifesté." };
+
 interface InterestRow {
   id: string;
   dealId: string;
@@ -52,12 +54,12 @@ export default async function InvestorHomePage() {
             <table className="dp-table">
               <thead>
                 <tr>
-                  <th>Opportunité</th>
-                  <th>Type</th>
-                  <th>État du dossier</th>
-                  <th>Manifesté le</th>
-                  <th className="dp-num">Messages</th>
-                  <th></th>
+                  <th scope="col">Opportunité</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">État du dossier</th>
+                  <th scope="col">Manifesté le</th>
+                  <th scope="col" className="dp-num">Messages</th>
+                  <th scope="col"></th>
                 </tr>
               </thead>
               <tbody>

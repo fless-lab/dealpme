@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 import { ContextBar, StatusBadge, Workspace } from "@dealpme/ui";
 import { api, ApiError } from "../../../../lib/api";
 import { requireRole } from "../../../../lib/guards";
@@ -50,7 +51,7 @@ export default async function DossierLayout({ children, params }: { children: Re
           </span>
         </span>
       </ContextBar>
-      <Workspace nav={nav} ariaLabel="Étapes du dossier">
+      <Workspace nav={nav} ariaLabel="Étapes du dossier" pathname={(await headers()).get("x-chemin") ?? ""}>
         {children}
       </Workspace>
     </>

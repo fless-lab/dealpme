@@ -128,6 +128,13 @@ PROGRESS = {
     "Inscription email": ("Complétée", None, dt.date(2026, 9, 11)),
     "Gabarit applicatif": ("Complétée", None, dt.date(2026, 9, 12)),
     "Tests négatifs : permissions serveur": ("Complétée", None, dt.date(2026, 10, 13)),
+    "État actif de la navigation": ("Complétée", None, dt.date(2026, 10, 3)),
+    "Champs de formulaire : aide et message": ("Complétée", None, dt.date(2026, 10, 4)),
+    "Titre et description propres à chaque écran": ("Complétée", None, dt.date(2026, 10, 3)),
+    "États de chargement, d'erreur et page introuvable": ("Complétée", None, dt.date(2026, 10, 5)),
+    "Navigation au clavier : lien d'évitement": ("En cours", 0.6, None),
+    "Tableaux accessibles : intitulé, portée": ("En cours", 0.7, None),
+    "Revue des contrôles désactivés": ("Complétée", None, dt.date(2026, 10, 5)),
     "Fiche opportunité T0": ("Complétée", None, dt.date(2026, 9, 28)),
     "Recherche et filtres": ("Complétée", None, dt.date(2026, 9, 29)),
     "Mise en relation : manifestation": ("Complétée", None, dt.date(2026, 9, 30)),
@@ -217,7 +224,7 @@ T = []
 def add(v, m, lot, tache, crit, ch, prio="Moyenne", statut=None, bloquant="Non", dep=""):
     T.append((v, m, lot, tache, crit, ch, prio, statut or ("À faire" if v == "V1" else "Backlog"), bloquant, dep))
 
-# ---------------- V1 (262 j/p) ----------------
+# ---------------- V1 (274 j/p) ----------------
 add("V1", "TRV", "Conception", "Architecture cible et décisions structurantes : monolithe modulaire, RPS indépendant, isolation de la data room, TypeScript de bout en bout, connecteurs externes, sessions serveur (ADR 0001 à 0006)", "Chaque décision est un ADR archivé avec contexte, options écartées et conséquences", 3, "Haute", bloquant="Oui")
 add("V1", "FOND", "Conception", "Modèle de domaine et invariants : entités, agrégats, machine à états du deal, immutabilités (type de cession, attribution), isolation par organisation", "Schéma de domaine relu ; chaque invariant est porté par une contrainte ou un déclencheur en base, pas seulement par le code", 3, "Haute", bloquant="Oui")
 add("V1", "FOND", "Conception", "Classification des données et politique de chiffrement : catégories PUBLIC / INTERNAL / PERSONAL / CONFIDENTIAL_DEAL, champs chiffrés, gestion et rotation des clés", "Registre des champs par catégorie ; procédure de rotation écrite", 2, "Haute")
@@ -303,6 +310,16 @@ add("V1", "TRV", "Frontend et design", "Gabarit applicatif : AppShell, navigatio
 add("V1", "TRV", "Frontend et design", "Responsive mobile sur les parcours V1", "Aucune casse de mise en page entre 360 et 1920 px", 4, "Moyenne")
 add("V1", "TRV", "Frontend et design", "Revue visuelle avec le designer UI/UX", "Liste des écarts traitée", 2, "Moyenne", dep="Designer UI/UX confirmé")
 
+# Lot de finition ouvert le 11/09/2026 après audit de l'interface : ces points ne cassent rien, mais ils
+# distinguent un produit fini d'une maquette fonctionnelle, et ils se voient en présentation.
+add("V1", "TRV", "Finition frontend", "État actif de la navigation : élément courant mis en évidence dans la barre et dans les navigations de service", "Chaque écran signale où l'on se trouve, au clavier comme à l'œil", 1, "Haute")
+add("V1", "TRV", "Finition frontend", "Champs de formulaire : aide et message d'erreur reliés au champ, focus porté sur le premier champ fautif", "Un lecteur d'écran annonce l'aide et l'erreur ; la correction commence au bon endroit", 2, "Haute")
+add("V1", "TRV", "Finition frontend", "Titre et description propres à chaque écran", "L'onglet du navigateur et l'historique nomment l'écran, pas seulement le produit", 1, "Moyenne")
+add("V1", "TRV", "Finition frontend", "États de chargement, d'erreur et page introuvable, en français", "Aucune page blanche ni message par défaut du cadre technique", 2, "Haute")
+add("V1", "TRV", "Finition frontend", "Navigation au clavier : lien d'évitement, repères de page, ordre de tabulation après une action", "Le parcours complet est praticable sans souris", 1, "Moyenne")
+add("V1", "TRV", "Finition frontend", "Tableaux accessibles : intitulé, portée des colonnes, en-têtes de ligne", "Chaque tableau se lit hors contexte visuel", 1, "Moyenne")
+add("V1", "TRV", "Finition frontend", "Revue des contrôles désactivés et des liens ouvrant un nouvel onglet", "Un contrôle désactivé dit pourquoi ; un nouvel onglet est annoncé", 1, "Moyenne")
+add("V1", "TRV", "Finition frontend", "Passe de finition visuelle sur les six parcours (espacements, alignements, états au survol et au focus)", "Écarts relevés lors de la revue traités ou inscrits", 3, "Moyenne")
 add("V1", "TRV", "QA et livraison", "Tests automatisés : unitaires et bout en bout sur les parcours critiques", "Couverture des parcours inscription, dossier, publication, certification", 5, "Haute")
 add("V1", "TRV", "QA et livraison", "Tests négatifs : permissions serveur, accès non autorisés, contrôles morts", "Aucun contrôle visible sans réaction définie", 3, "Haute")
 add("V1", "TRV", "QA et livraison", "Captures de régression visuelle sur le laboratoire de composants (1440 x 960 et 390 x 844)", "Un écart visuel non intentionnel fait échouer la chaîne d'intégration", 2, "Moyenne")
@@ -463,7 +480,7 @@ add("V5", "VDR-IA", "QA IA", "Performance : viewer progressif, streaming des ré
 add("V5", "VDR-IA", "QA IA", "Recette V5 et corrections", "Zéro anomalie bloquante ouverte", 5, "Haute")
 
 # ------------------------------------------------------------------ contrôle des totaux par version
-expected = {"V1": 262, "V2": 172, "V3": 179, "V4": 102, "V5": 153}
+expected = {"V1": 274, "V2": 172, "V3": 179, "V4": 102, "V5": 153}
 totals = {}
 for t in T:
     totals[t[0]] = totals.get(t[0], 0) + t[5]
@@ -1399,7 +1416,7 @@ ROADMAP = {
                   "Alerte & Rebond, billetterie et sponsoring Deal-Connect, rendez-vous mutuels, rapport post-événement, profil diaspora complet (V4)"],
         "prerequis": "Équipe de développement confirmée (5 à 6 profils) ; réponse sur l'API CFE/RCCM ; designer UI/UX confirmé.",
         "decision": "La démonstration RPS fait partie de V1. Sans équipe à 5 ou 6 profils, la démonstration RPS est le premier lot à retirer, avant le matching automatisé.",
-        "lots": ["Conception", "Fondations", "Auth et rôles", "Espace CCI-Togo", "Deal-Ready", "Dossier cédant", "Marketplace actifs", "Évaluation indicative", "Démonstration RPS", "Deal-Connect (Remo)", "Sécurité", "Frontend et design", "QA et livraison"],
+        "lots": ["Conception", "Fondations", "Auth et rôles", "Espace CCI-Togo", "Deal-Ready", "Dossier cédant", "Marketplace actifs", "Évaluation indicative", "Démonstration RPS", "Deal-Connect (Remo)", "Sécurité", "Frontend et design", "Finition frontend", "QA et livraison"],
     },
     "V2": {
         "focus": "Le cœur du différenciateur produit : le moteur RPS complet pour les cessions de titres et la data room. Prérequis à toute diligence réelle.",
