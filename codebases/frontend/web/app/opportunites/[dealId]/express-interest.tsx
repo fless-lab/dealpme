@@ -99,7 +99,7 @@ export function ExpressInterest({ dealId, isShare, alreadyInterested }: { dealId
             <Textarea id="interest-note" rows={3} value={note} onChange={(e) => setNote(e.target.value)} data-control-id="OPP_INTEREST_NOTE" />
           </Field>
           <Actions>
-            <Button controlId="OPP_INTEREST_SUBMIT" type="submit" state={busy ? "loading" : "default"}>
+            <Button controlId="EXPRESS_INTEREST" type="submit" state={busy ? "loading" : "default"}>
               Manifester mon intérêt
             </Button>
           </Actions>
@@ -123,7 +123,7 @@ export function ExpressInterest({ dealId, isShare, alreadyInterested }: { dealId
               <Textarea id="message-body" rows={3} required value={body} onChange={(e) => setBody(e.target.value)} data-control-id="OPP_MESSAGE_BODY" />
             </Field>
             <Actions>
-              <Button controlId="OPP_MESSAGE_SEND" type="submit" state={busy ? "loading" : "default"}>
+              <Button controlId="CONTACT_SELLER" type="submit" state={busy ? "loading" : "default"}>
                 Envoyer
               </Button>
             </Actions>

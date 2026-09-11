@@ -177,7 +177,7 @@
    "succes": "`CONTACT_REQUESTED`",
    "bloque": "`—`",
    "audit": "`CONTACT_REQUEST_CREATED`",
-   "utilise": false
+   "utilise": true
   },
   "CREATE_ISSUE": {
    "origine": "corpus",
@@ -276,7 +276,7 @@
    "succes": "`INTEREST_RECORDED`",
    "bloque": "`—`",
    "audit": "`INTEREST_RECORDED`",
-   "utilise": false
+   "utilise": true
   },
   "FILTER_ISSUES": {
    "origine": "corpus",
@@ -3299,18 +3299,6 @@
    "contrat": "a_documenter",
    "utilise": true
   },
-  "OPP_DETAIL_NEXT": {
-   "origine": "depot",
-   "surface": "web/app/opportunites/[dealId]/page.tsx",
-   "libelle": "",
-   "action": "",
-   "autorisation": "",
-   "succes": "",
-   "bloque": "",
-   "audit": "",
-   "contrat": "a_documenter",
-   "utilise": true
-  },
   "OPP_DETAIL_RAIL": {
    "origine": "depot",
    "surface": "web/app/opportunites/[dealId]/page.tsx",
@@ -3515,18 +3503,6 @@
    "contrat": "a_documenter",
    "utilise": true
   },
-  "OPP_INTEREST_SUBMIT": {
-   "origine": "depot",
-   "surface": "web/app/opportunites/[dealId]/express-interest.tsx",
-   "libelle": "",
-   "action": "",
-   "autorisation": "",
-   "succes": "",
-   "bloque": "",
-   "audit": "",
-   "contrat": "a_documenter",
-   "utilise": true
-  },
   "OPP_LIST_DEAL_READY_SCOPE": {
    "origine": "depot",
    "surface": "web/app/opportunites/page.tsx",
@@ -3576,18 +3552,6 @@
    "utilise": true
   },
   "OPP_MESSAGE_BODY": {
-   "origine": "depot",
-   "surface": "web/app/opportunites/[dealId]/express-interest.tsx",
-   "libelle": "",
-   "action": "",
-   "autorisation": "",
-   "succes": "",
-   "bloque": "",
-   "audit": "",
-   "contrat": "a_documenter",
-   "utilise": true
-  },
-  "OPP_MESSAGE_SEND": {
    "origine": "depot",
    "surface": "web/app/opportunites/[dealId]/express-interest.tsx",
    "libelle": "",

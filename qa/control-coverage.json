@@ -1,11 +1,11 @@
 {
  "genereLe": "2026-09-11",
- "controlesAuRegistre": 444,
+ "controlesAuRegistre": 441,
  "controlesDuCorpus": 76,
- "controlesDuDepot": 368,
- "controlesUtilisesDansLeCode": 372,
+ "controlesDuDepot": 365,
+ "controlesUtilisesDansLeCode": 371,
  "identifiantsHorsRegistre": 0,
- "contratsADocumenter": 368,
+ "contratsADocumenter": 365,
  "identifiantsDynamiques": 1,
  "statut": "PASS"
 }

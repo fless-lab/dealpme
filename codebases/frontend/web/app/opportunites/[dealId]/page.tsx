@@ -80,7 +80,7 @@ export default async function OpportunityPage({ params }: { params: Promise<{ de
               ? {}
               : {
                   nextAction: canExpressInterest
-                    ? { label: "Manifester votre intérêt", href: `#interet`, controlId: "OPP_DETAIL_NEXT" }
+                    ? { label: "Manifester votre intérêt", href: `#interet`, controlId: "EXPRESS_INTEREST" }
                     : { label: "Créer un compte investisseur", href: "/inscription", controlId: "OPP_DETAIL_REGISTER" },
                 }),
             missing: isShare ? ["Admission au cercle par le service de conformité"] : ["Manifestation d'intérêt", "Qualification par le cédant", "Accord de confidentialité signé"],
