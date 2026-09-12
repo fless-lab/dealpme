@@ -2,7 +2,9 @@
 
 **Révision : 12/09/2026, après réunion direction et clarification CFE.**
 
-**État : L01 et L02 réalisés et vérifiés ; prochain lot technique à engager : L03.**
+**État : L01/L02 vérifiés ; L03 opérationnel en local, recettes fournisseurs encore ouvertes.**
+Le prochain lot technique indépendant est **L04**. [Usage des notifications](NOTIFICATIONS.md),
+[preuves locales L03](../qa/l03-verification.json).
 Preuves et commandes de reprise : [CI.md](CI.md) et [qa/l01-ci.json](../qa/l01-ci.json).
 Les autres lots restent à réaliser ; les acquis historiques sont conservés.
 L02 : [décision d'implémentation](adr/0008-audit-et-conversations.md) et [preuves](../qa/l02-verification.json).
@@ -147,6 +149,10 @@ Tâches : **V1-094, V1-095**. Fichiers : `platform/audit.service.ts`, services m
 et chaque action sensible possède une preuve durable. Les tâches historiques restent acquises.
 
 ## 6. L03 — email SMTP, boîte SMS et bascule opérateur
+
+**Local validé :** 17 scénarios supplémentaires dont quatre navigateur, codes lus dans les boîtes et
+retours `devCode` supprimés. V1-101 terminée ; V1-093 et V1-102 en revue après validation locale.
+Les accès et recettes SMTP/SMS réels restent attendus, notamment V1-028. Aucun changement de dates.
 
 Tâches : **V1-093, V1-101, V1-102, V1-028**.
 Contrats détaillés et matrice de tests : [INTEGRATIONS_LOCALES.md](INTEGRATIONS_LOCALES.md), sections 1–4.
@@ -359,6 +365,6 @@ Pour chaque tâche engagée :
 6. Régénérer le classeur, vérifier dates/identifiants/formules et committer le lot cohérent.
 7. Laisser une note de reprise : dernier contrôle réussi, accès manquant éventuel, prochaine action exacte.
 
-**Première action applicative de reprise : L03 / V1-093**, implémenter le transport SMTP vers Mailpit,
-puis la boîte SMS locale V1-101 et les contrats V1-102. La consommation OTP atomique est déjà en place
-depuis L02 ; la livraison réelle et les pannes de transport restent à éprouver dans L03.
+**Première action applicative de reprise : L04 / V1-109**, implémenter le mock CFE et la bascule API/manuelle,
+puis le traitement des alertes, la supervision et les sauvegardes. Les transports locaux L03 sont prêts ;
+continuer en parallèle la collecte des accès et les recettes des fournisseurs réels.

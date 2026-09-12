@@ -5,7 +5,8 @@ Place de marché de transmission et reprise de PME en Afrique francophone (zone 
 Périmètre de référence : cahier des charges v0 approuvé (25/06/2026) et Référentiel de processus P04 à P25. Suivi du projet : `DealPME_Suivi.xlsx` à la racine (régénérable avec `devX/build_suivi.py`).
 
 Plan actif après réunion direction : [plan d'exécution par lots](docs/PLAN_EXECUTION.md), également dans
-l'onglet `Plan_execution` du classeur. **L01 et L02 terminés** ([CI](docs/CI.md), [audit et messagerie](docs/adr/0008-audit-et-conversations.md)) ; prochain lot : **L03 — email et SMS locaux**.
+l'onglet `Plan_execution` du classeur. **L01/L02 terminés, L03 opérationnel en local**
+([notifications](docs/NOTIFICATIONS.md)) ; recettes fournisseurs encore ouvertes. Prochain lot indépendant : **L04 — CFE, alertes et exploitation**.
 Contexte : [bilan initial du 12/09/2026](docs/BILAN_AVANCEMENT_2026-09-12.md) et
 [compte rendu de direction](docs/COMPTE_RENDU_DIRECTION_2026-09-12.md).
 Le fichier `DealPME_Suivi.ods` est une archive d'un ancien calendrier ; le suivi actif est le `.xlsx`.
@@ -13,7 +14,7 @@ Le fichier `DealPME_Suivi.ods` est une archive d'un ancien calendrier ; le suivi
 ## Structure
 
 ```
-packages/                  bibliothèques partagées (domain, contracts, i18n, testing, config)
+packages/                  bibliothèques partagées (domain, contracts, i18n, testing, notifications, config)
 codebases/backend/api      API REST /v1 : monolithe modulaire NestJS, un module par module fonctionnel
 codebases/backend/worker   jobs asynchrones (matching, notifications, ingestion, webhooks)
 codebases/engine/rps       Regulatory Perimeter Service : service indépendant, base séparée
@@ -22,6 +23,7 @@ codebases/engine/deallens  assistant IA (V5, Python), pare-feu de permission
 codebases/external_connectors/*  un port + des adaptateurs + un faux par dépendance externe
 codebases/frontend/web     site public et application (Next.js), français langue source
 codebases/frontend/ui      design system : jetons de la charte et composants nommés
+codebases/devtools/sms-inbox boîte SMS locale réutilisable (simulation, profil Docker local)
 infra/                     docker-compose (3 bases Postgres, Redis, MinIO, Mailpit)
 docs/                      architecture, conventions, décisions (ADR), fiches modules
 ```

@@ -63,6 +63,11 @@ export default tseslint.config(
     rules: { "no-console": "off" },
   },
   {
+    files: ["codebases/devtools/sms-inbox/public/*.js"],
+    extends: [js.configs.recommended],
+    languageOptions: { globals: globals.browser },
+  },
+  {
     files: ["devX/**/*.mjs", "eslint.config.mjs"],
     extends: [js.configs.recommended],
     languageOptions: { globals: globals.node },

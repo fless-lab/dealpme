@@ -107,7 +107,24 @@ services:
 
   mailpit:
     image: axllent/mailpit:latest
-    ports: ["8025:8025", "1025:1025"]
+    ports: ["127.0.0.1:8025:8025", "127.0.0.1:1025:1025"]
+
+  sms-inbox:
+    profiles: [local]
+    build:
+      context: ..
+      dockerfile: codebases/devtools/sms-inbox/Dockerfile
+    environment:
+      NODE_ENV: development
+      SMS_INBOX_API_KEY: ${SMS_LOCAL_API_KEY:-dealpme-local-sms}
+      SMS_INBOX_MAX_MESSAGES: 1000
+      SMS_INBOX_TTL_MS: 3600000
+    ports: ["127.0.0.1:8026:8026"]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8026/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
 
 volumes:
   clamav:

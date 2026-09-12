@@ -19,6 +19,7 @@ export const RULES = {
   LOGIN_PER_IP: { limit: 20, windowSeconds: 60 } satisfies RateLimitRule,
   LOGIN_FAILURES_PER_ACCOUNT: { limit: 5, windowSeconds: 60 } satisfies RateLimitRule,
   OTP_ATTEMPTS_PER_CHALLENGE: { limit: 5, windowSeconds: 600 } satisfies RateLimitRule,
+  OTP_ISSUES_PER_USER: { limit: 5, windowSeconds: 600 } satisfies RateLimitRule,
   API_PER_IP: { limit: 300, windowSeconds: 60 } satisfies RateLimitRule,
   REGISTER_PER_IP: { limit: 5, windowSeconds: 3600 } satisfies RateLimitRule,
 } as const;

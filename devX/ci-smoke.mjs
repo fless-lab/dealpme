@@ -26,8 +26,9 @@ const env = {
   CONNECTOR_REMO_WEBHOOK_SECRET: randomBytes(32).toString("base64"),
   DEMO_CREDENTIALS_FILE: join(privateDir, "credentials.json"),
   CI_TEST_PROJECT: project,
+  SMS_LOCAL_API_KEY: randomBytes(24).toString("hex"),
 };
-const compose = ["compose", "--env-file", composeEnv, "-p", project,
+const compose = ["compose", "--env-file", composeEnv, "--profile", "local", "-p", project,
   "-f", join(root, "infra/docker-compose.yml"), "-f", join(root, "infra/docker-compose.ci.yml")];
 const report = { startedAt: new Date().toISOString(), project, status: "RUNNING", steps: [], checks: [] };
 const children = [];
@@ -144,10 +145,10 @@ try {
     command("docker", ["info", "--format", "{{.ServerVersion}}"]);
     // Marquer avant up : nettoyer aussi un démarrage partiellement échoué.
     infrastructureStarted = true;
-    dc(["up", "-d"], { timeout: 180_000 });
+    dc(["up", "-d", "--build"], { timeout: 180_000 });
     await waitFor("Postgres, Redis, ClamAV et stockage", () => {
       const ids = dc(["ps", "-aq"]).split(/\s+/).filter(Boolean);
-      if (ids.length !== 8) return false;
+      if (ids.length !== 9) return false;
       const containers = JSON.parse(command("docker", ["inspect", ...ids]));
       return containers.every((container) => {
         const name = container.Config.Labels["com.docker.compose.service"];
@@ -174,6 +175,10 @@ try {
     env.RPS_BASE_URL = `http://127.0.0.1:${env.RPS_PORT}`;
     env.SMOKE_CORE_CONTAINER = dc(["ps", "-q", "postgres-core"]);
     env.SMOKE_REDIS_CONTAINER = dc(["ps", "-q", "redis"]);
+    env.SMTP_HOST = "127.0.0.1";
+    env.SMTP_PORT = String(mappedPort("mailpit", 1025));
+    env.MAILPIT_API_URL = `http://127.0.0.1:${mappedPort("mailpit", 8025)}`;
+    env.SMS_LOCAL_BASE_URL = `http://127.0.0.1:${mappedPort("sms-inbox", 8026)}`;
     await waitFor("MinIO", () => httpReady(`${env.S3_ENDPOINT}/minio/health/ready`, 200));
   });
   await step("Migrations et RLS", () => {
@@ -206,6 +211,9 @@ try {
   await step("L02 : transactions, migration et navigateur", () => {
     command(process.execPath, ["devX/l02-integration.mjs"], { timeout: 240_000 });
   });
+  await step("L03 : SMTP, SMS, pannes et parcours OTP", () => {
+    command(process.execPath, ["devX/l03-integration.mjs"], { timeout: 240_000 });
+  });
   report.status = "PASS";
 } catch (error) {
   report.status = "FAIL";
@@ -218,7 +226,7 @@ try {
   }
   await stopApps();
   if (infrastructureStarted) {
-    try { dc(["down", "--volumes", "--remove-orphans"], { timeout: 60_000 }); }
+    try { dc(["down", "--volumes", "--remove-orphans", "--rmi", "local"], { timeout: 60_000 }); }
     catch { report.status = "FAIL"; report.cleanupFailed = true; process.exitCode = 1; }
   }
   report.finishedAt = new Date().toISOString();

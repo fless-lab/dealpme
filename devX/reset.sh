@@ -13,13 +13,14 @@ grep -q "^NODE_ENV=production" .env && { echo "Refus : NODE_ENV=production dans 
 
 echo "1/6  Compilation (avant toute réinitialisation des données)"
 npm run build:libs
-npm run build -w codebases/backend/api -w codebases/engine/rps
+npm run build -w codebases/backend/api -w codebases/engine/rps -w codebases/devtools/sms-inbox
+node --env-file=.env -e 'require("./codebases/backend/api/dist/config/env.js").loadEnv()'
 
 echo "2/6  Arrêt et effacement des volumes"
-docker compose -f infra/docker-compose.yml down -v
+docker compose -f infra/docker-compose.yml --profile local down -v
 
 echo "3/6  Démarrage de la pile"
-docker compose -f infra/docker-compose.yml up -d >/dev/null
+docker compose -f infra/docker-compose.yml --profile local up -d --build >/dev/null
 for c in core vdr rps; do
   printf "      base %s" "$c"
    for _ in $(seq 1 60); do docker exec "dealpme-postgres-$c-1" pg_isready -U "dealpme_$c" >/dev/null 2>&1 && break; printf "."; sleep 1; done

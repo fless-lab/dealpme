@@ -12,17 +12,19 @@
     "packages/contracts",
     "packages/i18n",
     "packages/testing",
+    "packages/notifications",
     "codebases/engine/rules",
     "codebases/external_connectors/*",
     "codebases/frontend/ui",
     "codebases/engine/rps",
     "codebases/backend/api",
     "codebases/backend/worker",
-    "codebases/frontend/web"
+    "codebases/frontend/web",
+    "codebases/devtools/sms-inbox"
   ],
   "scripts": {
-    "build:libs": "npm run build -w packages/domain -w packages/contracts -w packages/i18n -w packages/testing -w codebases/engine/rules -w codebases/external_connectors -w codebases/frontend/ui",
-    "build:apps": "npm run build -w codebases/engine/rps -w codebases/backend/api -w codebases/backend/worker -w codebases/frontend/web",
+    "build:libs": "npm run build -w packages/domain -w packages/contracts -w packages/i18n -w packages/testing -w packages/notifications -w codebases/engine/rules -w codebases/external_connectors -w codebases/frontend/ui",
+    "build:apps": "npm run build -w codebases/engine/rps -w codebases/backend/api -w codebases/backend/worker -w codebases/frontend/web -w codebases/devtools/sms-inbox",
     "build": "npm run build:libs && npm run build:apps",
     "dev:api": "npm run dev -w codebases/backend/api",
     "dev:rps": "npm run dev -w codebases/engine/rps",
@@ -33,8 +35,8 @@
     "lint": "eslint . --max-warnings=0",
     "ci:smoke": "node devX/ci-smoke.mjs",
     "ci:verify-gates": "node devX/verify-ci-gates.mjs",
-    "infra:up": "docker compose -f infra/docker-compose.yml up -d",
-    "infra:down": "docker compose -f infra/docker-compose.yml down",
+    "infra:up": "npm run build -w packages/notifications -w codebases/devtools/sms-inbox && docker compose -f infra/docker-compose.yml --profile local up -d --build",
+    "infra:down": "docker compose -f infra/docker-compose.yml --profile local down",
     "db:migrate:core": "npm run db:migrate -w codebases/backend/api",
     "db:migrate:rps": "npm run db:migrate -w codebases/engine/rps"
   },

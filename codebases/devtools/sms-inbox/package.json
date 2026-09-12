@@ -1,0 +1,15 @@
+{
+  "name": "@dealpme/sms-inbox",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "start": "node dist/server.js"
+  },
+  "dependencies": { "@dealpme/notifications": "*", "zod": "^4.1.5" },
+  "devDependencies": { "@dealpme/config": "*" }
+}

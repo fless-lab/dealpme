@@ -20,8 +20,9 @@ check() { # nom, code attendu, code obtenu
   if [ "$2" = "$3" ]; then echo "OK   $1 ($3)"; ok=$((ok+1)); else echo "KO   $1 (attendu $2, obtenu $3)"; ko=$((ko+1)); fi
 }
 login() { curl -s -X POST "$API/auth/login" -H 'content-type: application/json' -d "{\"email\":\"$1\",\"password\":\"$(pw "$1")\"}" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("token",""))'; }
-# Connexion d'un rôle à second facteur obligatoire : le code n'est renvoyé (devCode) qu'en développement.
-login_mfa() { r=$(curl -s -X POST "$API/auth/login" -H 'content-type: application/json' -d "{\"email\":\"$1\",\"password\":\"$(pw "$1")\"}"); ch=$(echo "$r" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("challengeId",""))'); code=$(echo "$r" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("devCode",""))'); curl -s -X POST "$API/auth/mfa/verify" -H 'content-type: application/json' -d "{\"challengeId\":\"$ch\",\"code\":\"$code\"}" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("token",""))'; }
+# Les codes se lisent dans les boîtes locales ; aucune réponse API ne les expose.
+otp() { node "$(dirname "$0")/notification-inbox.mjs" "$1" "$2"; }
+login_mfa() { r=$(curl -s -X POST "$API/auth/login" -H 'content-type: application/json' -d "{\"email\":\"$1\",\"password\":\"$(pw "$1")\"}"); ch=$(echo "$r" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("challengeId",""))'); code=$(otp sms "$ch"); curl -s -X POST "$API/auth/mfa/verify" -H 'content-type: application/json' -d "{\"challengeId\":\"$ch\",\"code\":\"$code\"}" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("token",""))'; }
 
 # Le scénario provoque volontairement des échecs de connexion pour éprouver l'anti-force-brute. Les compteurs
 # et verrous restent ensuite en place quelques minutes : on les efface avant de commencer, faute de quoi une
@@ -39,10 +40,11 @@ check "un officier CCI-Togo reçoit un défi de second facteur, sans session" "T
 OFF=$(login_mfa officier@cci-togo.demo.dealpme.local)
 [ -n "$OFF" ] && check "second facteur validé ouvre la session de l'officier" 1 1 || check "second facteur validé ouvre la session de l'officier" 1 0
 reg=$(curl -s -X POST "$API/auth/register" -H 'content-type: application/json' -d "{\"email\":\"$NEW_EMAIL\",\"password\":\"MotDePasseSolide-2026\",\"phoneE164\":\"+22890000001\",\"organisationName\":\"Nouvelle entreprise de fumée\",\"role\":\"SELLER\",\"consents\":{\"termsAccepted\":true,\"privacyAccepted\":true,\"marketingOptIn\":false},\"attribution\":{\"channel\":\"SMOKE\"}}")
-chal=$(echo "$reg" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("emailChallengeId",""))'); vcode=$(echo "$reg" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("devCode",""))')
+chal=$(echo "$reg" | python3 -c 'import sys,json;d=json.load(sys.stdin);print(d.get("emailChallengeId",""))'); vcode=$(otp email "$chal")
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'content-type: application/json' -d "{\"email\":\"$NEW_EMAIL\",\"password\":\"MotDePasseSolide-2026\"}")
 check "connexion refusée tant que l'email n'est pas vérifié (403)" 403 "$code"
-code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/email/verify" -H 'content-type: application/json' -d "{\"challengeId\":\"$chal\",\"code\":\"000000\"}")
+wrongcode=000000; [ "$vcode" = "$wrongcode" ] && wrongcode=111111
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/email/verify" -H 'content-type: application/json' -d "{\"challengeId\":\"$chal\",\"code\":\"$wrongcode\"}")
 check "code de vérification faux refusé (401)" 401 "$code"
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/email/verify" -H 'content-type: application/json' -d "{\"challengeId\":\"$chal\",\"code\":\"$vcode\"}")
 check "vérification d'email avec le bon code" 200 "$code"

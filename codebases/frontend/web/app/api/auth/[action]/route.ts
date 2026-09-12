@@ -20,12 +20,12 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ action: st
   try {
     switch (action as Action) {
       case "login": {
-        const r = await api<{ token?: string; expiresAt?: string; mfaRequired?: boolean; challengeId?: string; devCode?: string }>("/auth/login", { method: "POST", body: JSON.stringify(body), headers: forward });
+        const r = await api<{ token?: string; expiresAt?: string; mfaRequired?: boolean; challengeId?: string }>("/auth/login", { method: "POST", body: JSON.stringify(body), headers: forward });
         if (r.token) {
           await setSession(r.token);
           return NextResponse.json({ ok: true });
         }
-        return NextResponse.json({ ok: false, mfaRequired: true, challengeId: r.challengeId, devCode: r.devCode });
+        return NextResponse.json({ ok: false, mfaRequired: true, challengeId: r.challengeId });
       }
       case "mfa": {
         const r = await api<{ token: string }>("/auth/mfa/verify", { method: "POST", body: JSON.stringify(body), headers: forward });
@@ -33,8 +33,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ action: st
         return NextResponse.json({ ok: true });
       }
       case "register": {
-        const r = await api<{ userId: string; emailChallengeId: string; devCode?: string }>("/auth/register", { method: "POST", body: JSON.stringify(body), headers: forward });
-        return NextResponse.json({ ok: true, emailChallengeId: r.emailChallengeId, devCode: r.devCode });
+        const r = await api<{ userId: string; emailChallengeId: string }>("/auth/register", { method: "POST", body: JSON.stringify(body), headers: forward });
+        return NextResponse.json({ ok: true, emailChallengeId: r.emailChallengeId });
       }
       case "email-verify": {
         await api("/auth/email/verify", { method: "POST", body: JSON.stringify(body) });

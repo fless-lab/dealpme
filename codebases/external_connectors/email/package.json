@@ -13,5 +13,9 @@
   },
   "devDependencies": {
     "@dealpme/config": "*"
+  },
+  "dependencies": {
+    "@dealpme/notifications": "*",
+    "nodemailer": "^10.0.8"
   }
 }

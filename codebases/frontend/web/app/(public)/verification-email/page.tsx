@@ -3,13 +3,13 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState, type FormEvent } from "react";
 import { Actions, Button, Field, Input, StateBanner } from "@dealpme/ui";
+import { authRequest } from "../../../lib/auth-request";
 
 function VerifyEmailForm() {
   const router = useRouter();
   const params = useSearchParams();
   const email = params.get("email") ?? "";
   const challengeId = params.get("challenge") ?? "";
-  const devCode = params.get("devCode");
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -19,15 +19,16 @@ function VerifyEmailForm() {
     e.preventDefault();
     setBusy(true);
     setError(null);
-    const res = await fetch("/api/auth/email-verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ challengeId, code }) });
-    const data = (await res.json()) as { ok: boolean; message?: string };
-    setBusy(false);
+    try {
+    const data = await authRequest("email-verify", { challengeId, code });
     if (data.ok) {
       setDone(true);
       setTimeout(() => router.push("/connexion"), 1200);
       return;
     }
     setError(data.message ?? "Code invalide.");
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Vérification indisponible."); }
+    finally { setBusy(false); }
   }
 
   if (!challengeId) {
@@ -41,7 +42,6 @@ function VerifyEmailForm() {
     <>
       {done ? <StateBanner tone="success" title="Adresse vérifiée" controlId="VERIFY_EMAIL_DONE">Vous pouvez maintenant vous connecter.</StateBanner> : null}
       {error ? <StateBanner tone="danger" title="Code refusé" controlId="VERIFY_EMAIL_ERROR">{error}</StateBanner> : null}
-      {devCode ? <p className="dp-muted">Environnement de développement : code {devCode}</p> : null}
       <form onSubmit={submit} noValidate>
         <Field id="code" label={`Code reçu à l'adresse ${email}`} hint="Six chiffres, valable 10 minutes.">
           <Input id="code" inputMode="numeric" pattern="[0-9]{6}" required value={code} onChange={(e) => setCode(e.target.value)} data-control-id="VERIFY_EMAIL_CODE" />
@@ -50,6 +50,7 @@ function VerifyEmailForm() {
           <Button controlId="VERIFY_EMAIL_SUBMIT" type="submit" state={busy ? "loading" : "default"}>
             Vérifier mon adresse
           </Button>
+          <a className="dp-btn dp-btn-ghost" href="/connexion" data-control-id="VERIFY_EMAIL_REISSUE">Recevoir un nouveau code via la connexion</a>
         </Actions>
       </form>
     </>

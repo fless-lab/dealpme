@@ -36,7 +36,7 @@ export class IdentityController {
   async login(@Body(validate(LoginRequestSchema)) body: { email: string; password: string }, @Req() req: Request, @Headers("user-agent") ua?: string) {
     const outcome = await this.identity.login(body.email, body.password, clientIp(req), ua?.slice(0, 120) ?? null, correlationIdOf(req));
     if (outcome.kind === "MFA_REQUIRED") {
-      return { mfaRequired: true, challengeId: outcome.challengeId, ...(outcome.devCode ? { devCode: outcome.devCode } : {}) };
+      return { mfaRequired: true, challengeId: outcome.challengeId };
     }
     // Le jeton est transmis au client, seul son hash est conservé côté serveur.
     return { token: outcome.token, expiresAt: outcome.expiresAt.toISOString() };

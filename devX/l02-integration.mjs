@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import postgres from "postgres";
 import { verifyHistoricalMigration } from "./l02-migration-check.mjs";
 import { verifyMessagingBrowser } from "./l02-browser.mjs";
+import { readOtp } from "./notification-inbox.mjs";
 
 // Les injections de panne ne sont utilisables que dans la pile jetable du runner CI.
 if (!/^dealpme-ci-/.test(process.env.CI_TEST_PROJECT ?? "") || !process.env.DEMO_CREDENTIALS_FILE) throw new Error("Utiliser npm run ci:smoke, jamais la base de travail");
@@ -39,7 +40,7 @@ async function request(path, { token, body, method = body === undefined ? "GET" 
 }
 async function login(email) {
   const data = await request("/auth/login", { body: { email, password: credentials[email] } });
-  if (data.mfaRequired) return (await request("/auth/mfa/verify", { body: { challengeId: data.challengeId, code: data.devCode } })).token;
+  if (data.mfaRequired) return (await request("/auth/mfa/verify", { body: { challengeId: data.challengeId, code: await readOtp("sms", data.challengeId) } })).token;
   return data.token;
 }
 const scalar = async (query) => Number((await query)[0].n);
@@ -92,11 +93,12 @@ try {
   });
   const emailB = `l02-beta-${randomUUID()}@demo.dealpme.local`;
   const registrationB = await request("/auth/register", { body: registration(emailB), status: 201 });
+  const registrationBCode = await readOtp("email", registrationB.emailChallengeId);
   await check("Email : consommation OTP et validation annulées ensemble si audit échoue", async () => {
-    await request("/auth/email/verify", { body: { challengeId: registrationB.emailChallengeId, code: registrationB.devCode }, cid: "l02-fault-email", status: 500 });
+    await request("/auth/email/verify", { body: { challengeId: registrationB.emailChallengeId, code: registrationBCode }, cid: "l02-fault-email", status: 500 });
     assert.equal((await admin`SELECT consumed_at FROM otp_challenge WHERE id=${registrationB.emailChallengeId}`)[0].consumed_at, null);
     assert.equal((await admin`SELECT email_verified_at FROM app_user WHERE email=${emailB}`)[0].email_verified_at, null);
-    await request("/auth/email/verify", { body: { challengeId: registrationB.emailChallengeId, code: registrationB.devCode } });
+    await request("/auth/email/verify", { body: { challengeId: registrationB.emailChallengeId, code: registrationBCode } });
   });
   const investorB = (await request("/auth/login", { body: { email: emailB, password: registration(emailB).password } })).token;
   const meB = await request("/me", { token: investorB });
@@ -111,9 +113,10 @@ try {
   });
   await check("MFA : consommation unique en concurrence et pas de session sans preuve", async () => {
     const challenge = await request("/auth/login", { body: { email: "officier@cci-togo.demo.dealpme.local", password: credentials["officier@cci-togo.demo.dealpme.local"] } });
-    await request("/auth/mfa/verify", { body: { challengeId: challenge.challengeId, code: challenge.devCode }, cid: "l02-fault-mfa", status: 500 });
+    const challengeCode = await readOtp("sms", challenge.challengeId);
+    await request("/auth/mfa/verify", { body: { challengeId: challenge.challengeId, code: challengeCode }, cid: "l02-fault-mfa", status: 500 });
     assert.equal((await admin`SELECT consumed_at FROM otp_challenge WHERE id=${challenge.challengeId}`)[0].consumed_at, null);
-    const responses = await Promise.all([1, 2].map(() => fetch(`${base}/auth/mfa/verify`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ challengeId: challenge.challengeId, code: challenge.devCode }) })));
+    const responses = await Promise.all([1, 2].map(() => fetch(`${base}/auth/mfa/verify`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ challengeId: challenge.challengeId, code: challengeCode }) })));
     assert.deepEqual(responses.map((r) => r.status).sort(), [200, 401]);
     await Promise.all(responses.map((r) => r.arrayBuffer()));
   });

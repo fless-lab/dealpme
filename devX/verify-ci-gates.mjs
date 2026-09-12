@@ -60,7 +60,7 @@ const probes = [
   { name: "Règles de Hooks React", file: "codebases/frontend/ui/src/ci-gate-probe.tsx", content: 'import { useState } from "react";\nexport function CiProbe({ active }: { active: boolean }) { if (active) { useState(0); } return null; }\n', args: ["run", "lint"], expected: "react-hooks/rules-of-hooks" },
   { name: "Bibliothèque partagée", file: "packages/domain/src/ci-gate-probe.ts", content: typeError, args: ["run", "build:libs"], expected: "ci-gate-probe.ts" },
   { name: "Connecteur externe", file: "codebases/external_connectors/email/src/ci-gate-probe.ts", content: typeError, args: ["run", "build:libs"], expected: "ci-gate-probe.ts" },
-  ...["codebases/engine/rps", "codebases/backend/api", "codebases/backend/worker", "codebases/frontend/web"].map((workspace) => ({
+  ...["codebases/engine/rps", "codebases/backend/api", "codebases/backend/worker", "codebases/frontend/web", "codebases/devtools/sms-inbox"].map((workspace) => ({
     name: `Build ${workspace}`, file: `${workspace}/${workspace.endsWith("/web") ? "" : "src/"}ci-gate-probe.ts`,
     content: typeError, args: ["run", "build", "-w", workspace], expected: "ci-gate-probe.ts",
   })),

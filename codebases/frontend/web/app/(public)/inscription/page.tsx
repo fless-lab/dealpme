@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { Actions, Button, Checkbox, Field, Input, Select, StateBanner } from "@dealpme/ui";
+import { authRequest } from "../../../lib/auth-request";
 
 /**
  * Inscription (P08). Consentements séparés : conditions et confidentialité obligatoires, marketing jamais pré-coché.
@@ -23,11 +24,9 @@ export default function RegisterPage() {
     }
     setBusy(true);
     setError(null);
+    try {
     const params = new URLSearchParams(window.location.search);
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+    const data = await authRequest("register", {
         email: form.email,
         password: form.password,
         phoneE164: form.phoneE164,
@@ -35,16 +34,15 @@ export default function RegisterPage() {
         role: form.role,
         consents: { termsAccepted: form.terms, privacyAccepted: form.privacy, marketingOptIn: form.marketing },
         attribution: { channel: params.get("canal") ?? "SELF_REGISTRATION", campaignId: params.get("campagne"), referralCode: form.referralCode || null },
-      }),
     });
-    const data = (await res.json()) as { ok: boolean; emailChallengeId?: string; devCode?: string; message?: string };
-    setBusy(false);
     if (data.ok && data.emailChallengeId) {
-      const q = new URLSearchParams({ email: form.email, challenge: data.emailChallengeId, ...(data.devCode ? { devCode: data.devCode } : {}) });
+      const q = new URLSearchParams({ email: form.email, challenge: data.emailChallengeId });
       router.push(`/verification-email?${q.toString()}`);
       return;
     }
     setError(data.message ?? "Inscription impossible.");
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Inscription indisponible."); }
+    finally { setBusy(false); }
   }
 
   return (

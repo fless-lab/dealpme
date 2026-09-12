@@ -19,6 +19,7 @@ export const ErrorCode = {
   RATE_LIMITED: "RATE_LIMITED",
   PAYLOAD_TOO_LARGE: "PAYLOAD_TOO_LARGE",
   INTERNAL: "INTERNAL",
+  NOTIFICATION_UNAVAILABLE: "NOTIFICATION_UNAVAILABLE",
 } as const;
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
 
@@ -35,6 +36,7 @@ export const httpStatusForCode: Record<ErrorCode, number> = {
   RATE_LIMITED: 429,
   PAYLOAD_TOO_LARGE: 413,
   INTERNAL: 500,
+  NOTIFICATION_UNAVAILABLE: 503,
 };
 
 export const ErrorEnvelopeSchema = z.object({

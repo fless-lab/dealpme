@@ -3,10 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { Actions, Button, Field, Input, StateBanner } from "@dealpme/ui";
+import { authRequest } from "../../../lib/auth-request";
 
 /**
  * Connexion. Deux issues : session ouverte (cookie posé par le BFF) ou second facteur requis
- * (officiers CCI-Togo, conformité, administrateurs). Le code de développement (devCode) n'existe qu'en local.
+ * (officiers CCI-Togo, conformité, administrateurs). Le code est reçu par le canal SMS configuré.
  */
 export default function LoginPage() {
   const router = useRouter();
@@ -14,7 +15,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
   const [challengeId, setChallengeId] = useState<string | null>(null);
-  const [devCode, setDevCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [hint, setHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -23,9 +23,8 @@ export default function LoginPage() {
     e.preventDefault();
     setBusy(true);
     setError(null);
-    const res = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
-    const data = (await res.json()) as { ok: boolean; mfaRequired?: boolean; challengeId?: string; devCode?: string; message?: string; details?: { reason?: string } };
-    setBusy(false);
+    try {
+    const data = await authRequest("login", { email, password });
     if (data.ok) {
       router.push("/");
       router.refresh();
@@ -33,30 +32,33 @@ export default function LoginPage() {
     }
     if (data.mfaRequired && data.challengeId) {
       setChallengeId(data.challengeId);
-      setDevCode(data.devCode ?? null);
       setHint("Un code de connexion vous a été envoyé par SMS. Il est valable 10 minutes.");
       return;
     }
     if (data.details?.reason === "EMAIL_NOT_VERIFIED") {
-      router.push(`/verification-email?email=${encodeURIComponent(email)}`);
+      const params = new URLSearchParams({ email, ...(data.details.challengeId ? { challenge: data.details.challengeId } : {}) });
+      router.push(`/verification-email?${params}`);
       return;
     }
     setError(data.message ?? "Connexion impossible.");
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Connexion indisponible."); }
+    finally { setBusy(false); }
   }
 
   async function submitMfa(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError(null);
-    const res = await fetch("/api/auth/mfa", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ challengeId, code }) });
-    const data = (await res.json()) as { ok: boolean; message?: string };
-    setBusy(false);
+    try {
+    const data = await authRequest("mfa", { challengeId, code });
     if (data.ok) {
       router.push("/");
       router.refresh();
       return;
     }
     setError(data.message ?? "Code invalide.");
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Vérification indisponible."); }
+    finally { setBusy(false); }
   }
 
   return (
@@ -85,7 +87,6 @@ export default function LoginPage() {
         <form onSubmit={submitMfa} noValidate>
           <StateBanner tone="info" title="Second facteur requis" controlId="LOGIN_MFA_NOTICE">
             {hint}
-            {devCode ? <div className="dp-muted">Environnement de développement : code {devCode}</div> : null}
           </StateBanner>
           <div style={{ height: 16 }} />
           <Field id="code" label="Code reçu par SMS" hint="Six chiffres">

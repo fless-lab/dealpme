@@ -5,7 +5,7 @@ import { z } from "zod";
  * jamais un comportement par défaut silencieux en production.
  */
 const bool = z
-  .string()
+  .enum(["true", "false"])
   .default("false")
   .transform((v) => v === "true");
 
@@ -13,9 +13,7 @@ const EnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   API_PORT: z.coerce.number().int().default(4000),
   APP_BASE_URL: z.url().default("http://localhost:3000"),
-  DATABASE_URL_CORE: z.string().min(1).refine((u) => !/^postgres:\/\/dealpme_core:/.test(u) || process.env["NODE_ENV"] === "test", {
-    message: "L'API doit se connecter avec le rôle applicatif dealpme_api, pas avec le rôle propriétaire (RLS contournée)",
-  }),
+  DATABASE_URL_CORE: z.string().min(1),
   DATABASE_URL_CORE_ADMIN: z.string().min(1).optional(),
   DATABASE_URL_VDR: z.string().min(1),
   REDIS_URL: z.string().min(1).default("redis://localhost:6379"),
@@ -37,8 +35,23 @@ const EnvSchema = z.object({
   CLAMAV_HOST: z.string().default("localhost"),
   CLAMAV_PORT: z.coerce.number().int().default(3310),
   DOSSIER_MAX_FILE_BYTES: z.coerce.number().int().positive().default(20 * 1024 * 1024),
-  CONNECTOR_SMS_PROVIDER: z.string().default("fake"),
-  CONNECTOR_EMAIL_PROVIDER: z.string().default("mailpit"),
+  CONNECTOR_SMS_PROVIDER: z.enum(["fake", "local", "generic-http"]).default("local"),
+  CONNECTOR_EMAIL_PROVIDER: z.enum(["fake", "mailpit", "smtp"]).default("mailpit"),
+  SMTP_HOST: z.string().trim().min(1).default("127.0.0.1"),
+  SMTP_PORT: z.coerce.number().int().min(1).max(65535).default(1025),
+  SMTP_SECURE: bool,
+  SMTP_REQUIRE_TLS: bool,
+  SMTP_USER: z.string().optional(),
+  SMTP_PASSWORD: z.string().optional(),
+  EMAIL_FROM: z.email().default("notifications@demo.dealpme.local"),
+  SMS_LOCAL_BASE_URL: z.url().default("http://127.0.0.1:8026"),
+  SMS_LOCAL_API_KEY: z.string().min(1).default("dealpme-local-sms"),
+  SMS_HTTP_BASE_URL: z.string().optional(),
+  SMS_HTTP_API_KEY: z.string().optional(),
+  NOTIFICATION_TIMEOUT_MS: z.coerce.number().int().min(100).max(60000).default(5000),
+  NOTIFICATION_ATTEMPT_TIMEOUT_MS: z.coerce.number().int().min(50).max(60000).default(1500),
+  NOTIFICATION_MAX_ATTEMPTS: z.coerce.number().int().min(1).max(5).default(3),
+  NOTIFICATION_RETRY_DELAY_MS: z.coerce.number().int().min(0).max(5000).default(100),
   CONNECTOR_REMO_API_KEY: z.string().default(""),
   CONNECTOR_REMO_WEBHOOK_SECRET: z.string().min(16).optional(),
   FEATURE_TRANSACTION_FEES: bool,
@@ -47,19 +60,45 @@ const EnvSchema = z.object({
   FEATURE_SHARE_DEAL_LISTING: bool,
   FEATURE_DEALLENS: bool,
   RPS_DEFAULT_CIRCLE_CAP: z.coerce.number().int().positive().default(50),
+}).superRefine((env, ctx) => {
+  const issue = (path: string, message: string) => ctx.addIssue({ code: "custom", path: [path], message });
+  let databaseUser = "";
+  try { databaseUser = new URL(env.DATABASE_URL_CORE).username; } catch { issue("DATABASE_URL_CORE", "URL PostgreSQL invalide"); }
+  if (databaseUser === "dealpme_core" && env.NODE_ENV !== "test") issue("DATABASE_URL_CORE", "Utiliser le rôle applicatif dealpme_api, pas le propriétaire");
+  if (!!env.SMTP_USER !== !!env.SMTP_PASSWORD) issue("SMTP_USER", "Utilisateur et mot de passe SMTP doivent être fournis ensemble");
+  if (env.NOTIFICATION_ATTEMPT_TIMEOUT_MS > env.NOTIFICATION_TIMEOUT_MS) issue("NOTIFICATION_ATTEMPT_TIMEOUT_MS", "Le délai par tentative ne peut dépasser le budget global");
+  if (env.NODE_ENV !== "test" && (env.CONNECTOR_EMAIL_PROVIDER === "fake" || env.CONNECTOR_SMS_PROVIDER === "fake")) issue("CONNECTOR_SMS_PROVIDER", "Les faux transports sont réservés aux tests ; utiliser mailpit/local en développement");
+  if (env.CONNECTOR_SMS_PROVIDER === "local" && !/^https?:\/\//.test(env.SMS_LOCAL_BASE_URL)) issue("SMS_LOCAL_BASE_URL", "URL HTTP locale attendue");
+  if (env.CONNECTOR_SMS_PROVIDER === "generic-http") {
+    try {
+      const url = new URL(env.SMS_HTTP_BASE_URL ?? "");
+      if (url.protocol !== "https:" || url.username || url.password || url.search || url.hash) issue("SMS_HTTP_BASE_URL", "Passerelle HTTPS sans identifiants dans l'URL attendue");
+    } catch { issue("SMS_HTTP_BASE_URL", "URL HTTPS de passerelle requise"); }
+    if (!env.SMS_HTTP_API_KEY?.trim()) issue("SMS_HTTP_API_KEY", "Clé de passerelle requise");
+  }
+  if (env.NODE_ENV === "production") {
+    if (env.CONNECTOR_EMAIL_PROVIDER !== "smtp") issue("CONNECTOR_EMAIL_PROVIDER", "SMTP réel requis en production");
+    if (env.CONNECTOR_SMS_PROVIDER !== "generic-http") issue("CONNECTOR_SMS_PROVIDER", "Passerelle réelle requise en production");
+    if (!env.SMTP_SECURE && !env.SMTP_REQUIRE_TLS) issue("SMTP_REQUIRE_TLS", "TLS obligatoire en production");
+    if (!env.SMTP_USER || !env.SMTP_PASSWORD) issue("SMTP_USER", "Authentification SMTP requise en production");
+  }
 });
 
 export type Env = z.infer<typeof EnvSchema>;
 
 let cached: Env | undefined;
 
-export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
-  if (cached) return cached;
+export function parseEnv(source: NodeJS.ProcessEnv): Env {
   const parsed = EnvSchema.safeParse(source);
   if (!parsed.success) {
     const issues = parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("\n");
     throw new Error(`Configuration invalide :\n${issues}`);
   }
-  cached = parsed.data;
+  return parsed.data;
+}
+
+export function loadEnv(source?: NodeJS.ProcessEnv): Env {
+  if (source) return parseEnv(source);
+  cached ??= parseEnv(process.env);
   return cached;
 }

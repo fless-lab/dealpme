@@ -3,6 +3,9 @@
  "genereLe": "2026-09-11",
  "apropos": "Registre des contrôles d'interface. Le standard d'implémentation du corpus exige que chaque contrôle visible porte un identifiant présent ici, avec son contrat : déclencheur, autorisation, source de données, état de succès, état bloqué et événement d'audit quand l'action est sensible. Un contrôle absent du registre bloque la recette (UNREGISTERED_CONTROL, P0 du Release Gate).\nDeux origines : 'corpus' pour les identifiants du Master Developer Handoff V3.1, qui font autorité sur les surfaces qu'il couvre (fiche d'opportunité, data room, gabarit de service) ; 'depot' pour les surfaces que le corpus ne décrit pas. Les entrées 'depot' portent un contrat à documenter tant que la décision A15 n'est pas rendue : leur présence ici rend la dette visible et empêche qu'elle grandisse.",
  "controles": {
+  "VERIFY_EMAIL_REISSUE": {
+   "origine": "depot", "surface": "Vérification email", "libelle": "Recevoir un nouveau code via la connexion", "action": "Revenir à la connexion et authentifier le compte avant une nouvelle émission", "autorisation": "Mot de passe vérifié ; émission limitée par utilisateur", "source": "POST /auth/login puis transport SMTP", "succes": "Nouveau défi dans la page de vérification, code reçu dans la boîte", "bloque": "Aucune session avant vérification, pas de code dans URL ou réponse", "audit": "OTP_ISSUED ou OTP_DELIVERY_FAILED", "contrat": "documente", "utilise": true
+  },
   "MESSAGE_THREAD_REFRESH": {
    "origine": "depot", "surface": "Messagerie cédant/repreneur et historique", "libelle": "Actualiser les échanges", "action": "Relire la page courante depuis le BFF", "autorisation": "Session et parties contrôlées par API/RLS", "source": "GET /deals/:id/messages", "succes": "Messages persistés affichés", "bloque": "Erreur visible et bouton de reprise", "audit": "Aucune mutation", "contrat": "documente", "utilise": true
   },

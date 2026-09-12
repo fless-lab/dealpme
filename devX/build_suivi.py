@@ -193,6 +193,9 @@ _check_progress_keys()
 # Les acquis V1 de PROGRESS restent inchangés ; leurs compléments ont leurs propres tâches.
 # (statut, avancement estimé, preuve / reste à faire)
 AUDIT_REVIEW = {
+    "V1-093": ("En revue", 0.9, "SMTP/Mailpit opérationnel, TLS/authentification et pannes testés ; recette chez le fournisseur retenu encore attendue. Preuves locales : qa/l03-verification.json."),
+    "V1-101": ("Complétée", 1, "Boîte SMS réutilisable livrée : interface, API, dédoublonnage, rétention, erreurs et sécurité locale testés. Preuve : qa/l03-verification.json."),
+    "V1-102": ("En revue", 0.9, "Contrats fake/SMTP/passerelle JSON testés ; OTP et navigateur lisent les boîtes, sans devCode. Qualification fournisseur réelle encore ouverte avec V1-028."),
     "V1-094": ("Complétée", 1, "L02 vérifié : actions/audit atomiques, refus après rollback, OTP et webhooks renforcés ; injections de panne et arrêt brutal testés. Preuve : qa/l02-verification.json."),
     "V1-095": ("Complétée", 1, "L02 vérifié : conversations ciblées, historique conservé, RLS et contraintes ; 33 scénarios dont six navigateur desktop/mobile. Preuve : qa/l02-verification.json."),
     "V1-091": ("Complétée", 1, "L01 vérifié : lint effectif, 21 builds, 74 tests, smoke isolé ClamAV 101/101 ; neuf sondes invalides rejetées. Preuve locale : qa/l01-ci.json ; workflow GitHub aligné."),
@@ -230,6 +233,7 @@ COMPLETION_DATES: dict[str, dt.date] = {
     "V1-091": dt.date(2026, 9, 16),
     "V1-094": dt.date(2026, 9, 23),
     "V1-095": dt.date(2026, 9, 25),
+    "V1-101": dt.date(2026, 9, 23),
 }
 
 FOLLOW_UP_LINKS = {
@@ -1771,7 +1775,7 @@ wsS.freeze_panes = "C6"
 
 # ================================================================== PLAN D'EXECUTION
 wsPlan = wb.create_sheet("Plan_execution")
-title(wsPlan, "Plan d'exécution par lots", "L01 et L02 clôturés ; prochain lot technique : L03. L00 coordonne les accès en parallèle. Avancement calculé depuis Taches ; détail : docs/PLAN_EXECUTION.md.")
+title(wsPlan, "Plan d'exécution par lots", "L03 opérationnel en local ; qualification des fournisseurs ouverte. Prochain lot technique indépendant : L04. Détail : docs/PLAN_EXECUTION.md.")
 # Chaque tâche restant à traiter appartient à un lot unique. Les tâches déjà
 # acquises restent dans Taches et ne sont pas recomptées comme du nouveau travail.
 EXECUTION_LOTS = [

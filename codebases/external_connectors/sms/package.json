@@ -13,5 +13,6 @@
   },
   "devDependencies": {
     "@dealpme/config": "*"
-  }
+  },
+  "dependencies": { "@dealpme/notifications": "*" }
 }

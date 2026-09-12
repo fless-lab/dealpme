@@ -16,6 +16,7 @@
     "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
+    "@dealpme/notifications": "*",
     "@dealpme/connector-antivirus": "*",
     "@dealpme/connector-email": "*",
     "@dealpme/connector-registry": "*",

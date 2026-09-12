@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="fr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Boîte SMS locale</title><link rel="stylesheet" href="/styles.css"><script src="/app.js" defer></script></head>
+<body>
+  <main>
+    <h1>Boîte SMS locale</h1>
+    <p class="notice">Simulation de développement — aucun SMS envoyé sur un téléphone.</p>
+    <form id="filters">
+      <label>Destinataire (E.164)<input id="recipient" placeholder="+22890000001" autocomplete="off"></label>
+      <label>Catégorie<select id="category"><option value="">Toutes</option><option>OTP</option><option>TRANSACTIONAL</option><option>MARKETING</option></select></label>
+      <label>Corrélation<input id="correlation" autocomplete="off"></label>
+      <button type="submit">Actualiser</button>
+    </form>
+    <p id="status" role="status"></p>
+    <section id="messages" aria-label="Messages reçus"></section>
+    <button id="older" type="button" hidden>Messages précédents</button>
+    <p class="help">Mémoire bornée, expiration automatique. Les références et encodages sont simulés ; « accepté » ne signifie pas « remis par un opérateur ».</p>
+  </main>
+</body></html>

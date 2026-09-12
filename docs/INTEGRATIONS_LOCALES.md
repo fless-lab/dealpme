@@ -1,7 +1,8 @@
-# Notifications locales et intégrations réutilisables — plan de réalisation
+# Notifications locales et intégrations réutilisables
 
-Statut : conception à implémenter. Référence de départ : `2dd4e3d`, réunion direction prise en compte le
-12/09/2026. Cette page décrit les contrats et les tests des lots L03 et L05/L09 du plan d'exécution.
+Notifications L03 : **implémentées et vérifiées en local**, voir [NOTIFICATIONS.md](NOTIFICATIONS.md).
+La qualification des fournisseurs réels reste ouverte. Les sections événements/captation et CFE sont
+encore des conceptions pour les lots suivants. Référence de départ : `2dd4e3d`, réunion du 12/09/2026.
 
 ## 1. Objectif email et SMS
 
@@ -21,7 +22,7 @@ Hors local
   └─ SmsPort   → adaptateur du fournisseur SMS retenu
 ```
 
-Mailpit est déjà dans Compose (SMTP 1025, interface 8025), mais l'identité ne l'utilise pas encore.
+Mailpit est dans Compose (SMTP 1025, interface 8025) et l'identité l'utilise désormais réellement.
 `SmsPort.send({toE164, text, category})` retourne déjà une référence fournisseur : aucun vendeur ne
 doit apparaître dans les services métier d'identité, de certification ou de matching.
 
@@ -39,7 +40,7 @@ téléphone ni simuler la qualité du réseau opérateur. Pas de connexion à la
 Pourquoi ce choix : il couvre exactement le port existant sans imposer une API commerciale avant le
 choix fournisseur. L'outil doit rester une boîte de test légère, pas devenir une passerelle télécom.
 
-### Contrat local proposé (à créer, pas des routes existantes)
+### Contrat local implémenté
 
 | Route | Usage |
 |---|---|
@@ -60,10 +61,10 @@ contrôle du déploiement cible. Les messages de démonstration sont synthétiqu
 
 ### Configuration cible proposée
 
-Ces noms seront introduits dans `.env.example` et validés dans `config/env.ts` pendant L03 :
+Ces paramètres sont présents dans `.env.example` et validés dans `config/env.ts` :
 
 ```dotenv
-CONNECTOR_EMAIL_PROVIDER=smtp
+CONNECTOR_EMAIL_PROVIDER=mailpit
 SMTP_HOST=localhost
 SMTP_PORT=1025
 SMTP_SECURE=false
@@ -96,9 +97,8 @@ Un fournisseur inconnu ou incomplet fait échouer le démarrage ; aucun repli si
    que par un accusé compatible et authentifié. Le simulateur étiquette ses statuts comme simulés.
 7. Les logs techniques portent références, résultat et corrélation, pas le code OTP ni le corps du message.
 
-La consommation atomique des OTP et l'invalidation d'un défi dont l'envoi a échoué sont à vérifier pendant
-L03 : `OtpService.verify` lit puis met à jour séparément aujourd'hui. Un test concurrent doit montrer
-qu'un même défi n'ouvre qu'une seule authentification réussie.
+La consommation atomique des OTP est en place depuis L02. L03 vérifie l'envoi par les transports locaux,
+le rollback d'un défi non confirmé et la trace d'échec. Les codes ne sont plus exposés dans l'API ou le BFF.
 
 ## 4. Recette du lot notifications
 
@@ -114,10 +114,9 @@ qu'un même défi n'ouvre qu'une seule authentification réussie.
 | Bascule fournisseur | Même suite de contrats exécutée contre l'adaptateur HTTP de test puis le sandbox réel |
 | Configuration cible | Les modes `fake`/`local` et les retours `devCode` ne sont pas exposés hors environnement de test |
 
-Les tests de parcours doivent lire les boîtes, pas utiliser le `devCode` de la réponse API. Migrer
-`devX/smoke_v1.sh` avant de retirer ce raccourci de ses scénarios. Les tests unitaires gardent les faux
-en mémoire pour être rapides. Les tests sandbox opérateur restent rattachés à V1-028 ; la boîte locale
-ne clôt pas à elle seule l'intégration du fournisseur réel.
+Les tests de parcours lisent maintenant les boîtes via `devX/notification-inbox.mjs` ; le smoke et les
+scénarios L02 sont migrés. Les tests unitaires gardent les faux en mémoire. Les tests sandbox opérateur
+restent rattachés à V1-028 ; la boîte locale ne clôt pas l'intégration du fournisseur réel.
 
 Tâches : V1-093 (SMTP), V1-101 (boîte SMS), V1-102 (contrats/bascule/OTP), V1-028 (opérateur réel),
 V1-096 (alertes), V1-100 (recette navigateur).

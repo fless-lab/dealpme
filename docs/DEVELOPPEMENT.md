@@ -60,7 +60,7 @@ npm run lint                 # ESLint TypeScript/React/Next, avertissements bloq
 npm test                     # tests unitaires (règles métier, primitives de sécurité)
 npm run build                # compilation complète
 npm audit --audit-level=high # bloquant en intégration continue
-npm run ci:verify-gates      # diagnostic séquentiel : dix défauts injectés puis retirés
+npm run ci:verify-gates      # diagnostic séquentiel : onze défauts injectés puis retirés
 ```
 
 Voir [CI.md](CI.md) pour l'ordre des builds, les exceptions de lint motivées, les artefacts et le diagnostic.
@@ -118,9 +118,11 @@ curl -s localhost:4000/v1/health             # vie du processus, erreurs serveur
 curl -s localhost:4000/v1/ready              # bases et Redis joignables
 ```
 
-Mailpit est disponible sur http://localhost:8025, mais au 12/09/2026 l'identité utilise encore le faux
-connecteur email : les codes sont journalisés en développement, aucun email n'est livré à Mailpit. Le
-branchement SMTP est suivi en V1-093. Les objets stockés sont dans la console MinIO, http://localhost:9001.
+Mailpit reçoit réellement les emails sur http://127.0.0.1:8025. La boîte SMS locale est accessible sur
+http://127.0.0.1:8026 après `npm run infra:up` (profil Compose `local`). Dans un ancien `.env`, remplacer
+`CONNECTOR_SMS_PROVIDER=fake` par `local` et reprendre les paramètres SMTP de `.env.example`.
+Les codes se consultent dans ces boîtes, pas dans l'API ni dans ses logs. Les objets restent dans MinIO,
+http://localhost:9001. Détails et bascule fournisseur : [NOTIFICATIONS.md](NOTIFICATIONS.md).
 
 ## Suivi du projet
 
@@ -148,6 +150,5 @@ Les nouvelles tâches sont ajoutées en fin de liste afin de conserver les ident
 
 Le travail restant est affecté à un lot unique dans `Plan_execution`, avec charges et avancement calculés
 depuis `Taches`. Le [plan détaillé](PLAN_EXECUTION.md) précise les sous-étapes, preuves et accès nécessaires.
-Pour les évolutions locales prévues (SMTP/Mailpit, boîte SMS, CFE API activée/mock ou manuel), consulter
-[INTEGRATIONS_LOCALES.md](INTEGRATIONS_LOCALES.md) : ses variables et routes proposées seront ajoutées
-pendant les lots L03/L04, elles ne sont pas encore implémentées dans la configuration actuelle.
+SMTP/Mailpit et la boîte SMS sont implémentés. Le CFE API activée/mock ou manuel reste au lot L04 :
+[INTEGRATIONS_LOCALES.md](INTEGRATIONS_LOCALES.md) distingue les fonctions livrées des contrats à réaliser.

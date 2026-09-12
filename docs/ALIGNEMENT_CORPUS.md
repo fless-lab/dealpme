@@ -11,6 +11,10 @@ Actualisation L02 : audit transactionnel et conversations ciblées implémentés
 réussis, dont six navigateur. Voir [ADR 0008](adr/0008-audit-et-conversations.md). La recette navigateur
 de messagerie ne constitue pas encore la recette globale de toutes les surfaces.
 
+Actualisation L03 : SMTP/Mailpit et boîte SMS locale opérationnels, tests OTP migrés vers leurs APIs de
+lecture et plus aucun code renvoyé par l'authentification. La qualification des fournisseurs réels reste
+distincte : [NOTIFICATIONS.md](NOTIFICATIONS.md), [preuve locale](../qa/l03-verification.json).
+
 ## Ce qui fait autorité, et sur quoi
 
 | Source | Autorité sur | Statut |

@@ -1,4 +1,5 @@
 import type { EmailMessage, EmailPort } from "./port.js";
+import { EmailSchema, assertNotExpired, contentHash, deliveryFor, validateMessage, TransportError } from "@dealpme/notifications";
 
 /** Faux connecteur email : mémoire et, en développement, sortie standard. Un message MARKETING sans lien de désinscription est refusé. */
 export interface SentEmail extends EmailMessage {
@@ -9,20 +10,25 @@ export interface SentEmail extends EmailMessage {
 export function createFakeEmail(options: { echo?: boolean } = {}): EmailPort & { sent: SentEmail[] } {
   const sent: SentEmail[] = [];
   let n = 0;
+  const keys = new Map<string, { hash: string; providerRef: string }>();
   return {
     sent,
     async send(msg: EmailMessage) {
-      if (msg.category === "MARKETING" && !msg.unsubscribeUrl) {
-        throw new Error("Un email marketing exige un lien de désinscription");
-      }
+      validateMessage(EmailSchema, msg);
+      const delivery = deliveryFor(msg.delivery); assertNotExpired(delivery);
+      const hash = contentHash([msg.to, msg.subject, msg.text, msg.html ?? null, msg.category, msg.unsubscribeUrl ?? null, delivery.expiresAt ?? null]);
+      const previous = keys.get(delivery.idempotencyKey);
+      if (previous && previous.hash !== hash) throw new TransportError("INVALID_MESSAGE");
+      if (previous) return { providerRef: previous.providerRef, status: "ACCEPTED", simulated: true };
       n += 1;
       const providerRef = `fake-email-${n}`;
+      keys.set(delivery.idempotencyKey, { hash, providerRef });
       sent.push({ ...msg, providerRef, sentAt: new Date().toISOString() });
       if (options.echo) {
         // eslint-disable-next-line no-console
-        console.log(`[email:fake] -> ${msg.to} : ${msg.subject}\n${msg.text}`);
+        console.log(`[email:fake] ${providerRef} (${msg.category})`);
       }
-      return { providerRef };
+      return { providerRef, status: "ACCEPTED", simulated: true };
     },
   };
 }

@@ -1,0 +1,12 @@
+:root { font-family: system-ui, sans-serif; color: #1c2751; background: #f2f2f3; }
+body { margin: 0; } main { max-width: 1000px; margin: auto; padding: 24px; }
+.notice { padding: 16px; background: #e7e8f7; border-radius: 8px; }
+form { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; }
+label { display: flex; flex-direction: column; gap: 6px; }
+input, select, button { font: inherit; padding: 10px; min-height: 44px; box-sizing: border-box; }
+button { cursor: pointer; background: #1c2751; color: white; border: 0; border-radius: 6px; }
+button:disabled { opacity: .6; } :focus-visible { outline: 3px solid #6678f1; outline-offset: 2px; }
+article { margin: 16px 0; padding: 20px; background: white; border: 1px solid #d8dce5; border-radius: 8px; }
+h2 { font-size: 1rem; } pre { font: inherit; white-space: pre-wrap; overflow-wrap: anywhere; }
+.meta, .help { font-size: .85rem; color: #53647b; overflow-wrap: anywhere; }
+@media (max-width: 600px) { main { padding: 16px; } label { width: 100%; } input, select { width: 100%; } }

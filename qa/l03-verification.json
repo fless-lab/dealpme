@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "lot": "L03",
+  "tasks": ["V1-093", "V1-101", "V1-102", "V1-028"],
+  "sourceBase": "01b3cb0",
+  "verifiedOn": "2026-09-12",
+  "localStatus": "PASS",
+  "externalProviderStatus": "PENDING_ACCESS_AND_QUALIFICATION",
+  "checks": {
+    "cleanInstall": "PASS",
+    "types": "PASS",
+    "lint": "PASS",
+    "buildWorkspaces": 23,
+    "unitTests": { "passed": 121, "files": 11 },
+    "smokeV1": { "passed": 101, "antivirus": "ClamAV réel", "otpSource": "Mailpit et boîte SMS" },
+    "l02Regression": { "passed": 33, "otpSource": "Mailpit et boîte SMS" },
+    "l03": {
+      "passed": 17,
+      "browser": 4,
+      "startedAt": "2026-09-12T10:06:44.974Z",
+      "finishedAt": "2026-09-12T10:06:53.378Z"
+    },
+    "rejectionProbes": { "passed": 11, "expectedExitCode": 1 },
+    "dependencyAudit": { "critical": 0, "high": 0, "moderate": 4 }
+  },
+  "verifiedBehaviours": [
+    "SMTP/Mailpit : texte, HTML, destinataire et corrélation reçus",
+    "Désinscription marketing : en-tête et lien, message sans lien refusé",
+    "SMS local : numéro, Unicode, segmentation et indication de simulation",
+    "Reprise 429 et acceptation suivie de timeout sans double message SMS",
+    "Refus permanent, panne SMTP/SMS et erreur de configuration explicites",
+    "Échec de transport : défi annulé et tentative auditée après rollback",
+    "Expiration, consommation unique, cinq essais et quota d'émission OTP",
+    "Reprise de vérification email après authentification du compte",
+    "Aucun devCode dans API, BFF, URL ou bandeau",
+    "Parcours navigateur inscription/email et MFA via les boîtes",
+    "Panne réseau : saisies conservées, boutons réutilisables",
+    "Boîte SMS : filtre, mobile et texte HTML inerte",
+    "Production : fournisseurs locaux refusés, TLS et authentification exigés"
+  ],
+  "limitations": [
+    "Pas de réception sur téléphone ni de fournisseur SMTP externe validé",
+    "generic-http requiert une passerelle compatible ; protocole fournisseur à confirmer",
+    "Worker d'alertes et consentement à l'envoi restent au lot L04"
+  ],
+  "replay": "npm run build && npx playwright install chromium && npm run ci:smoke"
+}

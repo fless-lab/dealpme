@@ -15,3 +15,5 @@ services:
     ports: !override ["127.0.0.1::3310"]
   mailpit:
     ports: !override ["127.0.0.1::8025", "127.0.0.1::1025"]
+  sms-inbox:
+    ports: !override ["127.0.0.1::8026"]

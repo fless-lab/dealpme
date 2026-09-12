@@ -6,14 +6,14 @@ import { CORE_DB, type CoreDb } from "../../database/database.module.js";
 import { organisations, persons, users } from "../../database/schema/core.js";
 import { AuditService } from "../../platform/audit.service.js";
 import { RULES, RateLimitService } from "../../platform/rate-limit.service.js";
-import { OtpService } from "./otp.service.js";
+import { OtpDeliveryError, OtpService } from "./otp.service.js";
 import { PasswordService } from "./password.service.js";
 import { SessionService } from "./session.service.js";
 
 /** Rôles pour lesquels un second facteur est obligatoire à chaque connexion (S03). */
 const MFA_REQUIRED_ROLES: readonly string[] = [Role.CCI_OFFICER, Role.PLATFORM_ADMIN, Role.COMPLIANCE_OPERATOR];
 
-export type LoginOutcome = { kind: "SESSION"; token: string; expiresAt: Date } | { kind: "MFA_REQUIRED"; challengeId: string; devCode?: string };
+export type LoginOutcome = { kind: "SESSION"; token: string; expiresAt: Date } | { kind: "MFA_REQUIRED"; challengeId: string };
 
 @Injectable()
 export class IdentityService {
@@ -30,7 +30,7 @@ export class IdentityService {
    * Inscription : organisation, personne, utilisateur, défi email et preuves dans une même transaction.
    * L'attribution est capturée ici et devient immuable (trigger en base). Le marketing n'est jamais pré-coché.
    */
-  async register(req: RegisterRequest, ip: string, correlationId: string): Promise<{ userId: string; organisationId: string; emailChallengeId: string; devCode?: string }> {
+  async register(req: RegisterRequest, ip: string, correlationId: string): Promise<{ userId: string; organisationId: string; emailChallengeId: string }> {
     await this.limiter.hit("register:ip", ip, RULES.REGISTER_PER_IP);
     const existing = await this.db.select({ id: users.id }).from(users).where(eq(users.email, req.email.toLowerCase())).limit(1);
     if (existing.length > 0) {
@@ -65,8 +65,11 @@ export class IdentityService {
       });
       await this.audit.record({ action: "USER_REGISTERED", actorUserId: userId, subjectType: "user", subjectId: userId, outcome: "OK", correlationId }, tx);
       return this.otp.issue(userId, "EMAIL_VERIFY", { email: req.email.toLowerCase() }, correlationId, tx);
+    }).catch(async (error: unknown) => {
+      if (error instanceof OtpDeliveryError) await this.audit.rejection({ ...error.auditContext, actorUserId: null });
+      throw error;
     });
-    return { userId, organisationId, emailChallengeId: challenge.challengeId, ...(challenge.devCode ? { devCode: challenge.devCode } : {}) };
+    return { userId, organisationId, emailChallengeId: challenge.challengeId };
   }
 
   async verifyEmail(challengeId: string, code: string, correlationId: string): Promise<void> {
@@ -110,7 +113,8 @@ export class IdentityService {
     await this.limiter.clearFailures(account);
 
     if (!row.emailVerifiedAt) {
-      throw new DealPmeError(ErrorCode.FORBIDDEN, "Adresse email non vérifiée", { reason: "EMAIL_NOT_VERIFIED" });
+      const challenge = await this.otp.issue(row.id, "EMAIL_VERIFY", { email: row.email }, correlationId);
+      throw new DealPmeError(ErrorCode.FORBIDDEN, "Adresse email non vérifiée : un nouveau code a été envoyé.", { reason: "EMAIL_NOT_VERIFIED", challengeId: challenge.challengeId });
     }
 
     const roles = row.roles as string[];
@@ -119,7 +123,7 @@ export class IdentityService {
         throw new DealPmeError(ErrorCode.FORBIDDEN, "Second facteur obligatoire pour ce rôle : aucun téléphone enregistré", { reason: "MFA_PHONE_MISSING" });
       }
       const challenge = await this.otp.issue(row.id, "LOGIN_MFA", { phoneE164: row.phoneE164 }, correlationId);
-      return { kind: "MFA_REQUIRED", challengeId: challenge.challengeId, ...(challenge.devCode ? { devCode: challenge.devCode } : {}) };
+      return { kind: "MFA_REQUIRED", challengeId: challenge.challengeId };
     }
 
     const session = await this.db.transaction(async (tx) => {
