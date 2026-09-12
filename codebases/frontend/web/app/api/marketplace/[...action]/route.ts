@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { api, ApiError, SESSION_COOKIE, messageFor } from "../../../../lib/api";
+import { MessageQuerySchema } from "@dealpme/contracts";
 
 /**
  * BFF de la place de marché : manifestation d'intérêt, message, alertes, publication d'un dossier.
@@ -37,17 +38,22 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ action: st
 }
 
 /** Fil des messages d'un dossier, pour la partie qui le consulte. */
-export async function GET(_req: NextRequest, ctx: { params: Promise<{ action: string[] }> }) {
+export async function GET(req: NextRequest, ctx: { params: Promise<{ action: string[] }> }) {
   const { action } = await ctx.params;
-  const match = action.join("/").match(new RegExp(`^threads/(${UUID})$`));
+  const match = action.join("/").match(new RegExp(`^(threads|conversations)/(${UUID})$`));
   if (!match) return NextResponse.json({ ok: false, message: "Ressource inconnue" }, { status: 404 });
   const t = (await cookies()).get(SESSION_COOKIE)?.value;
-  if (!t) return NextResponse.json({ items: [] });
+  if (!t) return NextResponse.json({ ok: false, message: "Connexion requise" }, { status: 401 });
+  const parsed = MessageQuerySchema.safeParse(Object.fromEntries(req.nextUrl.searchParams));
+  if (!parsed.success) return NextResponse.json({ ok: false, message: "Paramètres de conversation invalides" }, { status: 400 });
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(parsed.data)) if (value !== undefined) query.set(key, String(value));
   try {
-    const result = await api<{ items: unknown[] }>(`/deals/${match[1]}/messages`, { token: t });
+    const path = match[1] === "threads" ? `messages?${query}` : "conversations";
+    const result = await api<{ items: unknown[] }>(`/deals/${match[2]}/${path}`, { token: t });
     return NextResponse.json(result);
-  } catch {
-    return NextResponse.json({ items: [] });
+  } catch (error) {
+    return NextResponse.json({ ok: false, message: messageFor(error) }, { status: error instanceof ApiError ? error.status : 502 });
   }
 }
 

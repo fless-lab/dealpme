@@ -36,7 +36,10 @@ jobs:
       - name: Preuves de rejet des contrôles
         run: npm run ci:verify-gates
       - name: Smoke V1 sur une pile isolée avec ClamAV réel
-        run: npm run ci:smoke
+        # Chromium vérifie aussi la messagerie L02, sans réutiliser un profil utilisateur.
+        run: |
+          npx playwright install --with-deps chromium
+          npm run ci:smoke
       - name: Résumé des contrôles exécutés
         if: always()
         env:

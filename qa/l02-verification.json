@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "lot": "L02",
+  "tasks": ["V1-094", "V1-095"],
+  "verifiedOn": "2026-09-12",
+  "sourceBase": "857410d",
+  "scope": "Arbre de travail L02 vérifié localement sur pile jetable ; aucun résultat GitHub distant présumé",
+  "status": "PASS",
+  "checks": {
+    "lint": "PASS",
+    "types": "PASS",
+    "unitTests": { "passed": 74, "files": 6 },
+    "buildWorkspaces": 21,
+    "smokeV1": { "passed": 101, "antivirus": "ClamAV réel" },
+    "l02": {
+      "passed": 33,
+      "backendMigrationAndProcess": 27,
+      "browser": 6,
+      "startedAt": "2026-09-12T08:47:34.261Z",
+      "finishedAt": "2026-09-12T08:47:59.868Z",
+      "viewports": ["1440x960", "390x844"]
+    },
+    "ciRejectionProbes": { "passed": 10, "expectedExitCode": 1, "probesRemoved": true },
+    "dependencyAudit": { "critical": 0, "high": 0, "moderate": 4 }
+  },
+  "verifiedBehaviours": [
+    "Action et audit annulés ensemble sur panne du journal",
+    "Inscription, défi OTP et preuves atomiques, y compris panne du second événement",
+    "Consommation OTP unique en concurrence et rollback avec la session",
+    "Certification et clôture de demande atomiques",
+    "Refus conservés après rollback, sans seconde connexion retenue dans la transaction métier",
+    "Arrêt brutal d'un processus API avant commit sans action ni audit orphelins",
+    "Une conversation par dossier et organisation malgré des intérêts concurrents",
+    "Réponses ciblées et isolation des deux repreneurs dans l'API, la RLS et le navigateur",
+    "Migration : contenu, auteur, date et intérêt historiques conservés",
+    "Historique ambigu conservé en lecture seule, aucune attribution arbitraire",
+    "Refus des auteurs forgés, fils étrangers et nouveaux messages sans cible",
+    "Signature du webhook avant cache et rejeu concurrent sans double effet",
+    "Effets, audit et clé d'idempotence annulés ensemble sur panne",
+    "Ancienne réponse sans empreinte conservée mais non rejouée sans vérification",
+    "Brouillon conservé après panne réseau, aucun message fictif ajouté",
+    "Réponse tardive ignorée après changement de conversation",
+    "Erreur de lecture visible et reprise possible",
+    "Messagerie et sélection accessibles sur mobile sans débordement global"
+  ],
+  "replay": "npm run build && npx playwright install chromium && npm run ci:smoke",
+  "runtimeReports": [".ci-artifacts/l02-results.json", ".ci-artifacts/smoke-results.json", ".ci-artifacts/gate-rejections.json"]
+}

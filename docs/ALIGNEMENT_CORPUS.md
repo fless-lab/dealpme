@@ -7,6 +7,10 @@ Les compléments de la réunion direction et le mode CFE manuel/mock sont tracé
 [compte rendu](COMPTE_RENDU_DIRECTION_2026-09-12.md) et le [plan actif](PLAN_EXECUTION.md). Les besoins de
 services TaxeFacile et de comptes rendus événementiels ne réactivent pas globalement le blueprint v5 écarté.
 
+Actualisation L02 : audit transactionnel et conversations ciblées implémentés ; 33 scénarios dédiés
+réussis, dont six navigateur. Voir [ADR 0008](adr/0008-audit-et-conversations.md). La recette navigateur
+de messagerie ne constitue pas encore la recette globale de toutes les surfaces.
+
 ## Ce qui fait autorité, et sur quoi
 
 | Source | Autorité sur | Statut |

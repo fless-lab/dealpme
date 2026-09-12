@@ -2,9 +2,10 @@
 
 **Révision : 12/09/2026, après réunion direction et clarification CFE.**
 
-**État : L01 réalisé et vérifié ; prochain lot technique à engager : L02.**
+**État : L01 et L02 réalisés et vérifiés ; prochain lot technique à engager : L03.**
 Preuves et commandes de reprise : [CI.md](CI.md) et [qa/l01-ci.json](../qa/l01-ci.json).
 Les autres lots restent à réaliser ; les acquis historiques sont conservés.
+L02 : [décision d'implémentation](adr/0008-audit-et-conversations.md) et [preuves](../qa/l02-verification.json).
 
 Sources : [bilan initial](BILAN_AVANCEMENT_2026-09-12.md), [réunion](COMPTE_RENDU_DIRECTION_2026-09-12.md),
 [contrats des intégrations locales](INTEGRATIONS_LOCALES.md), [serveur et accès](DEMANDE_INFRA_ACCES.md).
@@ -115,6 +116,10 @@ une compilation sont effectivement rejetés, puis retirés. Aucun `|| true` ne t
 contrôle obligatoire en succès. Créer le commit du lot.
 
 ## 5. L02 — échanges ciblés et audit durable
+
+**Clôturé :** 33 scénarios supplémentaires réussis, dont six navigateur ; panne d'audit, arrêt brutal,
+migration historique et isolation des repreneurs éprouvés. L'audit est transactionnel ; les refus sont
+persistés après rollback. Les 101 contrôles de smoke et 74 tests unitaires restent passants.
 
 Tâches : **V1-094, V1-095**. Fichiers : `platform/audit.service.ts`, services métier appelants,
 `modules/marketplace/marketplace.service.ts`, schéma core, migrations/RLS, écrans d'échange et BFF.
@@ -354,6 +359,6 @@ Pour chaque tâche engagée :
 6. Régénérer le classeur, vérifier dates/identifiants/formules et committer le lot cohérent.
 7. Laisser une note de reprise : dernier contrôle réussi, accès manquant éventuel, prochaine action exacte.
 
-**Première action applicative de reprise : L02 / V1-094 et V1-095**, définir la persistance transactionnelle
-de l'audit et le rattachement d'une réponse au bon repreneur, puis préparer migrations et tests négatifs.
-Aucun accès fournisseur requis ; utiliser `npm run ci:smoke` pour la régression isolée.
+**Première action applicative de reprise : L03 / V1-093**, implémenter le transport SMTP vers Mailpit,
+puis la boîte SMS locale V1-101 et les contrats V1-102. La consommation OTP atomique est déjà en place
+depuis L02 ; la livraison réelle et les pannes de transport restent à éprouver dans L03.

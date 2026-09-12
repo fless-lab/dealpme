@@ -1,14 +1,13 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Req } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, Req } from "@nestjs/common";
 import type { Request } from "express";
 import { z } from "zod";
-import { IdSchema } from "@dealpme/contracts";
+import { IdSchema, SendMessageSchema, MessageQuerySchema } from "@dealpme/contracts";
 import { RegionCode, Role, TurnoverBand } from "@dealpme/domain";
 import { CurrentPrincipal, OptionalPrincipal, Roles, type Principal } from "../../platform/auth.js";
 import { correlationIdOf } from "../../platform/correlation-id.middleware.js";
 import { validate } from "../../platform/zod.pipe.js";
 import { MarketplaceService } from "./marketplace.service.js";
 
-const MessageSchema = z.object({ body: z.string().min(2).max(4000) });
 const AlertSchema = z.object({
   label: z.string().min(2).max(120),
   sectorCode: z.string().max(16).nullable().default(null),
@@ -36,17 +35,23 @@ export class MarketplaceController {
   @Roles(Role.SELLER, Role.ADVISOR, Role.INVESTOR, Role.INVESTOR_DIASPORA, Role.BANK)
   send(
     @Param("dealId", validate(IdSchema)) dealId: string,
-    @Body(validate(MessageSchema)) body: z.infer<typeof MessageSchema>,
+    @Body(validate(SendMessageSchema)) body: z.infer<typeof SendMessageSchema>,
     @CurrentPrincipal() sender: Principal,
     @Req() req: Request,
   ) {
-    return this.marketplace.sendMessage(dealId, body.body, sender, correlationIdOf(req));
+    return this.marketplace.sendMessage(dealId, body.body, sender, correlationIdOf(req), body.conversationId);
   }
 
   @Get("deals/:dealId/messages")
   @Roles(Role.SELLER, Role.ADVISOR, Role.INVESTOR, Role.INVESTOR_DIASPORA, Role.BANK)
-  thread(@Param("dealId", validate(IdSchema)) dealId: string, @CurrentPrincipal() principal: Principal) {
-    return this.marketplace.messages(dealId, principal);
+  thread(@Param("dealId", validate(IdSchema)) dealId: string, @CurrentPrincipal() principal: Principal, @Query(validate(MessageQuerySchema)) query: z.infer<typeof MessageQuerySchema>) {
+    return this.marketplace.messages(dealId, principal, query);
+  }
+
+  @Get("deals/:dealId/conversations")
+  @Roles(Role.SELLER, Role.ADVISOR)
+  conversations(@Param("dealId", validate(IdSchema)) dealId: string, @CurrentPrincipal() principal: Principal) {
+    return this.marketplace.conversations(dealId, principal);
   }
 
   @Get("deals/:dealId/interests")

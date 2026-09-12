@@ -106,6 +106,7 @@ REMO_FIRST (option)
 | [0005](adr/0005-connecteurs-externes.md) | Connecteurs externes derrière des ports |
 | [0006](adr/0006-sessions-serveur.md) | Sessions opaques côté serveur plutôt que jetons autoportants |
 | [0007](adr/0007-depot-de-pieces.md) | Dépôt des pièces : antivirus avant stockage, aucune adresse publique |
+| [0008](adr/0008-audit-et-conversations.md) | Audit dans la transaction métier, conversations ciblées et reprise historique |
 
 ## Environnements
 

@@ -191,10 +191,13 @@ async function main(): Promise<void> {
       message: "Reprise envisagée au premier semestre 2027, financement bancaire en cours de montage.",
       createdAt: veille,
     });
+    const conversationId = newId();
+    await db.insert(s.dealConversations).values({ id: conversationId, dealId: premier.dealId, sellerOrganisationId: premier.ownerOrgId, investorOrganisationId: investor.orgId, createdAt: veille });
     await db.insert(s.dealMessages).values({
       id: newId(),
       dealId: premier.dealId,
       interestId,
+      conversationId,
       senderUserId: investor.userId,
       senderOrganisationId: investor.orgId,
       body: "Bonjour, votre dossier correspond à notre thèse. Seriez-vous disponible pour un échange la semaine prochaine ?",

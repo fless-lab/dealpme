@@ -3,6 +3,21 @@
  "genereLe": "2026-09-11",
  "apropos": "Registre des contrôles d'interface. Le standard d'implémentation du corpus exige que chaque contrôle visible porte un identifiant présent ici, avec son contrat : déclencheur, autorisation, source de données, état de succès, état bloqué et événement d'audit quand l'action est sensible. Un contrôle absent du registre bloque la recette (UNREGISTERED_CONTROL, P0 du Release Gate).\nDeux origines : 'corpus' pour les identifiants du Master Developer Handoff V3.1, qui font autorité sur les surfaces qu'il couvre (fiche d'opportunité, data room, gabarit de service) ; 'depot' pour les surfaces que le corpus ne décrit pas. Les entrées 'depot' portent un contrat à documenter tant que la décision A15 n'est pas rendue : leur présence ici rend la dette visible et empêche qu'elle grandisse.",
  "controles": {
+  "MESSAGE_THREAD_REFRESH": {
+   "origine": "depot", "surface": "Messagerie cédant/repreneur et historique", "libelle": "Actualiser les échanges", "action": "Relire la page courante depuis le BFF", "autorisation": "Session et parties contrôlées par API/RLS", "source": "GET /deals/:id/messages", "succes": "Messages persistés affichés", "bloque": "Erreur visible et bouton de reprise", "audit": "Aucune mutation", "contrat": "documente", "utilise": true
+  },
+  "MESSAGE_THREAD_OLDER": {
+   "origine": "depot", "surface": "Messagerie et historique", "libelle": "Messages précédents", "action": "Charger la page antérieure par curseur", "autorisation": "Même conversation ou historique autorisé", "source": "GET /deals/:id/messages?before=", "succes": "Messages précédents ajoutés sans doublon", "bloque": "Erreur visible ; autre fil inaccessible", "audit": "Aucune mutation", "contrat": "documente", "utilise": true
+  },
+  "MESSAGE_LEGACY_ROW": {
+   "origine": "depot", "surface": "Historique non attribué", "libelle": "Message historique", "action": "Affichage en lecture seule", "autorisation": "Cédant du dossier ou auteur initial", "source": "GET /deals/:id/messages?scope=legacy", "succes": "Contenu conservé sans attribution arbitraire", "bloque": "Aucune redistribution à un repreneur", "audit": "Aucune mutation", "contrat": "documente", "utilise": true
+  },
+  "SELLER_CONVERSATION_SELECT": {
+   "origine": "depot", "surface": "Audience cédant", "libelle": "Conversation du repreneur", "action": "Sélectionner un fil par référence opaque", "autorisation": "Cédant du dossier", "source": "GET /deals/:id/conversations", "succes": "Seul le fil choisi est affiché", "bloque": "Aucun envoi sans cible ; réponse tardive ignorée après changement", "audit": "MESSAGE_SENT lors de l'envoi, pas à la sélection", "contrat": "documente", "utilise": true
+  },
+  "SELLER_CONVERSATIONS_REFRESH": {
+   "origine": "depot", "surface": "Audience cédant", "libelle": "Actualiser les destinataires", "action": "Relire les conversations ouvertes par les intérêts", "autorisation": "Cédant du dossier", "source": "GET /deals/:id/conversations", "succes": "Liste actualisée sans dévoiler d'identités", "bloque": "Erreur visible et reprise possible", "audit": "Aucune mutation", "contrat": "documente", "utilise": true
+  },
   "ADD_FAVORITE": {
    "origine": "corpus",
    "surface": "",
@@ -177,6 +192,14 @@
    "succes": "`CONTACT_REQUESTED`",
    "bloque": "`—`",
    "audit": "`CONTACT_REQUEST_CREATED`",
+   "implementationV1": {
+    "action": "Envoyer un message texte à la conversation de l'organisation repreneuse",
+    "autorisation": "Intérêt préalable ; session et parties vérifiées par API/RLS ; aucun contact direct avant NDA",
+    "source": "POST /deals/:id/messages",
+    "succes": "Message confirmé par le serveur après commit, identifiant réel affiché",
+    "bloque": "Message interdit ou réseau indisponible : brouillon conservé, erreur visible",
+    "audit": "MESSAGE_SENT dans la transaction ; MESSAGE_BLOCKED après rollback"
+   },
    "utilise": true
   },
   "CREATE_ISSUE": {
@@ -3554,13 +3577,13 @@
   "OPP_MESSAGE_BODY": {
    "origine": "depot",
    "surface": "web/app/opportunites/[dealId]/express-interest.tsx",
-   "libelle": "",
-   "action": "",
-   "autorisation": "",
-   "succes": "",
-   "bloque": "",
-   "audit": "",
-   "contrat": "a_documenter",
+   "libelle": "Message",
+   "action": "Saisir un brouillon texte de 2 à 4000 caractères",
+   "autorisation": "Organisation repreneuse de la conversation",
+   "succes": "Brouillon envoyé par CONTACT_SELLER",
+   "bloque": "Chargement ou envoi en cours ; contenu non accepté reste dans le champ",
+   "audit": "À l'envoi seulement",
+   "contrat": "documente",
    "utilise": true
   },
   "READINESS_CERTIFICATION": {
@@ -4382,25 +4405,25 @@
   "SELLER_MESSAGE_BODY": {
    "origine": "depot",
    "surface": "web/app/(espace)/cedant/[dealId]/audience/seller-thread.tsx",
-   "libelle": "",
-   "action": "",
-   "autorisation": "",
-   "succes": "",
-   "bloque": "",
-   "audit": "",
-   "contrat": "a_documenter",
+   "libelle": "Répondre",
+   "action": "Saisir un brouillon pour le fil sélectionné",
+   "autorisation": "Cédant du dossier et conversation explicite",
+   "succes": "Brouillon envoyé par SELLER_MESSAGE_SEND",
+   "bloque": "Sans cible ou pendant chargement/envoi ; changement de cible vide le brouillon",
+   "audit": "À l'envoi seulement",
+   "contrat": "documente",
    "utilise": true
   },
   "SELLER_MESSAGE_SEND": {
    "origine": "depot",
    "surface": "web/app/(espace)/cedant/[dealId]/audience/seller-thread.tsx",
-   "libelle": "",
-   "action": "",
-   "autorisation": "",
-   "succes": "",
-   "bloque": "",
-   "audit": "",
-   "contrat": "a_documenter",
+   "libelle": "Envoyer",
+   "action": "POST /deals/:id/messages avec conversationId explicite",
+   "autorisation": "API et RLS vérifient le cédant et la cible ; pièces jointes rejetées",
+   "succes": "Message serveur ajouté au fil après commit, brouillon vidé",
+   "bloque": "Sans cible, message interdit ou panne : aucune insertion fictive dans l'interface",
+   "audit": "MESSAGE_SENT atomique ; MESSAGE_BLOCKED persistant après rollback",
+   "contrat": "documente",
    "utilise": true
   },
   "SELLER_NEW_BAND": {

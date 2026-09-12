@@ -18,6 +18,7 @@ import * as core from "./schema/core.js";
 export type DataClass = "PUBLIC" | "INTERNAL" | "PERSONAL" | "SENSITIVE_PERSONAL" | "CONFIDENTIAL_DEAL";
 
 export const CLASSIFICATION: Record<string, Record<string, DataClass>> = {
+  dealConversations: { id: "INTERNAL", dealId: "INTERNAL", sellerOrganisationId: "INTERNAL", investorOrganisationId: "INTERNAL", createdAt: "INTERNAL" },
   organisations: {
     id: "INTERNAL",
     name: "INTERNAL",
@@ -236,6 +237,7 @@ export const CLASSIFICATION: Record<string, Record<string, DataClass>> = {
     createdAt: "INTERNAL",
   },
   idempotencyKeys: {
+    requestHash: "INTERNAL",
     key: "INTERNAL",
     responseStatus: "INTERNAL",
     responseBody: "INTERNAL",
@@ -298,6 +300,7 @@ export const CLASSIFICATION: Record<string, Record<string, DataClass>> = {
     viewedAt: "INTERNAL",
   },
   dealMessages: {
+    conversationId: "INTERNAL",
     id: "INTERNAL",
     dealId: "INTERNAL",
     interestId: "INTERNAL",

@@ -4,7 +4,7 @@ import { DealPmeError, ErrorCode, type CreateDealRequest, type DealTeaserT0, typ
 import { DealStatus, DealType, DisclosureTier, newId } from "@dealpme/domain";
 import { projectForTier, transition } from "@dealpme/rules";
 import { CORE_DB, type CoreDb } from "../../database/database.module.js";
-import { certifications, companies, dealEvents, deals, interests } from "../../database/schema/core.js";
+import { certifications, companies, dealConversations, dealEvents, deals, interests } from "../../database/schema/core.js";
 import { withTenant } from "../../database/tenant.js";
 import { AuditService } from "../../platform/audit.service.js";
 import type { Principal } from "../../platform/auth.js";
@@ -43,8 +43,8 @@ export class DealService {
         turnoverBand: req.turnoverBand,
       });
       await tx.insert(dealEvents).values({ id: newId(), dealId: id, fromStatus: null, toStatus: DealStatus.DRAFT, actorUserId: seller.userId, reason: "Création du dossier" });
+      await this.audit.record({ action: "DEAL_CREATED", actorUserId: seller.userId, subjectType: "deal", subjectId: id, outcome: "OK", correlationId, metadata: { dealType: req.dealType } }, tx);
     });
-    this.audit.record({ action: "DEAL_CREATED", actorUserId: seller.userId, subjectType: "deal", subjectId: id, outcome: "OK", correlationId, metadata: { dealType: req.dealType } });
     return { dealId: id };
   }
 
@@ -80,7 +80,9 @@ export class DealService {
     if (to === DealStatus.PENDING_VERIFICATION) {
       await this.dossier.assertSubmittable(dealId, actor);
     }
-    await withTenant(this.db, actor, async (tx) => {
+    let denial: Parameters<AuditService["rejection"]>[0] | undefined;
+    try {
+      await withTenant(this.db, actor, async (tx) => {
       const deal = (await tx.select().from(deals).where(eq(deals.id, dealId)).limit(1))[0];
       if (!deal) throw new DealPmeError(ErrorCode.NOT_FOUND, "Dossier introuvable");
       // Un officier CCI-Togo instruit : il peut renvoyer un dossier soumis en préparation, avec un motif,
@@ -95,7 +97,7 @@ export class DealService {
 
       if (deal.dealType === DealType.SHARE_DEAL && (to === DealStatus.LISTED_OPEN || to === DealStatus.LISTED_RESTRICTED)) {
         if (!this.flags.isEnabled("SHARE_DEAL_LISTING")) {
-          this.audit.record({ action: "DEAL_PUBLICATION_BLOCKED", actorUserId: actor.userId, subjectType: "deal", subjectId: dealId, outcome: "BLOCKED", correlationId, metadata: { attempted: to } });
+          denial = { action: "DEAL_PUBLICATION_BLOCKED", actorUserId: actor.userId, subjectType: "deal", subjectId: dealId, outcome: "BLOCKED", correlationId, metadata: { attempted: to } };
           throw new DealPmeError(ErrorCode.PERIMETER_BLOCKED, "Publication bloquée par le périmètre réglementaire : une cession de titres ne peut pas être diffusée au-delà d'un cercle restreint autorisé par le RPS.", {
             dealType: deal.dealType,
             maxTierWithoutAdmission: DisclosureTier.T0,
@@ -124,8 +126,13 @@ export class DealService {
       }
       await tx.insert(dealEvents).values({ id: newId(), dealId, fromStatus: deal.status, toStatus: to, actorUserId: actor.userId, reason: reason ?? null });
       // result.createsFeeEvent : la création du FeeEvent (PENDING ou SUSPENDED) arrive avec le module finance (V3).
-      this.audit.record({ action: "DEAL_TRANSITION", actorUserId: actor.userId, subjectType: "deal", subjectId: dealId, outcome: "OK", correlationId, metadata: { from: deal.status, to } });
-    });
+      await this.audit.record({ action: "DEAL_TRANSITION", actorUserId: actor.userId, subjectType: "deal", subjectId: dealId, outcome: "OK", correlationId, metadata: { from: deal.status, to } }, tx);
+      });
+    } catch (error) {
+      // Après rollback : pas de seconde connexion retenue pendant la transaction.
+      if (denial) await this.audit.rejection(denial);
+      throw error;
+    }
   }
 
   /** Recherche : uniquement des champs T0, pagination par curseur (id UUIDv7 ordonnable), jamais par offset. Contexte visiteur : seules les lignes publiées sont visibles. */
@@ -174,17 +181,22 @@ export class DealService {
   }
 
   /** Manifestation d'intérêt (P09) : tracée, sans pièce jointe avant NDA. */
-  async expressInterest(dealId: string, investor: Principal, message: string | null, correlationId: string): Promise<{ interestId: string }> {
+  async expressInterest(dealId: string, investor: Principal, message: string | null, correlationId: string): Promise<{ interestId: string; conversationId: string }> {
     const id = newId();
-    await withTenant(this.db, investor, async (tx) => {
-      const deal = (await tx.select({ id: deals.id, status: deals.status }).from(deals).where(eq(deals.id, dealId)).limit(1))[0];
+    const conversationId = await withTenant(this.db, investor, async (tx) => {
+      const deal = (await tx.select({ id: deals.id, status: deals.status, seller: deals.sellerOrganisationId }).from(deals).where(eq(deals.id, dealId)).limit(1))[0];
       if (!deal || !(LISTED_STATUSES as readonly string[]).includes(deal.status)) {
         throw new DealPmeError(ErrorCode.NOT_FOUND, "Opportunité introuvable");
       }
+      if (deal.seller === investor.organisationId) throw new DealPmeError(ErrorCode.FORBIDDEN, "Vous ne pouvez pas vous manifester sur votre propre dossier");
       await tx.insert(interests).values({ id, dealId, investorUserId: investor.userId, message });
+      await tx.insert(dealConversations).values({ id: newId(), dealId, sellerOrganisationId: deal.seller, investorOrganisationId: investor.organisationId }).onConflictDoNothing();
+      const conversation = (await tx.select({ id: dealConversations.id }).from(dealConversations).where(and(eq(dealConversations.dealId, dealId), eq(dealConversations.investorOrganisationId, investor.organisationId))).limit(1))[0];
+      if (!conversation) throw new DealPmeError(ErrorCode.INTERNAL, "Conversation non créée");
+      await this.audit.record({ action: "INTEREST_EXPRESSED", actorUserId: investor.userId, subjectType: "deal", subjectId: dealId, outcome: "OK", correlationId, metadata: { conversationId: conversation.id } }, tx);
+      return conversation.id;
     });
-    this.audit.record({ action: "INTEREST_EXPRESSED", actorUserId: investor.userId, subjectType: "deal", subjectId: dealId, outcome: "OK", correlationId });
-    return { interestId: id };
+    return { interestId: id, conversationId };
   }
 
   private async isDealReady(tx: Parameters<Parameters<typeof withTenant>[2]>[0], companyId: string): Promise<boolean> {

@@ -8,6 +8,7 @@ interface Interest {
   id: string;
   message: string | null;
   createdAt: string;
+  conversationLabel: string | null;
 }
 
 interface DashRow {
@@ -61,14 +62,16 @@ export default async function AudiencePage({ params }: { params: Promise<{ dealI
               <thead>
                 <tr>
                   <th scope="col">Reçue le</th>
-                  <th scope="col">Message d'accompagnement</th>
+                   <th scope="col">Message d'accompagnement</th>
+                   <th scope="col">Conversation</th>
                 </tr>
               </thead>
               <tbody>
                 {interests.map((i) => (
                   <tr key={i.id} data-control-id="SELLER_INTEREST_ROW">
                     <td>{fmtDateTime(i.createdAt)}</td>
-                    <td>{i.message ?? "Sans message"}</td>
+                     <td>{i.message ?? "Sans message"}</td>
+                     <td>{i.conversationLabel ?? "Historique sans conversation"}</td>
                   </tr>
                 ))}
               </tbody>

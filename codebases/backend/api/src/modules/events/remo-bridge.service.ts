@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { createFakeRemo, type RemoAttendance, type RemoPort } from "@dealpme/connector-remo";
 import { AuditService } from "../../platform/audit.service.js";
+import type { CoreTx } from "../../database/tenant.js";
 
 /**
  * Pont d'intégration Remo.co (décision du 09/09/2026).
@@ -57,13 +58,13 @@ export class RemoBridgeService {
   }
 
   /** Webhook de présence : signature vérifiée avant tout traitement ; présence rattachée à l'identifiant DealPME. */
-  ingestAttendance(rawBody: string, signatureHeader: string, correlationId: string): RemoAttendance[] {
+  async ingestAttendance(rawBody: string, signatureHeader: string, correlationId: string, tx: CoreTx): Promise<RemoAttendance[]> {
     if (!this.remo.verifyWebhook(rawBody, signatureHeader)) {
       throw new Error("Signature de webhook Remo invalide");
     }
     const attendances = this.remo.parseAttendance(rawBody);
     for (const a of attendances) {
-      this.audit.record({ action: "PRIVILEGED_ACCESS_USED", actorUserId: null, subjectType: "remo_event", subjectId: a.remoEventId, outcome: "OK", correlationId, metadata: { participant: a.externalUserId, joinedAt: a.joinedAt } });
+      await this.audit.record({ action: "PRIVILEGED_ACCESS_USED", actorUserId: null, subjectType: "remo_event", subjectId: a.remoEventId, outcome: "OK", correlationId, metadata: { participant: a.externalUserId, joinedAt: a.joinedAt } }, tx);
     }
     return attendances;
   }

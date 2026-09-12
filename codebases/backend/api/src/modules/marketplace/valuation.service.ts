@@ -27,7 +27,8 @@ export class ValuationService {
   async compute(req: IndicativeValuationRequest, actor: Principal, correlationId: string): Promise<IndicativeRange> {
     const range = indicativeRange({ ebitdaXof: xof(req.ebitdaXof), netDebtXof: req.netDebtXof, restatements: req.restatements, multiples: SYNTHETIC_MULTIPLES });
     // La politique RLS n'accepte l'écriture que si le dossier appartient à l'organisation du principal.
-    await withTenant(this.db, actor, (tx) => tx.insert(indicativeValuations).values({
+    await withTenant(this.db, actor, async (tx) => {
+      await tx.insert(indicativeValuations).values({
       id: newId(),
       dealId: req.dealId,
       method: range.method,
@@ -36,8 +37,9 @@ export class ValuationService {
       calculationLog: range.calculationLog,
       sources: range.sources,
       computedBy: actor.userId,
-    }));
-    this.audit.record({ action: "VALUATION_COMPUTED", actorUserId: actor.userId, subjectType: "deal", subjectId: req.dealId, outcome: "OK", correlationId });
+      });
+      await this.audit.record({ action: "VALUATION_COMPUTED", actorUserId: actor.userId, subjectType: "deal", subjectId: req.dealId, outcome: "OK", correlationId }, tx);
+    });
     return range;
   }
 

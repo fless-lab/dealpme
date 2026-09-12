@@ -31,8 +31,8 @@ export class CompanyController {
     const id = newId();
     await withTenant(this.db, seller, async (tx) => {
       await tx.insert(companies).values({ id, ownerOrganisationId: seller.organisationId, legalName: body.legalName, legalForm: body.legalForm, rccmNumber: body.rccmNumber ?? null });
+      await this.audit.record({ action: "DEAL_CREATED", actorUserId: seller.userId, subjectType: "company", subjectId: id, outcome: "OK", correlationId: correlationIdOf(req) }, tx);
     });
-    this.audit.record({ action: "DEAL_CREATED", actorUserId: seller.userId, subjectType: "company", subjectId: id, outcome: "OK", correlationId: correlationIdOf(req) });
     return { companyId: id };
   }
 }

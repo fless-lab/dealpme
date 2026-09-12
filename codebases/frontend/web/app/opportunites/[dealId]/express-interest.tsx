@@ -1,15 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { Actions, Button, Field, Panel, StateBanner, Textarea } from "@dealpme/ui";
 
-interface Message {
-  id: string;
-  body: string;
-  createdAt: string;
-  mine: boolean;
-}
+import { useMessageThread } from "../../../lib/use-message-thread";
+import { ConversationHistory, LegacyMessages } from "../../_components/conversation-history";
 
 /**
  * Manifestation d'intérêt puis échange avec le cédant. La messagerie est du texte seul : pas de pièce jointe
@@ -18,62 +14,40 @@ interface Message {
 export function ExpressInterest({ dealId, isShare, alreadyInterested }: { dealId: string; isShare: boolean; alreadyInterested: boolean }) {
   const router = useRouter();
   const [interested, setInterested] = useState(alreadyInterested);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const thread = useMessageThread(dealId);
   const [note, setNote] = useState("");
   const [body, setBody] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  useEffect(() => {
-    let cancelled = false;
-    void fetch(`/api/marketplace/threads/${dealId}`)
-      .then((r) => (r.ok ? r.json() : { items: [] }))
-      .then((d: { items?: Message[] }) => {
-        if (!cancelled && d.items) setMessages(d.items);
-      })
-      .catch(() => undefined);
-    return () => {
-      cancelled = true;
-    };
-  }, [dealId]);
-
   async function express(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError(null);
+    try {
     const res = await fetch(`/api/marketplace/deals/${dealId}/interests`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: note || null }),
+      signal: AbortSignal.timeout(15000),
     });
     const data = (await res.json()) as { ok: boolean; message?: string };
     setBusy(false);
     if (data.ok) {
       setInterested(true);
       setNote("");
+      thread.reload();
       router.refresh();
       return;
     }
     setError(data.message ?? "Envoi impossible.");
+    } catch { setError("Envoi non confirmé. Actualisez la page avant de réessayer."); }
+    finally { setBusy(false); }
   }
 
   async function send(e: FormEvent) {
     e.preventDefault();
-    setBusy(true);
-    setError(null);
-    const res = await fetch(`/api/marketplace/deals/${dealId}/messages`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ body }),
-    });
-    const data = (await res.json()) as { ok: boolean; message?: string };
-    setBusy(false);
-    if (data.ok) {
-      setMessages((m) => [...m, { id: crypto.randomUUID(), body, createdAt: new Date().toISOString(), mine: true }]);
-      setBody("");
-      return;
-    }
-    setError(data.message ?? "Message refusé.");
+    if (await thread.send(body)) setBody("");
   }
 
   if (isShare) {
@@ -87,7 +61,7 @@ export function ExpressInterest({ dealId, isShare, alreadyInterested }: { dealId
 
   return (
     <Panel title={interested ? "Votre échange avec le cédant" : "Manifester votre intérêt"} controlId="OPP_INTEREST">
-      {error ? <StateBanner tone="danger" title="Refusé" controlId="OPP_INTEREST_ERROR">{error}</StateBanner> : null}
+      {error || thread.error ? <StateBanner tone="danger" title="Échange indisponible" controlId="OPP_INTEREST_ERROR">{error ?? thread.error}</StateBanner> : null}
 
       {!interested ? (
         <form onSubmit={express} noValidate>
@@ -106,28 +80,19 @@ export function ExpressInterest({ dealId, isShare, alreadyInterested }: { dealId
         </form>
       ) : (
         <>
-          <div className="dp-stack" style={{ gap: 8, marginBottom: 16 }}>
-            {messages.length === 0 ? (
-              <p className="dp-muted" style={{ margin: 0 }}>Intérêt transmis. Écrivez au cédant pour convenir d'un échange.</p>
-            ) : (
-              messages.map((m) => (
-                <div key={m.id} style={{ padding: 12, borderRadius: 6, background: m.mine ? "var(--dp-canvas)" : "var(--dp-paper)", border: "1px solid var(--dp-line)" }} data-control-id="OPP_MESSAGE">
-                  <div className="dp-label">{m.mine ? "Vous" : "Le cédant"}</div>
-                  <div>{m.body}</div>
-                </div>
-              ))
-            )}
-          </div>
-          <form onSubmit={send} noValidate>
+          {!thread.loading && !thread.error && !thread.items.length ? <p className="dp-muted">Intérêt transmis. Écrivez au cédant pour convenir d'un échange.</p> : null}
+          <ConversationHistory thread={thread} otherParty="Le cédant" controlId="OPP_MESSAGE" />
+          <form onSubmit={send}>
             <Field id="message-body" label="Message" hint="Texte seul. Ni pièce jointe, ni téléphone, ni email tant que l'accord de confidentialité n'est pas signé.">
-              <Textarea id="message-body" rows={3} required value={body} onChange={(e) => setBody(e.target.value)} data-control-id="OPP_MESSAGE_BODY" />
+              <Textarea id="message-body" rows={3} required minLength={2} maxLength={4000} disabled={thread.busy || thread.loading} value={body} onChange={(e) => setBody(e.target.value)} data-control-id="OPP_MESSAGE_BODY" />
             </Field>
             <Actions>
-              <Button controlId="CONTACT_SELLER" type="submit" state={busy ? "loading" : "default"}>
+              <Button controlId="CONTACT_SELLER" type="submit" disabled={thread.loading} state={thread.busy ? "loading" : "default"}>
                 Envoyer
               </Button>
             </Actions>
           </form>
+          <LegacyMessages dealId={dealId} />
         </>
       )}
     </Panel>

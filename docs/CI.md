@@ -2,6 +2,8 @@
 
 Lot **L01 / V1-091**, vérifié le 12/09/2026. Preuve locale archivée : [`qa/l01-ci.json`](../qa/l01-ci.json).
 Le workflow GitHub exécute les mêmes commandes ; aucun résultat distant n'est déduit des essais locaux.
+La chaîne inclut désormais **L02** : [audit et conversations](adr/0008-audit-et-conversations.md),
+[preuve locale](../qa/l02-verification.json).
 
 ## Commandes
 
@@ -14,6 +16,7 @@ npm test
 npm audit --audit-level=high
 npm run build:apps
 npm run ci:verify-gates
+npx playwright install chromium
 npm run ci:smoke
 ```
 
@@ -54,11 +57,14 @@ sans build/lint/tests concurrents dans le même arbre de travail.
 
 Résultat : `.ci-artifacts/gate-rejections.json` avec codes de sortie, inventaire et empreintes des configs.
 Le workflow la lance après les contrôles positifs, pour ne pas confondre un défaut initial avec le rejet
-d'une sonde.
+d'une sonde. L02 ajoute une dixième sonde : une promesse métier ignorée dans l'API doit être rejetée par
+le lint typé, même lorsqu'elle est précédée de `void`.
 
 ## Smoke isolé
 
-Prérequis : Node 24, Docker avec Compose **≥ 2.24.4**, Python 3, Bash, curl et openssl. L'API et le RPS
+Prérequis : Node 24, Docker avec Compose **≥ 2.24.4**, Python 3, Bash, curl, openssl et Chromium Playwright.
+Sur le runner Linux, la CI installe Chromium et ses bibliothèques avec `playwright install --with-deps chromium`.
+L'API, le RPS et le web
 doivent être compilés (`npm run build`). Aucune pile locale déjà démarrée n'est requise.
 
 `ci:smoke` :
@@ -71,6 +77,15 @@ doivent être compilés (`npm run build`). Aucune pile locale déjà démarrée 
    privé distinct de `.demo-credentials.local.json`.
 5. Lance API/RPS sur des ports libres et vérifie leur disponibilité avant le smoke.
 6. Rejoue les 101 contrôles HTTP/base et antivirus. Nettoie processus et volumes de ce projet à la fin.
+
+Avant le nettoyage, L02 ajoute 33 scénarios : migration d'une base historique jetable, injections de panne,
+concurrence, arrêt brutal d'une API dédiée et six contrôles navigateur. Le test vérifie que le port de la
+base correspond bien au conteneur du projet CI avant toute injection. L'ancienne base de travail n'est
+jamais utilisée comme fixture de migration. Rapports : `.ci-artifacts/l02-results.json` et `smoke-results.json`.
+
+Sur un poste multi-projets, `PLAYWRIGHT_BROWSERS_PATH` peut désigner un cache propre à DealPME ; utiliser
+la même valeur pour l'installation de Chromium et l'exécution du smoke. Les profils de navigateur restent
+éphémères et indépendants des profils personnels.
 
 Le smoke historique reste disponible sur la pile de travail : `bash devX/smoke_v1.sh`. Ses paramètres
 `SMOKE_CORE_CONTAINER`, `SMOKE_REDIS_CONTAINER`, `DEMO_CREDENTIALS_FILE`, `S3_ENDPOINT` et
@@ -99,5 +114,6 @@ est affiché en cas d'échec. Ils ne sont pas envoyés dans les artefacts : les 
 - Neuf sondes volontairement invalides : neuf rejets attendus, puis retour au vert.
 - Audit : aucun niveau élevé/critique, quatre modérés dans la chaîne de développement drizzle-kit/esbuild.
 
-L01 ne valide pas encore les parcours navigateur ni les futurs transports réels. La prochaine action est
-**L02 : audit durable et conversations ciblées**, selon le [plan](PLAN_EXECUTION.md).
+L02 valide maintenant les parcours de messagerie en navigateur et l'audit transactionnel (33 scénarios),
+en plus de L01. La recette globale V1 et les futurs transports réels restent à faire. Prochaine action :
+**L03 : SMTP/Mailpit, boîte SMS et contrats de transport**, selon le [plan](PLAN_EXECUTION.md).

@@ -55,6 +55,7 @@ function assertBuildCoverage() {
 
 const typeError = 'export const ciProbe: number = "L01_TYPE_REJECTION";\n';
 const probes = [
+  { name: "Promesse métier non attendue", file: "codebases/backend/api/src/ci-gate-probe.ts", content: "Promise.resolve();\nexport {};\n", args: ["run", "lint"], expected: "@typescript-eslint/no-floating-promises" },
   { name: "Lint TypeScript", file: "packages/domain/src/ci-gate-probe.ts", content: "debugger;\nexport {};\n", args: ["run", "lint"], expected: "no-debugger" },
   { name: "Règles de Hooks React", file: "codebases/frontend/ui/src/ci-gate-probe.tsx", content: 'import { useState } from "react";\nexport function CiProbe({ active }: { active: boolean }) { if (active) { useState(0); } return null; }\n', args: ["run", "lint"], expected: "react-hooks/rules-of-hooks" },
   { name: "Bibliothèque partagée", file: "packages/domain/src/ci-gate-probe.ts", content: typeError, args: ["run", "build:libs"], expected: "ci-gate-probe.ts" },

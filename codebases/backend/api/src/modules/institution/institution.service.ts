@@ -42,8 +42,8 @@ export class InstitutionService {
     await this.db.transaction(async (tx) => {
       await tx.insert(membershipConfirmations).values({ id: newId(), organisationId, confirmationRef, confirmedBy: officer.userId });
       await tx.update(organisations).set({ cciMemberConfirmationRef: confirmationRef }).where(eq(organisations.id, organisationId));
+      await this.audit.record({ action: "MEMBERSHIP_CONFIRMED", actorUserId: officer.userId, subjectType: "organisation", subjectId: organisationId, outcome: "OK", correlationId }, tx);
     });
-    this.audit.record({ action: "MEMBERSHIP_CONFIRMED", actorUserId: officer.userId, subjectType: "organisation", subjectId: organisationId, outcome: "OK", correlationId });
   }
 
   /**
@@ -60,7 +60,7 @@ export class InstitutionService {
         : await this.registry.lookup({ rccmNumber });
 
     if (!result.found) {
-      this.audit.record({ action: "REGISTRY_VERIFIED", actorUserId: officer.userId, subjectType: "company", subjectId: companyId, outcome: "FAILED", correlationId });
+      await this.audit.rejection({ action: "REGISTRY_VERIFIED", actorUserId: officer.userId, subjectType: "company", subjectId: companyId, outcome: "FAILED", correlationId });
       throw new DealPmeError(ErrorCode.NOT_FOUND, "Aucune inscription trouvée au RCCM pour ce numéro");
     }
     const recordId = newId();
@@ -80,8 +80,8 @@ export class InstitutionService {
         mode: this.registry.mode,
       });
       await tx.update(companies).set({ registryRecordId: recordId }).where(eq(companies.id, companyId));
+      await this.audit.record({ action: "REGISTRY_VERIFIED", actorUserId: officer.userId, subjectType: "company", subjectId: companyId, outcome: "OK", correlationId, metadata: { mode: this.registry.mode } }, tx);
     });
-    this.audit.record({ action: "REGISTRY_VERIFIED", actorUserId: officer.userId, subjectType: "company", subjectId: companyId, outcome: "OK", correlationId, metadata: { mode: this.registry.mode } });
     return { registryRecordId: recordId };
   }
 
@@ -94,11 +94,12 @@ export class InstitutionService {
     const company = await withTenant(this.db, officer, async (tx) => (await tx.select({ id: companies.id, registryRecordId: companies.registryRecordId }).from(companies).where(eq(companies.id, req.companyId)).limit(1))[0]);
     if (!company) throw new DealPmeError(ErrorCode.NOT_FOUND, "Entreprise introuvable");
     if (req.decision === "GRANTED" && !company.registryRecordId) {
-      this.audit.record({ action: "CERTIFICATION_DECIDED", actorUserId: officer.userId, subjectType: "company", subjectId: req.companyId, outcome: "FAILED", correlationId, metadata: { decision: req.decision, reason: "REGISTRY_NOT_VERIFIED" } });
+      await this.audit.rejection({ action: "CERTIFICATION_DECIDED", actorUserId: officer.userId, subjectType: "company", subjectId: req.companyId, outcome: "FAILED", correlationId, metadata: { decision: req.decision, reason: "REGISTRY_NOT_VERIFIED" } });
       throw new DealPmeError(ErrorCode.INVALID_TRANSITION, "La certification exige une vérification RCCM / CFE préalable", { reason: "REGISTRY_NOT_VERIFIED" });
     }
     const id = newId();
-    await this.db.insert(certifications).values({
+    await withTenant(this.db, officer, async (tx) => {
+      await tx.insert(certifications).values({
       id,
       companyId: req.companyId,
       scopeStatement: req.scopeStatement,
@@ -108,8 +109,9 @@ export class InstitutionService {
       revocationReason: req.decision === "REVOKED" ? (req.reason ?? "Motif non renseigné") : null,
     });
     // Une décision clôt les demandes en cours : l'entreprise voit son instruction aboutie, pas une file muette.
-    await this.requests.closeOpenRequests(req.companyId, id, officer);
-    this.audit.record({ action: "CERTIFICATION_DECIDED", actorUserId: officer.userId, subjectType: "company", subjectId: req.companyId, outcome: "OK", correlationId, metadata: { decision: req.decision } });
+      await this.requests.closeOpenRequests(req.companyId, id, tx);
+      await this.audit.record({ action: "CERTIFICATION_DECIDED", actorUserId: officer.userId, subjectType: "company", subjectId: req.companyId, outcome: "OK", correlationId, metadata: { decision: req.decision } }, tx);
+    });
     return { certificationId: id };
   }
 

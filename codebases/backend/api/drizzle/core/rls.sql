@@ -212,13 +212,9 @@ DROP POLICY IF EXISTS deal_view_owner ON deal_view;
 CREATE POLICY deal_view_owner ON deal_view FOR SELECT
   USING (EXISTS (SELECT 1 FROM deal d WHERE d.id = deal_view.deal_id AND d.seller_organisation_id::text = current_setting('app.organisation_id', true)));
 
-ALTER TABLE deal_message ENABLE ROW LEVEL SECURITY;
-ALTER TABLE deal_message FORCE ROW LEVEL SECURITY;
+-- Les politiques message/conversation sont installées atomiquement par 0004,
+-- avec la reprise historique. Ne jamais réintroduire la politique globale par dossier.
 DROP POLICY IF EXISTS deal_message_party ON deal_message;
-CREATE POLICY deal_message_party ON deal_message
-  USING (deal_message.sender_organisation_id::text = current_setting('app.organisation_id', true)
-      OR EXISTS (SELECT 1 FROM deal d WHERE d.id = deal_message.deal_id AND d.seller_organisation_id::text = current_setting('app.organisation_id', true)))
-  WITH CHECK (deal_message.sender_organisation_id::text = current_setting('app.organisation_id', true));
 
 ALTER TABLE saved_alert ENABLE ROW LEVEL SECURITY;
 ALTER TABLE saved_alert FORCE ROW LEVEL SECURITY;

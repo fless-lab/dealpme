@@ -24,7 +24,8 @@ export class EventsService {
 
   async create(input: { title: string; description?: string | undefined; startsAt: string; endsAt: string; capacity: number; mode: RemoIntegrationMode; campaignId?: string | undefined }, organiser: Principal, correlationId: string) {
     const id = newId();
-    await this.db.insert(events).values({
+    await this.db.transaction(async (tx) => {
+      await tx.insert(events).values({
       id,
       title: input.title,
       description: input.description ?? null,
@@ -35,7 +36,8 @@ export class EventsService {
       organiserUserId: organiser.userId,
       campaignId: input.campaignId ?? null,
     });
-    this.audit.record({ action: "DEAL_CREATED", actorUserId: organiser.userId, subjectType: "event", subjectId: id, outcome: "OK", correlationId, metadata: { mode: input.mode } });
+      await this.audit.record({ action: "DEAL_CREATED", actorUserId: organiser.userId, subjectType: "event", subjectId: id, outcome: "OK", correlationId, metadata: { mode: input.mode } }, tx);
+    });
     return { eventId: id };
   }
 
@@ -51,8 +53,10 @@ export class EventsService {
       capacity: ev.capacity,
       mode: ev.integrationMode as RemoIntegrationMode,
     });
-    await this.db.update(events).set({ remoEventId: published.remoEventId ?? null, status: "PUBLISHED" }).where(eq(events.id, eventId));
-    this.audit.record({ action: "DEAL_TRANSITION", actorUserId: organiser.userId, subjectType: "event", subjectId: eventId, outcome: "OK", correlationId, metadata: { status: "PUBLISHED", remoEventId: published.remoEventId ?? null } });
+    await this.db.transaction(async (tx) => {
+      await tx.update(events).set({ remoEventId: published.remoEventId ?? null, status: "PUBLISHED" }).where(eq(events.id, eventId));
+      await this.audit.record({ action: "DEAL_TRANSITION", actorUserId: organiser.userId, subjectType: "event", subjectId: eventId, outcome: "OK", correlationId, metadata: { status: "PUBLISHED", remoEventId: published.remoEventId ?? null } }, tx);
+    });
     return { eventId, remoEventId: published.remoEventId ?? null };
   }
 
@@ -135,10 +139,11 @@ export class EventsService {
 
     const id = newId();
     // Politique RLS : une inscription n'est visible et modifiable que par son auteur (ou un officier).
-    await withTenant(this.db, participant, (tx) => tx.insert(eventRegistrations).values({ id, eventId, userId: participant.userId, displayName, consentContactAt: consentContact ? new Date() : null }));
+    await withTenant(this.db, participant, async (tx) => {
+      await tx.insert(eventRegistrations).values({ id, eventId, userId: participant.userId, displayName, consentContactAt: consentContact ? new Date() : null });
     // L'attribution de campagne suit l'inscription : c'est elle qui rattachera plus tard une transaction à
     // l'événement qui l'a provoquée. Elle est portée par l'événement et journalisée, jamais saisie par le participant.
-    this.audit.record({
+      await this.audit.record({
       action: "EVENT_REGISTERED",
       actorUserId: participant.userId,
       subjectType: "event",
@@ -146,6 +151,7 @@ export class EventsService {
       outcome: "OK",
       correlationId,
       metadata: { campaignId: ev.campaignId, consentContact, integrationMode: ev.integrationMode },
+      }, tx);
     });
     return { registrationId: id, campaignId: ev.campaignId };
   }
@@ -155,15 +161,15 @@ export class EventsService {
    * Sans lui, le nom d'affichage circule mais aucune coordonnée n'est échangée.
    */
   async setContactConsent(eventId: string, participant: Principal, consent: boolean, correlationId: string): Promise<void> {
-    const updated = await withTenant(this.db, participant, (tx) =>
-      tx
+    await withTenant(this.db, participant, async (tx) => {
+      const updated = await tx
         .update(eventRegistrations)
         .set({ consentContactAt: consent ? new Date() : null })
         .where(and(eq(eventRegistrations.eventId, eventId), eq(eventRegistrations.userId, participant.userId)))
-        .returning({ id: eventRegistrations.id }),
-    );
-    if (updated.length === 0) throw new DealPmeError(ErrorCode.NOT_FOUND, "Inscription introuvable");
-    this.audit.record({ action: "EVENT_CONSENT_CHANGED", actorUserId: participant.userId, subjectType: "event", subjectId: eventId, outcome: "OK", correlationId, metadata: { consent } });
+        .returning({ id: eventRegistrations.id });
+      if (updated.length === 0) throw new DealPmeError(ErrorCode.NOT_FOUND, "Inscription introuvable");
+      await this.audit.record({ action: "EVENT_CONSENT_CHANGED", actorUserId: participant.userId, subjectType: "event", subjectId: eventId, outcome: "OK", correlationId, metadata: { consent } }, tx);
+    });
   }
 
   /** Lien d'accès unique : réservé aux inscrits d'un événement publié chez Remo. */
@@ -182,8 +188,10 @@ export class EventsService {
       throw new DealPmeError(ErrorCode.VALIDATION_FAILED, "Les contraintes transfrontalières doivent être présentées et reconnues avant toute demande (P21)");
     }
     const id = newId();
-    await withTenant(this.db, investor, (tx) => tx.insert(diasporaAppointments).values({ id, investorUserId: investor.userId, dealId, requestedSlot: new Date(requestedSlot), crossBorderNoticeShownAt: new Date() }));
-    this.audit.record({ action: "INTEREST_EXPRESSED", actorUserId: investor.userId, subjectType: "diaspora_appointment", subjectId: id, outcome: "OK", correlationId });
+    await withTenant(this.db, investor, async (tx) => {
+      await tx.insert(diasporaAppointments).values({ id, investorUserId: investor.userId, dealId, requestedSlot: new Date(requestedSlot), crossBorderNoticeShownAt: new Date() });
+      await this.audit.record({ action: "INTEREST_EXPRESSED", actorUserId: investor.userId, subjectType: "diaspora_appointment", subjectId: id, outcome: "OK", correlationId }, tx);
+    });
     return { appointmentId: id, status: "REQUESTED" };
   }
 }

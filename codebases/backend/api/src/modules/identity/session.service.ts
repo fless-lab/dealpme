@@ -5,6 +5,7 @@ import { newId, type Role } from "@dealpme/domain";
 import { CORE_DB, type CoreDb } from "../../database/database.module.js";
 import { sessions, users } from "../../database/schema/core.js";
 import type { Principal } from "../../platform/auth.js";
+import type { CoreTx } from "../../database/tenant.js";
 
 /**
  * Sessions côté serveur (DP-IDN) : jeton opaque dont seul le hash est stocké, expiration glissante
@@ -20,10 +21,10 @@ export class SessionService {
     return createHash("sha256").update(token).digest("hex");
   }
 
-  async create(userId: string, deviceLabel: string | null, ipHash: string | null): Promise<{ token: string; expiresAt: Date }> {
+  async create(userId: string, deviceLabel: string | null, ipHash: string | null, tx: CoreTx): Promise<{ token: string; expiresAt: Date }> {
     const token = randomBytes(32).toString("base64url");
     const expiresAt = new Date(Date.now() + SESSION_TTL_MINUTES * 60_000);
-    await this.db.insert(sessions).values({ id: newId(), userId, tokenHash: this.hashToken(token), deviceLabel, ipHash, expiresAt });
+    await tx.insert(sessions).values({ id: newId(), userId, tokenHash: this.hashToken(token), deviceLabel, ipHash, expiresAt });
     return { token, expiresAt };
   }
 
@@ -50,11 +51,13 @@ export class SessionService {
     };
   }
 
-  async revoke(sessionId: string): Promise<void> {
-    await this.db.update(sessions).set({ revokedAt: new Date() }).where(eq(sessions.id, sessionId));
+  async revoke(sessionId: string, userId: string, tx: CoreTx): Promise<boolean> {
+    const rows = await tx.update(sessions).set({ revokedAt: new Date() }).where(and(eq(sessions.id, sessionId), eq(sessions.userId, userId), isNull(sessions.revokedAt))).returning({ id: sessions.id });
+    return rows.length > 0;
   }
 
-  async revokeAllForUser(userId: string): Promise<void> {
-    await this.db.update(sessions).set({ revokedAt: new Date() }).where(and(eq(sessions.userId, userId), isNull(sessions.revokedAt)));
+  async revokeAllForUser(userId: string, tx: CoreTx): Promise<number> {
+    const rows = await tx.update(sessions).set({ revokedAt: new Date() }).where(and(eq(sessions.userId, userId), isNull(sessions.revokedAt))).returning({ id: sessions.id });
+    return rows.length;
   }
 }

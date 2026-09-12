@@ -5,7 +5,7 @@ import { newId } from "@dealpme/domain";
 import { dealReadyChecklist, DEAL_READY_LIMITS, DEAL_READY_SCOPE, type DealReadyChecklist } from "@dealpme/rules";
 import { CORE_DB, type CoreDb } from "../../database/database.module.js";
 import { certificationRequests, certifications, companies, dealDocuments, deals, membershipConfirmations } from "../../database/schema/core.js";
-import { withTenant } from "../../database/tenant.js";
+import { withTenant, type CoreTx } from "../../database/tenant.js";
 import { AuditService } from "../../platform/audit.service.js";
 import type { Principal } from "../../platform/auth.js";
 
@@ -95,21 +95,20 @@ export class CertificationRequestService {
       )[0];
       if (open) throw new DealPmeError(ErrorCode.CONFLICT, "Une demande est déjà en cours d'instruction pour cette entreprise");
       await tx.insert(certificationRequests).values({ id, companyId, message, requestedBy: seller.userId });
+      await this.audit.record({ action: "CERTIFICATION_REQUESTED", actorUserId: seller.userId, subjectType: "company", subjectId: companyId, outcome: "OK", correlationId }, tx);
     });
-    this.audit.record({ action: "CERTIFICATION_REQUESTED", actorUserId: seller.userId, subjectType: "company", subjectId: companyId, outcome: "OK", correlationId });
     return { requestId: id };
   }
 
   /** Retrait d'une demande par l'entreprise, tant qu'aucune décision n'est prise. */
   async withdraw(requestId: string, seller: Principal, correlationId: string): Promise<void> {
-    const companyId = await withTenant(this.db, seller, async (tx) => {
+    await withTenant(this.db, seller, async (tx) => {
       const row = (await tx.select().from(certificationRequests).where(eq(certificationRequests.id, requestId)).limit(1))[0];
       if (!row) throw new DealPmeError(ErrorCode.NOT_FOUND, "Demande introuvable");
       if (!(OPEN_STATES as readonly string[]).includes(row.state)) throw new DealPmeError(ErrorCode.INVALID_TRANSITION, "Cette demande n'est plus en cours");
       await tx.update(certificationRequests).set({ state: "WITHDRAWN", closedAt: new Date() }).where(eq(certificationRequests.id, requestId));
-      return row.companyId;
+      await this.audit.record({ action: "CERTIFICATION_REQUEST_WITHDRAWN", actorUserId: seller.userId, subjectType: "company", subjectId: row.companyId, outcome: "OK", correlationId }, tx);
     });
-    this.audit.record({ action: "CERTIFICATION_REQUEST_WITHDRAWN", actorUserId: seller.userId, subjectType: "company", subjectId: companyId, outcome: "OK", correlationId });
   }
 
   /** File d'instruction de l'officier : demandes ouvertes d'abord, avec l'état de la liste de contrôle. */
@@ -142,7 +141,7 @@ export class CertificationRequestService {
    */
   async requireRemediation(requestId: string, items: { label: string; detail: string | null }[], officer: Principal, correlationId: string): Promise<void> {
     if (items.length === 0) throw new DealPmeError(ErrorCode.VALIDATION_FAILED, "Une remédiation nomme au moins un point à reprendre");
-    const companyId = await withTenant(this.db, officer, async (tx) => {
+    await withTenant(this.db, officer, async (tx) => {
       const row = (await tx.select().from(certificationRequests).where(eq(certificationRequests.id, requestId)).limit(1))[0];
       if (!row) throw new DealPmeError(ErrorCode.NOT_FOUND, "Demande introuvable");
       if (!(OPEN_STATES as readonly string[]).includes(row.state)) throw new DealPmeError(ErrorCode.INVALID_TRANSITION, "Cette demande n'est plus en cours");
@@ -150,19 +149,16 @@ export class CertificationRequestService {
         .update(certificationRequests)
         .set({ state: "REMEDIATION_REQUIRED", remediationItems: items, remediationSetBy: officer.userId, remediationSetAt: new Date() })
         .where(eq(certificationRequests.id, requestId));
-      return row.companyId;
+      await this.audit.record({ action: "CERTIFICATION_REMEDIATION_REQUIRED", actorUserId: officer.userId, subjectType: "company", subjectId: row.companyId, outcome: "OK", correlationId, metadata: { items: items.length } }, tx);
     });
-    this.audit.record({ action: "CERTIFICATION_REMEDIATION_REQUIRED", actorUserId: officer.userId, subjectType: "company", subjectId: companyId, outcome: "OK", correlationId, metadata: { items: items.length } });
   }
 
   /** Clôture des demandes ouvertes d'une entreprise au moment d'une décision. Appelée par InstitutionService. */
-  async closeOpenRequests(companyId: string, certificationId: string, officer: Principal): Promise<void> {
-    await withTenant(this.db, officer, async (tx) => {
+  async closeOpenRequests(companyId: string, certificationId: string, tx: CoreTx): Promise<void> {
       await tx
         .update(certificationRequests)
         .set({ state: "DECIDED", certificationId, closedAt: new Date() })
         .where(and(eq(certificationRequests.companyId, companyId), inArray(certificationRequests.state, [...OPEN_STATES]), isNull(certificationRequests.closedAt)));
-    });
   }
 
   // ---------------------------------------------------------------- internes

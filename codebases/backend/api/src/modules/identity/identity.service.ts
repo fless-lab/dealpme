@@ -27,7 +27,7 @@ export class IdentityService {
   ) {}
 
   /**
-   * Inscription : organisation + personne + utilisateur dans une transaction, puis code de vérification d'email.
+   * Inscription : organisation, personne, utilisateur, défi email et preuves dans une même transaction.
    * L'attribution est capturée ici et devient immuable (trigger en base). Le marketing n'est jamais pré-coché.
    */
   async register(req: RegisterRequest, ip: string, correlationId: string): Promise<{ userId: string; organisationId: string; emailChallengeId: string; devCode?: string }> {
@@ -42,7 +42,7 @@ export class IdentityService {
     const userId = newId();
     const passwordHash = await this.passwords.hash(req.password);
 
-    await this.db.transaction(async (tx) => {
+    const challenge = await this.db.transaction(async (tx) => {
       await tx.insert(organisations).values({
         id: organisationId,
         name: req.organisationName,
@@ -63,17 +63,20 @@ export class IdentityService {
         consentPrivacyAt: now,
         consentMarketingAt: req.consents.marketingOptIn ? now : null,
       });
+      await this.audit.record({ action: "USER_REGISTERED", actorUserId: userId, subjectType: "user", subjectId: userId, outcome: "OK", correlationId }, tx);
+      return this.otp.issue(userId, "EMAIL_VERIFY", { email: req.email.toLowerCase() }, correlationId, tx);
     });
-    this.audit.record({ action: "USER_REGISTERED", actorUserId: userId, subjectType: "user", subjectId: userId, outcome: "OK", correlationId });
-    const challenge = await this.otp.issue(userId, "EMAIL_VERIFY", { email: req.email.toLowerCase() }, correlationId);
     return { userId, organisationId, emailChallengeId: challenge.challengeId, ...(challenge.devCode ? { devCode: challenge.devCode } : {}) };
   }
 
   async verifyEmail(challengeId: string, code: string, correlationId: string): Promise<void> {
-    const { userId, purpose } = await this.otp.verify(challengeId, code, correlationId);
-    if (purpose !== "EMAIL_VERIFY") throw new DealPmeError(ErrorCode.UNAUTHENTICATED, "Code invalide pour cet usage");
-    await this.db.update(users).set({ emailVerifiedAt: new Date() }).where(eq(users.id, userId));
-    this.audit.record({ action: "EMAIL_VERIFIED", actorUserId: userId, subjectType: "user", subjectId: userId, outcome: "OK", correlationId });
+    const verified = await this.otp.verify(challengeId, code, "EMAIL_VERIFY", correlationId);
+    const { userId } = verified;
+    await this.db.transaction(async (tx) => {
+      await this.otp.consume(verified, tx);
+      await tx.update(users).set({ emailVerifiedAt: new Date() }).where(eq(users.id, userId));
+      await this.audit.record({ action: "EMAIL_VERIFIED", actorUserId: userId, subjectType: "user", subjectId: userId, outcome: "OK", correlationId }, tx);
+    });
   }
 
   /**
@@ -89,16 +92,16 @@ export class IdentityService {
     const row = (await this.db.select().from(users).where(eq(users.email, account)).limit(1))[0];
     const ok = row ? await this.passwords.verify(row.passwordHash, password) : false;
     if (!row || !ok) {
-      this.audit.record({ action: "LOGIN_FAILED", actorUserId: row?.id ?? null, subjectType: "account", subjectId: RateLimitService.fingerprint(account), outcome: "FAILED", correlationId, metadata: { ipFp } });
+      await this.audit.rejection({ action: "LOGIN_FAILED", actorUserId: row?.id ?? null, subjectType: "account", subjectId: RateLimitService.fingerprint(account), outcome: "FAILED", correlationId, metadata: { ipFp } });
       const locked = await this.limiter.recordFailure(account);
       if (locked > 0) {
-        this.audit.record({ action: "ACCOUNT_LOCKED", actorUserId: row?.id ?? null, subjectType: "account", subjectId: RateLimitService.fingerprint(account), outcome: "BLOCKED", correlationId, metadata: { lockSeconds: locked } });
+        await this.audit.rejection({ action: "ACCOUNT_LOCKED", actorUserId: row?.id ?? null, subjectType: "account", subjectId: RateLimitService.fingerprint(account), outcome: "BLOCKED", correlationId, metadata: { lockSeconds: locked } });
       }
       try {
         await this.limiter.hit("login:account", account, RULES.LOGIN_FAILURES_PER_ACCOUNT);
       } catch (e) {
         if (e instanceof DealPmeError && e.code === ErrorCode.RATE_LIMITED) {
-          this.audit.record({ action: "RATE_LIMITED", actorUserId: null, subjectType: "account", subjectId: RateLimitService.fingerprint(account), outcome: "BLOCKED", correlationId });
+          await this.audit.rejection({ action: "RATE_LIMITED", actorUserId: null, subjectType: "account", subjectId: RateLimitService.fingerprint(account), outcome: "BLOCKED", correlationId });
         }
         throw e;
       }
@@ -119,17 +122,23 @@ export class IdentityService {
       return { kind: "MFA_REQUIRED", challengeId: challenge.challengeId, ...(challenge.devCode ? { devCode: challenge.devCode } : {}) };
     }
 
-    const session = await this.sessions.create(row.id, deviceLabel, ipFp);
-    this.audit.record({ action: "SESSION_CREATED", actorUserId: row.id, subjectType: "user", subjectId: row.id, outcome: "OK", correlationId, metadata: { ipFp } });
+    const session = await this.db.transaction(async (tx) => {
+      const created = await this.sessions.create(row.id, deviceLabel, ipFp, tx);
+      await this.audit.record({ action: "SESSION_CREATED", actorUserId: row.id, subjectType: "user", subjectId: row.id, outcome: "OK", correlationId, metadata: { ipFp } }, tx);
+      return created;
+    });
     return { kind: "SESSION", token: session.token, expiresAt: session.expiresAt };
   }
 
   /** Second facteur : le code consommé ouvre la session. */
   async completeMfa(challengeId: string, code: string, ip: string, deviceLabel: string | null, correlationId: string): Promise<{ token: string; expiresAt: Date }> {
-    const { userId, purpose } = await this.otp.verify(challengeId, code, correlationId);
-    if (purpose !== "LOGIN_MFA") throw new DealPmeError(ErrorCode.UNAUTHENTICATED, "Code invalide pour cet usage");
-    const session = await this.sessions.create(userId, deviceLabel, RateLimitService.fingerprint(ip));
-    this.audit.record({ action: "SESSION_CREATED", actorUserId: userId, subjectType: "user", subjectId: userId, outcome: "OK", correlationId, metadata: { mfa: true } });
-    return session;
+    const verified = await this.otp.verify(challengeId, code, "LOGIN_MFA", correlationId);
+    const { userId } = verified;
+    return this.db.transaction(async (tx) => {
+      await this.otp.consume(verified, tx);
+      const session = await this.sessions.create(userId, deviceLabel, RateLimitService.fingerprint(ip), tx);
+      await this.audit.record({ action: "SESSION_CREATED", actorUserId: userId, subjectType: "user", subjectId: userId, outcome: "OK", correlationId, metadata: { mfa: true } }, tx);
+      return session;
+    });
   }
 }

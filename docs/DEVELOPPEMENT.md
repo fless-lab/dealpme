@@ -40,6 +40,7 @@ propriétaire seulement, jamais versionné. Chaque chargement en génère de nou
 
 ```bash
 npm run build
+npx playwright install chromium
 npm run ci:smoke              # pile et comptes de test isolés, nettoyage automatique
 ```
 
@@ -48,6 +49,8 @@ paliers de divulgation, chiffrement, antivirus, limitation de débit, signatures
 certification, place de marché, blocage réglementaire, supervision. Chaque exécution crée sa pile, attend
 les sondes, migre les bases et charge son jeu synthétique. Aucun reset de la pile de travail.
 Le test direct `bash devX/smoke_v1.sh` reste disponible pour une pile locale déjà chargée.
+Le runner isolé exécute aussi les 33 scénarios L02, dont six en navigateur, et une migration de données
+historiques synthétiques sur une base distincte. Voir [l'ADR 0008](adr/0008-audit-et-conversations.md).
 
 Les autres commandes utiles :
 
@@ -57,7 +60,7 @@ npm run lint                 # ESLint TypeScript/React/Next, avertissements bloq
 npm test                     # tests unitaires (règles métier, primitives de sécurité)
 npm run build                # compilation complète
 npm audit --audit-level=high # bloquant en intégration continue
-npm run ci:verify-gates      # diagnostic séquentiel : neuf défauts injectés puis retirés
+npm run ci:verify-gates      # diagnostic séquentiel : dix défauts injectés puis retirés
 ```
 
 Voir [CI.md](CI.md) pour l'ordre des builds, les exceptions de lint motivées, les artefacts et le diagnostic.

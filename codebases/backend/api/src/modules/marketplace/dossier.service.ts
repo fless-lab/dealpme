@@ -139,9 +139,9 @@ export class DossierService {
       if (previous) {
         await tx.update(declaredFacts).set({ supersededAt: new Date() }).where(eq(declaredFacts.id, previous.id));
       }
+      await this.audit.record({ action: "DEAL_FACT_DECLARED", actorUserId: seller.userId, subjectType: "deal", subjectId: dealId, outcome: "OK", correlationId, metadata: { fieldKey: input.fieldKey, version: next } }, tx);
       return next;
     });
-    this.audit.record({ action: "DEAL_FACT_DECLARED", actorUserId: seller.userId, subjectType: "deal", subjectId: dealId, outcome: "OK", correlationId, metadata: { fieldKey: input.fieldKey, version } });
     return { factId: id, version };
   }
 
@@ -169,6 +169,7 @@ export class DossierService {
     seller: Principal,
     correlationId: string,
   ): Promise<{ documentId: string; version: number; sha256: string }> {
+    await withTenant(this.db, seller, async (tx) => this.mustOwn(await this.mustFindDeal(tx, dealId), seller));
     const { file } = input;
     if (!ACCEPTED[file.mimeType]) {
       throw new DealPmeError(ErrorCode.VALIDATION_FAILED, `Type de fichier non accepté (${file.mimeType}). Documents, tableurs, présentations et images sont acceptés ; les archives compressées ne le sont pas.`);
@@ -179,14 +180,14 @@ export class DossierService {
 
     const verdict = await this.antivirus.scan(file.buffer);
     if (!verdict.clean) {
-      this.audit.record({
+      await this.audit.rejection({
         action: "DOCUMENT_REJECTED_INFECTED",
         actorUserId: seller.userId,
         subjectType: "deal",
         subjectId: dealId,
         outcome: "BLOCKED",
         correlationId,
-        metadata: { category: input.category, fileName: file.originalName, signature: verdict.signature, engine: this.antivirus.engine },
+        metadata: { category: input.category, signature: verdict.signature, engine: this.antivirus.engine },
       });
       throw new DealPmeError(ErrorCode.VALIDATION_FAILED, "Fichier refusé par l'analyse antivirus. Il n'a pas été enregistré.", { signature: verdict.signature });
     }
@@ -227,10 +228,18 @@ export class DossierService {
       if (previous) {
         await tx.update(dealDocuments).set({ supersededAt: new Date() }).where(eq(dealDocuments.id, previous.id));
       }
+      await this.audit.record({ action: "DOCUMENT_UPLOADED", actorUserId: seller.userId, subjectType: "deal", subjectId: dealId, outcome: "OK", correlationId, metadata: { category: input.category, sha256: stored.sha256, version: next } }, tx);
       return next;
+    }).catch(async (error: unknown) => {
+      try { await this.storage.delete(this.bucket, key); }
+      catch {
+        // L'objet reste privé ; conserver l'erreur initiale et une référence de rapprochement.
+        // eslint-disable-next-line no-console
+        console.error("[document] compensation de stockage à reprendre", { documentId: id });
+      }
+      throw error;
     });
 
-    this.audit.record({ action: "DOCUMENT_UPLOADED", actorUserId: seller.userId, subjectType: "deal", subjectId: dealId, outcome: "OK", correlationId, metadata: { category: input.category, sha256: stored.sha256, version } });
     return { documentId: id, version, sha256: stored.sha256 };
   }
 
@@ -245,7 +254,7 @@ export class DossierService {
     });
     if (!row || row.scanState !== "CLEAN") throw new DealPmeError(ErrorCode.NOT_FOUND, "Pièce introuvable");
     const body = await this.storage.get(this.bucket, row.storageKey);
-    this.audit.record({ action: "DOCUMENT_READ", actorUserId: principal.userId, subjectType: "deal_document", subjectId: documentId, outcome: "OK", correlationId });
+    await withTenant(this.db, principal, (tx) => this.audit.record({ action: "DOCUMENT_READ", actorUserId: principal.userId, subjectType: "deal_document", subjectId: documentId, outcome: "OK", correlationId }, tx));
     return { body, contentType: row.contentType, fileName: row.fileName };
   }
 

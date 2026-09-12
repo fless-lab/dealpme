@@ -23,6 +23,12 @@ export default tseslint.config(
     },
   },
   {
+    files: ["codebases/backend/api/src/**/*.ts"],
+    languageOptions: { parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname } },
+    // Empêcher le retour d'un audit asynchrone ignoré dans un service métier.
+    rules: { "@typescript-eslint/no-floating-promises": ["error", { ignoreVoid: false }] },
+  },
+  {
     files: frontend,
     extends: [react.configs.flat.recommended, react.configs.flat["jsx-runtime"]],
     languageOptions: { globals: globals.browser },

@@ -193,6 +193,8 @@ _check_progress_keys()
 # Les acquis V1 de PROGRESS restent inchangés ; leurs compléments ont leurs propres tâches.
 # (statut, avancement estimé, preuve / reste à faire)
 AUDIT_REVIEW = {
+    "V1-094": ("Complétée", 1, "L02 vérifié : actions/audit atomiques, refus après rollback, OTP et webhooks renforcés ; injections de panne et arrêt brutal testés. Preuve : qa/l02-verification.json."),
+    "V1-095": ("Complétée", 1, "L02 vérifié : conversations ciblées, historique conservé, RLS et contraintes ; 33 scénarios dont six navigateur desktop/mobile. Preuve : qa/l02-verification.json."),
     "V1-091": ("Complétée", 1, "L01 vérifié : lint effectif, 21 builds, 74 tests, smoke isolé ClamAV 101/101 ; neuf sondes invalides rejetées. Preuve locale : qa/l01-ci.json ; workflow GitHub aligné."),
     "V2-007": ("En cours", 0.4, "ADR, schéma et règles RPS présents ; concurrence, immutabilité et revue juridique à fermer."),
     "V2-008": ("En cours", 0.25, "ADR 0003 et schéma VDR présents, dont les huit états documentaires ; permissions et viewer exécutables absents."),
@@ -224,7 +226,11 @@ AUDIT_CRITERIA = {
 
 # Dates de clôture du suivi par identifiant, selon le calendrier de livraison.
 # Une date après la fin prévue est conservée ; aucune borne liée à la date du jour.
-COMPLETION_DATES: dict[str, dt.date] = {"V1-091": dt.date(2026, 9, 16)}
+COMPLETION_DATES: dict[str, dt.date] = {
+    "V1-091": dt.date(2026, 9, 16),
+    "V1-094": dt.date(2026, 9, 23),
+    "V1-095": dt.date(2026, 9, 25),
+}
 
 FOLLOW_UP_LINKS = {
     "V1-008": "Socle monorepo réalisé. Renforcement de la CI suivi en V1-091.",
@@ -1765,7 +1771,7 @@ wsS.freeze_panes = "C6"
 
 # ================================================================== PLAN D'EXECUTION
 wsPlan = wb.create_sheet("Plan_execution")
-title(wsPlan, "Plan d'exécution par lots", "L01 clôturé ; prochain lot technique : L02. L00 coordonne les accès en parallèle. Avancement calculé depuis Taches ; détail : docs/PLAN_EXECUTION.md.")
+title(wsPlan, "Plan d'exécution par lots", "L01 et L02 clôturés ; prochain lot technique : L03. L00 coordonne les accès en parallèle. Avancement calculé depuis Taches ; détail : docs/PLAN_EXECUTION.md.")
 # Chaque tâche restant à traiter appartient à un lot unique. Les tâches déjà
 # acquises restent dans Taches et ne sont pas recomptées comme du nouveau travail.
 EXECUTION_LOTS = [

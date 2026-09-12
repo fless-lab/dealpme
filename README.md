@@ -5,7 +5,7 @@ Place de marché de transmission et reprise de PME en Afrique francophone (zone 
 Périmètre de référence : cahier des charges v0 approuvé (25/06/2026) et Référentiel de processus P04 à P25. Suivi du projet : `DealPME_Suivi.xlsx` à la racine (régénérable avec `devX/build_suivi.py`).
 
 Plan actif après réunion direction : [plan d'exécution par lots](docs/PLAN_EXECUTION.md), également dans
-l'onglet `Plan_execution` du classeur. **L01 terminé** ([preuves](docs/CI.md)) ; prochain lot : **L02 — messagerie et audit durable**.
+l'onglet `Plan_execution` du classeur. **L01 et L02 terminés** ([CI](docs/CI.md), [audit et messagerie](docs/adr/0008-audit-et-conversations.md)) ; prochain lot : **L03 — email et SMS locaux**.
 Contexte : [bilan initial du 12/09/2026](docs/BILAN_AVANCEMENT_2026-09-12.md) et
 [compte rendu de direction](docs/COMPTE_RENDU_DIRECTION_2026-09-12.md).
 Le fichier `DealPME_Suivi.ods` est une archive d'un ancien calendrier ; le suivi actif est le `.xlsx`.

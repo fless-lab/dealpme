@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { boolean, integer, jsonb, pgEnum, pgTable, text, timestamp, uuid, varchar, bigint, index, uniqueIndex } from "drizzle-orm/pg-core";
+import { boolean, integer, jsonb, pgEnum, pgTable, text, timestamp, uuid, varchar, bigint, index, uniqueIndex, foreignKey, check } from "drizzle-orm/pg-core";
 
 /**
  * Schéma de la base "core" (V1). Conventions v0 : snake_case, UUIDv7, timestamptz UTC, montants en entier XOF,
@@ -297,6 +297,7 @@ export const diasporaAppointments = pgTable("diaspora_appointment", {
 /** Idempotence des POST créateurs d'état et des webhooks (rejeu à l'identique). */
 export const idempotencyKeys = pgTable("idempotency_key", {
   key: varchar("key", { length: 256 }).primaryKey(), // méthode:chemin:clé
+  requestHash: varchar("request_hash", { length: 64 }), // INTERNAL : nul uniquement pour les anciennes réponses
   responseStatus: integer("response_status").notNull(),
   responseBody: jsonb("response_body").notNull(),
   createdAt: createdAt(),
@@ -399,19 +400,37 @@ export const dealViews = pgTable(
   (t) => [index("deal_view_deal_idx").on(t.dealId, t.viewedAt)],
 );
 
-/** Messagerie de mise en relation : texte seul. Aucune pièce jointe avant l'exécution d'un NDA (DP-MKT). */
+/** Un seul fil par dossier et organisation repreneuse, parties immuables. */
+export const dealConversations = pgTable("deal_conversation", {
+  id: id(),
+  dealId: uuid("deal_id").notNull().references(() => deals.id),
+  sellerOrganisationId: uuid("seller_organisation_id").notNull().references(() => organisations.id), // INTERNAL
+  investorOrganisationId: uuid("investor_organisation_id").notNull().references(() => organisations.id), // INTERNAL, jamais sérialisé en T0
+  createdAt: createdAt(),
+}, (t) => [
+  uniqueIndex("conversation_deal_investor_idx").on(t.dealId, t.investorOrganisationId),
+  uniqueIndex("conversation_id_deal_idx").on(t.id, t.dealId),
+  check("conversation_distinct_parties", sql`${t.sellerOrganisationId} <> ${t.investorOrganisationId}`),
+]);
+
+/** Messagerie : conversation obligatoire à l'insertion ; nul seulement pour l'historique ambigu conservé. */
 export const dealMessages = pgTable(
   "deal_message",
   {
     id: id(),
     dealId: uuid("deal_id").notNull().references(() => deals.id),
     interestId: uuid("interest_id").references(() => interests.id),
+    conversationId: uuid("conversation_id"), // INTERNAL : routage, jamais une identité de repreneur
     senderUserId: uuid("sender_user_id").notNull(),
     senderOrganisationId: uuid("sender_organisation_id").notNull(),
     body: text("body").notNull(), // INTERNAL : contenu filtré côté serveur, jamais de coordonnées avant NDA
     createdAt: createdAt(),
   },
-  (t) => [index("deal_message_deal_idx").on(t.dealId, t.createdAt)],
+  (t) => [
+    index("deal_message_deal_idx").on(t.dealId, t.createdAt),
+    index("deal_message_conversation_idx").on(t.conversationId, t.createdAt, t.id),
+    foreignKey({ name: "message_conversation_deal_fk", columns: [t.conversationId, t.dealId], foreignColumns: [dealConversations.id, dealConversations.dealId] }),
+  ],
 );
 
 /** Alerte enregistrée : critères T0 uniquement, envoi conditionné à un consentement explicite et révocable. */

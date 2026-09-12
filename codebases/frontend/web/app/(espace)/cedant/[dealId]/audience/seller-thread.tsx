@@ -1,79 +1,54 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import { Actions, Button, Field, Panel, StateBanner, Textarea } from "@dealpme/ui";
+import type { ConversationSummary } from "@dealpme/contracts";
+import { Actions, Button, Field, Panel, Select, StateBanner, Textarea } from "@dealpme/ui";
+import { useMessageThread } from "../../../../../lib/use-message-thread";
+import { ConversationHistory, LegacyMessages } from "../../../../_components/conversation-history";
 
-interface Message {
-  id: string;
-  body: string;
-  createdAt: string;
-  mine: boolean;
-}
-
-/** Réponse du cédant aux repreneurs. Texte seul, mêmes règles que côté repreneur. */
 export function SellerThread({ dealId }: { dealId: string }) {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [conversations, setConversations] = useState<ConversationSummary[]>([]);
+  const [target, setTarget] = useState("");
   const [body, setBody] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [listError, setListError] = useState<string | null>(null);
+  const [listRevision, setListRevision] = useState(0);
+  const thread = useMessageThread(dealId, target || undefined);
 
   useEffect(() => {
-    let cancelled = false;
-    void fetch(`/api/marketplace/threads/${dealId}`)
-      .then((r) => (r.ok ? r.json() : { items: [] }))
-      .then((d: { items?: Message[] }) => {
-        if (!cancelled && d.items) setMessages(d.items);
-      })
-      .catch(() => undefined);
-    return () => {
-      cancelled = true;
-    };
-  }, [dealId]);
+    const controller = new AbortController();
+    setListError(null);
+    void fetch(`/api/marketplace/conversations/${dealId}`, { signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]) }).then(async (r) => {
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.message ?? "Liste indisponible");
+      if (!controller.signal.aborted) setConversations(data.items);
+    }).catch((cause: unknown) => { if (!controller.signal.aborted) setListError(cause instanceof Error ? cause.message : "Liste indisponible"); });
+    return () => controller.abort();
+  }, [dealId, listRevision]);
 
-  async function send(e: FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    setError(null);
-    const res = await fetch(`/api/marketplace/deals/${dealId}/messages`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ body }),
-    });
-    const data = (await res.json()) as { ok: boolean; message?: string };
-    setBusy(false);
-    if (data.ok) {
-      setMessages((m) => [...m, { id: crypto.randomUUID(), body, createdAt: new Date().toISOString(), mine: true }]);
-      setBody("");
-      return;
-    }
-    setError(data.message ?? "Message refusé.");
+  async function send(event: FormEvent) {
+    event.preventDefault();
+    if (target && await thread.send(body)) setBody("");
   }
 
-  return (
+  return <>
     <Panel title="Échanges" controlId="SELLER_THREAD">
-      {error ? <StateBanner tone="danger" title="Message refusé" controlId="SELLER_THREAD_ERROR">{error}</StateBanner> : null}
-      {messages.length === 0 ? (
-        <StateBanner tone="info" title="Aucun échange pour le moment" controlId="SELLER_THREAD_EMPTY" />
-      ) : (
-        <div className="dp-stack" style={{ gap: 8, marginBottom: 16 }}>
-          {messages.map((m) => (
-            <div key={m.id} style={{ padding: 12, borderRadius: 6, background: m.mine ? "var(--dp-canvas)" : "var(--dp-paper)", border: "1px solid var(--dp-line)" }} data-control-id="SELLER_MESSAGE">
-              <div className="dp-label">{m.mine ? "Vous" : "Un repreneur"}</div>
-              <div>{m.body}</div>
-            </div>
-          ))}
-        </div>
-      )}
-      <form onSubmit={send} noValidate>
+      {listError || thread.error ? <StateBanner tone="danger" title="Échange indisponible" controlId="SELLER_THREAD_ERROR">{listError ?? thread.error}</StateBanner> : null}
+      <Field id="seller-conversation" label="Conversation du repreneur" hint="La référence correspond à la colonne Conversation des manifestations d'intérêt. L'identité reste masquée.">
+        <Select id="seller-conversation" value={target} disabled={thread.busy} onChange={(e) => { setTarget(e.target.value); setBody(""); }} data-control-id="SELLER_CONVERSATION_SELECT">
+          <option value="">Choisir une conversation</option>
+          {conversations.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+        </Select>
+      </Field>
+      <Button controlId="SELLER_CONVERSATIONS_REFRESH" onClick={() => setListRevision((v) => v + 1)}>Actualiser les destinataires</Button>
+      {!listError && !thread.error && !thread.loading && !thread.items.length ? <StateBanner tone="info" title={target ? "Aucun message dans cette conversation" : "Sélectionnez un repreneur pour ouvrir son échange"} controlId="SELLER_THREAD_EMPTY" /> : null}
+      <ConversationHistory thread={thread} otherParty="Le repreneur" controlId="SELLER_MESSAGE" />
+      <form onSubmit={send}>
         <Field id="seller-message" label="Répondre" hint="Texte seul. Ni pièce jointe, ni coordonnées directes avant l'accord de confidentialité.">
-          <Textarea id="seller-message" rows={3} required value={body} onChange={(e) => setBody(e.target.value)} data-control-id="SELLER_MESSAGE_BODY" />
+          <Textarea id="seller-message" rows={3} required minLength={2} maxLength={4000} disabled={!target || thread.busy || thread.loading} value={body} onChange={(e) => setBody(e.target.value)} data-control-id="SELLER_MESSAGE_BODY" />
         </Field>
-        <Actions>
-          <Button controlId="SELLER_MESSAGE_SEND" type="submit" state={busy ? "loading" : "default"}>
-            Envoyer
-          </Button>
-        </Actions>
+        <Actions><Button controlId="SELLER_MESSAGE_SEND" type="submit" disabled={!target || thread.loading} state={thread.busy ? "loading" : "default"}>Envoyer</Button></Actions>
       </form>
     </Panel>
-  );
+    <LegacyMessages dealId={dealId} />
+  </>;
 }

@@ -25,6 +25,7 @@ const env = {
   FIELD_ENCRYPTION_KEY: randomBytes(32).toString("base64"),
   CONNECTOR_REMO_WEBHOOK_SECRET: randomBytes(32).toString("base64"),
   DEMO_CREDENTIALS_FILE: join(privateDir, "credentials.json"),
+  CI_TEST_PROJECT: project,
 };
 const compose = ["compose", "--env-file", composeEnv, "-p", project,
   "-f", join(root, "infra/docker-compose.yml"), "-f", join(root, "infra/docker-compose.ci.yml")];
@@ -201,6 +202,9 @@ try {
     if (result.error || result.status !== 0 || report.checks.length === 0 || report.checks.some((check) => !check.passed)) {
       throw new Error(`Smoke refusé : ${report.checks.filter((check) => !check.passed).length} contrôle(s) en échec ; code ${result.status}`);
     }
+  });
+  await step("L02 : transactions, migration et navigateur", () => {
+    command(process.execPath, ["devX/l02-integration.mjs"], { timeout: 240_000 });
   });
   report.status = "PASS";
 } catch (error) {

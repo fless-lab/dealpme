@@ -1,5 +1,10 @@
 # Revue de sécurité interne V1
 
+> L02 : les points de persistance d'audit sont traités, ainsi que le routage privé des messages et le
+> contrôle de signature avant cache webhook. Vérifications de panne, concurrence, migration et navigateur :
+> [qa/l02-verification.json](../qa/l02-verification.json), [ADR 0008](adr/0008-audit-et-conversations.md).
+> Les résultats historiques ci-dessous restent datés ; le circuit RPS réel reste en V2.
+
 > Actualisation du 12/09/2026 : les résultats ci-dessous sont historiques, pas une nouvelle certification.
 > Les tests unitaires et l'audit de dépendances ont été rejoués ; la pile réelle était arrêtée.
 > La revue a identifié une persistance d'audit non garantie et un RPS encore à durcir :
