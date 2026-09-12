@@ -5,11 +5,13 @@ on:
     branches: [master]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   build-test:
     runs-on: ubuntu-latest
-    # Toute l'infrastructure (trois Postgres, Redis, MinIO, Mailpit) vient de infra/docker-compose.yml,
-    # exactement comme en local : aucun conteneur de service GitHub en doublon sur les mêmes ports.
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
@@ -19,28 +21,34 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npm run build:libs
-      - run: npm run typecheck
-      - run: npm run lint
-      - run: npm test
-      # Le build échoue sur toute vulnérabilité élevée ou critique dans les dépendances (exigence v0, section sécurité ; registre S08).
-      - run: npm audit --audit-level=high
-      # Vérification de fumée V1 contre une pile réelle (bases migrées, RLS, jeu de démonstration, API démarrée).
-      - run: |
-          cp .env.example .env
-          sed -i "s|^SESSION_SECRET=.*|SESSION_SECRET=$(openssl rand -base64 32)|; s|^FIELD_ENCRYPTION_KEY=.*|FIELD_ENCRYPTION_KEY=$(openssl rand -base64 32)|" .env
-          docker compose -f infra/docker-compose.yml up -d
-          for c in core vdr rps; do until docker exec dealpme-postgres-$c-1 pg_isready -U dealpme_$c >/dev/null 2>&1; do sleep 1; done; done
-          # Le moteur antivirus télécharge ses signatures au premier démarrage. La chaîne de dépôt est
-          # éprouvée contre ClamAV réel, pas contre le faux moteur : c'est le chemin de production.
-          for i in $(seq 1 60); do docker exec dealpme-clamav-1 clamdcheck.sh >/dev/null 2>&1 && break; sleep 5; done
-          docker exec dealpme-clamav-1 clamdcheck.sh
-          set -a; . ./.env; set +a
-          npm run db:migrate -w codebases/backend/api && (cd codebases/backend/api && npx drizzle-kit migrate --config drizzle.vdr.config.ts) && npm run db:migrate -w codebases/engine/rps
-          docker exec -i dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -v ON_ERROR_STOP=1 < codebases/backend/api/drizzle/core/rls.sql
-          npm run db:seed -w codebases/backend/api
-          npm run build -w codebases/backend/api -w codebases/engine/rps
-          (cd codebases/backend/api && node --env-file=../../../.env dist/main.js > /tmp/api.log 2>&1 &)
-          (cd codebases/engine/rps && node --env-file=../../../.env dist/main.js > /tmp/rps.log 2>&1 &)
-          for i in $(seq 1 60); do curl -s -o /dev/null http://localhost:4000/v1/events && break; sleep 1; done
-          bash devX/smoke_v1.sh
+      - name: Lint effectif (aucun avertissement toléré)
+        run: npm run lint
+      - name: Bibliothèques et tous les connecteurs
+        run: npm run build:libs
+      - name: Types de tous les workspaces
+        run: npm run typecheck
+      - name: Tests
+        run: npm test
+      - name: Vulnérabilités élevées et critiques
+        run: npm audit --audit-level=high
+      - name: Builds RPS, API, worker et web
+        run: npm run build:apps
+      - name: Preuves de rejet des contrôles
+        run: npm run ci:verify-gates
+      - name: Smoke V1 sur une pile isolée avec ClamAV réel
+        run: npm run ci:smoke
+      - name: Résumé des contrôles exécutés
+        if: always()
+        env:
+          CI_JOB_STATUS: ${{ job.status }}
+        run: node devX/ci-summary.mjs
+      - name: Preuves de CI (sans comptes ni logs privés)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .ci-artifacts/*.json
+            qa/control-coverage.json
+          if-no-files-found: error
+          retention-days: 14

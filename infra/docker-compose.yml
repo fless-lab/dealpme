@@ -53,6 +53,11 @@ services:
     ports: ["6379:6379"]
     volumes:
       - redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
 
   minio:
     image: minio/minio:latest
@@ -71,16 +76,18 @@ services:
     image: minio/mc:latest
     depends_on: [minio]
     entrypoint: >
-      /bin/sh -c "
-      sleep 3;
-      mc alias set local http://minio:9000 dealpme dealpme-secret;
-      mc mb -p local/dealpme-vdr || true;
-      mc mb -p local/dealpme-identity || true;
-      mc mb -p local/dealpme-dossier || true;
+      /bin/sh -ec "
+      for attempt in $$(seq 1 60); do
+        if mc alias set local http://minio:9000 dealpme dealpme-secret && mc ready local; then break; fi;
+        sleep 2;
+      done;
+      mc ready local;
+      mc mb --ignore-existing local/dealpme-vdr;
+      mc mb --ignore-existing local/dealpme-identity;
+      mc mb --ignore-existing local/dealpme-dossier;
       mc anonymous set none local/dealpme-vdr;
       mc anonymous set none local/dealpme-identity;
-      mc anonymous set none local/dealpme-dossier;
-      exit 0"
+      mc anonymous set none local/dealpme-dossier"
 
   clamav:
     image: clamav/clamav:stable

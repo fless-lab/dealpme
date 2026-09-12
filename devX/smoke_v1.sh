@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
 # Vérification de fumée des endpoints V1 contre une API démarrée en local (jeu de démonstration chargé).
 # Usage : devX/smoke_v1.sh [http://localhost:4000/v1]
-set -u
+set -uo pipefail
 API="${1:-http://localhost:4000/v1}"
-CRED="$(dirname "$0")/../.demo-credentials.local.json"
+CRED="${DEMO_CREDENTIALS_FILE:-$(dirname "$0")/../.demo-credentials.local.json}"
+CORE_CONTAINER="${SMOKE_CORE_CONTAINER:-dealpme-postgres-core-1}"
+REDIS_CONTAINER="${SMOKE_REDIS_CONTAINER:-dealpme-redis-1}"
+STORAGE="${S3_ENDPOINT:-http://localhost:9000}"
+SMOKE_TMP_DIR=$(mktemp -d)
+trap 'rm -rf "$SMOKE_TMP_DIR"' EXIT
+curl() { command curl --connect-timeout 5 --max-time 30 "$@"; }
+[ -s "$CRED" ] || { echo "Comptes de test absents : $CRED" >&2; exit 1; }
+curl -fsS "$API/ready" >/dev/null || { echo "API de test indisponible" >&2; exit 1; }
 pw() { python3 -c "import json,sys;print(json.load(open(sys.argv[1]))[sys.argv[2]])" "$CRED" "$1"; }
 ok=0; ko=0
 RUN_ID=$(date +%s)   # email unique par exécution : aucun nettoyage nécessaire entre deux passages
@@ -18,8 +26,8 @@ login_mfa() { r=$(curl -s -X POST "$API/auth/login" -H 'content-type: applicatio
 # Le scénario provoque volontairement des échecs de connexion pour éprouver l'anti-force-brute. Les compteurs
 # et verrous restent ensuite en place quelques minutes : on les efface avant de commencer, faute de quoi une
 # seconde exécution rapprochée échouerait sur des 429 sans que rien ne soit cassé. Développement uniquement.
-if command -v docker >/dev/null 2>&1 && docker exec dealpme-redis-1 redis-cli ping >/dev/null 2>&1; then
-  docker exec dealpme-redis-1 sh -c "redis-cli --scan --pattern 'rl:*' | xargs -r redis-cli del; redis-cli --scan --pattern 'fail:*' | xargs -r redis-cli del; redis-cli --scan --pattern 'lock:*' | xargs -r redis-cli del; redis-cli --scan --pattern 'strikes:*' | xargs -r redis-cli del" >/dev/null 2>&1
+if command -v docker >/dev/null 2>&1 && docker exec "$REDIS_CONTAINER" redis-cli ping >/dev/null 2>&1; then
+  docker exec "$REDIS_CONTAINER" sh -c "redis-cli --scan --pattern 'rl:*' | xargs -r redis-cli del; redis-cli --scan --pattern 'fail:*' | xargs -r redis-cli del; redis-cli --scan --pattern 'lock:*' | xargs -r redis-cli del; redis-cli --scan --pattern 'strikes:*' | xargs -r redis-cli del" >/dev/null 2>&1
 fi
 
 echo "== Authentification"
@@ -73,24 +81,24 @@ code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$did/transitio
 check "un investisseur ne peut pas faire transiter un dossier (403)" 403 "$code"
 
 echo "== Démonstration du blocage RPS"
-tvdeal=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select d.id from deal d join company c on c.id=d.company_id where c.legal_name like 'TropicVale%' limit 1")
+tvdeal=$(docker exec "$CORE_CONTAINER" psql -U dealpme_core -d dealpme_core -tAc "select d.id from deal d join company c on c.id=d.company_id where c.legal_name like 'TropicVale%' limit 1")
 resp=$(curl -s -X POST "$API/deals/$tvdeal/transitions" -H "authorization: Bearer $TV" -H 'content-type: application/json' -d '{"to":"LISTED_OPEN"}')
 codeval=$(echo "$resp" | python3 -c 'import sys,json;print(json.load(sys.stdin)["error"]["code"])' 2>/dev/null)
 check "publication d'une cession de titres bloquée par PERIMETER_BLOCKED" PERIMETER_BLOCKED "$codeval"
 
 echo "== Sécurité : RLS effective"
-tvdeal=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select d.id from deal d join company c on c.id=d.company_id where c.legal_name like 'TropicVale%' limit 1")
+tvdeal=$(docker exec "$CORE_CONTAINER" psql -U dealpme_core -d dealpme_core -tAc "select d.id from deal d join company c on c.id=d.company_id where c.legal_name like 'TropicVale%' limit 1")
 code=$(curl -s -o /dev/null -w '%{http_code}' "$API/deals/$tvdeal" -H "authorization: Bearer $SELLER")
 check "un cédant ne lit pas le dossier non publié d'un autre cédant (404 par RLS)" 404 "$code"
 own=$(curl -s "$API/deals/$tvdeal" -H "authorization: Bearer $TV" | grep -c askingPriceXof)
 check "le propriétaire lit son dossier complet, prix inclus" 1 "$own"
-frdeal=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select d.id from deal d join company c on c.id=d.company_id where c.legal_name like 'FroidRoute%' limit 1")
+frdeal=$(docker exec "$CORE_CONTAINER" psql -U dealpme_core -d dealpme_core -tAc "select d.id from deal d join company c on c.id=d.company_id where c.legal_name like 'FroidRoute%' limit 1")
 invview=$(curl -s "$API/deals/$frdeal" -H "authorization: Bearer $INV")
 check "un investisseur lit un dossier publié en projection T0, sans prix" 0 "$(echo "$invview" | grep -c askingPriceXof)"
 check "la projection T0 contient bien le secteur" 1 "$(echo "$invview" | grep -c sectorCode)"
-role=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select rolbypassrls from pg_roles where rolname='dealpme_api'")
+role=$(docker exec "$CORE_CONTAINER" psql -U dealpme_core -d dealpme_core -tAc "select rolbypassrls from pg_roles where rolname='dealpme_api'")
 check "le rôle applicatif ne contourne pas la RLS" f "$role"
-clear=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select count(*) from deal where asking_price_enc like '%2850000000%' or asking_price_enc not like 'v1:%'")
+clear=$(docker exec "$CORE_CONTAINER" psql -U dealpme_core -d dealpme_core -tAc "select count(*) from deal where asking_price_enc like '%2850000000%' or asking_price_enc not like 'v1:%'")
 check "le prix n'est jamais en clair en base (chiffrement applicatif)" 0 "$clear"
 price=$(curl -s "$API/deals/$tvdeal" -H "authorization: Bearer $TV" | python3 -c 'import sys,json;print(json.load(sys.stdin)["askingPriceXof"])')
 check "le propriétaire obtient le prix déchiffré" 2850000000 "$price"
@@ -113,17 +121,17 @@ check "origine inconnue sans en-tête CORS" 0 "$cors"
 big=$(python3 -c 'print("{\"x\":\"" + "a"*1100000 + "\"}")' | curl -s -o /dev/null -w '%{http_code}' -X POST "$API/auth/login" -H 'content-type: application/json' --data-binary @-)
 check "corps de requête au-delà de 1 Mo refusé" 413 "$big"
 payload='{"events":[{"remoEventId":"evt-1","externalUserId":"u-1","joinedAt":"2026-10-22T09:05:00Z"}]}'
-WEBHOOK_SECRET=$(grep -E "^CONNECTOR_REMO_WEBHOOK_SECRET=" "$(dirname "$0")/../.env" | cut -d= -f2-)
+WEBHOOK_SECRET="${CONNECTOR_REMO_WEBHOOK_SECRET:-$(grep -E "^CONNECTOR_REMO_WEBHOOK_SECRET=" "$(dirname "$0")/../.env" | cut -d= -f2-)}"
 sig=$(printf '%s' "$payload" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" | sed 's/^.* //')
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/webhooks/remo/attendance" -H 'content-type: application/json' -H 'idempotency-key: smoke-remo-1' -H 'x-remo-signature: deadbeef' --data-binary "$payload")
 check "webhook Remo avec signature invalide refusé (403)" 403 "$code"
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/webhooks/remo/attendance" -H 'content-type: application/json' -H "x-remo-signature: $sig" --data-binary "$payload")
 check "webhook sans Idempotency-Key refusé (400)" 400 "$code"
-before=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select count(*) from audit_event where subject_type='remo_event' and subject_id='evt-1'")
+before=$(docker exec "$CORE_CONTAINER" psql -U dealpme_core -d dealpme_core -tAc "select count(*) from audit_event where subject_type='remo_event' and subject_id='evt-1'")
 r1=$(curl -s -X POST "$API/webhooks/remo/attendance" -H 'content-type: application/json' -H "idempotency-key: smoke-remo-replay-$RUN_ID" -H "x-remo-signature: $sig" --data-binary "$payload")
 r2=$(curl -s -X POST "$API/webhooks/remo/attendance" -H 'content-type: application/json' -H "idempotency-key: smoke-remo-replay-$RUN_ID" -H "x-remo-signature: $sig" --data-binary "$payload")
 check "webhook signé accepté et rejoué à l'identique (idempotence)" "$r1" "$r2"
-after=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select count(*) from audit_event where subject_type='remo_event' and subject_id='evt-1'")
+after=$(docker exec "$CORE_CONTAINER" psql -U dealpme_core -d dealpme_core -tAc "select count(*) from audit_event where subject_type='remo_event' and subject_id='evt-1'")
 check "le rejeu ne produit pas de double effet (un seul événement d'audit en plus)" 1 "$((after - before))"
 
 echo "== Intérêt et évaluation"
@@ -143,19 +151,19 @@ curl -s -o /dev/null -X POST "$API/deals/$dossier_deal/dossier/facts" -H "author
 curl -s -o /dev/null -X POST "$API/deals/$dossier_deal/dossier/facts" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{"fieldKey":"TURNOVER","periodLabel":"2025","valueAmountXof":43500000,"source":"SUPPORTING_DOCUMENT","note":"Corrigé après liasse fiscale"}'
 n=$(curl -s "$API/deals/$dossier_deal/dossier/facts/history?fieldKey=TURNOVER" -H "authorization: Bearer $SELLER" | python3 -c 'import sys,json;print(len(json.load(sys.stdin)["items"]))')
 check "une correction crée une version, l'ancienne est conservée" 2 "$n"
-printf '%%PDF-1.4\nPiece de fumee.\n%%%%EOF\n' > /tmp/dealpme-smoke.pdf
-doc=$(curl -s -X POST "$API/deals/$dossier_deal/dossier/documents" -H "authorization: Bearer $SELLER" -F "category=STATUTS" -F "title=Statuts" -F "file=@/tmp/dealpme-smoke.pdf;type=application/pdf" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("documentId",""))')
+printf '%%PDF-1.4\nPiece de fumee.\n%%%%EOF\n' > "$SMOKE_TMP_DIR/piece.pdf"
+doc=$(curl -s -X POST "$API/deals/$dossier_deal/dossier/documents" -H "authorization: Bearer $SELLER" -F "category=STATUTS" -F "title=Statuts" -F "file=@$SMOKE_TMP_DIR/piece.pdf;type=application/pdf" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("documentId",""))')
 [ -n "$doc" ] && check "dépôt d'une pièce saine" 1 1 || check "dépôt d'une pièce saine" 1 0
-python3 -c "import sys;sys.stdout.buffer.write(b'X5O!P%@AP[4\\\\PZX54(P^)7CC)7}\$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!\$H+H*')" > /tmp/dealpme-smoke-eicar.pdf
-code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$dossier_deal/dossier/documents" -H "authorization: Bearer $SELLER" -F "category=RCCM" -F "title=Extrait" -F "file=@/tmp/dealpme-smoke-eicar.pdf;type=application/pdf")
+python3 -c "import sys;sys.stdout.buffer.write(b'X5O!P%@AP[4\\\\PZX54(P^)7CC)7}\$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!\$H+H*')" > "$SMOKE_TMP_DIR/eicar.pdf"
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$dossier_deal/dossier/documents" -H "authorization: Bearer $SELLER" -F "category=RCCM" -F "title=Extrait" -F "file=@$SMOKE_TMP_DIR/eicar.pdf;type=application/pdf")
 check "fichier reconnu par l'antivirus refusé (400)" 400 "$code"
-rm -f /tmp/dealpme-smoke-eicar.pdf
+rm -f "$SMOKE_TMP_DIR/eicar.pdf"
 n=$(curl -s "$API/deals/$dossier_deal/dossier" -H "authorization: Bearer $SELLER" | python3 -c 'import sys,json;print(len(json.load(sys.stdin)["documents"]))')
 check "la pièce refusée n'est pas enregistrée" 1 "$n"
-code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$dossier_deal/dossier/documents" -H "authorization: Bearer $SELLER" -F "category=RCCM" -F "title=Script" -F "file=@/tmp/dealpme-smoke.pdf;type=application/x-sh")
+code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$dossier_deal/dossier/documents" -H "authorization: Bearer $SELLER" -F "category=RCCM" -F "title=Script" -F "file=@$SMOKE_TMP_DIR/piece.pdf;type=application/x-sh")
 check "type de fichier hors liste refusé (400)" 400 "$code"
-key=$(docker exec dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -tAc "select storage_key from deal_document where id='$doc'")
-code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:9000/dealpme-dossier/$key")
+key=$(docker exec "$CORE_CONTAINER" psql -U dealpme_core -d dealpme_core -tAc "select storage_key from deal_document where id='$doc'")
+code=$(curl -s -o /dev/null -w '%{http_code}' "$STORAGE/dealpme-dossier/$key")
 check "aucun accès public au stockage des pièces (403)" 403 "$code"
 code=$(curl -s -o /dev/null -w '%{http_code}' "$API/deals/$dossier_deal/dossier" -H "authorization: Bearer $INV")
 check "un investisseur n'accède pas au dossier d'un cédant (403)" 403 "$code"
@@ -168,13 +176,13 @@ for f in EBITDA:8000000 NET_DEBT:2000000; do
   curl -s -o /dev/null -X POST "$API/deals/$dossier_deal/dossier/facts" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d "{\"fieldKey\":\"$key\",\"periodLabel\":\"2025\",\"valueAmountXof\":$val}"
 done
 for cat in RCCM ETATS_FINANCIERS ATTESTATION_FISCALE INVENTAIRE_ACTIFS; do
-  curl -s -o /dev/null -X POST "$API/deals/$dossier_deal/dossier/documents" -H "authorization: Bearer $SELLER" -F "category=$cat" -F "title=Piece $cat" -F "file=@/tmp/dealpme-smoke.pdf;type=application/pdf"
+  curl -s -o /dev/null -X POST "$API/deals/$dossier_deal/dossier/documents" -H "authorization: Bearer $SELLER" -F "category=$cat" -F "title=Piece $cat" -F "file=@$SMOKE_TMP_DIR/piece.pdf;type=application/pdf"
 done
 n=$(curl -s "$API/deals/$dossier_deal/dossier" -H "authorization: Bearer $SELLER" | python3 -c 'import sys,json;print(len(json.load(sys.stdin)["completeness"]["missing"]))')
 check "dossier complété : plus aucun manque" 0 "$n"
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/deals/$dossier_deal/transitions" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{"to":"PENDING_VERIFICATION"}')
 check "un dossier complet est soumis à vérification" 200 "$code"
-rm -f /tmp/dealpme-smoke.pdf
+rm -f "$SMOKE_TMP_DIR/piece.pdf"
 
 echo "== Espace CCI-Togo"
 code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$API/institution/certifications" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{}')

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { and, asc, count, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, count, eq, inArray } from "drizzle-orm";
 import { DealPmeError, ErrorCode } from "@dealpme/contracts";
 import { newId } from "@dealpme/domain";
 import { CORE_DB, type CoreDb } from "../../database/database.module.js";

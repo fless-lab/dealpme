@@ -29,7 +29,6 @@ export function markCurrent(items: NavItem[], pathname: string | null | undefine
  * la logique de permission, de preuve ou de cycle de vie.
  */
 export function AppShell({
-  brand = "DealPME",
   pathname,
   nav,
   account,

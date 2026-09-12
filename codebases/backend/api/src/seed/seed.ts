@@ -16,7 +16,9 @@ import { encryptField, encryptInt, keyRingFromEnv } from "../platform/field-cryp
  * Mots de passe uniques par compte, dérivés d'un secret local aléatoire et écrits dans .demo-credentials.local.json
  * (ignoré par git). Aucun mot de passe commun, aucun mot de passe dans le code.
  */
-const CREDENTIALS_FILE = resolve(__dirname, "../../../../../.demo-credentials.local.json"); // racine du dépôt
+const CREDENTIALS_FILE = process.env["DEMO_CREDENTIALS_FILE"]
+  ? resolve(process.env["DEMO_CREDENTIALS_FILE"])
+  : resolve(__dirname, "../../../../../.demo-credentials.local.json");
 function demoPassword(secret: string, email: string): string {
   return "Demo-" + createHash("sha256").update(`${secret}:${email}`).digest("base64url").slice(0, 18);
 }

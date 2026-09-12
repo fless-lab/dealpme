@@ -39,22 +39,28 @@ propriétaire seulement, jamais versionné. Chaque chargement en génère de nou
 ## Vérifier que tout marche
 
 ```bash
-bash devX/smoke_v1.sh
+npm run build
+npm run ci:smoke              # pile et comptes de test isolés, nettoyage automatique
 ```
 
 Cent un contrôles contre la pile réelle : authentification, second facteur, isolation entre cédants,
 paliers de divulgation, chiffrement, antivirus, limitation de débit, signatures de webhooks, dossier cédant,
-certification, place de marché, blocage réglementaire, supervision. Le script efface d'abord les compteurs
-anti-force-brute : il est rejouable immédiatement.
+certification, place de marché, blocage réglementaire, supervision. Chaque exécution crée sa pile, attend
+les sondes, migre les bases et charge son jeu synthétique. Aucun reset de la pile de travail.
+Le test direct `bash devX/smoke_v1.sh` reste disponible pour une pile locale déjà chargée.
 
 Les autres commandes utiles :
 
 ```bash
 npm run typecheck            # tout le dépôt
+npm run lint                 # ESLint TypeScript/React/Next, avertissements bloquants
 npm test                     # tests unitaires (règles métier, primitives de sécurité)
 npm run build                # compilation complète
 npm audit --audit-level=high # bloquant en intégration continue
+npm run ci:verify-gates      # diagnostic séquentiel : neuf défauts injectés puis retirés
 ```
+
+Voir [CI.md](CI.md) pour l'ordre des builds, les exceptions de lint motivées, les artefacts et le diagnostic.
 
 ## Où se trouve quoi
 

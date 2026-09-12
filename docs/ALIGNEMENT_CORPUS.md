@@ -87,8 +87,8 @@ d'ingestion ne fait encore que journaliser les jobs.
 
 Le Release Gate exige que la livraison produise `qa/e2e-results.json`, `qa/control-coverage.json`, des
 captures desktop et mobile, et `qa/fidelity-ledger.md`. La couverture statique existe et a été régénérée le
-12/09. Les trois autres preuves n'ont pas été trouvées. Le smoke API existe mais n'a pas été rejoué pendant
-cet audit, la pile Docker étant arrêtée. La recette navigateur est suivie dans les compléments
+12/09. Les trois autres preuves restent à produire. Le smoke API a depuis été rejoué en L01 sur une pile
+isolée : 101 contrôles réussis, preuve dans `qa/l01-ci.json`. Il ne remplace pas la recette navigateur, suivie dans les compléments
 V1-092/100 et la tâche de captures V1-086 ; les travaux de tests V1-084/085 restent acquis.
 
 ### 5. RPS : socle réel, garanties encore à construire

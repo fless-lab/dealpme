@@ -4,40 +4,42 @@
 #
 #   bash devX/reset.sh
 #
-# À la fin, l'API et le service RPS ne sont pas démarrés : lancez-les avec devX/start.sh ou à la main.
+# À la fin, l'API et le service RPS ne sont pas démarrés : voir les commandes affichées.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 [ -f .env ] || { echo "Fichier .env absent : copiez .env.example puis renseignez les secrets." >&2; exit 1; }
 grep -q "^NODE_ENV=production" .env && { echo "Refus : NODE_ENV=production dans .env." >&2; exit 1; }
 
-echo "1/6  Arrêt et effacement des volumes"
-docker compose -f infra/docker-compose.yml down -v >/dev/null 2>&1 || true
+echo "1/6  Compilation (avant toute réinitialisation des données)"
+npm run build:libs
+npm run build -w codebases/backend/api -w codebases/engine/rps
 
-echo "2/6  Démarrage de la pile"
+echo "2/6  Arrêt et effacement des volumes"
+docker compose -f infra/docker-compose.yml down -v
+
+echo "3/6  Démarrage de la pile"
 docker compose -f infra/docker-compose.yml up -d >/dev/null
 for c in core vdr rps; do
   printf "      base %s" "$c"
-  until docker exec "dealpme-postgres-$c-1" pg_isready -U "dealpme_$c" >/dev/null 2>&1; do printf "."; sleep 1; done
+   for _ in $(seq 1 60); do docker exec "dealpme-postgres-$c-1" pg_isready -U "dealpme_$c" >/dev/null 2>&1 && break; printf "."; sleep 1; done
+   docker exec "dealpme-postgres-$c-1" pg_isready -U "dealpme_$c" >/dev/null
   echo " prête"
 done
 printf "      antivirus"
 for _ in $(seq 1 60); do docker exec dealpme-clamav-1 clamdcheck.sh >/dev/null 2>&1 && break; printf "."; sleep 5; done
+docker exec dealpme-clamav-1 clamdcheck.sh
 echo " prêt"
 
 set -a; . ./.env; set +a
 
-echo "3/6  Migrations"
+echo "4/6  Migrations"
 npm run db:migrate -w codebases/backend/api >/dev/null
 (cd codebases/backend/api && npx drizzle-kit migrate --config drizzle.vdr.config.ts >/dev/null)
 npm run db:migrate -w codebases/engine/rps >/dev/null
 
-echo "4/6  Politiques de sécurité au niveau des lignes"
+echo "5/6  Politiques de sécurité au niveau des lignes"
 docker exec -i dealpme-postgres-core-1 psql -U dealpme_core -d dealpme_core -q -v ON_ERROR_STOP=1 < codebases/backend/api/drizzle/core/rls.sql >/dev/null
-
-echo "5/6  Compilation"
-npm run build:libs >/dev/null 2>&1 || true
-npm run build -w codebases/backend/api -w codebases/engine/rps >/dev/null
 
 echo "6/6  Jeu de démonstration"
 npm run db:seed -w codebases/backend/api

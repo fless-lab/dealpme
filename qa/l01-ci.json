@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "lot": "L01",
+  "task": "V1-091",
+  "verifiedOn": "2026-09-12",
+  "scope": "Vérifications locales de l'arbre de travail L01 issu de 93193db ; exécution GitHub distante non observée",
+  "status": "PASS",
+  "environment": { "platform": "linux", "node": "24.20.0", "npm": "11.19.0", "compose": "5.3.1" },
+  "positiveChecks": {
+    "cleanInstall": { "command": "npm ci", "status": "PASS" },
+    "lint": { "command": "npm run lint", "status": "PASS", "warnings": 0 },
+    "types": { "command": "npm run typecheck", "status": "PASS" },
+    "webRouteTypes": { "command": "npm run typecheck -w codebases/frontend/web", "status": "PASS" },
+    "unitTests": { "command": "npm test", "status": "PASS", "tests": 74, "files": 6 },
+    "build": { "command": "npm run build", "status": "PASS", "workspaces": 21 },
+    "dependencies": { "command": "npm audit --audit-level=high", "status": "PASS", "critical": 0, "high": 0, "moderate": 4 },
+    "smoke": {
+      "command": "npm run ci:smoke",
+      "status": "PASS",
+      "checks": 101,
+      "antivirus": "ClamAV réel",
+      "startedAt": "2026-09-12T03:17:34.875Z",
+      "credentials": "fichier éphémère distinct du jeu local",
+      "infrastructure": "projet, ports et volumes isolés ; nettoyage après exécution"
+    }
+  },
+  "negativeChecks": {
+    "command": "npm run ci:verify-gates",
+    "status": "PASS",
+    "startedAt": "2026-09-12T03:05:05.519Z",
+    "finishedAt": "2026-09-12T03:12:43.006Z",
+    "expectedExitCode": 1,
+    "rejectionsObserved": [
+      "Lint TypeScript : no-debugger",
+      "React : rules-of-hooks",
+      "Compilation bibliothèque partagée",
+      "Compilation connecteur externe",
+      "Compilation RPS",
+      "Compilation API",
+      "Compilation worker",
+      "Compilation web Next.js",
+      "Test Vitest volontairement faux"
+    ],
+    "probesRemoved": true,
+    "positiveLintAndBuildAfterRemoval": true
+  },
+  "configHashes": {
+    "package.json": "2911b7091746a8f42c9bc602a2a77d4d0ee19c9605663322883651a5fc713321",
+    "package-lock.json": "77a648ac54cd3039fc05c33657c47da2dd1bacfc236203436ba80d4e9b41384e",
+    "eslint.config.mjs": "9a3f05875b70639637eea3aa8f50cf09fa79729c3707eb7ac841d07379b4a2cf",
+    "tsconfig.base.json": "d8df1698b9d239e6ce6875611e59bf4f944f774b6725e3b9c9320dbbdb7ab875",
+    ".github/workflows/ci.yml": "9ebfd8bd19f97efcb43172d4779820d39fc21d6d13df55a390b0edf16d5e5189"
+  }
+}

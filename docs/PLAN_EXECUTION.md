@@ -2,8 +2,9 @@
 
 **Révision : 12/09/2026, après réunion direction et clarification CFE.**
 
-**État : plan préparé ; prochain lot technique à engager : L01.** Les travaux applicatifs ci-dessous ne
-sont pas déclarés réalisés par la rédaction du plan. Les acquis historiques restent conservés.
+**État : L01 réalisé et vérifié ; prochain lot technique à engager : L02.**
+Preuves et commandes de reprise : [CI.md](CI.md) et [qa/l01-ci.json](../qa/l01-ci.json).
+Les autres lots restent à réaliser ; les acquis historiques sont conservés.
 
 Sources : [bilan initial](BILAN_AVANCEMENT_2026-09-12.md), [réunion](COMPTE_RENDU_DIRECTION_2026-09-12.md),
 [contrats des intégrations locales](INTEGRATIONS_LOCALES.md), [serveur et accès](DEMANDE_INFRA_ACCES.md).
@@ -91,6 +92,10 @@ Handoff `H` : `R/DealPME_V_MASTER_DEVELOPER_HANDOFF/DealPME__MASTER_DEVELOPER_HA
 Le brouillon de courriel et ce plan sont préparés ; les envois, accès et validations ne sont pas présumés acquis.
 
 ## 4. L01 — CI réellement bloquante
+
+**Clôturé :** installation propre, lint, types et builds réussis ; 74 tests unitaires, 101 contrôles de
+smoke isolé avec ClamAV réel, neuf sondes de rejet. Le workflow distant est configuré ; les preuves
+archivées ici sont celles des exécutions locales.
 
 Tâche : **V1-091**. Fichiers : `package.json`, manifests des workspaces, configuration de lint,
 `.github/workflows/ci.yml`.
@@ -349,5 +354,6 @@ Pour chaque tâche engagée :
 6. Régénérer le classeur, vérifier dates/identifiants/formules et committer le lot cohérent.
 7. Laisser une note de reprise : dernier contrôle réussi, accès manquant éventuel, prochaine action exacte.
 
-**Première action applicative de reprise : L01 / V1-091**, inventaire des scripts de build et remplacement
-du succès forcé de `build:libs`, puis configuration du lint réellement exécuté. Aucun accès externe requis.
+**Première action applicative de reprise : L02 / V1-094 et V1-095**, définir la persistance transactionnelle
+de l'audit et le rattachement d'une réponse au bon repreneur, puis préparer migrations et tests négatifs.
+Aucun accès fournisseur requis ; utiliser `npm run ci:smoke` pour la régression isolée.

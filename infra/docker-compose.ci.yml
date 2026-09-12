@@ -1,0 +1,17 @@
+# Compose >= 2.24.4 : remplacer les ports locaux, pas les fusionner.
+# Le projet et ses volumes sont nommés par devX/ci-smoke.mjs pour chaque exécution.
+services:
+  postgres-core:
+    ports: !override ["127.0.0.1::5432"]
+  postgres-vdr:
+    ports: !override ["127.0.0.1::5432"]
+  postgres-rps:
+    ports: !override ["127.0.0.1::5432"]
+  redis:
+    ports: !override ["127.0.0.1::6379"]
+  minio:
+    ports: !override ["127.0.0.1::9000"]
+  clamav:
+    ports: !override ["127.0.0.1::3310"]
+  mailpit:
+    ports: !override ["127.0.0.1::8025", "127.0.0.1::1025"]

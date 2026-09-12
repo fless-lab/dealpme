@@ -13,6 +13,7 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "declaration": true,
+    "noEmitOnError": true,
     "sourceMap": true,
     "isolatedModules": true
   }
