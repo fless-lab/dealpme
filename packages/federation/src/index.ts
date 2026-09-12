@@ -23,7 +23,7 @@ setSchemaValidator({ validate: async (xml: string) => {
 } });
 
 export class FederationError extends Error {
-  constructor(readonly code: "INVALID_REQUEST" | "EXPIRED" | "REAUTH_REQUIRED" | "INVALID_IDENTITY") { super(`SSO : ${code}`); this.name = "FederationError"; }
+  constructor(readonly code: "INVALID_REQUEST" | "EXPIRED" | "REAUTH_REQUIRED" | "INVALID_IDENTITY" | "CERTIFICATE_EXPIRED") { super(`SSO : ${code}`); this.name = "FederationError"; }
 }
 export interface SamlConfiguration {
   idpEntityId: string; ssoUrl: string; spEntityId: string; acsUrl: string;
@@ -46,12 +46,17 @@ export function createSamlIdentityProvider(config: SamlConfiguration) {
     singleSignOnService: [{ Binding: REDIRECT, Location: config.ssoUrl }, { Binding: POST, Location: config.ssoUrl }],
   });
   // Le signataire emploie une seule clé ; le document public peut annoncer la clé précédente pendant la rotation.
-  if (config.previousCertificate) new X509Certificate(config.previousCertificate);
+  const previous = config.previousCertificate ? new X509Certificate(config.previousCertificate) : null;
   const publicMetadata = config.previousCertificate ? IdentityProvider({ entityID: config.idpEntityId, signingCert: [config.certificate, config.previousCertificate], nameIDFormat: [EMAIL], wantAuthnRequestsSigned: false, singleSignOnService: [{ Binding: REDIRECT, Location: config.ssoUrl }, { Binding: POST, Location: config.ssoUrl }] }) : idp;
   const sp = ServiceProvider({ entityID: config.spEntityId, authnRequestsSigned: false, wantAssertionsSigned: true, wantMessageSigned: false, nameIDFormat: [EMAIL], assertionConsumerService: [{ Binding: POST, Location: config.acsUrl, isDefault: true }] });
+  function assertSigningCertificate() {
+    if (Date.now() < Date.parse(cert.validFrom) || Date.now() >= Date.parse(cert.validTo)) throw new FederationError("CERTIFICATE_EXPIRED");
+  }
 
   async function prepare(samlRequest: string, binding: "redirect" | "post", relayState = ""): Promise<PreparedSamlRequest> {
     try {
+      assertSigningCertificate();
+      if (binding !== "redirect" && binding !== "post") throw new FederationError("INVALID_REQUEST");
       if (samlRequest.length > 88000 || !/^[A-Za-z0-9+/]+={0,2}$/.test(samlRequest) || Buffer.byteLength(relayState) > 80) throw new FederationError("INVALID_REQUEST");
       const raw = Buffer.from(samlRequest, "base64");
       const xml = (binding === "redirect" ? inflateRawSync(raw, { maxOutputLength: 65536 }) : raw).toString("utf8");
@@ -74,11 +79,12 @@ export function createSamlIdentityProvider(config: SamlConfiguration) {
   }
 
   async function respond(request: PreparedSamlRequest, identity: { email: string; authenticatedAt: Date }) {
+    assertSigningCertificate();
     if (request.configurationId !== configurationId) throw new FederationError("INVALID_REQUEST");
     if (!/^[^\s<>"@]+@[^\s<>"@]+\.[^\s<>"@]+$/.test(identity.email) || identity.email.length > 254 || !Number.isFinite(identity.authenticatedAt.getTime())) throw new FederationError("INVALID_IDENTITY");
     if (Date.parse(request.issuedAt) < Date.now() - 300000) throw new FederationError("EXPIRED");
     if (request.forceAuthn && identity.authenticatedAt.getTime() < Date.parse(request.issuedAt)) throw new FederationError("REAUTH_REQUIRED");
-    const now = new Date(), until = new Date(now.getTime() + 90000), id = `_${randomUUID()}`;
+    const now = new Date(), until = new Date(Math.min(now.getTime() + 90000, Date.parse(cert.validTo))), id = `_${randomUUID()}`;
     const response = await idp.createLoginResponse(sp, { extract: { request: { id: request.requestId } } }, "post", { email: identity.email }, {
       relayState: request.relayState,
       customTagReplacement: template => ({ id, context: SamlLib.replaceTagsByValue(template.replace("{AuthnStatement}", '<saml:AuthnStatement AuthnInstant="{AuthnInstant}" SessionIndex="{SessionIndex}"><saml:AuthnContext><saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</saml:AuthnContextClassRef></saml:AuthnContext></saml:AuthnStatement>'), {
@@ -92,5 +98,9 @@ export function createSamlIdentityProvider(config: SamlConfiguration) {
     });
     return { samlResponse: response.context, acsUrl: config.acsUrl, relayState: request.relayState, expiresAt: until.toISOString() };
   }
-  return { metadata: () => publicMetadata.getMetadata(), prepare, respond };
+  return { metadata: () => {
+    assertSigningCertificate();
+    const previousValid = previous && Date.parse(previous.validFrom) <= Date.now() && Date.now() < Date.parse(previous.validTo);
+    return (previousValid ? publicMetadata : idp).getMetadata();
+  }, prepare, respond };
 }

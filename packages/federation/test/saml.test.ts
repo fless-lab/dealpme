@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { inflateRawSync, deflateRawSync } from "node:zlib";
+import { X509Certificate } from "node:crypto";
 import { IdentityProvider, ServiceProvider } from "samlify";
 import { createSamlIdentityProvider } from "../src/index.js";
 
@@ -66,7 +67,7 @@ describe("Fédération SAML SP-initiated", () => {
   });
   it("publie deux certificats pendant la rotation et conserve la validation des assertions anciennes", async () => {
     const old = await federation.respond(await federation.prepare(login(), "redirect"), { email: "old@example.test", authenticatedAt: new Date() });
-    expect(spawnSync("openssl", ["req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout", join(directory, "next-key.pem"), "-out", join(directory, "next-cert.pem"), "-days", "1", "-subj", "/CN=next.dealpme.example.test"], { stdio: "ignore" }).status).toBe(0);
+    expect(spawnSync("openssl", ["req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout", join(directory, "next-key.pem"), "-out", join(directory, "next-cert.pem"), "-days", "2", "-subj", "/CN=next.dealpme.example.test"], { stdio: "ignore" }).status).toBe(0);
     const rotated = createSamlIdentityProvider({ ...config, privateKey: readFileSync(join(directory, "next-key.pem"), "utf8"), certificate: readFileSync(join(directory, "next-cert.pem"), "utf8"), previousCertificate: config.certificate });
     const newRequest = sp.createLoginRequest(IdentityProvider({ metadata: rotated.metadata() }), "redirect");
     const next = await rotated.respond(await rotated.prepare(new URL(newRequest.context).searchParams.get("SAMLRequest")!, "redirect"), { email: "new@example.test", authenticatedAt: new Date() });
@@ -75,5 +76,20 @@ describe("Fédération SAML SP-initiated", () => {
       expect(parsed.extract.nameID).toBe(email);
     }
     expect(rotated.metadata()).not.toContain("PRIVATE KEY");
+    vi.useFakeTimers({toFake:["Date"]});vi.setSystemTime(Date.parse(new X509Certificate(config.certificate).validTo)+1000);
+    try {expect(rotated.metadata().match(/<ds:X509Certificate>/g)).toHaveLength(1);}finally{vi.useRealTimers();}
+  });
+  it("contrôle le certificat pendant le fonctionnement et borne la durée de l'assertion",async()=>{
+    const expiry=Date.parse(new X509Certificate(config.certificate).validTo);
+    vi.useFakeTimers({toFake:["Date"]});vi.setSystemTime(expiry-30000);
+    try {
+      const encoded=login(),request=await federation.prepare(encoded,"redirect");
+      const response=await federation.respond(request,{email:"participant@example.test",authenticatedAt:new Date()});
+      expect(Date.parse(response.expiresAt)).toBe(expiry);
+      vi.setSystemTime(expiry);
+      expect(()=>federation.metadata()).toThrow(/CERTIFICATE_EXPIRED/);
+      await expect(federation.respond(request,{email:"participant@example.test",authenticatedAt:new Date()})).rejects.toMatchObject({code:"CERTIFICATE_EXPIRED"});
+      await expect(federation.prepare(encoded,"redirect")).rejects.toMatchObject({code:"CERTIFICATE_EXPIRED"});
+    } finally {vi.useRealTimers();}
   });
 });

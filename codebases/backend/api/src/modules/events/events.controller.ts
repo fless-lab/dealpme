@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Req } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Param, Post, Query, Req } from "@nestjs/common";
 import type { Request } from "express";
 import { z } from "zod";
 import { IdSchema } from "@dealpme/contracts";
@@ -10,6 +10,7 @@ import { EventsService } from "./events.service.js";
 import { CreateEventSchema, UpdateEventSchema } from "./event.schemas.js";
 import { BrandingSchema } from "@dealpme/connector-remo";
 import { RemoMembersService } from "./remo-members.service.js";
+import { EventPageSchema,type EventPage } from "./event-page.js";
 
 const ReasonSchema=z.object({reason:z.string().trim().min(3).max(2000),deleteRemoteData:z.boolean().default(false)});
 const ReconcileSchema=z.object({remoteId:z.string().regex(/^[a-f0-9]{24}$/i)});
@@ -20,7 +21,7 @@ const InvitationBatchSchema=z.object({cursor:z.uuid().optional(),limit:z.number(
 const AppointmentDecisionSchema=ReasonSchema.extend({decision:z.enum(["CONFIRM","REFUSE"])});
 const RegisterSchema = z.object({ displayName: z.string().min(2).max(120), consentContact: z.boolean().default(false), providerConsent:z.boolean().default(false) });
 const ConsentSchema = z.object({ consentContact: z.boolean() });
-const AppointmentSchema = z.object({ requestedSlot: z.iso.datetime(), dealId: IdSchema.nullable().default(null), crossBorderNoticeAcknowledged: z.boolean(),providerConsent:z.boolean().default(false) });
+const AppointmentSchema = z.object({ requestId:z.uuid().optional(),requestedSlot: z.iso.datetime(), dealId: IdSchema.nullable().default(null), crossBorderNoticeAcknowledged: z.boolean(),providerConsent:z.boolean().default(false) });
 
 @Controller("events")
 export class EventsController {
@@ -45,7 +46,7 @@ export class EventsController {
 
   @Get("managed")
   @Roles(Role.CCI_OFFICER,Role.PLATFORM_ADMIN)
-  managed(@CurrentPrincipal() principal:Principal) { return this.events.managed(principal); }
+  managed(@CurrentPrincipal() principal:Principal,@Query(validate(EventPageSchema)) page:EventPage) { return this.events.managed(principal,page); }
 
   @Get("managed/:eventId")
   @Roles(Role.CCI_OFFICER,Role.PLATFORM_ADMIN)
@@ -93,11 +94,11 @@ export class EventsController {
 
   @Get("diaspora/appointments")
   @Roles(Role.INVESTOR,Role.INVESTOR_DIASPORA)
-  mine(@CurrentPrincipal() principal:Principal) { return this.events.appointments(principal); }
+  mine(@CurrentPrincipal() principal:Principal,@Query(validate(EventPageSchema)) page:EventPage) { return this.events.appointments(principal,false,page); }
 
   @Get("diaspora/managed")
   @Roles(Role.CCI_OFFICER,Role.PLATFORM_ADMIN)
-  appointmentQueue(@CurrentPrincipal() principal:Principal) { return this.events.appointments(principal,true); }
+  appointmentQueue(@CurrentPrincipal() principal:Principal,@Query(validate(EventPageSchema)) page:EventPage) { return this.events.appointments(principal,true,page); }
 
   @Post("diaspora/:appointmentId/decision")
   @HttpCode(200)
@@ -148,6 +149,6 @@ export class EventsController {
   @HttpCode(201)
   @Roles(Role.INVESTOR_DIASPORA, Role.INVESTOR)
   appointment(@Body(validate(AppointmentSchema)) body: z.infer<typeof AppointmentSchema>, @CurrentPrincipal() investor: Principal, @Req() req: Request) {
-    return this.events.requestAppointment(investor, body.requestedSlot, body.dealId, body.crossBorderNoticeAcknowledged, correlationIdOf(req),body.providerConsent);
+    return this.events.requestAppointment(investor, body.requestedSlot, body.dealId, body.crossBorderNoticeAcknowledged, correlationIdOf(req),body.providerConsent,body.requestId);
   }
 }

@@ -40,6 +40,8 @@ jobs:
         run: |
           npx playwright install --with-deps chromium
           npm run ci:smoke
+      - name: Matrice de câblage L05 et preuves de recette complète
+        run: npm run ci:l05-wiring -- --evidence
       - name: Résumé des contrôles exécutés
         if: always()
         env:
@@ -61,5 +63,6 @@ jobs:
           path: |
             .ci-artifacts/*.json
             qa/control-coverage.json
+            qa/l05-wiring-matrix.json
           if-no-files-found: error
           retention-days: 14

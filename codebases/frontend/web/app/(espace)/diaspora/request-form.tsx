@@ -1,16 +1,19 @@
 "use client";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Checkbox, Field, Input, StateBanner } from "@dealpme/ui";
 
 export function AppointmentForm({ providerEmailRequired = false }: { providerEmailRequired?: boolean }) {
   const router = useRouter();
+  const request=useRef<{body:string;id:string}|null>(null);
   const [slot, setSlot] = useState(""), [ack, setAck] = useState(false), [providerConsent, setProviderConsent] = useState(false);
   const [busy, setBusy] = useState(false), [error, setError] = useState<string | null>(null), [done, setDone] = useState(false);
   async function submit(e: FormEvent) {
     e.preventDefault(); if (busy) return; setBusy(true); setError(null); setDone(false);
     try {
-      const r = await fetch("/api/diaspora", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ requestedSlot: `${slot}:00Z`, crossBorderNoticeAcknowledged: ack, providerConsent }) });
+      const body={requestedSlot:`${slot}:00Z`,crossBorderNoticeAcknowledged:ack,providerConsent};
+      const serialized=JSON.stringify(body);if(request.current?.body!==serialized)request.current={body:serialized,id:crypto.randomUUID()};
+      const r = await fetch("/api/diaspora", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({...body,requestId:request.current.id}) });
       const d = await r.json() as { ok: boolean; message?: string };
       if (!d.ok) { setError(d.message ?? "Demande impossible"); return; }
       setDone(true); router.refresh();

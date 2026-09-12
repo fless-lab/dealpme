@@ -1,0 +1,550 @@
+{
+  "schemaVersion": 1,
+  "task": "V1-110",
+  "status": "PASS",
+  "evidence": "FULL_ISOLATED_SUITE_PASS",
+  "routeCount": 27,
+  "rows": [
+    {
+      "api": "GET /events",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "list",
+      "service": [
+        "events.service.ts#listPublished"
+      ],
+      "surface": "codebases/frontend/web/app/evenements/page.tsx",
+      "bff": "SSR direct / protocole",
+      "control": "EVENT_CARD",
+      "authentication": "PUBLIC_OR_PROTOCOL_GUARD",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "e4700255406957b47b1be3719bb828c4ec384d143127d96a1c924244ba7acc19"
+    },
+    {
+      "api": "GET /events/options",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "options",
+      "service": [
+        "events.service.ts#options"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/diaspora/page.tsx",
+      "bff": "SSR direct / protocole",
+      "control": "DIA_PROVIDER_CONSENT",
+      "authentication": "PUBLIC_OR_PROTOCOL_GUARD",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "ac455e50300bf81639846ce18e0f9b47de4026fd9d53222ef6a4d410401eea94"
+    },
+    {
+      "api": "GET /events/integration",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "integration",
+      "service": [
+        "events.service.ts#integration"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/organisateur/integration/page.tsx",
+      "bff": "SSR direct / protocole",
+      "control": "ORG_INTEGRATION",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "ca6a3607b13ab9e77f23ed1f9b5d33bd7d253dfd95331bc8882ba7f23d33e83d"
+    },
+    {
+      "api": "POST /events/account-branding",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "accountBranding",
+      "service": [
+        "events.service.ts#updateAccountBranding"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/organisateur/integration/brand-form.tsx",
+      "bff": "codebases/frontend/web/app/api/organisateur/[...path]/route.ts",
+      "control": "REMO_ACCOUNT_BRAND_SAVE",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "a14c65870e9b5aaf18990bdecf41e2a95b7645baac55419410d07d786f2bfa68"
+    },
+    {
+      "api": "GET /events/managed",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "managed",
+      "service": [
+        "events.service.ts#managed"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/organisateur/evenements/page.tsx",
+      "bff": "SSR direct / protocole",
+      "control": "L05_PAGE_NEXT",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "fd532e0aa0db5940ccdf70c16248b851bb6c03a93a0cd91e1f473b08dc5312f5"
+    },
+    {
+      "api": "GET /events/managed/:eventId",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "detail",
+      "service": [
+        "events.service.ts#detail"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/organisateur/evenements/[eventId]/page.tsx",
+      "bff": "SSR direct / protocole",
+      "control": "ORG_EVENT_DETAIL",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "07c7ae782e54ed98ceb6131414adaaef8eea526e6d73bf3c2519c6af604e0790"
+    },
+    {
+      "api": "POST /events/:eventId/edit",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "edit",
+      "service": [
+        "events.service.ts#update"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/organisateur/evenements/event-form.tsx",
+      "bff": "codebases/frontend/web/app/api/organisateur/[...path]/route.ts",
+      "control": "ORG_EVENT_SAVE",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "de82256935ab795a1d506ad4948101c12bd8aa73cbe4d3f5b34ddfae2c537689"
+    },
+    {
+      "api": "POST /events/:eventId/cancel",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "cancel",
+      "service": [
+        "events.service.ts#cancel"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/organisateur/evenements/event-actions.tsx",
+      "bff": "codebases/frontend/web/app/api/organisateur/[...path]/route.ts",
+      "control": "ORG_EVENT_CANCEL",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "d697fb7c093388d2fa1b815c6a4c10ef8d90189f89d1bb5102462df4cb33cbe2"
+    },
+    {
+      "api": "POST /events/:eventId/reconcile",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "reconcile",
+      "service": [
+        "events.service.ts#reconcileRemote"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/organisateur/evenements/event-actions.tsx",
+      "bff": "codebases/frontend/web/app/api/organisateur/[...path]/route.ts",
+      "control": "ORG_REMOTE_RECONCILE",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "d697fb7c093388d2fa1b815c6a4c10ef8d90189f89d1bb5102462df4cb33cbe2"
+    },
+    {
+      "api": "POST /events/:eventId/remote-content",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "remoteContent",
+      "service": [
+        "events.service.ts#updateRemoteContent"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/organisateur/evenements/event-form.tsx",
+      "bff": "codebases/frontend/web/app/api/organisateur/[...path]/route.ts",
+      "control": "ORG_EVENT_SAVE",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "de82256935ab795a1d506ad4948101c12bd8aa73cbe4d3f5b34ddfae2c537689"
+    },
+    {
+      "api": "POST /events/:eventId/sync-invitations",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "invitations",
+      "service": [
+        "remo-members.service.ts#synchronise"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/organisateur/evenements/event-actions.tsx",
+      "bff": "codebases/frontend/web/app/api/organisateur/[...path]/route.ts",
+      "control": "ORG_SYNC_INVITATIONS",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "19c087dab2fee03d62a54838674109805e1cc62ebb1b777ba79ac4b5b54d65fb"
+    },
+    {
+      "api": "POST /events/:eventId/member-group",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "group",
+      "service": [
+        "remo-members.service.ts#changeGroup"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/organisateur/evenements/member-group.tsx",
+      "bff": "codebases/frontend/web/app/api/organisateur/[...path]/route.ts",
+      "control": "REMO_GROUP_ADD",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "966ac098fd06a91dd82b421b7d9bf1beff87c7b49c8ed3f18fed4c752d67d326"
+    },
+    {
+      "api": "POST /events/:eventId/invite-speaker",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "speaker",
+      "service": [
+        "remo-members.service.ts#inviteSpeaker"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/organisateur/evenements/member-group.tsx",
+      "bff": "codebases/frontend/web/app/api/organisateur/[...path]/route.ts",
+      "control": "REMO_INVITE_SPEAKER",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "966ac098fd06a91dd82b421b7d9bf1beff87c7b49c8ed3f18fed4c752d67d326"
+    },
+    {
+      "api": "POST /events/:eventId/sync-attendance",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "sync",
+      "service": [
+        "events.service.ts#syncAttendance"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/organisateur/evenements/event-actions.tsx",
+      "bff": "codebases/frontend/web/app/api/organisateur/[...path]/route.ts",
+      "control": "ORG_EVENT_SYNC",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "d697fb7c093388d2fa1b815c6a4c10ef8d90189f89d1bb5102462df4cb33cbe2"
+    },
+    {
+      "api": "GET /events/diaspora/appointments",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "mine",
+      "service": [
+        "events.service.ts#appointments"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/diaspora/page.tsx",
+      "bff": "SSR direct / protocole",
+      "control": "L05_PAGE_NEXT",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "ac455e50300bf81639846ce18e0f9b47de4026fd9d53222ef6a4d410401eea94"
+    },
+    {
+      "api": "GET /events/diaspora/managed",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "appointmentQueue",
+      "service": [
+        "events.service.ts#appointments"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/organisateur/evenements/page.tsx",
+      "bff": "SSR direct / protocole",
+      "control": "L05_PAGE_NEXT",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "fd532e0aa0db5940ccdf70c16248b851bb6c03a93a0cd91e1f473b08dc5312f5"
+    },
+    {
+      "api": "POST /events/diaspora/:appointmentId/decision",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "appointmentDecision",
+      "service": [
+        "events.service.ts#decideAppointment"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/organisateur/evenements/appointment-decision.tsx",
+      "bff": "codebases/frontend/web/app/api/organisateur/[...path]/route.ts",
+      "control": "DIA_CONFIRM",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "56048af2f38e6de61513796834269fb91c3135ccb760c38a3d109d878b7b88ff"
+    },
+    {
+      "api": "POST /events",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "create",
+      "service": [
+        "events.service.ts#create"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/organisateur/evenements/event-form.tsx",
+      "bff": "codebases/frontend/web/app/api/organisateur/[...path]/route.ts",
+      "control": "ORG_EVENT_SAVE",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "de82256935ab795a1d506ad4948101c12bd8aa73cbe4d3f5b34ddfae2c537689"
+    },
+    {
+      "api": "POST /events/:eventId/publish",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "publish",
+      "service": [
+        "events.service.ts#publish"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/organisateur/evenements/event-actions.tsx",
+      "bff": "codebases/frontend/web/app/api/organisateur/[...path]/route.ts",
+      "control": "ORG_EVENT_PUBLISH",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "d697fb7c093388d2fa1b815c6a4c10ef8d90189f89d1bb5102462df4cb33cbe2"
+    },
+    {
+      "api": "POST /events/:eventId/registrations",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "register",
+      "service": [
+        "events.service.ts#register"
+      ],
+      "surface": "codebases/frontend/web/app/evenements/event-card.tsx",
+      "bff": "codebases/frontend/web/app/api/events/[eventId]/[action]/route.ts",
+      "control": "EVENT_REGISTER_SUBMIT",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "bfb8e13938f93ee59e94f79cfa72fd7246dcf22ed90378c9afe80f7203fbd59c"
+    },
+    {
+      "api": "POST /events/:eventId/contact-consent",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "consent",
+      "service": [
+        "events.service.ts#setContactConsent"
+      ],
+      "surface": "codebases/frontend/web/app/evenements/event-card.tsx",
+      "bff": "codebases/frontend/web/app/api/events/[eventId]/[action]/route.ts",
+      "control": "EVENT_CONSENT_TOGGLE",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "bfb8e13938f93ee59e94f79cfa72fd7246dcf22ed90378c9afe80f7203fbd59c"
+    },
+    {
+      "api": "GET /events/:eventId/join-url",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "join",
+      "service": [
+        "events.service.ts#joinUrl"
+      ],
+      "surface": "codebases/frontend/web/app/evenements/[eventId]/acces/page.tsx",
+      "bff": "codebases/frontend/web/app/api/events/[eventId]/[action]/route.ts",
+      "control": "EVENT_JOIN",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "e2622770a6aa107a76cbc51bb06daa34381c8451a7c2a81ae11ebdd8e1625a91"
+    },
+    {
+      "api": "POST /events/diaspora/appointments",
+      "controller": "codebases/backend/api/src/modules/events/events.controller.ts",
+      "handler": "appointment",
+      "service": [
+        "events.service.ts#requestAppointment"
+      ],
+      "surface": "codebases/frontend/web/app/(espace)/diaspora/request-form.tsx",
+      "bff": "codebases/frontend/web/app/api/diaspora/route.ts",
+      "control": "DIA_REQUEST",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "6c7c4f85366746fbc4537794ba35936a10dc76959ba006cdb405e3a8fbaf4fa1"
+    },
+    {
+      "api": "GET /federation/remo/metadata",
+      "controller": "codebases/backend/api/src/modules/events/remo-sso.controller.ts",
+      "handler": "metadata",
+      "service": [
+        "remo-sso.controller.ts#metadata"
+      ],
+      "surface": "codebases/frontend/web/app/sso/remo/metadata/route.ts",
+      "bff": "SSR direct / protocole",
+      "control": "REMO_SAML_METADATA",
+      "authentication": "PUBLIC_OR_PROTOCOL_GUARD",
+      "tests": [
+        "packages/federation/test/saml.test.ts",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "037e0ad673d81e87502c68dd2a3edae3cbd3373f147ddc6e92e277d6611c4103"
+    },
+    {
+      "api": "POST /federation/remo/challenges",
+      "controller": "codebases/backend/api/src/modules/events/remo-sso.controller.ts",
+      "handler": "challenge",
+      "service": [
+        "remo-sso.controller.ts#challenge"
+      ],
+      "surface": "codebases/frontend/web/app/sso/remo/route.ts",
+      "bff": "SSR direct / protocole",
+      "control": null,
+      "authentication": "PUBLIC_OR_PROTOCOL_GUARD",
+      "tests": [
+        "packages/federation/test/saml.test.ts",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "f3d766ef589af948e239c3bba9f14199bad548343c11f6504448820c2db6c425"
+    },
+    {
+      "api": "POST /federation/remo/challenges/:id/complete",
+      "controller": "codebases/backend/api/src/modules/events/remo-sso.controller.ts",
+      "handler": "complete",
+      "service": [
+        "remo-sso.controller.ts#complete"
+      ],
+      "surface": "codebases/frontend/web/app/sso/remo/complete/route.ts",
+      "bff": "SSR direct / protocole",
+      "control": "SAML_POST_CONTINUE",
+      "authentication": "SESSION_AND_ROLES",
+      "tests": [
+        "packages/federation/test/saml.test.ts",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "13a3b6d9d3a698bf9e6751b2aadc1535497a8e5d6b9d270de0ba685f901a8fa8"
+    },
+    {
+      "api": "POST /webhooks/remo/attendance",
+      "controller": "codebases/backend/api/src/modules/events/remo-webhook.controller.ts",
+      "handler": "attendance",
+      "service": [
+        "remo-webhook.controller.ts#attendance"
+      ],
+      "surface": "codebases/backend/api/src/modules/events/remo-webhook.controller.ts",
+      "bff": "SSR direct / protocole",
+      "control": null,
+      "authentication": "PUBLIC_OR_PROTOCOL_GUARD",
+      "tests": [
+        "devX/l05-integration.mjs",
+        "devX/remo-api-integration.mjs",
+        "devX/l05-wiring-cases.mjs"
+      ],
+      "sourceHash": "98a04e11b0f37e4945c2607d979f4548a28c8725b90fa9d17364d0b98f3f4e79"
+    }
+  ],
+  "exclusions": [
+    {
+      "capability": "POST /events (compagnie implicite)",
+      "handling": "Variante remplacée par la création sous Company ID explicite",
+      "tracking": "V1-068"
+    },
+    {
+      "capability": "Découverte publique et rapport global par hôte",
+      "handling": "Connecteur disponible ; exploitation statistique approfondie au périmètre P20",
+      "tracking": "V1-104 / L11"
+    },
+    {
+      "capability": "Activation SSO, favicon, domaine et emails globaux",
+      "handling": "Initialisation fournisseur ; aucune route d'écriture dans le Swagger",
+      "tracking": "V1-112 / V1-113 / V1-114"
+    },
+    {
+      "capability": "Captation voix réelles, transcripts et recordings",
+      "handling": "Recette du compte et stratégie d'export ; aucun endpoint de téléchargement inventé",
+      "tracking": "V1-107 / A21"
+    },
+    {
+      "capability": "Single Logout et suppression individuelle d'inscription Remo",
+      "handling": "Non exposés ; ne pas promettre de révocation distante depuis un simple retrait de groupe",
+      "tracking": "V1-113 / V1-115"
+    }
+  ],
+  "requiredCases": [
+    "W110 : réponse d'invitation tardive après reprise et changement de rôle",
+    "W110 : groupes/intervenants refusés après changement d'email ou annulation",
+    "W110 : commandes organisateur parcourent le BFF jusqu'au fournisseur",
+    "W110 : diaspora rejouable par le BFF, confirmation et refus sans doublon",
+    "W110 : plus de 100 événements et demandes accessibles sans doublon ni fuite",
+    "W110 : SAML POST et reprise avec MFA navigateur",
+    "W111 : précontrôle CLI sans réseau et sans secret dans les diagnostics",
+    "W111 : redémarrage, modes disabled/local/remo et changement de compte",
+    "W111 : invitation incertaine reprise après redémarrage sans nouvel envoi"
+  ],
+  "reports": {
+    "l05-results.json": {
+      "sha256": "4a455a50ee5b0edd73320177a6f1bf453b49a6ae7936916b7446815e09dc9975",
+      "checks": 13
+    },
+    "remo-api-results.json": {
+      "sha256": "0d3a3714906d88bf691761fbff89b75e3bf342d4b50f514c4c985799883a40aa",
+      "checks": 24
+    }
+  },
+  "tests": [
+    "devX/l05-integration.mjs",
+    "devX/remo-api-integration.mjs",
+    "devX/l05-wiring-cases.mjs",
+    "packages/federation/test/saml.test.ts",
+    "codebases/backend/api/test/remo-preflight.test.ts"
+  ]
+}

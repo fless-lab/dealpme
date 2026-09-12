@@ -11,6 +11,7 @@ import { IdentityProvider, ServiceProvider } from "samlify";
 import "@dealpme/federation";
 import { chromium } from "playwright";
 import { readOtp } from "./notification-inbox.mjs";
+import { verifyL05Wiring } from "./l05-wiring-cases.mjs";
 
 if (!/^dealpme-ci-/.test(process.env.CI_TEST_PROJECT ?? "")) throw new Error("Pile CI isolée requise");
 const source = JSON.parse(spawnSync("docker", ["inspect", process.env.SMOKE_CORE_CONTAINER], { encoding: "utf8" }).stdout)[0];
@@ -31,6 +32,7 @@ assert.equal(spawnSync("openssl", ["req", "-x509", "-newkey", "rsa:2048", "-node
 const key = await readFile(privateKey), cert = await readFile(certificate);
 const remoteEvents = new Map(), remoteMembers = new Map(), pendingSaml = new Map();
 let creations = 0, invitations = 0, loseCreate = false, loseInvite = false, rejectCreate = false, sp, idp, samlReceipt;
+let traffic=0,pauseNextRoster=false,releaseRoster=null;
 const fixture = createHttpsServer({ key, cert }, async (req, res) => {
   const respond = (status, body) => { res.writeHead(status, { "Content-Type": "application/json" }); res.end(JSON.stringify(body)); };
   const url = new URL(req.url, "https://fixture.invalid");
@@ -47,6 +49,7 @@ const fixture = createHttpsServer({ key, cert }, async (req, res) => {
     return;
   }
   if (req.headers.authorization !== `Token: ${apiKey}`) { respond(401, { isSuccess: false }); return; }
+  traffic++;
   const body = raw ? JSON.parse(raw) : {};
   if (url.pathname === `/api/v1/companies/${companyId}/events` && req.method === "POST") {
     if(rejectCreate){rejectCreate=false;respond(403,{isSuccess:false});return;}
@@ -69,7 +72,11 @@ const fixture = createHttpsServer({ key, cert }, async (req, res) => {
     if (loseInvite) { loseInvite = false; res.destroy(); return; }
     respond(200, { isSuccess: true }); return;
   }
-  if (action === "attendees" && req.method === "GET") { respond(200, { isSuccess: true, attendees: [...remoteMembers.get(id).values()] }); return; }
+  if (action === "attendees" && req.method === "GET") {
+    const snapshot=JSON.parse(JSON.stringify([...remoteMembers.get(id).values()]));
+    if(pauseNextRoster){pauseNextRoster=false;releaseRoster=()=>respond(200,{isSuccess:true,attendees:snapshot});return;}
+    respond(200, { isSuccess: true, attendees: snapshot }); return;
+  }
   if (action?.startsWith("groups/")) { assert.equal(typeof body.emailId, "string"); respond(action.includes("missing-group") ? 404 : 200, { isSuccess: !action.includes("missing-group") }); return; }
   respond(404, { isSuccess: false });
 });
@@ -77,13 +84,22 @@ await new Promise(ok => fixture.listen(0, "127.0.0.1", ok));
 const providerOrigin = `https://127.0.0.1:${fixture.address().port}`, apiPort = await freePort();
 const api = `http://127.0.0.1:${apiPort}/v1`;
 const samlConfig = { idpEntityId: "https://dealpme-contract.example.test/sso/remo/metadata", ssoUrl: "https://dealpme-contract.example.test/sso/remo", spEntityId: "http://live.remo.co/", acsUrl: `${providerOrigin}/saml/acs` };
-const child = spawn(process.execPath, ["dist/main.js"], { cwd: resolve(root, "codebases/backend/api"), env: {
+const runtimeEnv={
   ...process.env, API_PORT: String(apiPort), NODE_EXTRA_CA_CERTS: certificate,
   CONNECTOR_REMO_PROVIDER: "remo", CONNECTOR_REMO_API_KEY: apiKey, REMO_API_BASE_URL: `${providerOrigin}/api/v1`, REMO_EVENT_BASE_URL: providerOrigin,
   REMO_COMPANY_ID: companyId, REMO_ACCOUNT_KEY: "remo-contract", REMO_QUOTA_REFERENCE: "RECETTE_CONTRAT_LOCALE", REMO_HOST_EMAIL: "officier@cci-togo.demo.dealpme.local",
   REMO_SSO_ENABLED: "true", REMO_SAML_IDP_ENTITY_ID: samlConfig.idpEntityId, REMO_SAML_SSO_URL: samlConfig.ssoUrl, REMO_SAML_SP_ENTITY_ID: samlConfig.spEntityId, REMO_SAML_ACS_URL: samlConfig.acsUrl,
   REMO_SAML_KEY_FILE: privateKey, REMO_SAML_CERT_FILE: certificate,
-}, stdio: "ignore" });
+};
+const startApi=overrides=>spawn(process.execPath,["dist/main.js"],{cwd:resolve(root,"codebases/backend/api"),env:{...runtimeEnv,...overrides},stdio:"ignore"});
+let child=startApi({});
+async function restart(overrides={}) {
+  const exit=new Promise(ok=>child.once("exit",ok));child.kill("SIGTERM");const timer=setTimeout(()=>child.kill("SIGKILL"),10000);
+  try{await exit;}finally{clearTimeout(timer);}
+  child=startApi(overrides);
+  for(let i=0;i<150;i++){try{if((await fetch(`${api}/ready`)).ok)return;}catch{/* démarrage */}await delay(100);}
+  throw new Error("Redémarrage API non disponible");
+}
 let web, browser;
 async function request(path, { token, body, status = body === undefined ? 200 : 201, cid = randomUUID() } = {}) {
   const res = await fetch(api + path, { method: body === undefined ? "GET" : "POST", headers: { "content-type": "application/json", "x-correlation-id": cid, ...(token ? { authorization: `Bearer ${token}` } : {}) }, ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal: AbortSignal.timeout(20000) });
@@ -239,6 +255,8 @@ try {
     assert(await page.evaluate(() => globalThis.document.documentElement.scrollWidth <= globalThis.innerWidth + 1));
     await page.screenshot({ path: resolve(root, ".ci-artifacts/remo-content-mobile.png"), fullPage: true }); await context.close();
   });
+  await verifyL05Wiring({check,request,login,admin,officer,investor,platform,origin,browser,root,temp,api,runtimeEnv,restart,eventId,remoteId,slot,samlRequest,
+    fixture:{remoteEvents,remoteMembers,get traffic(){return traffic;},get invitations(){return invitations;},pauseRoster(){pauseNextRoster=true;},get held(){return !!releaseRoster;},release(){const fn=releaseRoster;releaseRoster=null;fn?.();},loseInvite(){loseInvite=true;},loseCreate(){loseCreate=true;}}});
   report.status = "PASS";
 } catch (error) { console.error(error); report.status = "FAIL"; process.exitCode = 1; }
 finally {

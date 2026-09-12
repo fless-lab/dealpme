@@ -38,6 +38,8 @@
     "lint": "eslint . --max-warnings=0",
     "ci:smoke": "node devX/ci-smoke.mjs",
     "ci:verify-gates": "node devX/verify-ci-gates.mjs",
+    "remo:preflight": "node devX/remo-preflight.mjs",
+    "ci:l05-wiring": "node devX/verify-l05-wiring.mjs",
     "infra:up": "npm run build -w packages/notifications -w codebases/external_connectors/registry -w codebases/external_connectors/remo -w codebases/devtools/sms-inbox -w codebases/devtools/registry-mock -w codebases/devtools/event-simulator && docker compose -f infra/docker-compose.yml --profile local up -d --build",
     "infra:down": "docker compose -f infra/docker-compose.yml --profile local down",
     "db:migrate:core": "npm run db:migrate -w codebases/backend/api",

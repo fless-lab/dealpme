@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { createHash } from "node:crypto";
-import { and, asc, desc, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, asc, desc, eq, getTableColumns, inArray, isNull, sql } from "drizzle-orm";
 import { DealPmeError, ErrorCode } from "@dealpme/contracts";
 import { newId } from "@dealpme/domain";
 import { RemoError } from "@dealpme/connector-remo";
@@ -14,6 +14,7 @@ import { RemoBridgeService, type DealPmeEvent, type RemoIntegrationMode } from "
 import { reserveSharedEvent } from "./reservations.js";
 import type { CreateEventInput } from "./event.schemas.js";
 import { RemoMembersService } from "./remo-members.service.js";
+import { firstEventPage, pageOf, type EventPage } from "./event-page.js";
 
 type Event = typeof events.$inferSelect;
 const toProvider = (e: Event): DealPmeEvent => ({ id:e.id,title:e.title,description:e.description??"",startsAt:e.startsAt.toISOString(),endsAt:e.endsAt.toISOString(),capacity:e.capacity,mode:e.integrationMode as RemoIntegrationMode,publicationKey:e.publicationKey!,branding:e.branding,...(e.remoEventId?{remoEventId:e.remoEventId}:{}) });
@@ -22,6 +23,12 @@ const activeOperation = (e: Event) => ["PUBLISHING","CANCEL_PENDING"].includes(e
 @Injectable()
 export class EventsService {
   constructor(@Inject(CORE_DB) private readonly db: CoreDb, private readonly bridge: RemoBridgeService, private readonly audit: AuditService, private readonly members: RemoMembersService) {}
+  private configuredFor(event: Event) {
+    const env=loadEnv();
+    if(event.provider!==this.bridge.provider||this.bridge.provider==="disabled")return false;
+    if(event.provider==="remo")return event.providerAccountKey===env.REMO_ACCOUNT_KEY&&event.providerCompanyId===env.REMO_COMPANY_ID;
+    return event.provider==="local"&&(!event.providerAccountKey||event.providerAccountKey===env.REMO_ACCOUNT_KEY);
+  }
   private async branding(input:CreateEventInput,tx:CoreTx) {
     const env=loadEnv(),account=(await tx.select().from(eventProviderAccounts).where(eq(eventProviderAccounts.key,env.REMO_ACCOUNT_KEY)).limit(1))[0];
     const defaults=account?.branding??{label:env.REMO_ACCOUNT_BRAND_LABEL,accent:env.REMO_ACCOUNT_BRAND_ACCENT,welcome:env.REMO_ACCOUNT_BRAND_WELCOME};
@@ -54,8 +61,8 @@ export class EventsService {
       return {eventId:id};
     });
   }
-  async managed(principal:Principal) {
-    return withTenant(this.db,principal,async(tx)=>({items:await tx.select().from(events).where(eq(events.organiserUserId,principal.userId)).orderBy(desc(events.createdAt)).limit(100),provider:this.bridge.provider,account:{key:loadEnv().REMO_ACCOUNT_KEY,concurrentLimit:loadEnv().REMO_MAX_CONCURRENT,marginMinutes:loadEnv().REMO_MARGIN_MINUTES,qualification:this.bridge.provider==="remo"?loadEnv().REMO_QUOTA_REFERENCE:"SIMULATION_LOCALE_NON_CONTRACTUELLE"}}));
+  async managed(principal:Principal,page:EventPage=firstEventPage) {
+    return withTenant(this.db,principal,async(tx)=>({...pageOf(await tx.select({...getTableColumns(events),cursorTime:sql<string>`to_char(${events.createdAt} AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`}).from(events).where(and(eq(events.organiserUserId,principal.userId),page.before?sql`(${events.createdAt},${events.id}) < (${page.before.createdAt}::timestamptz,${page.before.id}::uuid)`:undefined)).orderBy(desc(events.createdAt),desc(events.id)).limit(page.limit+1),page.limit),provider:this.bridge.provider,account:{key:loadEnv().REMO_ACCOUNT_KEY,concurrentLimit:loadEnv().REMO_MAX_CONCURRENT,marginMinutes:loadEnv().REMO_MARGIN_MINUTES,qualification:this.bridge.provider==="remo"?loadEnv().REMO_QUOTA_REFERENCE:"SIMULATION_LOCALE_NON_CONTRACTUELLE"}}));
   }
   async detail(id:string,principal:Principal) {
     return withTenant(this.db,principal,async(tx)=>{
@@ -69,7 +76,8 @@ export class EventsService {
     if(this.bridge.provider==="disabled") throw new DealPmeError(ErrorCode.CONFLICT,"Fournisseur événementiel désactivé");
     const prepared=await withTenant(this.db,organiser,async(tx)=>{
       const e=await this.owned(tx,id,organiser);
-      if(e.status==="PUBLISHED") return e;
+      if(e.status==="PUBLISHED") { if(!this.configuredFor(e))throw new DealPmeError(ErrorCode.CONFLICT,"La publication appartient à une autre configuration fournisseur"); return e; }
+      if(e.publicationKey&&!this.configuredFor(e))throw new DealPmeError(ErrorCode.CONFLICT,"Rétablissez le compte fournisseur de cette tentative avant sa reprise");
       if(this.bridge.provider==="remo" && e.publicationKey && ["SYNC_UNKNOWN","PUBLISHING"].includes(e.status)) throw new DealPmeError(ErrorCode.CONFLICT,"Remo ne documente pas d'idempotence de création : renseignez la référence distante pour rapprocher, sans recréer la salle");
       if(activeOperation(e)||!["DRAFT","CREATE_REJECTED","SYNC_UNKNOWN","PUBLISHING"].includes(e.status)) throw new DealPmeError(ErrorCode.INVALID_TRANSITION,"Publication en cours ou événement fermé ; actualisez son état");
       if(e.integrationMode!=="DEALPME_FIRST"||e.endsAt.getTime()<=Date.now()) throw new DealPmeError(ErrorCode.INVALID_TRANSITION,"Mode non qualifié ou événement terminé");
@@ -133,7 +141,7 @@ export class EventsService {
       const mine=principal?await tx.select().from(eventRegistrations).where(and(inArray(eventRegistrations.eventId,rows.map(r=>r.id)),eq(eventRegistrations.userId,principal.userId),isNull(eventRegistrations.cancelledAt))):[];
       return {items:rows.map(e=>{
         const reg=mine.find(r=>r.eventId===e.id),taken=Number(counts.find(r=>r.event_id===e.id)?.n??0);
-        return {id:e.id,title:e.title,description:e.description,startsAt:e.startsAt,endsAt:e.endsAt,capacity:e.capacity,registered:taken,seatsLeft:Math.max(0,e.capacity-taken),campaignId:e.campaignId,integrationMode:e.integrationMode,branding:e.branding,provider:e.provider,simulated:e.provider==="local"||e.provider==="legacy",liveReady:e.provider===this.bridge.provider&&["local","remo"].includes(e.provider)&&!!e.remoEventId,ended:e.endsAt.getTime()<=Date.now(),myRegistration:reg?{displayName:reg.displayName,consentContact:!!reg.consentContactAt,invitationState:reg.invitationState,providerConsent:!!reg.providerConsentAt}:null};
+        return {id:e.id,title:e.title,description:e.description,startsAt:e.startsAt,endsAt:e.endsAt,capacity:e.capacity,registered:taken,seatsLeft:Math.max(0,e.capacity-taken),campaignId:e.campaignId,integrationMode:e.integrationMode,branding:e.branding,provider:e.provider,simulated:e.provider==="local"||e.provider==="legacy",liveReady:this.configuredFor(e)&&!!e.remoEventId&&Date.now()>=e.startsAt.getTime()-900000&&Date.now()<e.endsAt.getTime(),ended:e.endsAt.getTime()<=Date.now(),myRegistration:reg?{displayName:reg.displayName,consentContact:!!reg.consentContactAt,invitationState:reg.invitationState,providerConsent:!!reg.providerConsentAt}:null};
       })};
     });
   }
@@ -191,7 +199,7 @@ export class EventsService {
   }
   async syncAttendance(id:string,organiser:Principal,correlationId:string) {
     const e=await withTenant(this.db,organiser,tx=>this.owned(tx,id,organiser));
-    if(!e.remoEventId||e.provider!==this.bridge.provider) throw new DealPmeError(ErrorCode.CONFLICT,"Présence non disponible pour cette intégration");
+    if(!e.remoEventId||!this.configuredFor(e)||!["PUBLISHED","CLOSED"].includes(e.status)) throw new DealPmeError(ErrorCode.CONFLICT,"Présence non disponible pour cette intégration ou cet état");
     if(this.bridge.remote) {
       this.bridge.assertRemoteAccount(e);
       const roster=await this.bridge.remote.attendees(e.remoEventId);
@@ -216,6 +224,7 @@ export class EventsService {
     if(!this.bridge.remote) throw new DealPmeError(ErrorCode.CONFLICT,"Rapprochement Remo indisponible");
     const current=await withTenant(this.db,organiser,tx=>this.owned(tx,id,organiser));
     this.bridge.assertRemoteAccount(current);
+    if(!["SYNC_UNKNOWN","PUBLISHING"].includes(current.status)||activeOperation(current))throw new DealPmeError(ErrorCode.CONFLICT,"Événement non disponible pour rapprochement");
     const remote=await this.bridge.remote.getEvent(remoteId);
     return withTenant(this.db,organiser,async tx=>{
       const e=await this.owned(tx,id,organiser);
@@ -250,24 +259,36 @@ export class EventsService {
       throw error;
     }
   }
-  async requestAppointment(investor:Principal,requestedSlot:string,dealId:string|null,acknowledged:boolean,correlationId:string,providerConsent=false) {
-    if(!acknowledged||Date.parse(requestedSlot)<=Date.now()) throw new DealPmeError(ErrorCode.VALIDATION_FAILED,"Reconnaissez l'avis transfrontalier et choisissez un créneau futur");
-    if(this.bridge.provider==="remo"&&!providerConsent) throw new DealPmeError(ErrorCode.VALIDATION_FAILED,"L'entretien Remo nécessite votre accord pour l'invitation par email");
-    const id=newId();
-    await withTenant(this.db,investor,async(tx)=>{
+  async requestAppointment(investor:Principal,requestedSlot:string,dealId:string|null,acknowledged:boolean,correlationId:string,providerConsent=false,requestId?:string) {
+    if(!acknowledged) throw new DealPmeError(ErrorCode.VALIDATION_FAILED,"Reconnaissez l'avis transfrontalier");
+    const id=requestId??newId();
+    return withTenant(this.db,investor,async(tx)=>{
+      // Sérialiser la clé, y compris le premier INSERT et les reprises après réponse perdue.
+      await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${`diaspora:${id}`},0))`);
+      const prior=(await tx.select().from(diasporaAppointments).where(eq(diasporaAppointments.id,id)).limit(1))[0];
+      if(prior) {
+        if(prior.investorUserId!==investor.userId||prior.requestedSlot.getTime()!==Date.parse(requestedSlot)||prior.dealId!==dealId||!!prior.providerConsentAt!==providerConsent)throw new DealPmeError(ErrorCode.CONFLICT,"Clé de demande déjà utilisée avec un autre contenu");
+        return {appointmentId:id,status:prior.status};
+      }
+      if(Date.parse(requestedSlot)<=Date.now())throw new DealPmeError(ErrorCode.VALIDATION_FAILED,"Choisissez un créneau futur");
+      if(this.bridge.provider==="remo"&&!providerConsent) throw new DealPmeError(ErrorCode.VALIDATION_FAILED,"L'entretien Remo nécessite votre accord pour l'invitation par email");
       if(dealId&&!(await tx.select({id:deals.id}).from(deals).where(and(eq(deals.id,dealId),inArray(deals.status,["LISTED_OPEN","LISTED_RESTRICTED","ENGAGED","DUE_DILIGENCE","NEGOTIATION"]))).limit(1))[0]) throw new DealPmeError(ErrorCode.NOT_FOUND,"Opportunité introuvable");
-      await tx.insert(diasporaAppointments).values({id,investorUserId:investor.userId,dealId,requestedSlot:new Date(requestedSlot),crossBorderNoticeShownAt:new Date(),providerConsentAt:providerConsent?new Date():null});
+      const inserted=await tx.insert(diasporaAppointments).values({id,investorUserId:investor.userId,dealId,requestedSlot:new Date(requestedSlot),crossBorderNoticeShownAt:new Date(),providerConsentAt:providerConsent?new Date():null}).onConflictDoNothing().returning({id:diasporaAppointments.id});
+      if(!inserted.length)throw new DealPmeError(ErrorCode.CONFLICT,"Clé de demande déjà utilisée");
       await this.audit.record({action:"INTEREST_EXPRESSED",actorUserId:investor.userId,subjectType:"diaspora_appointment",subjectId:id,outcome:"OK",correlationId},tx);
-    }); return {appointmentId:id,status:"REQUESTED"};
+      return {appointmentId:id,status:"REQUESTED"};
+    });
   }
-  async appointments(principal:Principal,managed=false) {
-    return withTenant(this.db,principal,async(tx)=>({items:await tx.select().from(diasporaAppointments).where(managed?undefined:eq(diasporaAppointments.investorUserId,principal.userId)).orderBy(desc(diasporaAppointments.createdAt)).limit(100)}));
+  async appointments(principal:Principal,managed=false,page:EventPage=firstEventPage) {
+    return withTenant(this.db,principal,async(tx)=>pageOf(await tx.select({...getTableColumns(diasporaAppointments),cursorTime:sql<string>`to_char(${diasporaAppointments.createdAt} AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`}).from(diasporaAppointments).where(and(managed?undefined:eq(diasporaAppointments.investorUserId,principal.userId),page.before?sql`(${diasporaAppointments.createdAt},${diasporaAppointments.id}) < (${page.before.createdAt}::timestamptz,${page.before.id}::uuid)`:undefined)).orderBy(desc(diasporaAppointments.createdAt),desc(diasporaAppointments.id)).limit(page.limit+1),page.limit));
   }
   async decideAppointment(id:string,decision:"CONFIRM"|"REFUSE",reason:string,officer:Principal,correlationId:string) {
-    const eventId=await withTenant(this.db,officer,async(tx)=>{
+    const prepared=await withTenant(this.db,officer,async(tx)=>{
       const a=(await tx.select().from(diasporaAppointments).where(eq(diasporaAppointments.id,id)).for("update").limit(1))[0];
       if(!a) throw new DealPmeError(ErrorCode.NOT_FOUND,"Rendez-vous introuvable");
       if(a.confirmedBy&&a.confirmedBy!==officer.userId) throw new DealPmeError(ErrorCode.FORBIDDEN,"Instruction déjà attribuée à un autre officier");
+      if((a.status==="CONFIRMED"&&decision==="CONFIRM")||(a.status==="REFUSED"&&decision==="REFUSE")) { if(a.decisionReason!==reason)throw new DealPmeError(ErrorCode.CONFLICT,"La décision est déjà enregistrée avec un autre motif");return {eventId:a.eventId,done:true}; }
+      if(a.status==="CONFIRMING"&&a.decisionReason!==reason)throw new DealPmeError(ErrorCode.CONFLICT,"Reprenez la préparation avec le motif initial");
       if(!["REQUESTED","CONFIRMING"].includes(a.status)) throw new DealPmeError(ErrorCode.CONFLICT,"Rendez-vous déjà instruit");
       if(decision==="REFUSE") {
         if(a.eventId) throw new DealPmeError(ErrorCode.CONFLICT,"Annulez la salle réservée avant de clôturer ce rendez-vous");
@@ -279,15 +300,18 @@ export class EventsService {
         await tx.insert(events).values({id:eventId,title:"Entretien Guichet Diaspora",startsAt:a.requestedSlot,endsAt:new Date(a.requestedSlot.getTime()+1800000),capacity:2,organiserUserId:officer.userId,audience:"DIASPORA",provider:this.bridge.provider});
         await tx.update(diasporaAppointments).set({status:"CONFIRMING",eventId,confirmedBy:officer.userId,decisionReason:reason}).where(eq(diasporaAppointments.id,id));
         await this.audit.record({action:"DEAL_TRANSITION",actorUserId:officer.userId,subjectType:"diaspora_appointment",subjectId:id,outcome:"OK",correlationId,metadata:{decision,eventId}},tx);
-        return eventId;
+        return {eventId,done:false};
       }
       await this.audit.record({action:"DEAL_TRANSITION",actorUserId:officer.userId,subjectType:"diaspora_appointment",subjectId:id,outcome:"OK",correlationId,metadata:{decision}},tx);
-      return a.eventId;
+      return {eventId:a.eventId,done:false};
     });
+    const {eventId}=prepared;
     if(decision==="REFUSE") return {status:"REFUSED"};
+    if(prepared.done)return {status:"CONFIRMED",eventId};
     await this.publish(eventId!,officer,correlationId);
     await withTenant(this.db,officer,async(tx)=>{
       const a=(await tx.select().from(diasporaAppointments).where(eq(diasporaAppointments.id,id)).for("update"))[0]!;
+      if(a.status==="CONFIRMED"&&a.confirmedBy===officer.userId)return;
       if(a.status!=="CONFIRMING") throw new DealPmeError(ErrorCode.CONFLICT,"Rendez-vous modifié pendant la publication");
       await tx.insert(eventRegistrations).values({id:newId(),eventId:eventId!,userId:a.investorUserId,displayName:"Participant diaspora",providerConsentAt:a.providerConsentAt}).onConflictDoNothing();
       await tx.update(diasporaAppointments).set({status:"CONFIRMED"}).where(eq(diasporaAppointments.id,id));

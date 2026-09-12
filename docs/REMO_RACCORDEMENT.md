@@ -19,10 +19,10 @@ et vérifié par une implémentation SAML côté service destinataire, y compris
 Cela valide le code et son raccordement ; la recette avec les droits et données du compte Remo demeure
 une étape distincte à réaliser dès réception des accès.
 
-Le suivi de clôture est explicite : V1-110/111 restent à faire pour la revue exhaustive du câblage
-et le précontrôle/bascule hors compte ; V1-112 à 115 portent l'activation et les recettes réelles ;
-V1-116 clôt L05 après corrections et qualification V1-107. Les preuves archivées ne ferment pas ces
-compléments nouveaux. Voir [PLAN_EXECUTION.md](PLAN_EXECUTION.md).
+La revue de câblage V1-110 et le précontrôle/bascule V1-111 sont éprouvés, avec leurs compléments
+V1-117/118/119. La matrice couvre 27 routes ; la suite Remo comporte 24 scénarios de contrat, dont
+neuf consacrés à cette revue. V1-112 à 115 portent l'activation et les recettes réelles ; V1-116 clôt
+L05 après corrections et qualification V1-107. Voir [PLAN_EXECUTION.md](PLAN_EXECUTION.md).
 
 ## Écrans
 
@@ -32,6 +32,12 @@ compléments nouveaux. Voir [PLAN_EXECUTION.md](PLAN_EXECUTION.md).
   contenu et les visuels d'un événement publié, synchroniser invitations/présences et gérer les groupes.
 - `/evenements` : inscription avec accord de transmission d'email à Remo, distinct du partage de contacts.
 - `/diaspora` : demande privée, même accord fournisseur, confirmation humaine et accès à la salle.
+
+Les listes organisateur et diaspora sont paginées (50 lignes par défaut, maximum 100 par appel API),
+par curseur date/identifiant conservant la précision PostgreSQL. Les deux listes de la console ont des
+curseurs indépendants ; les erreurs de chargement sont visibles. Une demande diaspora conserve sa clé
+au réessai : même utilisateur/contenu donne la même demande, un contenu différent est refusé. Une décision
+déjà enregistrée peut être relue avec le même officier et le même motif.
 
 Le profil général DealPME est modifiable par `PLATFORM_ADMIN` ; les organisateurs peuvent le consulter
 et le reprendre dans leurs événements. Les surcharges événementielles ne modifient pas ce profil.
@@ -87,6 +93,9 @@ chez le fournisseur ne sont pas couvertes automatiquement par le registre commun
 L'API d'ajout de membres reçoit un email et un rôle, et **envoie une invitation fournisseur**.
 DealPME demande donc un accord spécifique, puis persiste email de rapprochement, début et résultat
 de la tentative. Le nom choisi dans DealPME n'est pas envoyé comme un attribut non documenté.
+Chaque tentative ou rapprochement possède aussi une génération persistée : une réponse tardive ne
+remplace pas le rôle ou la tentative courante. Ces conflits sont audités ; groupes et intervenants
+contrôlent l'inscription active et l'email vérifié courant avant l'appel fournisseur.
 
 Après perte de réponse, la liste des inscrits Remo est consultée avant de confirmer l'invitation.
 Une absence/blocage dans cette liste ne déclenche pas un renvoi automatique. L'inscription DealPME
@@ -116,7 +125,7 @@ Flux :
 2. DealPME valide la requête et crée un challenge opaque de cinq minutes, conservé côté serveur.
 3. En l'absence de session, retour vers la connexion DealPME, MFA compris selon le rôle.
 4. La session, le rôle et l'email vérifié sont relus ; le challenge est consommé atomiquement.
-5. Une assertion signée valable quatre-vingt-dix secondes est envoyée par POST à l'ACS configuré.
+5. Une assertion signée valable au maximum quatre-vingt-dix secondes est envoyée par POST à l'ACS configuré.
 
 Les redirections de reprise sont relatives au site pour conserver les cookies derrière un proxy.
 Le formulaire SAML a une CSP à nonce, une destination fixe et `no-store` ; il n'utilise pas le routeur
@@ -127,6 +136,9 @@ sont disponibles sur `/sso/remo/metadata`, sans clé privée.
 Le module vérifie ForceAuthn et permet la publication d'un certificat précédent pendant une rotation,
 avec un signataire utilisant uniquement la clé courante. La capacité du compte Remo à accepter une
 période à deux certificats reste à vérifier ; son écran de configuration peut exiger une bascule coordonnée.
+La validité du certificat courant est relue à chaque requête, émission et export des métadonnées ;
+un processus démarré avant son expiration ne continue pas à signer après. La durée d'assertion est
+bornée par cette expiration et le certificat précédent expiré cesse d'être annoncé.
 Le Single Logout n'est pas implémenté : la révocation d'une session DealPME bloque les nouvelles émissions,
 mais ne prétend pas fermer une session Remo déjà ouverte. SAML authentifie ; l'invitation reste le contrôle
 d'admission chez le fournisseur.
@@ -165,12 +177,51 @@ certificat RSA, sa taille et sa validité. Référencer le certificat précéden
 les quotas sont configurables sans changer les parcours UI. Les salles utilisent le plan/thème configuré
 dans `REMO_FLOOR_TEMPLATE` / `REMO_FLOOR_THEME`, dont les valeurs seront vérifiées sur le compte.
 
+### Précontrôle hors réseau — V1-111
+
+Après le build, sur l'hôte qui peut lire les fichiers PEM et la configuration serveur :
+
+```sh
+npm run remo:preflight -- --env-file=/etc/dealpme/dealpme.env --output=/tmp/remo-preflight.json
+# Sortie JSON seule, pour l'automatisation :
+node devX/remo-preflight.mjs --env-file=/etc/dealpme/dealpme.env
+```
+
+Le fichier complète et surcharge l'environnement du processus. Il contient la configuration complète
+requise par l'API, pas uniquement les paramètres Remo. Le contrôle réutilise son validateur, les
+constructeurs d'adaptateurs et l'IdP. Il vérifie modes, URL, paramètres obligatoires, hôte, contradictions
+et certificats/clé RSA ; aucun appel réseau ni écriture en base. Code de sortie 0 = PASS, 1 = FAIL.
+Les diagnostics donnent des codes et noms de champs, sans valeur secrète, chemin PEM ou exception brute.
+`providerQualified:false` et `persistedAccountChecked:false` sont intentionnels : le rapport ne confirme
+ni les droits du compte ni sa concordance avec les événements persistés.
+
+### Bascule et retour à la configuration précédente
+
+1. Conserver la configuration précédente hors dépôt. Appliquer les migrations, dont
+   `0014_invitation_attempt_generation.sql`, avant de lancer cette version de l'API.
+2. Préparer la nouvelle configuration et exécuter le précontrôle sur le même hôte, avec les mêmes
+   droits de lecture des PEM que le service. Corriger tout FAIL avant de redémarrer l'API.
+3. Redémarrer le service API selon la procédure d'exploitation ; vérifier `/ready`, puis le compte,
+   le quota et les métadonnées dans `/organisateur/integration`. Le précontrôle n'applique pas la bascule.
+4. Les modes `disabled`, `local` et `remo` conservent les événements existants. Un événement d'un autre
+   compte/Company ID ne devient pas accessible ou republiable sous la nouvelle configuration ; aucun
+   appel Remo n'est émis par les refus testés. L'accès public n'est proposé que de quinze minutes avant
+   le début jusqu'à la fin. Pour reprendre les événements précédents, rétablir leur configuration et
+   redémarrer, sans réécrire leur liaison en base.
+5. Reprendre une invitation `UNKNOWN` en consultant la présence fournisseur ; ne pas relancer un email
+   à l'aveugle. Une création `SYNC_UNKNOWN` conserve sa réservation et nécessite la référence distante
+   vérifiée depuis la console. Un redémarrage ne transforme pas un résultat inconnu en échec certain.
+6. Pour le compte réel, exécuter V1-112, puis les recettes SAML/branding/parcours V1-113/114/115.
+   Consigner les écarts dans V1-116. Les changements SSO affectent tout le compte mutualisé : vérifier
+   l'IdP commun et les paramètres du SP avant son activation.
+
 ## Vérifications
 
 ```sh
 npm run build
 npm test
 npm run ci:smoke
+npm run ci:l05-wiring -- --evidence
 # Diagnostic ciblé sur une pile jetable (ne remplace pas la recette complète) :
 npm run ci:smoke -- --only=remo
 ```
@@ -179,3 +230,6 @@ Preuves : tests de contrat du connecteur, tests SAML de `packages/federation`,
 `.ci-artifacts/remo-api-results.json` et captures navigateur. Les essais ciblés portent explicitement
 le scope `remo-contract-only` ; la CI normale exécute toujours les suites précédentes et le scope `all`.
 Les endpoints de production n'ont reçu aucun appel métier pendant cette recette sans accès.
+La matrice `qa/l05-wiring-matrix.json` relie API/services/SSR-BFF/contrôles/tests, et refuse les routes
+non classées. Son mode `--evidence` exige le scope complet et les neuf scénarios de revue exécutés.
+Constats clos et preuve de régression : `qa/l05-wiring-findings.json`, `qa/l05-wiring-verification.json`.

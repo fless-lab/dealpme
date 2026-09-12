@@ -205,23 +205,41 @@ en A19/A02 ; ils ne remplacent pas les tests locaux.
 
 ## 8. L05 — événements administrés depuis DealPME
 
-Tâches : **V1-007/068/071/104/105/106/107 et V1-110 à V1-116** ; dépendances A17/A18/A21.
+Tâches : **V1-007/068/071/104/105/106/107 et V1-110 à V1-119** ; dépendances A17/A18/A21.
 
 ### Suivi explicite du reste à faire
 
+Revue V1-110 achevée hors fournisseur : trois compléments distincts ont été inscrits dès constat, sans attendre la fin
+du lot : **V1-117** pagination consoles/files (2 j/p, 28/09–07/10), **V1-118** validité des certificats
+SAML pendant le fonctionnement (1 j/p, 28/09–06/10), **V1-119** cohérence des invitations concurrentes
+et de l'identité du destinataire (2 j/p, 28/09–08/10). Ils sont réalisables sans accès fournisseur,
+reliés à V1-110 et aux acquis concernés, puis éprouvés. Les charges s'ajoutent :
+V1 = 350 j/p, total = 1061 j/p, **269 tâches dont 87 complétées**. Les fenêtres et les acquis antérieurs sont conservés.
+
 La clôture de V1-105 atteste la console livrée et ses essais archivés. **Elle ne clôture ni tout le
 câblage L05, ni l'intégration au compte réel.** Les tests de contrat déjà réussis restent acquis ; une
-revue exhaustive, le précontrôle de bascule et les recettes ci-dessous doivent encore être exécutés.
+revue exhaustive et le précontrôle de bascule ont maintenant leurs propres preuves ; les recettes
+fournisseur ci-dessous restent ouvertes.
 
-| ID | Travail restant | Statut initial | Accès nécessaires | Dates prévues |
+| ID | Travail suivi | Statut courant | Accès nécessaires | Dates prévues |
 |---|---|---|---|---|
-| V1-110 | Revue exhaustive API/BFF/UI/configuration, matrice de couverture et correction des trous de câblage | À faire, 0 % | Aucun compte Remo requis | 24/09–02/10/2026 |
-| V1-111 | Précontrôle automatisé et recette de changement de configuration/reprise | À faire, 0 % | Aucun compte Remo requis ; fixtures et certificats de test | 28/09–06/10/2026 |
+| V1-110 | Revue exhaustive API/BFF/UI/configuration, matrice de couverture et correction des trous de câblage | Complétée, 100 % | Éprouvée hors compte Remo | 24/09–02/10/2026 |
+| V1-111 | Précontrôle automatisé et recette de changement de configuration/reprise | Complétée, 100 % | Fixtures et certificats de test | 28/09–06/10/2026 |
 | V1-112 | Activation du compte réel, droits/add-ons, Company ID et quota | Bloquée, 0 % | A17/A18 | 05/10–08/10/2026 |
 | V1-113 | Recette SAML réelle, IdP commun, sessions et admissions privées | Bloquée, 0 % | V1-112 et paramètres SAML du compte | 06/10–12/10/2026 |
 | V1-114 | Activation et recette du branding global/par événement, domaines et emails | Bloquée, 0 % | V1-112 et options white label | 06/10–12/10/2026 |
 | V1-115 | Parcours organisateur/participant/diaspora, droits, quotas et incidents sur Remo réel | Bloquée, 0 % | V1-112/113/114 et A17/A18 | 08/10–14/10/2026 |
 | V1-116 | Corrections des écarts fournisseur, rejeu et décision documentée de clôture L05 | À faire, 0 % | Résultats des recettes et qualification V1-107/A21 | 12/10–15/10/2026 |
+| V1-117 | Pagination complète des consoles/files diaspora | Complétée, 100 % | Éprouvée hors compte Remo | 28/09–07/10/2026 |
+| V1-118 | Validité SAML en fonctionnement et rotation | Complétée, 100 % | Horloge contrôlée et certificats de test | 28/09–06/10/2026 |
+| V1-119 | Concurrence invitations, identité et rôle | Complétée, 100 % | Fixture HTTPS, base réelle et audits | 28/09–08/10/2026 |
+
+Preuves : `qa/l05-wiring-verification.json`, matrice de **27 routes** et six constats clos.
+Contrôles : 26 builds, **175 tests**, typecheck/lint/audit high, 13 sondes de rejet ; smoke **102**,
+L02 **33**, L03 **17**, L04 **32**, L05 local **13**, Remo **24**. Pagination avec 105 événements et
+105 demandes, SAML POST/MFA, refus audités, précontrôle et redémarrages vérifiés. La clôture de suivi
+des cinq tâches est placée à leur fin prévue selon la convention ; les preuves portent la date réelle
+d'exécution du 12/09/2026. Aucun résultat de fixture ne qualifie le compte fournisseur.
 
 V1-107 garde la captation/export live ouverte ; V1-007/068/071/104/106 conservent leurs statuts de revue.
 Les références à leurs **acquis locaux** sont des sources de travail, pas l'obligation d'attendre leur
@@ -229,15 +247,13 @@ clôture fournisseur pour commencer V1-110/111. Cela évite une dépendance circ
 et recette réelle. Les résultats des sous-recettes permettront ensuite de clore les tâches historiques
 encore en revue, sous le contrôle de V1-116.
 Les nouvelles lignes sont des compléments de vérification, bascule, activation et corrections : elles
-ne remplacent pas les tâches initiales et ne réestiment pas leurs charges. **13 j/p supplémentaires**
-sont provisionnés, à confirmer avec l'équipe : V1 passe de 332 à 345 j/p, total de 1043 à 1056 j/p.
-Les 259 lignes antérieures, leurs dates et leurs charges sont conservées. Le suivi compte désormais
-**266 tâches, dont 82 complétées** ; aucune nouvelle ligne n'a de date de clôture.
+ne remplacent pas les tâches initiales et ne réestiment pas leurs charges. Le premier ajout V1-110 à 116
+a provisionné **13 j/p** (259 → 266 tâches, V1 332 → 345 j/p, total 1043 → 1056 j/p).
+Les compléments V1-117 à 119 ajoutent **5 j/p**, pour les totaux courants ci-dessus.
 
 **Deux conditions de sortie distinctes :**
 
-1. Préparation hors accès : V1-110/111 terminées avec matrice exhaustive et preuves de câblage/bascule.
-   L'attente du compte ne bloque pas ce travail.
+1. Préparation hors accès : V1-110/111/117/118/119 terminées avec matrice et preuves de câblage/bascule.
 2. Clôture de L05 : activation et recettes réelles exécutées, V1-107 instruite, écarts traités et
    V1-116 clôturée sur preuves. Un accès reçu ou un mock PASS ne remplace pas cette recette.
 
@@ -442,8 +458,8 @@ Pour chaque tâche engagée :
 6. Régénérer le classeur, vérifier dates/identifiants/formules et committer le lot cohérent.
 7. Laisser une note de reprise : dernier contrôle réussi, accès manquant éventuel, prochaine action exacte.
 
-**Reprise prioritaire L05 : V1-110 puis V1-111**, revue exhaustive du câblage et précontrôle/bascule,
-sans attendre les accès. Exécuter V1-112 à 115 dès réception du compte et de ses paramètres ; conserver
+**Préparation L05 achevée hors compte : V1-110/111/117/118/119.**
+Exécuter V1-112 à 115 dès réception du compte et de ses paramètres ; conserver
 V1-107 et V1-116 ouvertes jusqu'aux preuves de qualification et de clôture. Les fonctions globales absentes
 du Swagger ont une initialisation fournisseur explicite. L06 peut préparer les surfaces indépendantes,
 mais ne remplace pas ces tâches L05. Reprendre les sous-recettes L04 dès réception des accès

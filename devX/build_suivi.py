@@ -193,8 +193,11 @@ _check_progress_keys()
 # Les acquis V1 de PROGRESS restent inchangés ; leurs compléments ont leurs propres tâches.
 # (statut, avancement estimé, preuve / reste à faire)
 AUDIT_REVIEW = {
-    "V1-110": ("À faire", 0, "Complément L05 : revue exhaustive du câblage encore à exécuter, sans attendre les accès. Les suites déjà passées restent des acquis ; elles ne clôturent pas cette revue de couverture."),
-    "V1-111": ("À faire", 0, "Complément L05 : automatiser et éprouver le précontrôle et la bascule de configuration hors compte fournisseur ; distinct de la documentation de branchement déjà livrée."),
+    "V1-117": ("Complétée", 1, "Pagination API/SSR à précision microseconde éprouvée avec 105 événements et 105 demandes ; curseurs indépendants, isolation et erreur visible testés. Preuve : qa/l05-wiring-verification.json."),
+    "V1-118": ("Complétée", 1, "Validité du certificat SAML relue en fonctionnement ; assertions bornées, retrait du certificat précédent expiré et signatures vérifiés par horloge contrôlée. Neuf tests SAML passent. Preuve : qa/l05-wiring-verification.json."),
+    "V1-119": ("Complétée", 1, "Migration 0014, génération de tentative et finalisation conditionnelle ; réponse tardive, rôle, destinataire actif/vérifié et audits de refus/conflit éprouvés sur fixture HTTPS. Preuve : qa/l05-wiring-verification.json."),
+    "V1-110": ("Complétée", 1, "27 routes classées API/service/SSR-BFF/contrôles/tests, six constats corrigés et compléments 117/118/119 éprouvés. CI : 175 tests, smoke 102, régressions L02–L05 et 24 scénarios Remo PASS hors compte fournisseur. Preuve : qa/l05-wiring-verification.json."),
+    "V1-111": ("Complétée", 1, "Précontrôle CLI hors réseau et sans secrets ; modes local/remo/disabled, configuration invalide, certificats, compte divergent et reprise d'invitation après redémarrage éprouvés. Procédure de bascule livrée ; activation réelle V1-112 distincte. Preuve : qa/l05-wiring-verification.json."),
     "V1-112": ("Bloquée", 0, "Activation du compte réel non exécutée : accès propriétaire, Company ID, App Token, add-ons et quota contractuel A17/A18 attendus."),
     "V1-113": ("Bloquée", 0, "Le SAML local est éprouvé, mais la recette avec le SP et l'IdP retenus pour le compte mutualisé reste à exécuter après V1-112."),
     "V1-114": ("Bloquée", 0, "La console et les profils sont livrés ; activation et vérification des visuels, domaines et emails sur le compte Remo réel restent ouvertes."),
@@ -253,6 +256,11 @@ AUDIT_CRITERIA = {
 # Dates de clôture du suivi par identifiant, selon le calendrier de livraison.
 # Une date après la fin prévue est conservée ; aucune borne liée à la date du jour.
 COMPLETION_DATES: dict[str, dt.date] = {
+    "V1-110": dt.date(2026, 10, 2),
+    "V1-111": dt.date(2026, 10, 6),
+    "V1-117": dt.date(2026, 10, 7),
+    "V1-118": dt.date(2026, 10, 6),
+    "V1-119": dt.date(2026, 10, 8),
     "V1-105": dt.date(2026, 10, 5),
     "V1-109": dt.date(2026, 9, 28),
     "V1-096": dt.date(2026, 10, 2),
@@ -263,15 +271,18 @@ COMPLETION_DATES: dict[str, dt.date] = {
 }
 
 FOLLOW_UP_LINKS = {
-    "V1-007": "Architecture et SAML implémentés : qa/l05-remo-verification.json. Revue exhaustive V1-110, bascule V1-111 et recette SAML réelle V1-113 restent distinctes et ouvertes.",
+    "V1-117": "Complément découvert pendant V1-110, lié à la console livrée V1-105 : pagination API/SSR/UI, conservation des filtres et isolation, sans accès Remo. Responsable : Abdou-Raouf.",
+    "V1-118": "Complément découvert pendant V1-110, lié au SAML V1-007/068 : validité à l'émission et à la lecture des métadonnées, certificat précédent et preuve par horloge contrôlée. Sans accès fournisseur.",
+    "V1-119": "Complément découvert pendant V1-110, lié aux invitations V1-068/105 : rôle et tentative courants, email vérifié et inscription active, effets concurrents et reprise après interruption. Sans accès Remo.",
+    "V1-007": "Architecture et SAML implémentés ; revue V1-110 et bascule V1-111 closes hors fournisseur : qa/l05-wiring-verification.json. Recette SAML réelle V1-113 toujours ouverte.",
     "V1-068": "Adaptateur du Swagger public éprouvé sur fixture HTTPS. Activation V1-112, recette API réelle V1-115 et corrections/clôture V1-116 ne sont pas réalisées par ces tests locaux.",
     "V1-071": "Parcours diaspora local acquis. Admission privée et véritable entretien à vérifier dans V1-113/115 ; pas de validation fournisseur par la seule présence d'un lien.",
     "V1-104": "Matrice et sources disponibles. Sous-recettes explicites V1-112 à V1-115 ; V1-107 conserve la qualification captation/export. Clôture d'ensemble en V1-116.",
-    "V1-105": "Acquis conservé : console organisateur livrée et testée, qa/l05-remo-verification.json. Sa clôture ne clôt pas L05 : compléments de câblage V1-110/111, recette branding V1-114 et recette bout en bout V1-115 restent ouverts.",
+    "V1-105": "Acquis conservé : console organisateur livrée et testée, qa/l05-remo-verification.json. Câblage V1-110/111/117 éprouvé ; recettes branding V1-114 et bout en bout V1-115 encore ouvertes. L05 non clos.",
     "V1-106": "Registre partagé éprouvé localement. Le quota de simulation ne valide pas l'offre : paramètres réels V1-112, concurrence et couverture du compte V1-115, écarts V1-116.",
     "V1-107": "Prototype synthétique conservé ; voix réelles, tables/scène, agent et exports natifs restent à qualifier avec A17/A21. Cette tâche reste un prérequis de clôture V1-116 ; le pipeline de rapports V2 n'est pas anticipé.",
-    "V1-110": "À exécuter sans accès Remo : audit de couverture API/BFF/UI/configuration, correction des trous de câblage et rapport relié au commit. Complément à V1-007/068/105, pas reprise des fonctionnalités déjà acquises.",
-    "V1-111": "À exécuter sans accès Remo : précontrôle automatisé et scénarios de changement de configuration/reprise, avec fixtures et certificats de test ; les accès ne bloquent que l'activation réelle V1-112.",
+    "V1-110": "Complément à V1-007/068/105 clos hors compte ; matrice et six constats vérifiés, liés à V1-117/118/119. Preuves : qa/l05-wiring-verification.json et qa/l05-wiring-matrix.json.",
+    "V1-111": "Précontrôle et bascule éprouvés avec fixtures et certificats de test. Procédure : docs/REMO_RACCORDEMENT.md. Aucun compte réel qualifié ; activation V1-112 encore bloquée par les accès.",
     "V1-112": "Bloquée par A17/A18 : activer le compte reçu et consigner droits, paramètres, add-ons et quota. Le Swagger public est disponible ; son accès n'est plus un blocage.",
     "V1-113": "Bloquée jusqu'à activation réelle : IdP commun, métadonnées, NameID email, MFA, sessions, rotation et admissions privées vérifiés chez Remo ; les résultats locaux restent des preuves distinctes.",
     "V1-114": "Bloquée jusqu'à activation réelle : compte et événement, héritage/surcharges, logo/couverture/accueil, favicon, domaine et emails. Paramètres hors API configurés initialement chez Remo, effets et limites documentés.",
@@ -652,8 +663,13 @@ followup("V1", "CNX", "Deal-Connect (Remo)", "Activation et recette du branding 
 followup("V1", "CNX", "Deal-Connect (Remo)", "Recette bout en bout DealPME vers l'API et les salles Remo réelles", "Création, contenu, invitations/intervenants, groupes, présence et entretien diaspora rejoués contre le compte réel ; droits, profils/contacts, email modifié, quota partagé, erreurs/reprise et suppression contrôlée vérifiés ; distinction des effets fournisseur et des fixtures dans les preuves", 2, "2026-10-08", "2026-10-14", "Acquis locaux V1-068/071/106 ; V1-112 ; V1-113 ; V1-114 ; A17/A18")
 followup("V1", "CNX", "Deal-Connect (Remo)", "Corrections des écarts fournisseur et clôture documentée de L05", "Écarts des recettes réelles corrigés et rejoués ; revue de câblage et bascule closes ; qualification captation/export V1-107 instruite avec preuves ; aucun point bloquant non résolu ou non arbitré ; validation et preuves L05 archivées ; un test fournisseur non exécuté n'est jamais déclaré réussi", 2, "2026-10-12", "2026-10-15", "V1-110 ; V1-111 ; V1-113 ; V1-114 ; V1-115 ; V1-107 ; A21")
 
+# Compléments distincts révélés par la revue de câblage, append après V1-116.
+followup("V1", "CNX", "Deal-Connect (Remo)", "Pagination complète des consoles événements et des demandes diaspora", "Toutes les lignes au-delà de la première page sont accessibles par curseur depuis les écrans organisateur et demandeur ; ordre stable, paramètres bornés, états vides/erreur et isolation entre utilisateurs testés", 2, "2026-09-28", "2026-10-07", "Constat V1-110 ; acquis V1-105/071 ; aucun accès fournisseur requis")
+followup("V1", "IDN", "Deal-Connect (Remo)", "Validité des certificats SAML en fonctionnement et pendant la rotation", "Après démarrage, un certificat courant expiré ne signe plus ; durée des assertions bornée par sa validité ; certificat précédent expiré non annoncé ; erreur exploitable sans secret et tests temporels/signatures archivés", 1, "2026-09-28", "2026-10-06", "Constat V1-110 ; acquis SAML V1-007/068 ; précontrôle V1-111")
+followup("V1", "CNX", "Deal-Connect (Remo)", "Cohérence des invitations Remo concurrentes et des changements d'identité ou de rôle", "Une réponse tardive ne remplace pas une intention plus récente ; inscription active et email vérifié courant contrôlés avant groupe/intervenant ; refus/conflits audités, reprise et concurrence éprouvées sur fixture HTTPS", 2, "2026-09-28", "2026-10-08", "Constat V1-110 ; acquis V1-068/105 ; aucun accès fournisseur requis")
+
 # ------------------------------------------------------------------ contrôle des totaux par version
-expected = {"V1": 345, "V2": 228, "V3": 219, "V4": 111, "V5": 153}
+expected = {"V1": 350, "V2": 228, "V3": 219, "V4": 111, "V5": 153}
 totals = {}
 for t in T:
     totals[t[0]] = totals.get(t[0], 0) + t[5]
@@ -1825,7 +1841,7 @@ wsS.freeze_panes = "C6"
 
 # ================================================================== PLAN D'EXECUTION
 wsPlan = wb.create_sheet("Plan_execution")
-title(wsPlan, "Plan d'exécution par lots", "L05 : API/SAML et console livrés ; revue de câblage et bascule V1-110/111 à faire sans accès, activation/recettes réelles V1-112 à 115 ouvertes, clôture en V1-116. Détail : docs/PLAN_EXECUTION.md.")
+title(wsPlan, "Plan d'exécution par lots", "L05 : câblage/bascule V1-110/111 et compléments 117/118/119 éprouvés hors fournisseur ; activation/recettes réelles V1-112 à 115 ouvertes, clôture en V1-116. Détail : docs/PLAN_EXECUTION.md.")
 # Chaque tâche restant à traiter appartient à un lot unique. Les tâches déjà
 # acquises restent dans Taches et ne sont pas recomptées comme du nouveau travail.
 EXECUTION_LOTS = [
@@ -1834,7 +1850,7 @@ EXECUTION_LOTS = [
     ("L02", "Messagerie et audit durable", "V1", ["V1-094", "V1-095"], "L01", "Échanges ciblés et traces persistées malgré les pannes", "Tests multi-repreneurs, transaction/outbox et panne"),
     ("L03", "Email et SMS local/réel", "V1", ["V1-093", "V1-101", "V1-102", "V1-028"], "L02 ; accès opérateur pour la sous-recette réelle seulement", "OTP reçu dans les boîtes, contrats testés puis activables chez le fournisseur", "Contrats transports, E2E sans devCode, preuve sandbox opérateur"),
     ("L04", "CFE, alertes et exploitation", "V1", ["V1-109", "V1-035", "V1-096", "V1-097", "V1-098", "V1-009"], "L03 ; A19 pour staging, A02 pour API CFE réelle", "CFE manuel/mock, notifications consenties et environnement reproductible", "Tests trois modes CFE, livraison, supervision et restauration"),
-    ("L05", "Événements et prototype de captation", "V1", ["V1-007", "V1-068", "V1-071", "V1-104", "V1-105", "V1-106", "V1-107", *[f"V1-{i:03d}" for i in range(110, 117)]], "V1-110/111 sans accès ; V1-112 à 115 avec A17/A18 ; captation A21", "Câblage complet éprouvé, compte activé et parcours réels validés ; clôture distincte V1-116", "Matrice API/BFF/UI/tests, précontrôle, recettes SAML/branding/API réelles, captation et corrections"),
+    ("L05", "Événements et prototype de captation", "V1", ["V1-007", "V1-068", "V1-071", "V1-104", "V1-105", "V1-106", "V1-107", *[f"V1-{i:03d}" for i in range(110, 120)]], "V1-110/111/117/118/119 sans accès ; V1-112 à 115 avec A17/A18 ; captation A21", "Câblage complet éprouvé, compte activé et parcours réels validés ; clôture distincte V1-116", "Matrice API/BFF/UI/tests, précontrôle, recettes SAML/branding/API réelles, captation et corrections"),
     ("L06", "Interface, accessibilité et fidélité", "V1", ["V1-092", "V1-099", "V1-080", "V1-081", "V1-083", "V1-086", "V1-075"], "Contrats dès L01 ; recette finale après L04/L05", "Surfaces cohérentes avec références et accessibles", "Registre, contrôles navigateur, captures et journal de fidélité"),
     ("L07", "Recette et démonstration V1", "V1", ["V1-100", "V1-066", "V1-088", "V1-090"], "L02 à L06 ; validation métier", "Parcours complet rejouable, validations et anomalies closes", "qa/e2e-results.json et compte rendu de recette"),
     ("L08", "Cœur V2 : RPS, NDA et VDR", "V2", [f"V2-{i:03d}" for i in range(1, 47) if i != 43], "L07 ; PSC/PSAE pour signature réelle", "Qualification > admission > NDA > T2 > document > révocation > Q&R", "Paliers, concurrence RPS, viewer, preuves et 12 cas du corpus"),

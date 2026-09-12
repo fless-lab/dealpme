@@ -1,0 +1,1 @@
+ALTER TABLE "event_registration" ADD COLUMN "invitation_attempt_id" uuid;

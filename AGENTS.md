@@ -37,7 +37,8 @@ une correction hors portée initiale ou une activation/validation fournisseur re
 
 ## Reprise actuelle
 
-L05 : les implémentations API/SAML et la console ont des preuves locales. **V1-110/111 restent à faire
-sans attendre le compte Remo** ; V1-112 à 115 portent activation et recettes réelles ; V1-116 porte les
-corrections finales et la clôture du lot. V1-107 garde la qualification captation/export ouverte.
+L05 : **V1-110/111 et leurs compléments V1-117/118/119 sont éprouvés hors compte fournisseur** :
+27 routes dans la matrice, précontrôle et bascule/reprise testés. V1-112 à 115 portent activation et
+recettes réelles ; V1-116 porte les corrections finales et la clôture du lot. V1-107 garde la
+qualification captation/export ouverte. Preuves : `qa/l05-wiring-verification.json`.
 Toujours vérifier le statut courant dans le générateur avant d'agir, cette section étant un repère de reprise.

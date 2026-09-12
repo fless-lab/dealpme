@@ -227,6 +227,7 @@ export const CLASSIFICATION: Record<string, Record<string, DataClass>> = {
     createdAt: "INTERNAL",
   },
   eventRegistrations: {
+    invitationAttemptId: "INTERNAL",
     providerConsentAt: "INTERNAL", providerEmail: "PERSONAL", invitationState: "INTERNAL", invitationStartedAt: "INTERNAL", providerRole: "INTERNAL",
     cancelledAt: "INTERNAL",
     id: "INTERNAL",

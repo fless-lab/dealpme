@@ -315,6 +315,7 @@ export const eventRegistrations = pgTable(
     invitationState: varchar("invitation_state", { length: 16 }).notNull().default("NONE"),
     providerRole: varchar("provider_role", { length: 16 }).notNull().default("attendee"),
     invitationStartedAt: timestamp("invitation_started_at", { withTimezone: true }),
+    invitationAttemptId: uuid("invitation_attempt_id"),
     createdAt: createdAt(),
   },
   (t) => [uniqueIndex("registration_unique_idx").on(t.eventId, t.userId), uniqueIndex("registration_provider_email_idx").on(t.eventId, t.providerEmail)],

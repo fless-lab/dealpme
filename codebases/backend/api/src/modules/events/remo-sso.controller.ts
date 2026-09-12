@@ -39,7 +39,10 @@ export class RemoSsoController {
   @Get("metadata")
   @Header("Content-Type", "application/samlmetadata+xml; charset=utf-8")
   @Header("Cache-Control", "no-store")
-  metadata() { return this.enabled().metadata(); }
+  metadata() {
+    try { return this.enabled().metadata(); }
+    catch (error) { if (error instanceof FederationError && error.code === "CERTIFICATE_EXPIRED") throw new DealPmeError(ErrorCode.INTERNAL, "Le certificat SSO doit être renouvelé par l'organisation"); throw error; }
+  }
 
   @Post("challenges")
   @HttpCode(201)
@@ -48,7 +51,7 @@ export class RemoSsoController {
     await this.rates.hit("saml-prepare", req.ip ?? "unknown", { limit: 60, windowSeconds: 60 });
     let prepared: PreparedSamlRequest;
     try { prepared = await federation.prepare(body.samlRequest, body.binding, body.relayState); }
-    catch { throw new DealPmeError(ErrorCode.VALIDATION_FAILED, "Requête SAML invalide, expirée ou destinée à un autre service"); }
+    catch (error) { if (error instanceof FederationError && error.code === "CERTIFICATE_EXPIRED") throw new DealPmeError(ErrorCode.INTERNAL, "Le certificat SSO doit être renouvelé par l'organisation"); throw new DealPmeError(ErrorCode.VALIDATION_FAILED, "Requête SAML invalide, expirée ou destinée à un autre service"); }
     const digest = createHash("sha256").update(`${loadEnv().REMO_SAML_SP_ENTITY_ID}:${prepared.requestId}`).digest("hex");
     const fresh = await this.redis.set(`saml:seen:${digest}`, "1", "EX", 600, "NX");
     if (!fresh) throw new DealPmeError(ErrorCode.CONFLICT, "Requête SAML déjà utilisée ; recommencez depuis Remo");
@@ -73,7 +76,7 @@ export class RemoSsoController {
       if (!user?.verifiedAt || !session || !user.roles.some(role => SSO_ROLES.includes(role as Role))) throw new DealPmeError(ErrorCode.UNAUTHENTICATED, "Session ou identité vérifiée requise pour le SSO");
       let response;
       try { response = await federation.respond(prepared, { email: user.email, authenticatedAt: session.createdAt }); }
-      catch (error) { throw new DealPmeError(ErrorCode.CONFLICT, error instanceof FederationError && error.code === "REAUTH_REQUIRED" ? "Une nouvelle connexion DealPME est requise avant de reprendre le SSO" : "Demande SAML non valide"); }
+      catch (error) { if (error instanceof FederationError && error.code === "CERTIFICATE_EXPIRED") throw new DealPmeError(ErrorCode.INTERNAL, "Le certificat SSO doit être renouvelé par l'organisation"); throw new DealPmeError(ErrorCode.CONFLICT, error instanceof FederationError && error.code === "REAUTH_REQUIRED" ? "Une nouvelle connexion DealPME est requise avant de reprendre le SSO" : "Demande SAML non valide"); }
       // Consommation atomique : deux requêtes concurrentes ne reçoivent jamais deux assertions.
       if (await this.redis.getdel(`saml:challenge:${id}`) !== stored) throw new DealPmeError(ErrorCode.CONFLICT, "Demande SSO déjà consommée");
       await this.audit.record({ action: "PRIVILEGED_ACCESS_USED", actorUserId: principal.userId, subjectType: "saml", subjectId: createHash("sha256").update(prepared.requestId).digest("hex"), outcome: "OK", correlationId: correlationIdOf(req), metadata: { operation: "SAML_ASSERTION_ISSUED", sp: loadEnv().REMO_SAML_SP_ENTITY_ID! } }, tx);

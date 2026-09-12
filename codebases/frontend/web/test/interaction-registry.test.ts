@@ -31,7 +31,7 @@ function fichiers(dossier: string): string[] {
   for (const nom of readdirSync(dossier)) {
     const chemin = join(dossier, nom);
     if (statSync(chemin).isDirectory()) out.push(...fichiers(chemin));
-    else if (chemin.endsWith(".tsx")) out.push(chemin);
+    else if (chemin.endsWith(".tsx") || chemin.endsWith(".ts")) out.push(chemin);
   }
   return out;
 }

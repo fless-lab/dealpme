@@ -1,0 +1,1273 @@
+{
+  "status": "PASS",
+  "sourceBase": "73f5621572f170c8080ba27d1eb0362e11890593",
+  "verifiedAt": "2026-09-12T20:00:51.186Z",
+  "scope": "V1-110/111/117/118/119 hors compte fournisseur",
+  "providerQualified": false,
+  "sourceHashes": {
+    ".github/workflows/ci.yml": "6893608d2228d3363a4ec18b53c6f902ec89204fbff3b4f008f1350d1c52da66",
+    "codebases/backend/api/drizzle/core/0014_invitation_attempt_generation.sql": "8368e603ef3949a263c50555a0a0b3a9198857a6411e1f6c4e34fbb62fed2e7f",
+    "codebases/backend/api/drizzle/core/meta/0014_snapshot.json": "17fbd5431819facc9c11895bcac63064759793e2c23a8fb76bb50d95cf45b80f",
+    "codebases/backend/api/drizzle/core/meta/_journal.json": "72d21c580031ded79925feffd1a13faa8126dad35b5cae4d542a9a1a2a149dfd",
+    "codebases/backend/api/src/config/remo-preflight.ts": "fc0cfef1eebe7fc39dc5fcdccf198000752d40483c3d264a368dd3f9387c92b7",
+    "codebases/backend/api/src/database/classification.ts": "7897b8f16e8d0c9833b25f2c7a237c0dae3e777c946e18c1352389a08aa99337",
+    "codebases/backend/api/src/database/schema/core.ts": "799ca858d89cfda180993d1d3662514e2d71eb1bb7ad5650bdfe6ba260b2aca1",
+    "codebases/backend/api/src/modules/events/event-page.ts": "5310d84d4ac4a67bb2fa6cb1fbe0806d8b98ac3e949f91695eff4754418b331e",
+    "codebases/backend/api/src/modules/events/events.controller.ts": "d1238edc63f23e7324b65b4cf530eab6f9986bedeb4db9ae65c81a96b2cc4145",
+    "codebases/backend/api/src/modules/events/events.service.ts": "509dcbfc534c83c09e4fd24ccfbf2258d51b28c86455058d38a95d52b4925d2e",
+    "codebases/backend/api/src/modules/events/remo-members.service.ts": "b66631fe8170c236e911d5e04b18777033ec7e805e47ddf3e15b54c9f64af28a",
+    "codebases/backend/api/src/modules/events/remo-sso.controller.ts": "f6a1b4599c78c039249bb57d427350246d46e39c10fd2772a74740747b3377be",
+    "codebases/backend/api/test/remo-preflight.test.ts": "99ef9e78c9bc985ed7ccd5c819d52f8888f07a1e5553d0980da5b9736a281121",
+    "codebases/frontend/web/app/(espace)/diaspora/page.tsx": "12ca6683ef857459d584d6b0fec9637cada8122d772fde5fc5be8ff3037f69f0",
+    "codebases/frontend/web/app/(espace)/diaspora/request-form.tsx": "a4edc2b234cfcd49390ecf53569c48429f57779570837c1f1d37dcc300ff0d73",
+    "codebases/frontend/web/app/(espace)/organisateur/evenements/appointment-decision.tsx": "4bcf341df20c288881649b38721162a4f6b28f98cb3dc54b3cbc8b57cdf1b2a3",
+    "codebases/frontend/web/app/(espace)/organisateur/evenements/page-links.tsx": "2201514c2aea98b0905731ec917d77c5b8e4ac02944d1febd2167022a168dbf1",
+    "codebases/frontend/web/app/(espace)/organisateur/evenements/page.tsx": "451ac350d6777e2926373f17267151475a6a2753a3de6701e0140ef961fd3db9",
+    "codebases/frontend/web/app/api/events/[eventId]/[action]/route.ts": "8b5fba3432380512edcfc0be31f04910a687738a3cfc11aef743b9a37bbfc895",
+    "codebases/frontend/web/app/evenements/[eventId]/acces/page.tsx": "650d20ba098bffad11a651ff24b093632648bbb1970e02f08a9d1362e2b5017e",
+    "codebases/frontend/web/app/sso/remo/complete/route.ts": "7b1f279a7f7d5afd18873ff83857a3cfe281bc26fccd54dee8acdf6737171819",
+    "codebases/frontend/web/app/sso/remo/metadata/route.ts": "d35cbeae03fd1f2ba14e82983782f3e2afc8ad4b4cb94045d69e6e72eca76548",
+    "codebases/frontend/web/test/interaction-registry.test.ts": "02c5f4df8f63cdf3adb2d547bcf1819537c0dca2e80d3916d194bdb1ad1b27c1",
+    "devX/build_suivi.py": "ff89ff077e34bd9d61f07a0e4e40492170b996767df94d2ca312d2e4ffecdab4",
+    "devX/l05-wiring-cases.mjs": "47d6f149165539165df70c316e6098e15d1f7f6d48a8bd4d0ece8d03588df411",
+    "devX/remo-api-integration.mjs": "220b8e4704a9e087e49d2036cc2a9fce6facb039f615b95c40ace23853787d3c",
+    "devX/remo-preflight.mjs": "030f7e02e36806a384c935a08744e1a02c0cc809bfed5aa35b8d978be4607e96",
+    "devX/smoke_v1.sh": "624e77f6752d8f9babd116d37f1e48ce11600a024364c525d9d549f6d4e3c7ae",
+    "devX/verify-l05-followups.py": "ca19e82adfec46495c47c80b73d33c7f205441beb7a00a13f50ac2d79a9b1ecc",
+    "devX/verify-l05-wiring.mjs": "d77bd637c8cbc5b7aba7910598167c9d1ada88271a7e59d1cfd813c98a8807f3",
+    "package.json": "2b37a9bea48402e3e6c78fd417035cad75279e2d28cf1955b2897ca89ecf2af5",
+    "packages/federation/src/index.ts": "13f544e6b39e3fd443d1307c48b84c68e457eba6f1fc7ce9faf194e8c0064c4a",
+    "packages/federation/test/saml.test.ts": "9d15458488d5d25a242781a630962214416413663f807ddd0c6bd25b8a39011c",
+    "qa/registre-interactions.json": "b4d6c076c6e2cdd672269a37511516343888cdc1d00f16ad4f337ecc7a0561f0"
+  },
+  "checksExecutedInSession": {
+    "builds": 26,
+    "unitTests": 175,
+    "unitFiles": 18,
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "auditHighCritical": 0,
+    "auditModerate": 4
+  },
+  "tracking": {
+    "previousTasks": 266,
+    "tasks": 269,
+    "completed": 87,
+    "newIds": [
+      "V1-117",
+      "V1-118",
+      "V1-119"
+    ],
+    "closedIds": [
+      "V1-110",
+      "V1-111",
+      "V1-117",
+      "V1-118",
+      "V1-119"
+    ],
+    "addedPersonDays": 5,
+    "personDays": 1061,
+    "versionWindowsPreserved": true,
+    "odsUnchanged": true,
+    "recalculatedWithoutErrors": true,
+    "l05StillOpenAt100PercentIfBlocked": true
+  },
+  "reports": {
+    "smoke-results.json": {
+      "startedAt": "2026-09-12T19:58:03.244Z",
+      "project": "dealpme-ci-2813866-0ae7b638",
+      "scope": "all",
+      "status": "PASS",
+      "steps": [
+        {
+          "name": "Infrastructure isolée",
+          "status": "PASS",
+          "startedAt": "2026-09-12T19:58:03.245Z",
+          "finishedAt": "2026-09-12T19:58:25.461Z"
+        },
+        {
+          "name": "Configuration éphémère",
+          "status": "PASS",
+          "startedAt": "2026-09-12T19:58:25.461Z",
+          "finishedAt": "2026-09-12T19:58:27.100Z"
+        },
+        {
+          "name": "Migrations et RLS",
+          "status": "PASS",
+          "startedAt": "2026-09-12T19:58:27.100Z",
+          "finishedAt": "2026-09-12T19:58:32.074Z"
+        },
+        {
+          "name": "Jeu synthétique isolé",
+          "status": "PASS",
+          "startedAt": "2026-09-12T19:58:32.075Z",
+          "finishedAt": "2026-09-12T19:58:33.767Z"
+        },
+        {
+          "name": "Disponibilité API et RPS",
+          "status": "PASS",
+          "startedAt": "2026-09-12T19:58:33.767Z",
+          "finishedAt": "2026-09-12T19:58:34.937Z"
+        },
+        {
+          "name": "Smoke V1 et antivirus réel",
+          "status": "PASS",
+          "startedAt": "2026-09-12T19:58:34.937Z",
+          "finishedAt": "2026-09-12T19:58:45.491Z"
+        },
+        {
+          "name": "L02 : transactions, migration et navigateur",
+          "status": "PASS",
+          "startedAt": "2026-09-12T19:58:45.491Z",
+          "finishedAt": "2026-09-12T19:59:16.783Z"
+        },
+        {
+          "name": "L03 : SMTP, SMS, pannes et parcours OTP",
+          "status": "PASS",
+          "startedAt": "2026-09-12T19:59:16.784Z",
+          "finishedAt": "2026-09-12T19:59:29.926Z"
+        },
+        {
+          "name": "L04 : registre manuel et mock HTTP",
+          "status": "PASS",
+          "startedAt": "2026-09-12T19:59:29.927Z",
+          "finishedAt": "2026-09-12T19:59:36.898Z"
+        },
+        {
+          "name": "L04 : matching, outbox et consentement à l'envoi",
+          "status": "PASS",
+          "startedAt": "2026-09-12T19:59:36.899Z",
+          "finishedAt": "2026-09-12T19:59:44.330Z"
+        },
+        {
+          "name": "L04 : incident reçu et restauration complète",
+          "status": "PASS",
+          "startedAt": "2026-09-12T19:59:44.330Z",
+          "finishedAt": "2026-09-12T20:00:14.759Z"
+        },
+        {
+          "name": "L05 : événements, réservations, diaspora, navigateur et captation",
+          "status": "PASS",
+          "startedAt": "2026-09-12T20:00:14.762Z",
+          "finishedAt": "2026-09-12T20:00:27.084Z"
+        },
+        {
+          "name": "L05 : adaptateur Remo officiel, invitations et SAML de bout en bout",
+          "status": "PASS",
+          "startedAt": "2026-09-12T20:00:27.085Z",
+          "finishedAt": "2026-09-12T20:00:48.500Z"
+        }
+      ],
+      "checks": [
+        {
+          "name": "login refusé avec mauvais mot de passe",
+          "passed": true
+        },
+        {
+          "name": "un officier CCI-Togo reçoit un défi de second facteur, sans session",
+          "passed": true
+        },
+        {
+          "name": "second facteur validé ouvre la session de l'officier",
+          "passed": true
+        },
+        {
+          "name": "connexion refusée tant que l'email n'est pas vérifié",
+          "passed": true
+        },
+        {
+          "name": "code de vérification faux refusé",
+          "passed": true
+        },
+        {
+          "name": "vérification d'email avec le bon code",
+          "passed": true
+        },
+        {
+          "name": "un code déjà consommé est refusé",
+          "passed": true
+        },
+        {
+          "name": "connexion possible après vérification de l'email",
+          "passed": true
+        },
+        {
+          "name": "login cédant",
+          "passed": true
+        },
+        {
+          "name": "profil du compte connecté",
+          "passed": true
+        },
+        {
+          "name": "la session courante figure dans la liste des appareils",
+          "passed": true
+        },
+        {
+          "name": "déconnexion",
+          "passed": true
+        },
+        {
+          "name": "un jeton déconnecté est refusé",
+          "passed": true
+        },
+        {
+          "name": "liste des opportunités renvoie des cessions d'actifs",
+          "passed": true
+        },
+        {
+          "name": "aucun champ T2 dans la liste",
+          "passed": true
+        },
+        {
+          "name": "création d'entreprise",
+          "passed": true
+        },
+        {
+          "name": "création d'un dossier actifs",
+          "passed": true
+        },
+        {
+          "name": "transition invalide refusée",
+          "passed": true
+        },
+        {
+          "name": "un investisseur ne peut pas faire transiter un dossier",
+          "passed": true
+        },
+        {
+          "name": "publication d'une cession de titres bloquée par PERIMETER_BLOCKED",
+          "passed": true
+        },
+        {
+          "name": "un cédant ne lit pas le dossier non publié d'un autre cédant",
+          "passed": true
+        },
+        {
+          "name": "le propriétaire lit son dossier complet, prix inclus",
+          "passed": true
+        },
+        {
+          "name": "un investisseur lit un dossier publié en projection T0, sans prix",
+          "passed": true
+        },
+        {
+          "name": "la projection T0 contient bien le secteur",
+          "passed": true
+        },
+        {
+          "name": "le rôle applicatif ne contourne pas la RLS",
+          "passed": true
+        },
+        {
+          "name": "le prix n'est jamais en clair en base",
+          "passed": true
+        },
+        {
+          "name": "le propriétaire obtient le prix déchiffré",
+          "passed": true
+        },
+        {
+          "name": "sonde de vie accessible sans authentification",
+          "passed": true
+        },
+        {
+          "name": "sonde de disponibilité : bases et Redis joignables",
+          "passed": true
+        },
+        {
+          "name": "trois dépendances contrôlées",
+          "passed": true
+        },
+        {
+          "name": "sixième échec de connexion sur un compte renvoie 429",
+          "passed": true
+        },
+        {
+          "name": "en-têtes de sécurité présents",
+          "passed": true
+        },
+        {
+          "name": "origine inconnue sans en-tête CORS",
+          "passed": true
+        },
+        {
+          "name": "corps de requête au-delà de 1 Mo refusé",
+          "passed": true
+        },
+        {
+          "name": "webhook Remo avec signature invalide refusé",
+          "passed": true
+        },
+        {
+          "name": "webhook sans Idempotency-Key refusé",
+          "passed": true
+        },
+        {
+          "name": "webhook signé accepté et rejoué à l'identique",
+          "passed": true
+        },
+        {
+          "name": "le rejeu ne produit pas de double effet",
+          "passed": true
+        },
+        {
+          "name": "manifestation d'intérêt",
+          "passed": true
+        },
+        {
+          "name": "évaluation indicative",
+          "passed": true
+        },
+        {
+          "name": "liste des manques d'un dossier vide",
+          "passed": true
+        },
+        {
+          "name": "un dossier incomplet reste en préparation",
+          "passed": true
+        },
+        {
+          "name": "une correction crée une version, l'ancienne est conservée",
+          "passed": true
+        },
+        {
+          "name": "dépôt d'une pièce saine",
+          "passed": true
+        },
+        {
+          "name": "fichier reconnu par l'antivirus refusé",
+          "passed": true
+        },
+        {
+          "name": "la pièce refusée n'est pas enregistrée",
+          "passed": true
+        },
+        {
+          "name": "type de fichier hors liste refusé",
+          "passed": true
+        },
+        {
+          "name": "aucun accès public au stockage des pièces",
+          "passed": true
+        },
+        {
+          "name": "un investisseur n'accède pas au dossier d'un cédant",
+          "passed": true
+        },
+        {
+          "name": "dossier complété : plus aucun manque",
+          "passed": true
+        },
+        {
+          "name": "un dossier complet est soumis à vérification",
+          "passed": true
+        },
+        {
+          "name": "un cédant ne peut pas certifier",
+          "passed": true
+        },
+        {
+          "name": "certification refusée sans vérification RCCM préalable",
+          "passed": true
+        },
+        {
+          "name": "vérification RCCM en mode manuel, source tracée",
+          "passed": true
+        },
+        {
+          "name": "décision de certification nominative par un officier",
+          "passed": true
+        },
+        {
+          "name": "conflit d'intérêts déclaré bloque la décision",
+          "passed": true
+        },
+        {
+          "name": "badge Deal-Ready visible",
+          "passed": true
+        },
+        {
+          "name": "un cédant ne voit pas le tableau de bord institutionnel",
+          "passed": true
+        },
+        {
+          "name": "console CCI : déclaré et vérifié présentés séparément",
+          "passed": true
+        },
+        {
+          "name": "historique nominatif des décisions",
+          "passed": true
+        },
+        {
+          "name": "export CSV du journal des certifications",
+          "passed": true
+        },
+        {
+          "name": "renvoi sans motif refusé",
+          "passed": true
+        },
+        {
+          "name": "renvoi motivé par un officier",
+          "passed": true
+        },
+        {
+          "name": "le dossier est effectivement revenu en préparation",
+          "passed": true
+        },
+        {
+          "name": "le cédant lit le motif du renvoi",
+          "passed": true
+        },
+        {
+          "name": "un officier ne fait aucune autre transition",
+          "passed": true
+        },
+        {
+          "name": "fiche T0 en visiteur : aucun champ au-delà de T0",
+          "passed": true
+        },
+        {
+          "name": "un dossier non publié est introuvable en fiche publique",
+          "passed": true
+        },
+        {
+          "name": "message contenant un téléphone refusé",
+          "passed": true
+        },
+        {
+          "name": "message contenant un email refusé",
+          "passed": true
+        },
+        {
+          "name": "message sans coordonnées accepté",
+          "passed": true
+        },
+        {
+          "name": "un cédant tiers ne voit aucun message du fil",
+          "passed": true
+        },
+        {
+          "name": "alerte créée sans consentement de notification",
+          "passed": true
+        },
+        {
+          "name": "consentement explicite enregistré et daté",
+          "passed": true
+        },
+        {
+          "name": "un cédant ne crée pas d'alerte de repreneur",
+          "passed": true
+        },
+        {
+          "name": "une consultation incrémente le compteur du cédant",
+          "passed": true
+        },
+        {
+          "name": "liste de contrôle servie à l'entreprise",
+          "passed": true
+        },
+        {
+          "name": "un investisseur n'accède pas à la certification",
+          "passed": true
+        },
+        {
+          "name": "un autre cédant ne lit pas l'entreprise d'un concurrent",
+          "passed": true
+        },
+        {
+          "name": "la console institutionnelle reste fermée à un cédant",
+          "passed": true
+        },
+        {
+          "name": "dépôt d'une demande de certification",
+          "passed": true
+        },
+        {
+          "name": "demande en double refusée",
+          "passed": true
+        },
+        {
+          "name": "un cédant ne demande pas de remédiation",
+          "passed": true
+        },
+        {
+          "name": "remédiation nommée par un officier",
+          "passed": true
+        },
+        {
+          "name": "l'entreprise voit les compléments demandés",
+          "passed": true
+        },
+        {
+          "name": "la décision clôt la demande en cours",
+          "passed": true
+        },
+        {
+          "name": "la vue T1 du scénario ne contient aucun champ réservé à T2",
+          "passed": true
+        },
+        {
+          "name": "palier maximal sans admission pour une cession de titres",
+          "passed": true
+        },
+        {
+          "name": "le drapeau de publication des cessions de titres reste fermé",
+          "passed": true
+        },
+        {
+          "name": "le refus laisse une trace dans le journal",
+          "passed": true
+        },
+        {
+          "name": "un investisseur n'accède pas à la surface de démonstration",
+          "passed": true
+        },
+        {
+          "name": "liste des événements publiés",
+          "passed": true
+        },
+        {
+          "name": "création d'événement par un officier",
+          "passed": true
+        },
+        {
+          "name": "publication : la salle du partenaire est créée",
+          "passed": true
+        },
+        {
+          "name": "accès proposé uniquement dans la fenêtre d'ouverture",
+          "passed": true
+        },
+        {
+          "name": "inscription à un événement publié",
+          "passed": true
+        },
+        {
+          "name": "inscription en double refusée",
+          "passed": true
+        },
+        {
+          "name": "inscription sans consentement d'échange de contacts",
+          "passed": true
+        },
+        {
+          "name": "consentement donné explicitement",
+          "passed": true
+        },
+        {
+          "name": "consentement retiré aussi simplement qu'il est donné",
+          "passed": true
+        },
+        {
+          "name": "un visiteur ne voit aucune inscription nominative",
+          "passed": true
+        },
+        {
+          "name": "rendez-vous diaspora refusé sans avis transfrontalier",
+          "passed": true
+        }
+      ],
+      "finishedAt": "2026-09-12T20:00:51.186Z"
+    },
+    "gate-rejections.json": {
+      "startedAt": "2026-09-12T19:50:17.128Z",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "Promesse métier non attendue",
+          "command": "npm run lint",
+          "status": "PASS",
+          "exitCode": 1,
+          "rejectionObserved": true
+        },
+        {
+          "name": "Lint TypeScript",
+          "command": "npm run lint",
+          "status": "PASS",
+          "exitCode": 1,
+          "rejectionObserved": true
+        },
+        {
+          "name": "Règles de Hooks React",
+          "command": "npm run lint",
+          "status": "PASS",
+          "exitCode": 1,
+          "rejectionObserved": true
+        },
+        {
+          "name": "Bibliothèque partagée",
+          "command": "npm run build:libs",
+          "status": "PASS",
+          "exitCode": 1,
+          "rejectionObserved": true
+        },
+        {
+          "name": "Connecteur externe",
+          "command": "npm run build:libs",
+          "status": "PASS",
+          "exitCode": 1,
+          "rejectionObserved": true
+        },
+        {
+          "name": "Build codebases/engine/rps",
+          "command": "npm run build -w codebases/engine/rps",
+          "status": "PASS",
+          "exitCode": 1,
+          "rejectionObserved": true
+        },
+        {
+          "name": "Build codebases/backend/api",
+          "command": "npm run build -w codebases/backend/api",
+          "status": "PASS",
+          "exitCode": 1,
+          "rejectionObserved": true
+        },
+        {
+          "name": "Build codebases/backend/worker",
+          "command": "npm run build -w codebases/backend/worker",
+          "status": "PASS",
+          "exitCode": 1,
+          "rejectionObserved": true
+        },
+        {
+          "name": "Build codebases/frontend/web",
+          "command": "npm run build -w codebases/frontend/web",
+          "status": "PASS",
+          "exitCode": 1,
+          "rejectionObserved": true
+        },
+        {
+          "name": "Build codebases/devtools/sms-inbox",
+          "command": "npm run build -w codebases/devtools/sms-inbox",
+          "status": "PASS",
+          "exitCode": 1,
+          "rejectionObserved": true
+        },
+        {
+          "name": "Build codebases/devtools/registry-mock",
+          "command": "npm run build -w codebases/devtools/registry-mock",
+          "status": "PASS",
+          "exitCode": 1,
+          "rejectionObserved": true
+        },
+        {
+          "name": "Build codebases/devtools/event-simulator",
+          "command": "npm run build -w codebases/devtools/event-simulator",
+          "status": "PASS",
+          "exitCode": 1,
+          "rejectionObserved": true
+        },
+        {
+          "name": "Test réellement exécuté",
+          "command": "npm test",
+          "status": "PASS",
+          "exitCode": 1,
+          "rejectionObserved": true
+        }
+      ],
+      "configHashes": {
+        "package.json": "2b37a9bea48402e3e6c78fd417035cad75279e2d28cf1955b2897ca89ecf2af5",
+        "package-lock.json": "6cb182d03f3bde70d8e84a7c920c6299dd4d96b541aaca559efc4f4f1776a103",
+        "eslint.config.mjs": "0cb8e750bd9a819ac4d67ad2a992b4d393a4e2c8e8a3cf6b474e9e8ef39a4ad2",
+        "tsconfig.base.json": "d8df1698b9d239e6ce6875611e59bf4f944f774b6725e3b9c9320dbbdb7ab875",
+        ".github/workflows/ci.yml": "6893608d2228d3363a4ec18b53c6f902ec89204fbff3b4f008f1350d1c52da66"
+      },
+      "workspacesBuilt": [
+        "@dealpme/api",
+        "@dealpme/connector-ai-provider",
+        "@dealpme/connector-antivirus",
+        "@dealpme/connector-archiving",
+        "@dealpme/connector-email",
+        "@dealpme/connector-esign",
+        "@dealpme/connector-mobile-money",
+        "@dealpme/connector-registry",
+        "@dealpme/connector-remo",
+        "@dealpme/connector-sms",
+        "@dealpme/connector-storage",
+        "@dealpme/connector-tax-partner",
+        "@dealpme/contracts",
+        "@dealpme/domain",
+        "@dealpme/event-simulator",
+        "@dealpme/federation",
+        "@dealpme/i18n",
+        "@dealpme/notifications",
+        "@dealpme/registry-mock",
+        "@dealpme/rps",
+        "@dealpme/rules",
+        "@dealpme/sms-inbox",
+        "@dealpme/testing",
+        "@dealpme/ui",
+        "@dealpme/web",
+        "@dealpme/worker"
+      ],
+      "finishedAt": "2026-09-12T19:52:01.895Z"
+    },
+    "l02-results.json": {
+      "startedAt": "2026-09-12T19:58:46.069Z",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "Migration historique : aucun contenu perdu et aucune attribution arbitraire",
+          "status": "PASS"
+        },
+        {
+          "name": "Inscription : panne audit annule utilisateur, organisation et preuve",
+          "status": "PASS"
+        },
+        {
+          "name": "Échec de la preuve OTP : inscription entière annulée, même après USER_REGISTERED",
+          "status": "PASS"
+        },
+        {
+          "name": "Email : consommation OTP et validation annulées ensemble si audit échoue",
+          "status": "PASS"
+        },
+        {
+          "name": "Connexion : aucune session créée sans audit durable",
+          "status": "PASS"
+        },
+        {
+          "name": "Refus de connexion enregistré avant la réponse et conservé",
+          "status": "PASS"
+        },
+        {
+          "name": "MFA : consommation unique en concurrence et pas de session sans preuve",
+          "status": "PASS"
+        },
+        {
+          "name": "Révocation de session annulée si audit indisponible",
+          "status": "PASS"
+        },
+        {
+          "name": "Entreprise : panne audit ne laisse aucune création",
+          "status": "PASS"
+        },
+        {
+          "name": "Dossier : création et DealEvent annulés sur panne d'audit",
+          "status": "PASS"
+        },
+        {
+          "name": "Pièce déposée : panne audit annule la métadonnée de publication",
+          "status": "PASS"
+        },
+        {
+          "name": "Événement et alerte : écritures annulées si leur preuve échoue",
+          "status": "PASS"
+        },
+        {
+          "name": "Valeur déclarée : version précédente intacte après échec",
+          "status": "PASS"
+        },
+        {
+          "name": "Certification et clôture de demande atomiques",
+          "status": "PASS"
+        },
+        {
+          "name": "Intérêts concurrents : un seul fil par organisation",
+          "status": "PASS"
+        },
+        {
+          "name": "Panne audit : ni message ni succès fantôme",
+          "status": "PASS"
+        },
+        {
+          "name": "Échange A/cédant isolé de B, identifiants serveur et aucune identité T0",
+          "status": "PASS"
+        },
+        {
+          "name": "Cible obligatoire pour le cédant, refus des fils étrangers et pièces jointes",
+          "status": "PASS"
+        },
+        {
+          "name": "Refus concurrents : audit durable après rollback sans saturer le pool",
+          "status": "PASS"
+        },
+        {
+          "name": "Audit de refus indisponible : erreur explicite, aucun message enregistré",
+          "status": "PASS"
+        },
+        {
+          "name": "Pagination bornée et stable par conversation",
+          "status": "PASS"
+        },
+        {
+          "name": "RLS et contraintes : aucun auteur forgé, fil déplacé ou nouveau message ambigu",
+          "status": "PASS"
+        },
+        {
+          "name": "Webhook : rejeu concurrent unique, signature avant cache et empreinte du corps",
+          "status": "PASS"
+        },
+        {
+          "name": "Webhook : panne audit ne persiste ni effets ni clé ; reprise possible",
+          "status": "PASS"
+        },
+        {
+          "name": "Arrêt brutal du processus API avant commit : ni métier ni audit orphelin",
+          "status": "PASS"
+        },
+        {
+          "name": "Échec de persistance de la clé webhook : audit et effet annulés ensemble",
+          "status": "PASS"
+        },
+        {
+          "name": "Ancienne réponse sans empreinte : conservée, mais jamais rejouée sans vérification",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur : sélection explicite et envoi du cédant vers A puis B",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur : les repreneurs ne voient que leurs réponses",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur : panne réseau conserve le brouillon et ne simule aucun succès",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur : réponse tardive d'un ancien fil ignorée après changement",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur/BFF : erreur de lecture visible, reprise et refus du fil étranger",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur mobile : sélection et historique sans débordement",
+          "status": "PASS"
+        }
+      ],
+      "finishedAt": "2026-09-12T19:59:16.714Z"
+    },
+    "l03-results.json": {
+      "startedAt": "2026-09-12T19:59:17.445Z",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "SMTP Mailpit : destinataire, Unicode, HTML et en-têtes reçus",
+          "status": "PASS"
+        },
+        {
+          "name": "Email marketing : lien de désinscription transmis, absence refusée",
+          "status": "PASS"
+        },
+        {
+          "name": "SMS : contenu et numéro conservés, Unicode estimé et état explicitement simulé",
+          "status": "PASS"
+        },
+        {
+          "name": "SMS : 429 repris avec la même clé et une seule réception",
+          "status": "PASS"
+        },
+        {
+          "name": "SMS : acceptation suivie d'un timeout sans double message",
+          "status": "PASS"
+        },
+        {
+          "name": "MFA : aucun code dans l'API, réception par boîte et trace d'acceptation",
+          "status": "PASS"
+        },
+        {
+          "name": "MFA : indisponibilité SMS annule le défi et laisse une preuve d'échec",
+          "status": "PASS"
+        },
+        {
+          "name": "MFA : refus permanent du destinataire sans faux succès",
+          "status": "PASS"
+        },
+        {
+          "name": "OTP : expiration et cinq erreurs restent appliquées avec le transport local",
+          "status": "PASS"
+        },
+        {
+          "name": "Émissions OTP limitées par utilisateur",
+          "status": "PASS"
+        },
+        {
+          "name": "Email perdu ou expiré : la connexion propose un nouveau défi, sans session",
+          "status": "PASS"
+        },
+        {
+          "name": "Panne SMTP : inscription annulée et tentative d'envoi tracée",
+          "status": "PASS"
+        },
+        {
+          "name": "Démarrage production : refus des fournisseurs locaux",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur : panne réseau conserve les saisies et permet de réessayer",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur : inscription, code reçu par SMTP et vérification sans raccourci",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur : MFA validé avec le SMS effectivement reçu",
+          "status": "PASS"
+        },
+        {
+          "name": "Boîte SMS : filtre, affichage Unicode et contenu HTML inerte",
+          "status": "PASS"
+        }
+      ],
+      "finishedAt": "2026-09-12T19:59:29.883Z"
+    },
+    "l04-registry-results.json": {
+      "status": "PASS",
+      "startedAt": "2026-09-12T19:59:30.462Z",
+      "checks": [
+        {
+          "name": "Mode manuel : validation complète et zéro appel réseau",
+          "status": "PASS"
+        },
+        {
+          "name": "Rejeu concurrent : une consultation, une preuve, un audit",
+          "status": "PASS"
+        },
+        {
+          "name": "Permissions et historique append-only",
+          "status": "PASS"
+        },
+        {
+          "name": "Identité modifiée : prérequis invalidé, historique conservé",
+          "status": "PASS"
+        },
+        {
+          "name": "Instruction manuelle : DIVERGENT avec motif",
+          "status": "PASS"
+        },
+        {
+          "name": "Instruction manuelle : NEEDS_INFO avec motif",
+          "status": "PASS"
+        },
+        {
+          "name": "Instruction manuelle : REFUSED avec motif",
+          "status": "PASS"
+        },
+        {
+          "name": "API mock : MATCH, provenance et décision séparée",
+          "status": "PASS"
+        },
+        {
+          "name": "API mock : ABSENT, provenance et décision séparée",
+          "status": "PASS"
+        },
+        {
+          "name": "API mock : DIVERGENT, provenance et décision séparée",
+          "status": "PASS"
+        },
+        {
+          "name": "API mock : STRUCK, provenance et décision séparée",
+          "status": "PASS"
+        },
+        {
+          "name": "API mock : INCOMPLETE, provenance et décision séparée",
+          "status": "PASS"
+        },
+        {
+          "name": "API mock : MALFORMED, provenance et décision séparée",
+          "status": "PASS"
+        },
+        {
+          "name": "API mock : 429, provenance et décision séparée",
+          "status": "PASS"
+        },
+        {
+          "name": "API mock : 503, provenance et décision séparée",
+          "status": "PASS"
+        },
+        {
+          "name": "API mock : TIMEOUT, provenance et décision séparée",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur : panne réseau et reprise du formulaire",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur : incident API visible, reprise manuelle explicite et historique",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur mobile : provenance et formulaire sans débordement",
+          "status": "PASS"
+        }
+      ],
+      "finishedAt": "2026-09-12T19:59:36.830Z"
+    },
+    "l04-alert-results.json": {
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "Rôle worker : prix, identité entreprise et mots de passe inaccessibles",
+          "status": "PASS"
+        },
+        {
+          "name": "Sans opt-in : aucune intention ; opt-in explicite : matching T0 explicable",
+          "status": "PASS"
+        },
+        {
+          "name": "Rejeu et deux workers : une intention et une acceptation SMTP",
+          "status": "PASS"
+        },
+        {
+          "name": "Retrait du consentement après mise en file : transport annulé",
+          "status": "PASS"
+        },
+        {
+          "name": "Dossier retiré après matching : aucun envoi",
+          "status": "PASS"
+        },
+        {
+          "name": "Rôle révoqué après matching : aucun envoi",
+          "status": "PASS"
+        },
+        {
+          "name": "Erreur temporaire : reprise bornée avec la même intention",
+          "status": "PASS"
+        },
+        {
+          "name": "Échec après acceptation SMTP : état inconnu sans double émission",
+          "status": "PASS"
+        },
+        {
+          "name": "Processus worker réel : publication détectée et email livré sans enqueue manuel",
+          "status": "PASS"
+        }
+      ]
+    },
+    "l04-operations-results.json": {
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "Incident 5xx réel : métrique et notification reçue dans Mailpit",
+          "status": "PASS"
+        },
+        {
+          "name": "Sauvegarde complète : trois snapshots cohérents et volume MinIO",
+          "status": "PASS"
+        },
+        {
+          "name": "Restauration jetable : bases, politiques et objets déchiffrés comparés au manifeste",
+          "status": "PASS"
+        },
+        {
+          "name": "Archive altérée : restauration refusée avant création des cibles",
+          "status": "PASS"
+        }
+      ]
+    },
+    "l04-restore-results.json": {
+      "status": "PASS",
+      "restoredAt": "2026-09-12T20:00:12.855Z",
+      "databases": [
+        {
+          "name": "core",
+          "tables": 34
+        },
+        {
+          "name": "vdr",
+          "tables": 9
+        },
+        {
+          "name": "rps",
+          "tables": 6
+        }
+      ],
+      "objects": 5,
+      "comparison": "backup manifest",
+      "disposable": true
+    },
+    "l05-results.json": {
+      "status": "PASS",
+      "startedAt": "2026-09-12T20:00:15.779Z",
+      "checks": [
+        {
+          "name": "Création rejouée : un brouillon et un audit, autre corps refusé",
+          "status": "PASS"
+        },
+        {
+          "name": "Brouillons privés, rôle requis et révision de modification contrôlée",
+          "status": "PASS"
+        },
+        {
+          "name": "Profil général hérité et surcharge événement indépendante",
+          "status": "PASS"
+        },
+        {
+          "name": "Publication et rejeu : une réservation confirmée",
+          "status": "PASS"
+        },
+        {
+          "name": "Trois publications concurrentes respectent le quota de deux",
+          "status": "PASS"
+        },
+        {
+          "name": "Même compte, autre produit : réservation prise en compte",
+          "status": "PASS"
+        },
+        {
+          "name": "Timeout après acceptation : créneau conservé et rapprochement sans doublon",
+          "status": "PASS"
+        },
+        {
+          "name": "Capacité d'inscription atomique et décompte public exact sous RLS",
+          "status": "PASS"
+        },
+        {
+          "name": "Diaspora : décision humaine, salle privée et accès du demandeur uniquement",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur : création, panne réseau récupérable et personnalisation",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur mobile : état, branding et actions sans débordement",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur participant : inscription consentie et accès à la salle personnalisée",
+          "status": "PASS"
+        },
+        {
+          "name": "Prototype captation : consentement, octets audio et arrêt sur révocation",
+          "status": "PASS"
+        }
+      ],
+      "finishedAt": "2026-09-12T20:00:27.003Z"
+    },
+    "l05-capture-results.json": {
+      "sessionId": "01a09734-ed45-707e-a8b8-51143938e952",
+      "mimeType": "audio/webm;codecs=opus",
+      "synthetic": true,
+      "startedAt": 1789243224991,
+      "stoppedAt": 1789243226758,
+      "stopReason": "admission_revoked",
+      "sha256": "e927368ea17e2569539e1c7aa52e6817cd3cce22ef0cd79ee2afc1f58ee814fc",
+      "bytes": 26449,
+      "coverage": "Une session locale, signal généré ; aucune voix Remo ni transcription"
+    },
+    "remo-api-results.json": {
+      "status": "PASS",
+      "target": "HTTPS_CONTRACT_FIXTURE_NOT_REMO_ACCOUNT",
+      "checks": [
+        {
+          "name": "API réelle : création depuis DealPME, authentification Token et salle sur invitation",
+          "status": "PASS"
+        },
+        {
+          "name": "Invitation email distincte des contacts ; réponse perdue rapprochée sans renvoi",
+          "status": "PASS"
+        },
+        {
+          "name": "Présence et groupes rattachés à l'inscription, sans profil fournisseur exposé",
+          "status": "PASS"
+        },
+        {
+          "name": "Création indéterminée : aucun second POST, rattachement vérifié de la référence",
+          "status": "PASS"
+        },
+        {
+          "name": "Branding global dans DealPME : rôle administrateur et héritage versionné",
+          "status": "PASS"
+        },
+        {
+          "name": "Refus certain de création : correction/reprise et annulation sans référence distante",
+          "status": "PASS"
+        },
+        {
+          "name": "Invitations paginées : tous les inscrits sont traités sans réémission des précédents",
+          "status": "PASS"
+        },
+        {
+          "name": "Modification distante acceptée puis audit indisponible : état à rapprocher et reprise du PUT",
+          "status": "PASS"
+        },
+        {
+          "name": "Le compte fournisseur reste lié à l'événement lors d'une configuration divergente",
+          "status": "PASS"
+        },
+        {
+          "name": "Mode Remo : le webhook signé du simulateur est refusé avant le cache",
+          "status": "PASS"
+        },
+        {
+          "name": "SAML API : requête validée, session requise et consommation concurrente unique",
+          "status": "PASS"
+        },
+        {
+          "name": "SAML : une identité non vérifiée ne reçoit pas d'assertion",
+          "status": "PASS"
+        },
+        {
+          "name": "SAML : challenge expiré et rôle révoqué refusés",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur : connexion DealPME puis POST SAML vérifié par le SP HTTPS",
+          "status": "PASS"
+        },
+        {
+          "name": "Navigateur organisateur : contenu/visuels publiés modifiés depuis DealPME",
+          "status": "PASS"
+        },
+        {
+          "name": "W110 : réponse d'invitation tardive après reprise et changement de rôle",
+          "status": "PASS"
+        },
+        {
+          "name": "W110 : groupes/intervenants refusés après changement d'email ou annulation",
+          "status": "PASS"
+        },
+        {
+          "name": "W110 : commandes organisateur parcourent le BFF jusqu'au fournisseur",
+          "status": "PASS"
+        },
+        {
+          "name": "W110 : diaspora rejouable par le BFF, confirmation et refus sans doublon",
+          "status": "PASS"
+        },
+        {
+          "name": "W110 : plus de 100 événements et demandes accessibles sans doublon ni fuite",
+          "status": "PASS"
+        },
+        {
+          "name": "W110 : SAML POST et reprise avec MFA navigateur",
+          "status": "PASS"
+        },
+        {
+          "name": "W111 : précontrôle CLI sans réseau et sans secret dans les diagnostics",
+          "status": "PASS"
+        },
+        {
+          "name": "W111 : redémarrage, modes disabled/local/remo et changement de compte",
+          "status": "PASS"
+        },
+        {
+          "name": "W111 : invitation incertaine reprise après redémarrage sans nouvel envoi",
+          "status": "PASS"
+        }
+      ]
+    }
+  },
+  "openFollowups": [
+    "V1-112",
+    "V1-113",
+    "V1-114",
+    "V1-115",
+    "V1-116",
+    "V1-107"
+  ],
+  "verificationCommands": [
+    "npm ci && npm run build && npm run typecheck && npm test && npm run lint && npm audit --audit-level=high",
+    "npm run ci:verify-gates",
+    "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/dealpme-browsers npm run ci:smoke",
+    "npm run ci:l05-wiring -- --evidence"
+  ]
+}
