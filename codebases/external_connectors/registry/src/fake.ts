@@ -12,6 +12,7 @@ export function createFakeRegistry(): RegistryPort {
     port[m] = notImplemented(m);
   }
   port['mode'] = 'manual';
+  port['provider'] = 'manual';
   
   return port as unknown as RegistryPort;
 }

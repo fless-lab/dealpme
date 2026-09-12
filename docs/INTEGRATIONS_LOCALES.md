@@ -1,8 +1,9 @@
 # Notifications locales et intégrations réutilisables
 
 Notifications L03 : **implémentées et vérifiées en local**, voir [NOTIFICATIONS.md](NOTIFICATIONS.md).
-La qualification des fournisseurs réels reste ouverte. Les sections événements/captation et CFE sont
-encore des conceptions pour les lots suivants. Référence de départ : `2dd4e3d`, réunion du 12/09/2026.
+La qualification des fournisseurs réels reste ouverte. Le CFE manuel/mock et les alertes persistées
+sont implémentés en L04 : voir [EXPLOITATION_L04.md](EXPLOITATION_L04.md). Les sections événements/captation
+restent des conceptions pour les lots suivants. Référence de départ : `2dd4e3d`, réunion du 12/09/2026.
 
 ## 1. Objectif email et SMS
 
@@ -189,7 +190,7 @@ Clarification du chef de projet : API désactivée par environnement = validatio
 API activée = mock local en attendant les accès, puis adaptateur réel. Tâche complémentaire V1-109,
 rattachée au travail existant V1-035. La vérification de registre ne remplace pas la décision Deal-Ready.
 
-### Sélection cible proposée
+### Sélection implémentée (L04)
 
 ```dotenv
 CFE_API_ENABLED=false
@@ -202,7 +203,7 @@ CFE_API_BASE_URL=http://localhost:8027
 |---|---|---|
 | `false` | quelconque | Aucun appel réseau ; file CCI et résultat manuel avec officier, source et date |
 | `true` | `mock` | Appel HTTP au simulateur local, réponses synthétiques explicitement identifiées |
-| `true` | `cfe` | Adaptateur réel, configuration et réponse validées selon la documentation reçue |
+| `true` | `cfe` | Démarrage refusé tant que le contrat réel et son adaptateur ne sont pas qualifiés (A02) |
 | valeur invalide / fournisseur inconnu | — | Configuration refusée explicitement |
 
 `CFE_API_ENABLED` devient la source de sélection. Migrer l'ancien `CONNECTOR_REGISTRY_MODE=manual|api`

@@ -1,0 +1,17 @@
+[Unit]
+Description=DealPME API
+After=network-online.target docker.service
+[Service]
+User=dealpme
+WorkingDirectory=/opt/dealpme/current/codebases/backend/api
+EnvironmentFile=/etc/dealpme/api.env
+ExecStart=/usr/bin/node dist/main.js
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+UMask=0077
+StandardOutput=journal
+StandardError=journal
+[Install]
+WantedBy=multi-user.target

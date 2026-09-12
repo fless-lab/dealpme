@@ -5,7 +5,7 @@ import type { z } from "zod";
 import { DealStatus, DisclosureTier, newId } from "@dealpme/domain";
 import { contactRefusalMessage, findContactDetails, projectForTier } from "@dealpme/rules";
 import { CORE_DB, type CoreDb } from "../../database/database.module.js";
-import { certifications, dealConversations, dealMessages, dealViews, deals, interests, savedAlerts, users } from "../../database/schema/core.js";
+import { certifications, dealConversations, dealMessages, dealViews, deals, interests, notificationIntents, savedAlerts, users } from "../../database/schema/core.js";
 import { withTenant } from "../../database/tenant.js";
 import { AuditService } from "../../platform/audit.service.js";
 import type { Principal } from "../../platform/auth.js";
@@ -27,8 +27,8 @@ export class MarketplaceService {
     return withTenant(this.db, principal, async (tx) => {
       const deal = (await tx.select().from(deals).where(eq(deals.id, dealId)).limit(1))[0];
       if (!deal || !(LISTED as readonly string[]).includes(deal.status)) throw new DealPmeError(ErrorCode.NOT_FOUND, "Opportunité introuvable");
-      const certRows = await tx.select({ decision: certifications.decision, expiresAt: certifications.expiresAt }).from(certifications).where(eq(certifications.companyId, deal.companyId));
-      const isDealReady = certRows.some((c) => c.decision === "GRANTED" && (!c.expiresAt || c.expiresAt.getTime() > Date.now()));
+      const certRows = await tx.select().from(certifications).where(eq(certifications.companyId, deal.companyId)).orderBy(desc(certifications.decidedAt), desc(certifications.id)).limit(1);
+      const isDealReady = certRows.some((c) => c.decision === "GRANTED" && !c.registryInvalidatedAt && (!c.expiresAt || c.expiresAt.getTime() > Date.now()));
       await tx.insert(dealViews).values({
         id: newId(),
         dealId,
@@ -231,7 +231,8 @@ export class MarketplaceService {
   async listAlerts(principal: Principal) {
     return withTenant(this.db, principal, async (tx) => {
       const rows = await tx.select().from(savedAlerts).where(and(eq(savedAlerts.organisationId, principal.organisationId), isNull(savedAlerts.revokedAt))).orderBy(desc(savedAlerts.createdAt));
-      return { items: rows };
+      const deliveries = await tx.select({ id: notificationIntents.id, alertId: notificationIntents.alertId, dealId: notificationIntents.dealId, score: notificationIntents.score, reasons: notificationIntents.reasons, state: notificationIntents.state, attempts: notificationIntents.attempts, updatedAt: notificationIntents.updatedAt }).from(notificationIntents).where(eq(notificationIntents.userId, principal.userId)).orderBy(desc(notificationIntents.createdAt)).limit(100);
+      return { items: rows, deliveries };
     });
   }
 

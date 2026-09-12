@@ -2,9 +2,9 @@
 
 **Révision : 12/09/2026, après réunion direction et clarification CFE.**
 
-**État : L01/L02 vérifiés ; L03 opérationnel en local, recettes fournisseurs encore ouvertes.**
-Le prochain lot technique indépendant est **L04**. [Usage des notifications](NOTIFICATIONS.md),
-[preuves locales L03](../qa/l03-verification.json).
+**État : L01/L02 vérifiés ; L03/L04 opérationnels en local, recettes fournisseurs et serveur encore ouvertes.**
+Le prochain lot technique est **L05**. [Usage des notifications](NOTIFICATIONS.md),
+[exploitation L04](EXPLOITATION_L04.md), [preuves locales L04](../qa/l04-verification.json).
 Preuves et commandes de reprise : [CI.md](CI.md) et [qa/l01-ci.json](../qa/l01-ci.json).
 Les autres lots restent à réaliser ; les acquis historiques sont conservés.
 L02 : [décision d'implémentation](adr/0008-audit-et-conversations.md) et [preuves](../qa/l02-verification.json).
@@ -173,6 +173,10 @@ permettent de continuer L04 pendant l'attente d'accès.
 ## 7. L04 — CFE, notifications et environnement de livraison
 
 Tâches : **V1-109, V1-035, V1-096, V1-097, V1-098, V1-009**.
+
+Implémentation locale et procédures : [EXPLOITATION_L04.md](EXPLOITATION_L04.md).
+Le mock, l'instruction manuelle, l'outbox d'alertes et les scripts d'exploitation sont disponibles ;
+les accès CFE/fournisseurs/serveur conditionnent encore leurs sous-recettes externes.
 
 ### CFE / RCCM
 
@@ -365,6 +369,6 @@ Pour chaque tâche engagée :
 6. Régénérer le classeur, vérifier dates/identifiants/formules et committer le lot cohérent.
 7. Laisser une note de reprise : dernier contrôle réussi, accès manquant éventuel, prochaine action exacte.
 
-**Première action applicative de reprise : L04 / V1-109**, implémenter le mock CFE et la bascule API/manuelle,
-puis le traitement des alertes, la supervision et les sauvegardes. Les transports locaux L03 sont prêts ;
-continuer en parallèle la collecte des accès et les recettes des fournisseurs réels.
+**Première action applicative de reprise : L05**, qualifier les capacités Remo et construire la console
+organisateur depuis les contrats vérifiés. Reprendre les sous-recettes L04 dès réception des accès
+CFE/fournisseurs/serveur : A02, A16 et A19. Les dates des versions et les acquis restent inchangés.

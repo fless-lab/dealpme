@@ -73,7 +73,7 @@ leak=$(echo "$body" | grep -c 'askingPrice\|companyLegalName\|valuationBasis')
 check "aucun champ T2 dans la liste (DISCLOSURE_LEAK)" 0 "$leak"
 
 echo "== Dossier cédant"
-cid=$(curl -s -X POST "$API/companies" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{"legalName":"Entreprise de fumée SARL","legalForm":"SARL"}' | python3 -c 'import sys,json;print(json.load(sys.stdin).get("companyId",""))')
+cid=$(curl -s -X POST "$API/companies" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d '{"legalName":"Entreprise de fumée SARL","legalForm":"SARL","rccmNumber":"TG-LOM-2020-B-0001"}' | python3 -c 'import sys,json;print(json.load(sys.stdin).get("companyId",""))')
 [ -n "$cid" ] && check "création d'entreprise" 1 1 || check "création d'entreprise" 1 0
 did=$(curl -s -X POST "$API/deals" -H "authorization: Bearer $SELLER" -H 'content-type: application/json' -d "{\"companyId\":\"$cid\",\"dealType\":\"ASSET_DEAL\",\"sectorCode\":\"AGRO\",\"regionCode\":\"KARA\",\"turnoverBand\":\"LT_50M\"}" | python3 -c 'import sys,json;print(json.load(sys.stdin).get("dealId",""))')
 [ -n "$did" ] && check "création d'un dossier actifs" 1 1 || check "création d'un dossier actifs" 1 0

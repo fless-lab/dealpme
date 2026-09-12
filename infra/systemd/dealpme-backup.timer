@@ -1,0 +1,8 @@
+[Unit]
+Description=DealPME — sauvegarde quotidienne en fenêtre de maintenance
+[Timer]
+OnCalendar=*-*-* 02:00:00
+Persistent=true
+Unit=dealpme-backup.service
+[Install]
+WantedBy=timers.target

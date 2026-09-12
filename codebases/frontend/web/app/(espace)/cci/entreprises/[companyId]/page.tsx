@@ -13,6 +13,8 @@ interface CompanyDetail {
   owner: { id: string; name: string; membershipConfirmed: boolean; membershipConfirmedAt: string | null };
   registry: { legalName: string; legalForm: string; status: string; registeredAddress: string | null; officers: string[]; verifiedAt: string; mode: string; sourceRef: string } | null;
   registryMode: "api" | "manual";
+  registryProvider: string;
+  consultationHistory: { id: string; outcome: string; mode: string; provider: string; synthetic: boolean; stale: boolean; reason: string | null; createdAt: string; officerUserId: string; result: { sourceRef: string; legalName?: string; legalForm?: string; status?: string } | null }[];
   certification: { isDealReady: boolean; decision: string | null; scopeStatement: string | null; decidedAt: string | null; expiresAt: string | null };
   history: { id: string; decision: string; scopeStatement: string; decidedAt: string; expiresAt: string | null; revocationReason: string | null; officerEmail: string | null }[];
   deals: { id: string; dealType: string; status: string; sectorCode: string; createdAt: string }[];
@@ -124,11 +126,23 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
                     ? "Mode manuel : consultez le registre, puis reportez ici ce que vous avez lu. La source de la consultation est conservée."
                     : "Mode API : la vérification interroge directement le registre."}
                 </StateBanner>
-                <RegistryVerification companyId={data.id} declaredName={data.declared.legalName} declaredForm={data.declared.legalForm} declaredRccm={data.declared.rccmNumber} manual={data.registryMode === "manual"} />
               </>
             )}
+            <p>Mode courant : {data.registryMode === "manual" ? "instruction manuelle" : `API / ${data.registryProvider}`}.</p>
+            {data.registryProvider === "mock" ? <StateBanner tone="warning" title="Données synthétiques">Une consultation du simulateur ne permet pas l'octroi de Deal-Ready.</StateBanner> : null}
+            <RegistryVerification companyId={data.id} declaredName={data.declared.legalName} declaredForm={data.declared.legalForm} declaredRccm={data.declared.rccmNumber} manual={data.registryMode === "manual"} incidentId={data.consultationHistory[0]?.outcome === "UNAVAILABLE" ? data.consultationHistory[0].id : undefined} />
           </Panel>
         </div>
+
+        <Panel title="Historique des consultations RCCM / CFE" controlId="CCI_REGISTRY_HISTORY">
+          {data.consultationHistory.length ? <ol className="dp-stack">{data.consultationHistory.map((c) => <li key={c.id}>
+            <strong>{({ CONFIRMED: "Correspondance confirmée", NOT_FOUND: "Inscription introuvable", DIVERGENT: "Divergence", STRUCK_OFF: "Radiée", SUSPENDED: "Suspendue", INCOMPLETE: "Résultat incomplet", UNAVAILABLE: "Incident — à vérifier", NEEDS_INFO: "Complément demandé", REFUSED: "Refus" } as Record<string, string>)[c.outcome] ?? c.outcome}</strong>
+            {c.synthetic ? " — SYNTHÉTIQUE" : ""}{c.stale ? " — identité modifiée, preuve obsolète" : ""}
+            <div>{fmtDateTime(c.createdAt)} · {c.mode} / {c.provider} · Officier : {c.officerUserId}</div>
+            {c.result ? <div>{c.result.legalName ?? "Nom absent"} · {c.result.legalForm ?? "Forme absente"} · {c.result.status ?? "Situation absente"} · Source : {c.result.sourceRef}</div> : null}
+            {c.reason ? <div>Motif : {c.reason}</div> : null}
+          </li>)}</ol> : <p>Aucune consultation dans le nouveau journal. Les vérifications historiques restent conservées.</p>}
+        </Panel>
 
         <DecisionGate
           kind="certification"

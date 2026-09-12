@@ -45,7 +45,7 @@ export class CertificationRequestService {
     );
     const decisions = await withTenant(this.db, principal, async (tx) =>
       tx
-        .select({ id: certifications.id, decision: certifications.decision, scopeStatement: certifications.scopeStatement, decidedAt: certifications.decidedAt, expiresAt: certifications.expiresAt, revocationReason: certifications.revocationReason })
+        .select({ id: certifications.id, decision: certifications.decision, scopeStatement: certifications.scopeStatement, decidedAt: certifications.decidedAt, expiresAt: certifications.expiresAt, revocationReason: certifications.revocationReason, registryInvalidatedAt: certifications.registryInvalidatedAt })
         .from(certifications)
         .where(eq(certifications.companyId, companyId))
         .orderBy(desc(certifications.decidedAt)),
@@ -59,7 +59,7 @@ export class CertificationRequestService {
       requests,
       decisions,
       certification: {
-        isDealReady: latest?.decision === "GRANTED" && !expired,
+        isDealReady: latest?.decision === "GRANTED" && !expired && !latest.registryInvalidatedAt,
         decision: latest?.decision ?? null,
         scopeStatement: latest?.scopeStatement ?? null,
         decidedAt: latest?.decidedAt ?? null,

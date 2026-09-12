@@ -1,15 +1,17 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { and, desc, eq, gte, inArray, isNotNull, sql } from "drizzle-orm";
-import type { RegistryPort } from "@dealpme/connector-registry";
+import { normalizeRccm, RegistryError, type RegistryPort, type RegistryLookupResult } from "@dealpme/connector-registry";
+import { createHash } from "node:crypto";
 import { DealPmeError, ErrorCode, type CertificationDecisionRequest } from "@dealpme/contracts";
 import { newId } from "@dealpme/domain";
 import { CORE_DB, type CoreDb } from "../../database/database.module.js";
-import { certifications, companies, deals, membershipConfirmations, organisations, registryRecords, users } from "../../database/schema/core.js";
+import { certifications, companies, deals, membershipConfirmations, organisations, registryRecords, registryConsultations, users } from "../../database/schema/core.js";
 import { withTenant } from "../../database/tenant.js";
 import { AuditService } from "../../platform/audit.service.js";
 import type { Principal } from "../../platform/auth.js";
 import { CertificationRequestService } from "./certification-request.service.js";
 import { REGISTRY_PORT } from "./registry.provider.js";
+import { registryOutcome, type ManualRegistryResult } from "./registry-review.js";
 
 export interface CertificationStatus {
   isDealReady: boolean;
@@ -23,7 +25,7 @@ export interface CertificationStatus {
 function statusOf(row: typeof certifications.$inferSelect | undefined): CertificationStatus {
   if (!row) return { isDealReady: false, decision: null, scopeStatement: null, decidedAt: null, expiresAt: null, officerUserId: null };
   const expired = row.expiresAt ? row.expiresAt.getTime() < Date.now() : false;
-  return { isDealReady: row.decision === "GRANTED" && !expired, decision: row.decision, scopeStatement: row.scopeStatement, decidedAt: row.decidedAt, expiresAt: row.expiresAt, officerUserId: row.officerUserId };
+  return { isDealReady: row.decision === "GRANTED" && !expired && !row.registryInvalidatedAt, decision: row.decision, scopeStatement: row.scopeStatement, decidedAt: row.decidedAt, expiresAt: row.expiresAt, officerUserId: row.officerUserId };
 }
 
 @Injectable()
@@ -50,39 +52,58 @@ export class InstitutionService {
    * Vérification RCCM / CFE. Le résultat est stocké dans registry_record, séparément des données déclarées (DP-CCI-005).
    * En mode manuel, l'officier saisit ce qu'il a consulté ; sourceRef trace la consultation.
    */
-  async verifyRegistry(companyId: string, rccmNumber: string, officer: Principal, correlationId: string, manualResult?: { legalName: string; legalForm: string; status: string; sourceRef: string }) {
-    const company = await withTenant(this.db, officer, async (tx) => (await tx.select().from(companies).where(eq(companies.id, companyId)).limit(1))[0]);
-    if (!company) throw new DealPmeError(ErrorCode.NOT_FOUND, "Entreprise introuvable");
-
-    const result =
-      this.registry.mode === "manual" && manualResult
-        ? { found: true, ...manualResult, verifiedAt: new Date().toISOString() }
-        : await this.registry.lookup({ rccmNumber });
-
-    if (!result.found) {
-      await this.audit.rejection({ action: "REGISTRY_VERIFIED", actorUserId: officer.userId, subjectType: "company", subjectId: companyId, outcome: "FAILED", correlationId });
-      throw new DealPmeError(ErrorCode.NOT_FOUND, "Aucune inscription trouvée au RCCM pour ce numéro");
-    }
-    const recordId = newId();
-    await withTenant(this.db, officer, async (tx) => {
-      await tx.insert(registryRecords).values({
-        id: recordId,
-        companyId,
-        rccmNumber,
-        legalName: result.legalName ?? company.legalName,
-        legalForm: (result.legalForm ?? company.legalForm) as typeof company.legalForm,
-        status: result.status ?? "UNKNOWN",
-        registeredAddress: result.registeredAddress ?? null,
-        officers: result.officers ?? [],
-        verifiedAt: new Date(result.verifiedAt),
-        verifiedBy: officer.userId,
-        sourceRef: result.sourceRef,
-        mode: this.registry.mode,
+  async verifyRegistry(companyId: string, rawRccm: string, officer: Principal, correlationId: string, manualResult?: ManualRegistryResult, options: { requestId?: string | undefined; fallbackFromId?: string | undefined; fallbackReason?: string | undefined } = {}) {
+    const rccmNumber = normalizeRccm(rawRccm);
+    const requestId = options.requestId ?? newId();
+    const requestHash = createHash("sha256").update(JSON.stringify([rccmNumber, manualResult ?? null, options.fallbackFromId ?? null, options.fallbackReason ?? null])).digest("hex");
+    return withTenant(this.db, officer, async (tx) => {
+      // Sérialise les consultations, la modification d'identité et l'octroi. Le transport est borné.
+      const company = (await tx.select().from(companies).where(eq(companies.id, companyId)).for("update").limit(1))[0];
+      if (!company) throw new DealPmeError(ErrorCode.NOT_FOUND, "Entreprise introuvable");
+      if (company.ownerOrganisationId === officer.organisationId) throw new DealPmeError(ErrorCode.FORBIDDEN, "L'officier ne peut pas vérifier sa propre entreprise");
+      const prior = (await tx.select().from(registryConsultations).where(and(eq(registryConsultations.companyId, companyId), eq(registryConsultations.requestId, requestId))).limit(1))[0];
+      if (prior) {
+        if (prior.requestHash !== requestHash || prior.officerUserId !== officer.userId) throw new DealPmeError(ErrorCode.INVALID_TRANSITION, "Identifiant de requête déjà utilisé pour une autre consultation");
+        return { consultationId: prior.id, registryRecordId: prior.registryRecordId, outcome: prior.outcome, synthetic: prior.synthetic };
+      }
+      if (normalizeRccm(company.rccmNumber ?? "") !== rccmNumber) throw new DealPmeError(ErrorCode.VALIDATION_FAILED, "Le numéro consulté doit correspondre au numéro déclaré");
+      if (this.registry.mode === "manual" && !manualResult) throw new DealPmeError(ErrorCode.VALIDATION_FAILED, "Saisie manuelle complète et source requises");
+      if (this.registry.mode === "api" && manualResult) {
+        const latest = (await tx.select().from(registryConsultations).where(eq(registryConsultations.companyId, companyId)).orderBy(desc(registryConsultations.createdAt), desc(registryConsultations.id)).limit(1))[0];
+        if (!options.fallbackReason || !latest || latest.id !== options.fallbackFromId || latest.outcome !== "UNAVAILABLE") throw new DealPmeError(ErrorCode.INVALID_TRANSITION, "Reprise manuelle : incident courant et motif requis");
+      }
+      let result: RegistryLookupResult | null = null;
+      let outcome: string;
+      let reason = manualResult?.reason ?? options.fallbackReason ?? null;
+      const mode = manualResult ? "manual" : "api";
+      try {
+        result = manualResult
+          ? { found: true, legalName: manualResult.legalName, legalForm: manualResult.legalForm, status: manualResult.status, sourceRef: manualResult.sourceRef, verifiedAt: new Date().toISOString(), provider: "manual", synthetic: false }
+          : await this.registry.lookup({ rccmNumber });
+        outcome = manualResult && manualResult.decision !== "CONFIRMED" ? manualResult.decision : registryOutcome(result, company, rccmNumber);
+      } catch (error) {
+        if (!(error instanceof RegistryError)) throw error;
+        outcome = "UNAVAILABLE";
+        reason = error.code;
+      }
+      const recordId = outcome === "CONFIRMED" && result && !result.synthetic ? newId() : null;
+      if (recordId && result) await tx.insert(registryRecords).values({
+        id: recordId, companyId, rccmNumber, legalName: result.legalName!, legalForm: result.legalForm as typeof company.legalForm,
+        status: result.status!, registeredAddress: result.registeredAddress ?? null, officers: result.officers ?? [],
+        verifiedAt: new Date(result.verifiedAt), verifiedBy: officer.userId, sourceRef: result.sourceRef, mode,
+      });
+      const consultationId = newId();
+      const synthetic = result?.synthetic ?? (!manualResult && this.registry.provider === "mock");
+      await tx.insert(registryConsultations).values({
+        id: consultationId, companyId, requestId, requestHash, officerUserId: officer.userId, rccmNumber,
+        declaredIdentity: { legalName: company.legalName, legalForm: company.legalForm, rccmNumber: company.rccmNumber },
+        mode, provider: result?.provider ?? this.registry.provider, synthetic, outcome, result, reason,
+        fallbackFromId: options.fallbackFromId ?? null, registryRecordId: recordId, createdAt: new Date(),
       });
       await tx.update(companies).set({ registryRecordId: recordId }).where(eq(companies.id, companyId));
-      await this.audit.record({ action: "REGISTRY_VERIFIED", actorUserId: officer.userId, subjectType: "company", subjectId: companyId, outcome: "OK", correlationId, metadata: { mode: this.registry.mode } }, tx);
+      await this.audit.record({ action: "REGISTRY_VERIFIED", actorUserId: officer.userId, subjectType: "company", subjectId: companyId, outcome: outcome === "CONFIRMED" ? "OK" : "FAILED", correlationId, metadata: { mode, outcome, synthetic, consultationId, fallbackFromId: options.fallbackFromId ?? null, fallbackReason: options.fallbackReason ?? null, decisionReason: manualResult?.reason ?? null } }, tx);
+      return { consultationId, registryRecordId: recordId, outcome, synthetic };
     });
-    return { registryRecordId: recordId };
   }
 
   /**
@@ -91,14 +112,17 @@ export class InstitutionService {
    * Préalable : une vérification RCCM / CFE existe pour l'entreprise ; sans elle, l'octroi est refusé.
    */
   async decideCertification(req: CertificationDecisionRequest, officer: Principal, correlationId: string) {
-    const company = await withTenant(this.db, officer, async (tx) => (await tx.select({ id: companies.id, registryRecordId: companies.registryRecordId }).from(companies).where(eq(companies.id, req.companyId)).limit(1))[0]);
-    if (!company) throw new DealPmeError(ErrorCode.NOT_FOUND, "Entreprise introuvable");
-    if (req.decision === "GRANTED" && !company.registryRecordId) {
-      await this.audit.rejection({ action: "CERTIFICATION_DECIDED", actorUserId: officer.userId, subjectType: "company", subjectId: req.companyId, outcome: "FAILED", correlationId, metadata: { decision: req.decision, reason: "REGISTRY_NOT_VERIFIED" } });
-      throw new DealPmeError(ErrorCode.INVALID_TRANSITION, "La certification exige une vérification RCCM / CFE préalable", { reason: "REGISTRY_NOT_VERIFIED" });
-    }
     const id = newId();
-    await withTenant(this.db, officer, async (tx) => {
+    let registryDenied = false;
+    try { await withTenant(this.db, officer, async (tx) => {
+      const company = (await tx.select().from(companies).where(eq(companies.id, req.companyId)).for("update").limit(1))[0];
+      if (!company) throw new DealPmeError(ErrorCode.NOT_FOUND, "Entreprise introuvable");
+      if (company.ownerOrganisationId === officer.organisationId) throw new DealPmeError(ErrorCode.FORBIDDEN, "Décision sur sa propre entreprise interdite");
+      const record = company.registryRecordId ? (await tx.select().from(registryRecords).where(and(eq(registryRecords.id, company.registryRecordId), eq(registryRecords.companyId, company.id))).limit(1))[0] : undefined;
+      if (req.decision === "GRANTED" && (!record || registryOutcome({ ...record, found: true }, company, record.rccmNumber) !== "CONFIRMED")) {
+        registryDenied = true;
+        throw new DealPmeError(ErrorCode.INVALID_TRANSITION, "La certification exige une vérification RCCM / CFE réelle et conforme à l'identité courante", { reason: "REGISTRY_NOT_VERIFIED" });
+      }
       await tx.insert(certifications).values({
       id,
       companyId: req.companyId,
@@ -107,11 +131,14 @@ export class InstitutionService {
       officerUserId: officer.userId,
       expiresAt: req.expiresAt ? new Date(req.expiresAt) : null,
       revocationReason: req.decision === "REVOKED" ? (req.reason ?? "Motif non renseigné") : null,
-    });
+      });
     // Une décision clôt les demandes en cours : l'entreprise voit son instruction aboutie, pas une file muette.
       await this.requests.closeOpenRequests(req.companyId, id, tx);
       await this.audit.record({ action: "CERTIFICATION_DECIDED", actorUserId: officer.userId, subjectType: "company", subjectId: req.companyId, outcome: "OK", correlationId, metadata: { decision: req.decision } }, tx);
-    });
+    }); } catch (error) {
+      if (registryDenied) await this.audit.rejection({ action: "CERTIFICATION_DECIDED", actorUserId: officer.userId, subjectType: "company", subjectId: req.companyId, outcome: "FAILED", correlationId, metadata: { decision: req.decision, reason: "REGISTRY_NOT_VERIFIED" } });
+      throw error;
+    }
     return { certificationId: id };
   }
 
@@ -233,6 +260,12 @@ export class InstitutionService {
         .where(eq(deals.companyId, companyId))
         .orderBy(desc(deals.createdAt)),
     );
+    const consultationHistory = await withTenant(this.db, officer, async (tx) => tx.select({
+      id: registryConsultations.id, outcome: registryConsultations.outcome, mode: registryConsultations.mode,
+      provider: registryConsultations.provider, synthetic: registryConsultations.synthetic, result: registryConsultations.result,
+      reason: registryConsultations.reason, officerUserId: registryConsultations.officerUserId, createdAt: registryConsultations.createdAt,
+      declaredIdentity: registryConsultations.declaredIdentity, fallbackFromId: registryConsultations.fallbackFromId,
+    }).from(registryConsultations).where(eq(registryConsultations.companyId, companyId)).orderBy(desc(registryConsultations.createdAt), desc(registryConsultations.id)).limit(100));
     return {
       id: row.id,
       deals: companyDeals,
@@ -240,6 +273,8 @@ export class InstitutionService {
       owner: { id: row.ownerId, name: row.ownerName, membershipConfirmed: !!ownerConfirmedAt, membershipConfirmedAt: ownerConfirmedAt },
       registry: rec ? { legalName: rec.legalName, legalForm: rec.legalForm, status: rec.status, registeredAddress: rec.registeredAddress, officers: rec.officers, verifiedAt: rec.verifiedAt, mode: rec.mode, sourceRef: rec.sourceRef } : null,
       registryMode: this.registry.mode,
+      registryProvider: this.registry.provider,
+      consultationHistory: consultationHistory.map((c) => ({ ...c, stale: c.declaredIdentity.legalName !== row.legalName || c.declaredIdentity.legalForm !== row.legalForm || c.declaredIdentity.rccmNumber !== row.rccmNumber })),
       certification: statusOf(latest),
       history,
     };

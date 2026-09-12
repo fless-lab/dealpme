@@ -1,6 +1,8 @@
 import { Worker, type Job } from "bullmq";
 import IORedis from "ioredis";
 import { QUEUES, type IngestionJob, type MatchingJob, type NotificationJob, type WebhookJob } from "./queues/definitions.js";
+import { createSmtpAdapter } from "@dealpme/connector-email";
+import { AlertWorker } from "./alerts.js";
 
 /**
  * Worker DealPME. Un processus, plusieurs files. Concurrence pilotée par WORKER_CONCURRENCY.
@@ -8,6 +10,30 @@ import { QUEUES, type IngestionJob, type MatchingJob, type NotificationJob, type
  */
 const connection = new IORedis(process.env["REDIS_URL"] ?? "redis://localhost:6379", { maxRetriesPerRequest: null });
 const concurrency = Number(process.env["WORKER_CONCURRENCY"] ?? 4);
+if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 32) throw new Error("WORKER_CONCURRENCY invalide");
+const smtpSecure = process.env["SMTP_SECURE"] ?? "false";
+const requireTLS = process.env["SMTP_REQUIRE_TLS"] ?? "false";
+if (![smtpSecure, requireTLS].every((v) => v === "true" || v === "false")) throw new Error("Booléens SMTP invalides");
+if (process.env["NODE_ENV"] === "production" && (process.env["CONNECTOR_EMAIL_PROVIDER"] !== "smtp" || (smtpSecure !== "true" && requireTLS !== "true") || !process.env["SMTP_USER"] || !process.env["SMTP_PASSWORD"])) throw new Error("SMTP réel authentifié et TLS requis");
+const alerts = new AlertWorker(process.env["DATABASE_URL_WORKER"] ?? "", createSmtpAdapter({
+  host: process.env["SMTP_HOST"] ?? "127.0.0.1", port: Number(process.env["SMTP_PORT"] ?? 1025),
+  from: process.env["EMAIL_FROM"] ?? "notifications@demo.dealpme.local", secure: smtpSecure === "true", requireTLS: requireTLS === "true",
+  ...(process.env["SMTP_USER"] ? { user: process.env["SMTP_USER"]!, password: process.env["SMTP_PASSWORD"]! } : {}),
+}), (process.env["APP_BASE_URL"] ?? "http://localhost:3000").replace(/\/$/, ""));
+let stopped = false;
+async function pollAlerts() {
+  while (!stopped) {
+    try {
+      await alerts.matchBatch();
+      for (let i = 0; i < 50 && !stopped; i++) if (!await alerts.deliverOne()) break;
+    } catch {
+      // eslint-disable-next-line no-console
+      console.error(JSON.stringify({ service: "worker", event: "ALERT_POLL_FAILED" }));
+    }
+    if (!stopped) await new Promise((resolve) => setTimeout(resolve, 5000));
+  }
+}
+const polling = pollAlerts();
 
 function log(queue: string, job: Job, message: string): void {
   // eslint-disable-next-line no-console
@@ -16,13 +42,13 @@ function log(queue: string, job: Job, message: string): void {
 
 const workers = [
   new Worker<MatchingJob>(QUEUES.MATCHING, async (job) => {
-    // V1 : rankMatches (@dealpme/rules) sur les opportunités T0 et la thèse de l'investisseur ; alerte seulement avec opt-in.
-    log(QUEUES.MATCHING, job, `matching pour ${job.data.investorUserId} (à brancher sur la base core en lecture)`);
+    await alerts.matchBatch();
+    log(QUEUES.MATCHING, job, "intentions persistées");
   }, { connection, concurrency }),
 
   new Worker<NotificationJob>(QUEUES.NOTIFICATIONS, async (job) => {
-    // Consentement vérifié côté API avant mise en file ; ici : envoi via le connecteur SMS ou email, avec repli.
-    log(QUEUES.NOTIFICATIONS, job, `${job.data.channel} ${job.data.templateKey} -> ${job.data.category}`);
+    await alerts.deliverOne();
+    log(QUEUES.NOTIFICATIONS, job, "outbox traitée avec réévaluation des droits");
   }, { connection, concurrency }),
 
   new Worker<IngestionJob>(QUEUES.INGESTION, async (job) => {
@@ -44,7 +70,10 @@ for (const w of workers) {
 }
 
 async function shutdown(): Promise<void> {
+  stopped = true;
   await Promise.all(workers.map((w) => w.close()));
+  await polling;
+  await alerts.close();
   await connection.quit();
   process.exit(0);
 }

@@ -1,0 +1,16 @@
+[Unit]
+Description=DealPME — sondes et notification d'incident
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=dealpme
+WorkingDirectory=/opt/dealpme/current
+EnvironmentFile=/etc/dealpme/monitor.env
+ExecStart=/usr/bin/node devX/monitor.mjs
+StateDirectory=dealpme-monitor
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+StandardOutput=journal
+StandardError=journal

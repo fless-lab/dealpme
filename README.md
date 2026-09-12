@@ -5,8 +5,9 @@ Place de marché de transmission et reprise de PME en Afrique francophone (zone 
 Périmètre de référence : cahier des charges v0 approuvé (25/06/2026) et Référentiel de processus P04 à P25. Suivi du projet : `DealPME_Suivi.xlsx` à la racine (régénérable avec `devX/build_suivi.py`).
 
 Plan actif après réunion direction : [plan d'exécution par lots](docs/PLAN_EXECUTION.md), également dans
-l'onglet `Plan_execution` du classeur. **L01/L02 terminés, L03 opérationnel en local**
-([notifications](docs/NOTIFICATIONS.md)) ; recettes fournisseurs encore ouvertes. Prochain lot indépendant : **L04 — CFE, alertes et exploitation**.
+l'onglet `Plan_execution` du classeur. **L01/L02 terminés, L03/L04 opérationnels en local**
+([notifications](docs/NOTIFICATIONS.md), [registre et exploitation](docs/EXPLOITATION_L04.md)) ;
+recettes fournisseurs et installation sur serveur dédié encore ouvertes. Prochain lot : **L05 — événements administrés depuis DealPME**.
 Contexte : [bilan initial du 12/09/2026](docs/BILAN_AVANCEMENT_2026-09-12.md) et
 [compte rendu de direction](docs/COMPTE_RENDU_DIRECTION_2026-09-12.md).
 Le fichier `DealPME_Suivi.ods` est une archive d'un ancien calendrier ; le suivi actif est le `.xlsx`.

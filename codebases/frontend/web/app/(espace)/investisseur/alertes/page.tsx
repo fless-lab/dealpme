@@ -17,6 +17,8 @@ interface Alert {
   optInAt: string | null;
   createdAt: string;
 }
+interface Delivery { id: string; alertId: string; score: number; reasons: string[]; state: string; attempts: number; updatedAt: string }
+const DELIVERY_STATE: Record<string, string> = { PENDING: "En attente", SENDING: "En cours d'envoi", SENT: "Acceptée par le serveur email", RETRY: "Nouvelle tentative programmée", CANCELLED: "Annulée (consentement ou accès)", FAILED: "Échec de livraison", UNKNOWN: "Résultat indéterminé — vérification opérateur requise" };
 
 const SECTOR_LABEL = new Map(SECTORS.map((s) => [s.code, s.label]));
 
@@ -24,9 +26,11 @@ const SECTOR_LABEL = new Map(SECTORS.map((s) => [s.code, s.label]));
 export default async function AlertsPage() {
   const { token } = await requireRole("INVESTOR", "INVESTOR_DIASPORA", "BANK", "ADVISOR");
   let items: Alert[] = [];
+  let deliveries: Delivery[] = [];
   let error: string | null = null;
   try {
-    items = (await api<{ items: Alert[] }>("/alerts", { token })).items;
+    const result = await api<{ items: Alert[]; deliveries: Delivery[] }>("/alerts", { token });
+    items = result.items; deliveries = result.deliveries;
   } catch (e) {
     error = e instanceof ApiError ? e.envelope.message : "Service indisponible";
   }
@@ -46,6 +50,13 @@ export default async function AlertsPage() {
           Depuis la <a href="/opportunites">place de marché</a>, filtrez puis enregistrez la recherche.
         </StateBanner>
       ) : null}
+      {deliveries.length ? <Panel title="Historique des notifications" controlId="INV_ALERT_DELIVERIES">
+        <p>Critères publics T0 uniquement. Une acceptation SMTP ne confirme pas la remise au destinataire.</p>
+        <ul className="dp-stack">{deliveries.map((d) => <li key={d.id}>
+          <strong>{DELIVERY_STATE[d.state] ?? d.state}</strong> · {fmtDate(d.updatedAt)} · Score : {d.score}/100 · Tentatives : {d.attempts}
+          <ul>{d.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul>
+        </li>)}</ul>
+      </Panel> : null}
 
       {items.length > 0 ? (
         <Panel title="Alertes" controlId="INV_ALERTS">

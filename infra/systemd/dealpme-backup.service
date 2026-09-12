@@ -1,0 +1,15 @@
+[Unit]
+Description=DealPME — sauvegarde complète en fenêtre de maintenance
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+User=dealpme-backup
+WorkingDirectory=/opt/dealpme/current
+EnvironmentFile=/etc/dealpme/backup.env
+ExecStart=/usr/bin/bash devX/backup.sh /var/backups/dealpme
+UMask=0077
+TimeoutStartSec=1800
+StandardOutput=journal
+StandardError=journal

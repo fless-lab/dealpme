@@ -14,6 +14,7 @@ import { correlationIdOf } from "../../platform/correlation-id.middleware.js";
 import { validate } from "../../platform/zod.pipe.js";
 import { CertificationRequestService } from "./certification-request.service.js";
 import { InstitutionService } from "./institution.service.js";
+import { ManualRegistryResultSchema } from "./registry-review.js";
 
 const RemediationSchema = z.object({
   items: z
@@ -23,9 +24,10 @@ const RemediationSchema = z.object({
 });
 
 const ManualRegistrySchema = RegistryVerificationRequestSchema.extend({
-  manualResult: z
-    .object({ legalName: z.string().min(1), legalForm: z.string().min(1), status: z.string().min(1), sourceRef: z.string().min(3) })
-    .optional(),
+  manualResult: ManualRegistryResultSchema.optional(),
+  requestId: z.uuid().optional(),
+  fallbackFromId: z.uuid().optional(),
+  fallbackReason: z.string().trim().min(3).max(2000).optional(),
 });
 
 /** Espace CCI-Togo : réservé aux officiers, rôles et journal séparés du back-office plateforme. */
@@ -102,7 +104,7 @@ export class InstitutionController {
   @Post("registry-verifications")
   @HttpCode(201)
   verify(@Body(validate(ManualRegistrySchema)) body: z.infer<typeof ManualRegistrySchema>, @CurrentPrincipal() officer: Principal, @Req() req: Request) {
-    return this.institution.verifyRegistry(body.companyId, body.rccmNumber, officer, correlationIdOf(req), body.manualResult);
+    return this.institution.verifyRegistry(body.companyId, body.rccmNumber, officer, correlationIdOf(req), body.manualResult, body);
   }
 
   @Post("certifications")

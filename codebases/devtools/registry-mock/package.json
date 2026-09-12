@@ -1,0 +1,15 @@
+{
+  "name": "@dealpme/registry-mock",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "start": "node dist/server.js"
+  },
+  "dependencies": { "@dealpme/connector-registry": "*" },
+  "devDependencies": { "@dealpme/config": "*" }
+}

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { resolveRegistryConfig } from "@dealpme/connector-registry";
 
 /**
  * Variables d'environnement validées au démarrage. Un secret manquant fait échouer le démarrage,
@@ -30,7 +31,11 @@ const EnvSchema = z.object({
   FIELD_ENCRYPTION_KEY_ID: z.string().min(1).default("v1"),
   FIELD_ENCRYPTION_KEY_PREVIOUS: z.string().min(16).optional(),
   FIELD_ENCRYPTION_KEY_PREVIOUS_ID: z.string().min(1).optional(),
-  CONNECTOR_REGISTRY_MODE: z.enum(["api", "manual"]).default("manual"),
+  CONNECTOR_REGISTRY_MODE: z.enum(["api", "manual"]).optional(),
+  CFE_API_ENABLED: z.enum(["true", "false"]).optional(),
+  CONNECTOR_REGISTRY_PROVIDER: z.enum(["mock", "cfe"]).default("mock"),
+  CFE_API_BASE_URL: z.string().optional(),
+  CFE_API_TIMEOUT_MS: z.string().optional(),
   CONNECTOR_ANTIVIRUS_MODE: z.enum(["clamav", "fake"]).default("fake"),
   CLAMAV_HOST: z.string().default("localhost"),
   CLAMAV_PORT: z.coerce.number().int().default(3310),
@@ -62,6 +67,9 @@ const EnvSchema = z.object({
   RPS_DEFAULT_CIRCLE_CAP: z.coerce.number().int().positive().default(50),
 }).superRefine((env, ctx) => {
   const issue = (path: string, message: string) => ctx.addIssue({ code: "custom", path: [path], message });
+  try {
+    resolveRegistryConfig({ NODE_ENV: env.NODE_ENV, CFE_API_ENABLED: env.CFE_API_ENABLED, CONNECTOR_REGISTRY_MODE: env.CONNECTOR_REGISTRY_MODE, CONNECTOR_REGISTRY_PROVIDER: env.CONNECTOR_REGISTRY_PROVIDER, CFE_API_BASE_URL: env.CFE_API_BASE_URL, CFE_API_TIMEOUT_MS: env.CFE_API_TIMEOUT_MS });
+  } catch (error) { issue("CFE_API_ENABLED", error instanceof Error ? error.message : "Configuration registre invalide"); }
   let databaseUser = "";
   try { databaseUser = new URL(env.DATABASE_URL_CORE).username; } catch { issue("DATABASE_URL_CORE", "URL PostgreSQL invalide"); }
   if (databaseUser === "dealpme_core" && env.NODE_ENV !== "test") issue("DATABASE_URL_CORE", "Utiliser le rôle applicatif dealpme_api, pas le propriétaire");

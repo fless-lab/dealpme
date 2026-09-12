@@ -1,0 +1,8 @@
+[Unit]
+Description=DealPME — supervision chaque minute
+[Timer]
+OnBootSec=60
+OnUnitActiveSec=60
+Unit=dealpme-monitor.service
+[Install]
+WantedBy=timers.target

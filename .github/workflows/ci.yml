@@ -45,6 +45,14 @@ jobs:
         env:
           CI_JOB_STATUS: ${{ job.status }}
         run: node devX/ci-summary.mjs
+      - name: Artefact de livraison vérifié
+        run: node devX/package-release.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dealpme-release-${{ github.sha }}
+          path: .ci-artifacts/release/
+          if-no-files-found: error
+          retention-days: 14
       - name: Preuves de CI (sans comptes ni logs privés)
         if: always()
         uses: actions/upload-artifact@v4

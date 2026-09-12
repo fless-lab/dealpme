@@ -3,6 +3,24 @@
  "genereLe": "2026-09-11",
  "apropos": "Registre des contrôles d'interface. Le standard d'implémentation du corpus exige que chaque contrôle visible porte un identifiant présent ici, avec son contrat : déclencheur, autorisation, source de données, état de succès, état bloqué et événement d'audit quand l'action est sensible. Un contrôle absent du registre bloque la recette (UNREGISTERED_CONTROL, P0 du Release Gate).\nDeux origines : 'corpus' pour les identifiants du Master Developer Handoff V3.1, qui font autorité sur les surfaces qu'il couvre (fiche d'opportunité, data room, gabarit de service) ; 'depot' pour les surfaces que le corpus ne décrit pas. Les entrées 'depot' portent un contrat à documenter tant que la décision A15 n'est pas rendue : leur présence ici rend la dette visible et empêche qu'elle grandisse.",
  "controles": {
+  "CCI_REGISTRY_HISTORY": {
+   "origine": "depot", "surface": "Instruction CCI", "libelle": "Historique des consultations", "action": "Afficher résultat, source, mode, officier et origine synthétique", "autorisation": "Officier CCI ; isolation RLS", "source": "GET /institution/companies/:id", "succes": "Historique et obsolescence visibles", "bloque": "Pas de transformation d'une preuve mock en preuve réelle", "audit": "REGISTRY_VERIFIED", "contrat": "documente", "utilise": true
+  },
+  "CCI_REGISTRY_FALLBACK": {
+   "origine": "depot", "surface": "Instruction CCI", "libelle": "Reprise manuelle", "action": "Choisir la reprise après le dernier incident API", "autorisation": "Officier CCI", "source": "Dernière consultation UNAVAILABLE", "succes": "Saisie manuelle explicite", "bloque": "Sans incident courant la reprise est refusée", "audit": "REGISTRY_VERIFIED à la soumission", "contrat": "documente", "utilise": true
+  },
+  "CCI_REGISTRY_FALLBACK_REASON": {
+   "origine": "depot", "surface": "Instruction CCI", "libelle": "Motif de reprise", "action": "Motiver la reprise manuelle après panne", "autorisation": "Officier CCI", "source": "Saisie opérateur", "succes": "Motif conservé avec la source", "bloque": "Motif absent refusé", "audit": "REGISTRY_VERIFIED", "contrat": "documente", "utilise": true
+  },
+  "CCI_REGISTRY_DECISION": {
+   "origine": "depot", "surface": "Instruction CCI", "libelle": "Conclusion registre", "action": "Confirmer, signaler divergence, demander complément ou refuser", "autorisation": "Officier CCI hors entreprise propre", "source": "POST /institution/registry-verifications", "succes": "Conclusion nominative historisée", "bloque": "Confirmation non conforme ne crée pas de prérequis", "audit": "REGISTRY_VERIFIED", "contrat": "documente", "utilise": true
+  },
+  "CCI_REGISTRY_REASON": {
+   "origine": "depot", "surface": "Instruction CCI", "libelle": "Motif de conclusion", "action": "Motiver une conclusion non confirmée", "autorisation": "Officier CCI", "source": "Saisie opérateur", "succes": "Motif visible dans l'historique", "bloque": "Motif absent refusé hors confirmation", "audit": "REGISTRY_VERIFIED", "contrat": "documente", "utilise": true
+  },
+  "INV_ALERT_DELIVERIES": {
+   "origine": "depot", "surface": "Mes alertes", "libelle": "Historique des notifications", "action": "Afficher états et raisons du matching", "autorisation": "Auteur de l'alerte par RLS", "source": "GET /alerts et notification_intent", "succes": "Acceptation SMTP distincte de remise et résultat inconnu", "bloque": "Aucune intention d'un autre utilisateur", "audit": "ALERT_DELIVERY", "contrat": "documente", "utilise": true
+  },
   "VERIFY_EMAIL_REISSUE": {
    "origine": "depot", "surface": "Vérification email", "libelle": "Recevoir un nouveau code via la connexion", "action": "Revenir à la connexion et authentifier le compte avant une nouvelle émission", "autorisation": "Mot de passe vérifié ; émission limitée par utilisateur", "source": "POST /auth/login puis transport SMTP", "succes": "Nouveau défi dans la page de vérification, code reçu dans la boîte", "bloque": "Aucune session avant vérification, pas de code dans URL ou réponse", "audit": "OTP_ISSUED ou OTP_DELIVERY_FAILED", "contrat": "documente", "utilise": true
   },

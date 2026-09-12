@@ -14,12 +14,14 @@
   },
   "dependencies": {
     "@dealpme/domain": "*",
+    "@dealpme/notifications": "*",
     "@dealpme/rules": "*",
     "@dealpme/connector-sms": "*",
     "@dealpme/connector-email": "*",
     "@dealpme/connector-storage": "*",
     "bullmq": "^5.58.0",
-    "ioredis": "^5.7.0"
+    "ioredis": "^5.7.0",
+    "postgres": "^3.4.7"
   },
   "devDependencies": {
     "@dealpme/config": "*",

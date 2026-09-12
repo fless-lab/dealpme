@@ -148,7 +148,7 @@ try {
     dc(["up", "-d", "--build"], { timeout: 180_000 });
     await waitFor("Postgres, Redis, ClamAV et stockage", () => {
       const ids = dc(["ps", "-aq"]).split(/\s+/).filter(Boolean);
-      if (ids.length !== 9) return false;
+      if (ids.length !== 10) return false;
       const containers = JSON.parse(command("docker", ["inspect", ...ids]));
       return containers.every((container) => {
         const name = container.Config.Labels["com.docker.compose.service"];
@@ -164,6 +164,7 @@ try {
     const core = mappedPort("postgres-core", 5432);
     env.DATABASE_URL_CORE = `postgres://dealpme_api:dealpme_api@127.0.0.1:${core}/dealpme_core`;
     env.DATABASE_URL_CORE_ADMIN = `postgres://dealpme_core:dealpme_core@127.0.0.1:${core}/dealpme_core`;
+    env.DATABASE_URL_WORKER = `postgres://dealpme_worker:${randomBytes(24).toString("hex")}@127.0.0.1:${core}/dealpme_core`;
     env.DATABASE_URL_VDR = `postgres://dealpme_vdr:dealpme_vdr@127.0.0.1:${mappedPort("postgres-vdr", 5432)}/dealpme_vdr`;
     env.DATABASE_URL_RPS = `postgres://dealpme_rps:dealpme_rps@127.0.0.1:${mappedPort("postgres-rps", 5432)}/dealpme_rps`;
     env.REDIS_URL = `redis://127.0.0.1:${mappedPort("redis", 6379)}`;
@@ -179,6 +180,8 @@ try {
     env.SMTP_PORT = String(mappedPort("mailpit", 1025));
     env.MAILPIT_API_URL = `http://127.0.0.1:${mappedPort("mailpit", 8025)}`;
     env.SMS_LOCAL_BASE_URL = `http://127.0.0.1:${mappedPort("sms-inbox", 8026)}`;
+    env.CFE_API_ENABLED = "false";
+    env.CFE_API_BASE_URL = `http://127.0.0.1:${mappedPort("registry-mock", 8027)}`;
     await waitFor("MinIO", () => httpReady(`${env.S3_ENDPOINT}/minio/health/ready`, 200));
   });
   await step("Migrations et RLS", () => {
@@ -187,6 +190,8 @@ try {
     command("npm", ["run", "db:migrate", "-w", "codebases/engine/rps"]);
     dc(["exec", "-T", "postgres-core", "psql", "-U", "dealpme_core", "-d", "dealpme_core", "-v", "ON_ERROR_STOP=1"],
       { input: readFileSync(join(root, "codebases/backend/api/drizzle/core/rls.sql"), "utf8") });
+    dc(["exec", "-T", "postgres-core", "psql", "-U", "dealpme_core", "-d", "dealpme_core", "-v", "ON_ERROR_STOP=1"],
+      { input: `ALTER ROLE dealpme_worker LOGIN PASSWORD '${new URL(env.DATABASE_URL_WORKER).password}';` });
   });
   await step("Jeu synthétique isolé", () => {
     command(process.execPath, ["--require", "tsx/cjs", "src/seed/seed.ts"], { cwd: join(root, "codebases/backend/api") });
@@ -213,6 +218,15 @@ try {
   });
   await step("L03 : SMTP, SMS, pannes et parcours OTP", () => {
     command(process.execPath, ["devX/l03-integration.mjs"], { timeout: 240_000 });
+  });
+  await step("L04 : registre manuel et mock HTTP", () => {
+    command(process.execPath, ["devX/l04-registry.mjs"], { timeout: 240_000 });
+  });
+  await step("L04 : matching, outbox et consentement à l'envoi", () => {
+    command(process.execPath, ["devX/l04-alerts.mjs"], { timeout: 120_000 });
+  });
+  await step("L04 : incident reçu et restauration complète", () => {
+    command(process.execPath, ["devX/l04-operations.mjs"], { timeout: 300_000 });
   });
   report.status = "PASS";
 } catch (error) {

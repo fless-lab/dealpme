@@ -148,9 +148,11 @@ export class DealService {
       const page = rows.slice(0, q.limit);
       const companyIds = page.map((r) => r.companyId);
       const certRows = companyIds.length
-        ? await tx.select({ companyId: certifications.companyId, decision: certifications.decision, expiresAt: certifications.expiresAt }).from(certifications).where(inArray(certifications.companyId, companyIds))
+        ? await tx.select().from(certifications).where(inArray(certifications.companyId, companyIds)).orderBy(desc(certifications.decidedAt), desc(certifications.id))
         : [];
-      const ready = new Set(certRows.filter((c) => c.decision === "GRANTED" && (!c.expiresAt || c.expiresAt.getTime() > Date.now())).map((c) => c.companyId));
+      const latest = new Map<string, typeof certifications.$inferSelect>();
+      for (const row of certRows) if (!latest.has(row.companyId)) latest.set(row.companyId, row);
+      const ready = new Set([...latest.values()].filter((c) => c.decision === "GRANTED" && !c.registryInvalidatedAt && (!c.expiresAt || c.expiresAt.getTime() > Date.now())).map((c) => c.companyId));
 
       const items = page
         .map((r) =>
@@ -200,7 +202,7 @@ export class DealService {
   }
 
   private async isDealReady(tx: Parameters<Parameters<typeof withTenant>[2]>[0], companyId: string): Promise<boolean> {
-    const rows = await tx.select({ decision: certifications.decision, expiresAt: certifications.expiresAt }).from(certifications).where(eq(certifications.companyId, companyId));
-    return rows.some((c) => c.decision === "GRANTED" && (!c.expiresAt || c.expiresAt.getTime() > Date.now()));
+    const rows = await tx.select().from(certifications).where(eq(certifications.companyId, companyId)).orderBy(desc(certifications.decidedAt), desc(certifications.id)).limit(1);
+    return rows.some((c) => c.decision === "GRANTED" && !c.registryInvalidatedAt && (!c.expiresAt || c.expiresAt.getTime() > Date.now()));
   }
 }

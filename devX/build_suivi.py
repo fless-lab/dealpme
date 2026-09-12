@@ -193,6 +193,12 @@ _check_progress_keys()
 # Les acquis V1 de PROGRESS restent inchangés ; leurs compléments ont leurs propres tâches.
 # (statut, avancement estimé, preuve / reste à faire)
 AUDIT_REVIEW = {
+    "V1-109": ("Complétée", 1, "L04 : mock HTTP, sélection stricte, manuel sans réseau, historique append-only, reprise motivée, concurrence et navigateur éprouvés. Aucun octroi depuis une preuve synthétique. Preuve : qa/l04-verification.json."),
+    "V1-035": ("En revue", 0.95, "Parcours manuel/mock éprouvés ; identité modifiée invalide preuve et badge sans effacer la décision historique. Contrat CFE réel A02 toujours attendu ; fournisseur réel refusé tant qu'il n'est pas qualifié."),
+    "V1-096": ("Complétée", 1, "L04 : matching T0 explicable, intentions persistées, worker et SMTP, consentement/droits relus à l'envoi, reprise bornée, dédoublonnage et résultat inconnu éprouvés. Recette SMTP fournisseur séparée V1-093."),
+    "V1-097": ("En revue", 0.85, "Incident 5xx provoqué et notification reçue dans Mailpit ; sondes bornées, métriques et modèles journald/systemd livrés. Installation centralisée et astreinte réelles à qualifier sur A19/A16."),
+    "V1-098": ("En revue", 0.9, "Sauvegardes/manifeste et restauration jetable vérifiés : 47 tables, 5 objets déchiffrés ; archive altérée refusée, aucune erreur masquée. Timer quotidien livré ; installation, rétention et copie hors hôte attendent A19."),
+    "V1-009": ("En cours", 0.8, "Artefact CI avec empreinte et référence, unités système et procédure de bascule/retour arrière préparés. Aucun déploiement distant attesté : serveur, DNS et accès A19 attendus."),
     "V1-093": ("En revue", 0.9, "SMTP/Mailpit opérationnel, TLS/authentification et pannes testés ; recette chez le fournisseur retenu encore attendue. Preuves locales : qa/l03-verification.json."),
     "V1-101": ("Complétée", 1, "Boîte SMS réutilisable livrée : interface, API, dédoublonnage, rétention, erreurs et sécurité locale testés. Preuve : qa/l03-verification.json."),
     "V1-102": ("En revue", 0.9, "Contrats fake/SMTP/passerelle JSON testés ; OTP et navigateur lisent les boîtes, sans devCode. Qualification fournisseur réelle encore ouverte avec V1-028."),
@@ -230,6 +236,8 @@ AUDIT_CRITERIA = {
 # Dates de clôture du suivi par identifiant, selon le calendrier de livraison.
 # Une date après la fin prévue est conservée ; aucune borne liée à la date du jour.
 COMPLETION_DATES: dict[str, dt.date] = {
+    "V1-109": dt.date(2026, 9, 28),
+    "V1-096": dt.date(2026, 10, 2),
     "V1-091": dt.date(2026, 9, 16),
     "V1-094": dt.date(2026, 9, 23),
     "V1-095": dt.date(2026, 9, 25),

@@ -105,6 +105,12 @@ export const CLASSIFICATION: Record<string, Record<string, DataClass>> = {
     sourceRef: "INTERNAL",
     mode: "INTERNAL",
   },
+  registryConsultations: {
+    id: "INTERNAL", companyId: "INTERNAL", requestId: "INTERNAL", requestHash: "INTERNAL",
+    officerUserId: "INTERNAL", rccmNumber: "INTERNAL", declaredIdentity: "INTERNAL", mode: "INTERNAL",
+    provider: "INTERNAL", synthetic: "INTERNAL", outcome: "INTERNAL", result: "INTERNAL", reason: "INTERNAL",
+    fallbackFromId: "INTERNAL", registryRecordId: "INTERNAL", createdAt: "INTERNAL",
+  },
   membershipConfirmations: {
     id: "INTERNAL",
     organisationId: "INTERNAL",
@@ -167,6 +173,7 @@ export const CLASSIFICATION: Record<string, Record<string, DataClass>> = {
     decidedAt: "PUBLIC",
     expiresAt: "PUBLIC",
     revocationReason: "INTERNAL",
+    registryInvalidatedAt: "INTERNAL",
   },
   indicativeValuations: {
     id: "INTERNAL",
@@ -322,6 +329,11 @@ export const CLASSIFICATION: Record<string, Record<string, DataClass>> = {
     optInAt: "INTERNAL",
     revokedAt: "INTERNAL",
     createdAt: "INTERNAL",
+  },
+  notificationIntents: {
+    id: "INTERNAL", alertId: "INTERNAL", dealId: "INTERNAL", userId: "INTERNAL", organisationId: "INTERNAL",
+    score: "INTERNAL", reasons: "INTERNAL", state: "INTERNAL", attempts: "INTERNAL", nextAttemptAt: "INTERNAL",
+    leaseUntil: "INTERNAL", expiresAt: "INTERNAL", providerRef: "INTERNAL", lastError: "INTERNAL", createdAt: "INTERNAL", updatedAt: "INTERNAL",
   },
 };
 

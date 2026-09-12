@@ -130,6 +130,26 @@ export const registryRecords = pgTable("registry_record", {
   mode: varchar("mode", { length: 16 }).notNull(), // api | manual
 });
 
+/** Consultations append-only : y compris absence, incident et synthétique. Aucun comblement par le déclaratif. */
+export const registryConsultations = pgTable("registry_consultation", {
+  id: id(),
+  companyId: uuid("company_id").notNull().references(() => companies.id),
+  requestId: uuid("request_id").notNull(),
+  requestHash: varchar("request_hash", { length: 64 }).notNull(),
+  officerUserId: uuid("officer_user_id").notNull(),
+  rccmNumber: varchar("rccm_number", { length: 64 }).notNull(),
+  declaredIdentity: jsonb("declared_identity").$type<{ legalName: string; legalForm: string; rccmNumber: string | null }>().notNull(),
+  mode: varchar("mode", { length: 16 }).notNull(),
+  provider: varchar("provider", { length: 32 }).notNull(),
+  synthetic: boolean("synthetic").notNull(),
+  outcome: varchar("outcome", { length: 32 }).notNull(),
+  result: jsonb("result").$type<import("@dealpme/connector-registry").RegistryLookupResult>(),
+  reason: varchar("reason", { length: 2000 }),
+  fallbackFromId: uuid("fallback_from_id"),
+  registryRecordId: uuid("registry_record_id"),
+  createdAt: createdAt(),
+}, (t) => [uniqueIndex("registry_consultation_request_idx").on(t.companyId, t.requestId), index("registry_consultation_company_idx").on(t.companyId, t.createdAt)]);
+
 export const membershipConfirmations = pgTable("membership_confirmation", {
   id: id(),
   organisationId: uuid("organisation_id").notNull().references(() => organisations.id),
@@ -207,6 +227,7 @@ export const certifications = pgTable("certification", {
   decidedAt: timestamp("decided_at", { withTimezone: true }).notNull().defaultNow(),
   expiresAt: timestamp("expires_at", { withTimezone: true }),
   revocationReason: text("revocation_reason"),
+  registryInvalidatedAt: timestamp("registry_invalidated_at", { withTimezone: true }), // décision historique conservée, badge non courant
 });
 
 export const indicativeValuations = pgTable("indicative_valuation", {
@@ -452,3 +473,23 @@ export const savedAlerts = pgTable(
   },
   (t) => [index("saved_alert_user_idx").on(t.userId)],
 );
+
+/** Outbox durable : une intention par alerte/opportunité, contenu limité à la projection T0. */
+export const notificationIntents = pgTable("notification_intent", {
+  id: id(),
+  alertId: uuid("alert_id").notNull().references(() => savedAlerts.id),
+  dealId: uuid("deal_id").notNull().references(() => deals.id),
+  userId: uuid("user_id").notNull().references(() => users.id),
+  organisationId: uuid("organisation_id").notNull(),
+  score: integer("score").notNull(),
+  reasons: jsonb("reasons").$type<string[]>().notNull(),
+  state: varchar("state", { length: 16 }).notNull().default("PENDING"),
+  attempts: integer("attempts").notNull().default(0),
+  nextAttemptAt: timestamp("next_attempt_at", { withTimezone: true }).notNull().defaultNow(),
+  leaseUntil: timestamp("lease_until", { withTimezone: true }),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  providerRef: varchar("provider_ref", { length: 256 }),
+  lastError: varchar("last_error", { length: 64 }),
+  createdAt: createdAt(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [uniqueIndex("notification_intent_dedupe_idx").on(t.alertId, t.dealId), index("notification_intent_pending_idx").on(t.state, t.nextAttemptAt)]);

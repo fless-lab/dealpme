@@ -129,7 +129,7 @@ try {
     await request("/companies", { token: seller, body: { legalName: "L02 rollback entreprise", legalForm: "SARL" }, cid: "l02-fault-company", status: 500 });
     assert.equal(await scalar(admin`SELECT count(*) n FROM company WHERE legal_name='L02 rollback entreprise'`), 0);
   });
-  const company = await request("/companies", { token: seller, body: { legalName: "L02 entreprise", legalForm: "SARL" }, status: 201 });
+  const company = await request("/companies", { token: seller, body: { legalName: "L02 entreprise", legalForm: "SARL", rccmNumber: "TG-L02-TEST" }, status: 201 });
   const makeDeal = { companyId: company.companyId, dealType: "ASSET_DEAL", sectorCode: "TEST", regionCode: "KARA", turnoverBand: "LT_50M" };
   await check("Dossier : création et DealEvent annulés sur panne d'audit", async () => {
     await request("/deals", { token: seller, body: makeDeal, cid: "l02-fault-deal", status: 500 });

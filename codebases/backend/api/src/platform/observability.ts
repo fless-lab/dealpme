@@ -22,13 +22,10 @@ export interface RequestLog {
   roles?: string;
 }
 
-const REDACTED_QUERY = /(token|code|password|secret)=[^&]*/gi;
-
-/** Chemin journalisé sans ses valeurs sensibles : un code OTP ne doit jamais atterrir dans un journal. */
+/** Le modèle de route exclut paramètres, querystring et chemins arbitraires fournis par l'appelant. */
 function safePath(req: Request): string {
-  const path = req.originalUrl.split("?")[0] ?? req.originalUrl;
-  const query = req.originalUrl.includes("?") ? `?${req.originalUrl.split("?")[1]?.replace(REDACTED_QUERY, "$1=***")}` : "";
-  return `${path}${query}`;
+  const route = req.route as { path?: unknown } | undefined;
+  return typeof route?.path === "string" ? route.path : "/unmatched";
 }
 
 export function requestLogger(production: boolean) {
