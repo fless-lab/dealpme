@@ -124,6 +124,17 @@ V1-096 (alertes), V1-100 (recette navigateur).
 
 ## 5. Événements et compte fournisseur réutilisable
 
+Précision du chef de projet pendant L05 : préparer toutes les capacités Remo pertinentes, notamment
+le SSO s'il existe sur l'offre, le branding général du compte et celui de chaque événement. Les contrats,
+adaptateurs et scénarios doivent être prêts à être raccordés et testés dès réception des accès.
+Le protocole SSO et les paramètres privés seront confirmés sur la documentation reçue, puis implémentés
+derrière le contrat d'admission, sans refaire les écrans ou les règles d'accès de DealPME.
+
+Le profil de marque du compte est une ressource distincte, versionnée ; chaque événement hérite de ses
+valeurs ou applique ses surcharges explicites. La configuration d'un événement ne doit pas modifier
+implicitement la marque générale du compte mutualisé. La recette couvrira aussi l'effet de ces changements
+sur les autres produits et sur les liens d'entrée SSO.
+
 Conserver `RemoPort` et le connecteur existant comme point de départ. Le code métier manipule un événement,
 une session, une réservation et un profil de branding ; il ne construit pas de route fournisseur.
 Le périmètre exact du port évolue à partir des APIs effectivement vérifiées, pas de l'intitulé « API access ».

@@ -7,16 +7,10 @@ import { CurrentPrincipal, OptionalPrincipal, Roles, type Principal } from "../.
 import { correlationIdOf } from "../../platform/correlation-id.middleware.js";
 import { validate } from "../../platform/zod.pipe.js";
 import { EventsService } from "./events.service.js";
+import { CreateEventSchema, UpdateEventSchema } from "./event.schemas.js";
 
-const CreateEventSchema = z.object({
-  title: z.string().min(3).max(200),
-  description: z.string().max(4000).optional(),
-  startsAt: z.iso.datetime(),
-  endsAt: z.iso.datetime(),
-  capacity: z.number().int().positive().max(5000).default(100),
-  mode: z.enum(["DEALPME_FIRST", "REMO_FIRST"]).default("DEALPME_FIRST"),
-  campaignId: z.string().max(64).optional(),
-});
+const ReasonSchema=z.object({reason:z.string().trim().min(3).max(2000)});
+const AppointmentDecisionSchema=ReasonSchema.extend({decision:z.enum(["CONFIRM","REFUSE"])});
 const RegisterSchema = z.object({ displayName: z.string().min(2).max(120), consentContact: z.boolean().default(false) });
 const ConsentSchema = z.object({ consentContact: z.boolean() });
 const AppointmentSchema = z.object({ requestedSlot: z.iso.datetime(), dealId: IdSchema.nullable().default(null), crossBorderNoticeAcknowledged: z.boolean() });
@@ -29,6 +23,42 @@ export class EventsController {
   list(@OptionalPrincipal() principal: Principal | null) {
     return this.events.listPublished(principal);
   }
+
+  @Get("managed")
+  @Roles(Role.CCI_OFFICER,Role.PLATFORM_ADMIN)
+  managed(@CurrentPrincipal() principal:Principal) { return this.events.managed(principal); }
+
+  @Get("managed/:eventId")
+  @Roles(Role.CCI_OFFICER,Role.PLATFORM_ADMIN)
+  detail(@Param("eventId",validate(IdSchema)) id:string,@CurrentPrincipal() principal:Principal) { return this.events.detail(id,principal); }
+
+  @Post(":eventId/edit")
+  @HttpCode(200)
+  @Roles(Role.CCI_OFFICER,Role.PLATFORM_ADMIN)
+  edit(@Param("eventId",validate(IdSchema)) id:string,@Body(validate(UpdateEventSchema)) body:z.infer<typeof UpdateEventSchema>,@CurrentPrincipal() principal:Principal,@Req() req:Request) { return this.events.update(id,body,principal,correlationIdOf(req)); }
+
+  @Post(":eventId/cancel")
+  @HttpCode(200)
+  @Roles(Role.CCI_OFFICER,Role.PLATFORM_ADMIN)
+  cancel(@Param("eventId",validate(IdSchema)) id:string,@Body(validate(ReasonSchema)) body:z.infer<typeof ReasonSchema>,@CurrentPrincipal() principal:Principal,@Req() req:Request) { return this.events.cancel(id,body.reason,principal,correlationIdOf(req)); }
+
+  @Post(":eventId/sync-attendance")
+  @HttpCode(200)
+  @Roles(Role.CCI_OFFICER,Role.PLATFORM_ADMIN)
+  sync(@Param("eventId",validate(IdSchema)) id:string,@CurrentPrincipal() principal:Principal,@Req() req:Request) { return this.events.syncAttendance(id,principal,correlationIdOf(req)); }
+
+  @Get("diaspora/appointments")
+  @Roles(Role.INVESTOR,Role.INVESTOR_DIASPORA)
+  mine(@CurrentPrincipal() principal:Principal) { return this.events.appointments(principal); }
+
+  @Get("diaspora/managed")
+  @Roles(Role.CCI_OFFICER,Role.PLATFORM_ADMIN)
+  appointmentQueue(@CurrentPrincipal() principal:Principal) { return this.events.appointments(principal,true); }
+
+  @Post("diaspora/:appointmentId/decision")
+  @HttpCode(200)
+  @Roles(Role.CCI_OFFICER,Role.PLATFORM_ADMIN)
+  appointmentDecision(@Param("appointmentId",validate(IdSchema)) id:string,@Body(validate(AppointmentDecisionSchema)) body:z.infer<typeof AppointmentDecisionSchema>,@CurrentPrincipal() principal:Principal,@Req() req:Request) { return this.events.decideAppointment(id,body.decision,body.reason,principal,correlationIdOf(req)); }
 
   @Post()
   @HttpCode(201)
@@ -65,9 +95,9 @@ export class EventsController {
   }
 
   @Get(":eventId/join-url")
-  @Roles(Role.SELLER, Role.INVESTOR, Role.INVESTOR_DIASPORA, Role.ADVISOR, Role.BANK)
-  join(@Param("eventId", validate(IdSchema)) eventId: string, @CurrentPrincipal() participant: Principal) {
-    return this.events.joinUrl(eventId, participant);
+  @Roles(Role.SELLER, Role.INVESTOR, Role.INVESTOR_DIASPORA, Role.ADVISOR, Role.BANK,Role.CCI_OFFICER,Role.PLATFORM_ADMIN)
+  join(@Param("eventId", validate(IdSchema)) eventId: string, @CurrentPrincipal() participant: Principal,@Req() req:Request) {
+    return this.events.joinUrl(eventId, participant,correlationIdOf(req));
   }
 
   @Post("diaspora/appointments")

@@ -18,6 +18,9 @@ export interface DealConnectEvent {
   campaignId: string | null;
   integrationMode: string;
   liveReady: boolean;
+  simulated:boolean;
+  ended:boolean;
+  branding:{label:string;accent:string;welcome:string};
   myRegistration: { displayName: string; consentContact: boolean } | null;
 }
 
@@ -42,6 +45,7 @@ export default async function EventsPage() {
     <div className="dp-stack">
       <div>
         <h1>Deal-Connect</h1>
+        <div className="dp-actions">{session?.me.roles.some(r=>["CCI_OFFICER","PLATFORM_ADMIN"].includes(r))?<a href="/organisateur/evenements" data-control-id="NAV_ORGANISER">Ouvrir la console organisateur</a>:null}{session?.me.roles.some(r=>["INVESTOR","INVESTOR_DIASPORA"].includes(r))?<a href="/diaspora" data-control-id="NAV_DIASPORA">Guichet Diaspora</a>:null}</div>
         <p className="dp-muted" style={{ maxWidth: "70ch" }}>
           Rencontres entre cédants, repreneurs et partenaires financiers. Les stands ne présentent jamais d'offre de
           titres : un salon reste un lieu de rencontre, pas un canal de placement.

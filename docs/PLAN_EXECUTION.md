@@ -3,7 +3,7 @@
 **Révision : 12/09/2026, après réunion direction et clarification CFE.**
 
 **État : L01/L02 vérifiés ; L03/L04 opérationnels en local, recettes fournisseurs et serveur encore ouvertes.**
-Le prochain lot technique est **L05**. [Usage des notifications](NOTIFICATIONS.md),
+**L05 est engagé : socle local front/backend éprouvé ; extension SAML/white label et qualification à poursuivre.** [Usage des notifications](NOTIFICATIONS.md),
 [exploitation L04](EXPLOITATION_L04.md), [preuves locales L04](../qa/l04-verification.json).
 Preuves et commandes de reprise : [CI.md](CI.md) et [qa/l01-ci.json](../qa/l01-ci.json).
 Les autres lots restent à réaliser ; les acquis historiques sont conservés.
@@ -207,6 +207,31 @@ en A19/A02 ; ils ne remplacent pas les tests locaux.
 
 Tâches : **V1-007/068/071/104/105/106/107** ; dépendances A17/A18/A21.
 
+Socle local et reprise : [EVENEMENTS_L05.md](EVENEMENTS_L05.md).
+Matrice fournisseur, SAML et branding complet : [INTEGRATION_REMO.md](INTEGRATION_REMO.md).
+
+**Précision du chef de projet pendant L05 :** préparer l'ensemble de l'intégration Remo utile à DealPME
+avant réception des accès, pour limiter la bascule à la configuration, au raccordement du contrat réel,
+aux tests et aux ajustements constatés. Inclure le SSO s'il est proposé, le branding global du compte
+et celui de chaque événement, les parcours organisateur/participant et les capacités associées.
+Cette précision complète les tâches existantes, sans renumérotation ni modification des dates.
+
+Livrables de préparation supplémentaires :
+
+- Matrice de capacités détaillée et sourcée : API, SSO/authentification, comptes et rôles, branding global,
+  branding par événement, création/modification/annulation, invitations/admissions, présence, webhooks,
+  limites, enregistrements/exports et captation. Distinguer capacité documentée et droit de l'offre possédée.
+- Contrat d'entrée SSO conditionnel : protocole et prérequis, rapprochement d'identités, session,
+  expiration/révocation, erreurs et isolation entre événements/produits. Implémenter le protocole proposé
+  après confirmation de sa documentation ; un lien signé de simulation n'atteste pas un SSO fournisseur.
+- Profils de marque séparés pour le compte et les événements, héritage/surcharges explicites et versionnées,
+  sans changement de marque d'un produit voisin lors d'une personnalisation DealPME.
+- Configuration serveur et adaptateurs isolés, capacités activables uniquement quand elles sont prises
+  en charge ; aucun secret fournisseur dans le navigateur. Réutiliser les parcours UI/métier locaux.
+- Suite de contrats et fiche de branchement au compte réel : paramètres à recevoir, endpoints à vérifier,
+  tests positifs/négatifs, quotas, callbacks et écarts à réajuster. La préparation doit rendre cette recette
+  rapide et reproductible, sans promettre qu'une clé seule suffira pour un protocole encore privé.
+
 1. Qualifier l'offre et les autres abonnements disponibles dans une matrice : création/modification,
    authentification, participants, branding, simultanéité, tables/scène, billets, présence, recordings,
    export, langues, limite d'agents et comportement sur erreur. Chaque capacité porte preuve ou inconnu.
@@ -369,6 +394,7 @@ Pour chaque tâche engagée :
 6. Régénérer le classeur, vérifier dates/identifiants/formules et committer le lot cohérent.
 7. Laisser une note de reprise : dernier contrôle réussi, accès manquant éventuel, prochaine action exacte.
 
-**Première action applicative de reprise : L05**, qualifier les capacités Remo et construire la console
-organisateur depuis les contrats vérifiés. Reprendre les sous-recettes L04 dès réception des accès
+**Première action applicative de reprise : poursuivre L05**, raccorder le SSO SAML avec l'IdP retenu,
+compléter le white label global/événement et l'adaptateur Remo depuis les métadonnées/contrats reçus.
+Le socle console, réservation, diaspora et simulateur est éprouvé. Reprendre les sous-recettes L04 dès réception des accès
 CFE/fournisseurs/serveur : A02, A16 et A19. Les dates des versions et les acquis restent inchangés.

@@ -209,6 +209,9 @@ export const CLASSIFICATION: Record<string, Record<string, DataClass>> = {
     occurredAt: "INTERNAL",
   },
   events: {
+    creationHash: "INTERNAL",
+    brandingOrigin: "INTERNAL",
+    audience: "INTERNAL", branding: "PUBLIC", revision: "INTERNAL", publicationKey: "INTERNAL", provider: "INTERNAL", syncError: "INTERNAL", syncStartedAt: "INTERNAL", cancellationReason: "INTERNAL",
     id: "INTERNAL",
     title: "PUBLIC",
     description: "PUBLIC",
@@ -223,6 +226,7 @@ export const CLASSIFICATION: Record<string, Record<string, DataClass>> = {
     createdAt: "INTERNAL",
   },
   eventRegistrations: {
+    cancelledAt: "INTERNAL",
     id: "INTERNAL",
     eventId: "INTERNAL",
     userId: "INTERNAL",
@@ -233,6 +237,7 @@ export const CLASSIFICATION: Record<string, Record<string, DataClass>> = {
     createdAt: "INTERNAL",
   },
   diasporaAppointments: {
+    eventId: "INTERNAL", decisionReason: "INTERNAL",
     id: "INTERNAL",
     investorUserId: "INTERNAL",
     dealId: "INTERNAL",
@@ -243,6 +248,8 @@ export const CLASSIFICATION: Record<string, Record<string, DataClass>> = {
     crossBorderNoticeShownAt: "INTERNAL",
     createdAt: "INTERNAL",
   },
+  eventProviderAccounts: { key: "INTERNAL", provider: "INTERNAL", concurrentLimit: "INTERNAL", marginMinutes: "INTERNAL", qualificationRef: "INTERNAL" },
+  eventReservations: { id: "INTERNAL", accountKey: "INTERNAL", productKey: "INTERNAL", resourceId: "INTERNAL", startsAt: "INTERNAL", endsAt: "INTERNAL", state: "INTERNAL", providerRef: "INTERNAL", createdAt: "INTERNAL" },
   idempotencyKeys: {
     requestHash: "INTERNAL",
     key: "INTERNAL",

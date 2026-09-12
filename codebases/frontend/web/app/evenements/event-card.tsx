@@ -6,10 +6,7 @@ import { Actions, Button, Checkbox, Field, Input, Panel, StateBanner, StatusBadg
 import type { DealConnectEvent } from "./page";
 
 function fmt(iso: string): string {
-  const d = new Date(iso);
-  const jours = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
-  const mois = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
-  return `${jours[d.getDay()]} ${d.getDate()} ${mois[d.getMonth()]} ${d.getFullYear()}, ${String(d.getHours()).padStart(2, "0")}h${String(d.getMinutes()).padStart(2, "0")}`;
+  return new Intl.DateTimeFormat("fr-FR",{timeZone:"Africa/Lome",dateStyle:"full",timeStyle:"short"}).format(new Date(iso));
 }
 
 /**
@@ -29,7 +26,7 @@ export function EventCard({ event, canRegister, connected }: { event: DealConnec
     e.preventDefault();
     setBusy(true);
     setError(null);
-    const res = await fetch(`/api/events/${event.id}/register`, {
+    try { const res = await fetch(`/api/events/${event.id}/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ displayName, consentContact: consent }),
@@ -42,25 +39,31 @@ export function EventCard({ event, canRegister, connected }: { event: DealConnec
       return;
     }
     setError(data.message ?? "Inscription impossible.");
+    } catch {setError("Connexion interrompue. Vos saisies sont conservées.");} finally {setBusy(false);}
   }
 
   async function toggleConsent() {
     setBusy(true);
-    await fetch(`/api/events/${event.id}/contact-consent`, {
+    setError(null);
+    try { const response=await fetch(`/api/events/${event.id}/contact-consent`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ consentContact: !event.myRegistration?.consentContact }),
     });
-    setBusy(false);
+    const data=await response.json() as {ok:boolean;message?:string};if(!data.ok){setError(data.message??"Consentement non modifié");return;}
     router.refresh();
+    }catch{setError("Connexion interrompue : le changement n'est pas confirmé.");}finally{setBusy(false);}
   }
 
   return (
     <Panel title={event.title} controlId="EVENT_CARD">
       <p className="dp-muted" style={{ marginTop: 0 }}>
-        {fmt(event.startsAt)} à {new Date(event.endsAt).getHours()}h{String(new Date(event.endsAt).getMinutes()).padStart(2, "0")}
+        {fmt(event.startsAt)} → {fmt(event.endsAt)} (Togo)
       </p>
       {event.description ? <p style={{ maxWidth: "70ch" }}>{event.description}</p> : null}
+      <p style={{borderLeft:`4px solid ${event.branding.accent}`,paddingLeft:12}}><strong>{event.branding.label}</strong> — {event.branding.welcome}</p>
+      {event.simulated?<StateBanner tone="info" title="Session de démonstration">Salle locale synthétique ou événement historique non raccordé au fournisseur réel.</StateBanner>:null}
+      {error&&event.myRegistration?<StateBanner tone="danger" title="Action non confirmée">{error}</StateBanner>:null}
 
       <div className="dp-actions" style={{ alignItems: "center" }}>
         {event.myRegistration ? <StatusBadge status="verified" label="Vous êtes inscrit" controlId="EVENT_REGISTERED" /> : null}
@@ -86,7 +89,7 @@ export function EventCard({ event, canRegister, connected }: { event: DealConnec
               {event.myRegistration.consentContact ? "Retirer mon consentement" : "Accepter l'échange de contacts"}
             </Button>
             {event.liveReady ? (
-              <a className="dp-btn dp-btn-primary" href={`/api/events/${event.id}/join`} target="_blank" rel="noreferrer" title="Ouvre un nouvel onglet" data-control-id="EVENT_JOIN">
+              <a className="dp-btn dp-btn-primary" href={`/evenements/${event.id}/acces`} target="_blank" rel="noreferrer" title="Ouvre un nouvel onglet" data-control-id="EVENT_JOIN">
                 Rejoindre la salle
               </a>
             ) : null}
@@ -127,8 +130,8 @@ export function EventCard({ event, canRegister, connected }: { event: DealConnec
           </form>
         ) : (
           <Actions>
-            <Button controlId="EVENT_REGISTER_OPEN" state={full ? "blocked" : "default"} disabled={full} onClick={() => setOpen(true)}>
-              {full ? "Complet" : "M'inscrire"}
+            <Button controlId="EVENT_REGISTER_OPEN" state={full||event.ended ? "blocked" : "default"} disabled={full||event.ended} onClick={() => setOpen(true)}>
+              {event.ended?"Événement terminé":full ? "Complet" : "M'inscrire"}
             </Button>
           </Actions>
         )

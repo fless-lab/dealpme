@@ -1,0 +1,1 @@
+ALTER TABLE "event" ADD COLUMN "branding_origin" jsonb DEFAULT '{"scope":"EVENT","version":"legacy"}'::jsonb NOT NULL;

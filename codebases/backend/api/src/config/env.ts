@@ -58,6 +58,17 @@ const EnvSchema = z.object({
   NOTIFICATION_MAX_ATTEMPTS: z.coerce.number().int().min(1).max(5).default(3),
   NOTIFICATION_RETRY_DELAY_MS: z.coerce.number().int().min(0).max(5000).default(100),
   CONNECTOR_REMO_API_KEY: z.string().default(""),
+  CONNECTOR_REMO_PROVIDER: z.enum(["disabled", "local", "remo"]).default("disabled"),
+  REMO_LOCAL_BASE_URL: z.url().default("http://127.0.0.1:8028"),
+  REMO_LOCAL_API_KEY: z.string().min(16).default("dealpme-local-events"),
+  REMO_TIMEOUT_MS: z.coerce.number().int().min(100).max(30000).default(3000),
+  REMO_ACCOUNT_KEY: z.string().regex(/^[a-z0-9_-]{3,64}$/).default("local-shared"),
+  REMO_MAX_CONCURRENT: z.coerce.number().int().min(1).max(100).default(2),
+  REMO_MARGIN_MINUTES: z.coerce.number().int().min(0).max(120).default(10),
+  REMO_ACCOUNT_BRAND_LABEL: z.string().trim().min(1).max(100).default("DealPME"),
+  REMO_ACCOUNT_BRAND_ACCENT: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#1C2751"),
+  REMO_ACCOUNT_BRAND_WELCOME: z.string().max(300).default("Bienvenue à cette rencontre"),
+  REMO_ACCOUNT_BRAND_VERSION: z.string().min(1).max(64).default("local-v1"),
   CONNECTOR_REMO_WEBHOOK_SECRET: z.string().min(16).optional(),
   FEATURE_TRANSACTION_FEES: bool,
   FEATURE_LICENSED_PARTNER_HANDOFF: bool,
@@ -85,11 +96,13 @@ const EnvSchema = z.object({
     if (!env.SMS_HTTP_API_KEY?.trim()) issue("SMS_HTTP_API_KEY", "Clé de passerelle requise");
   }
   if (env.NODE_ENV === "production") {
+    if (env.CONNECTOR_REMO_PROVIDER === "local") issue("CONNECTOR_REMO_PROVIDER", "Simulateur événementiel interdit en production");
     if (env.CONNECTOR_EMAIL_PROVIDER !== "smtp") issue("CONNECTOR_EMAIL_PROVIDER", "SMTP réel requis en production");
     if (env.CONNECTOR_SMS_PROVIDER !== "generic-http") issue("CONNECTOR_SMS_PROVIDER", "Passerelle réelle requise en production");
     if (!env.SMTP_SECURE && !env.SMTP_REQUIRE_TLS) issue("SMTP_REQUIRE_TLS", "TLS obligatoire en production");
     if (!env.SMTP_USER || !env.SMTP_PASSWORD) issue("SMTP_USER", "Authentification SMTP requise en production");
   }
+  if (env.CONNECTOR_REMO_PROVIDER === "remo") issue("CONNECTOR_REMO_PROVIDER", "Adaptateur réel en attente du contrat API et de sa qualification A17");
 });
 
 export type Env = z.infer<typeof EnvSchema>;

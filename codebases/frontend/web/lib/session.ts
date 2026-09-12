@@ -54,6 +54,8 @@ export function navFor(roles: string[]): { href: string; label: string; controlI
   if (roles.includes("COMPLIANCE_OPERATOR")) nav.push({ href: "/conformite", label: "Conformité", controlId: "NAV_COMPLIANCE" });
   if (roles.includes("PLATFORM_ADMIN")) nav.push({ href: "/admin", label: "Administration", controlId: "NAV_ADMIN" });
   nav.push({ href: "/evenements", label: "Deal-Connect", controlId: "NAV_EVENTS" });
+  if(roles.some(r=>["CCI_OFFICER","PLATFORM_ADMIN"].includes(r))) nav.push({href:"/organisateur/evenements",label:"Organisation événements",controlId:"NAV_ORGANISER"});
+  if(roles.some(r=>["INVESTOR","INVESTOR_DIASPORA"].includes(r))) nav.push({href:"/diaspora",label:"Guichet Diaspora",controlId:"NAV_DIASPORA"});
   // Surface de démonstration du blocage réglementaire : visible des comptes qui présentent le produit.
   if (roles.some((r) => ["SELLER", "ADVISOR", "CCI_OFFICER", "COMPLIANCE_OPERATOR", "PLATFORM_ADMIN"].includes(r))) {
     nav.push({ href: "/demonstration", label: "Démonstration RPS", controlId: "NAV_DEMONSTRATION" });

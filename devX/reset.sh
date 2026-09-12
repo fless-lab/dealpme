@@ -13,7 +13,7 @@ grep -q "^NODE_ENV=production" .env && { echo "Refus : NODE_ENV=production dans 
 
 echo "1/6  Compilation (avant toute réinitialisation des données)"
 npm run build:libs
-npm run build -w codebases/backend/api -w codebases/engine/rps -w codebases/devtools/sms-inbox -w codebases/devtools/registry-mock
+npm run build -w codebases/backend/api -w codebases/engine/rps -w codebases/devtools/sms-inbox -w codebases/devtools/registry-mock -w codebases/devtools/event-simulator
 node --env-file=.env -e 'require("./codebases/backend/api/dist/config/env.js").loadEnv()'
 
 echo "2/6  Arrêt et effacement des volumes"

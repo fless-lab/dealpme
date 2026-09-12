@@ -11,12 +11,14 @@ export function createFakeRemo(): RemoPort {
     async createEvent(req: RemoEventRequest): Promise<RemoEvent> {
       counter += 1;
       const remoEventId = `fake-remo-${counter}-${req.startsAt.slice(0, 10)}`;
-      return { remoEventId, joinUrl: `https://live.remo.co/e/${remoEventId}` };
+      return { remoEventId, joinUrl: `http://127.0.0.1:8028/unavailable`, simulated: true };
     },
     async participantJoinUrl(remoEventId: string, externalUserId: string, displayName: string): Promise<string> {
-      const token = Buffer.from(`${externalUserId}:${displayName}`).toString("base64url");
-      return `https://live.remo.co/e/${remoEventId}?guest=${token}`;
+      void remoEventId; void externalUserId; void displayName;
+      throw new Error("Le faux unitaire ne délivre pas de lien live ; utiliser le simulateur local");
     },
+    async cancelEvent() {},
+    async attendance() { return []; },
     verifyWebhook(): boolean {
       return true;
     },

@@ -1,5 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { createFakeRemo, type RemoAttendance, type RemoPort } from "@dealpme/connector-remo";
+import { createLocalRemo, RemoError, AttendanceSchema, type RemoAttendance, type RemoPort } from "@dealpme/connector-remo";
+import { and, eq, isNull, sql } from "drizzle-orm";
+import { z } from "zod";
+import { loadEnv } from "../../config/env.js";
+import { events, eventRegistrations } from "../../database/schema/core.js";
 import { AuditService } from "../../platform/audit.service.js";
 import type { CoreTx } from "../../database/tenant.js";
 
@@ -32,39 +36,53 @@ export interface DealPmeEvent {
   capacity: number;
   mode: RemoIntegrationMode;
   remoEventId?: string;
+  publicationKey: string;
+  branding: { label: string; accent: string; welcome: string };
 }
 
 @Injectable()
 export class RemoBridgeService {
-  private readonly remo: RemoPort;
+  private readonly remo: RemoPort | null;
+  readonly provider = loadEnv().CONNECTOR_REMO_PROVIDER;
 
   constructor(private readonly audit: AuditService) {
-    // L'adaptateur réel (createRemoApiAdapter) remplace le faux dès que le plan Remo et la clé API sont connus.
-    this.remo = createFakeRemo();
+    const env = loadEnv();
+    this.remo = env.CONNECTOR_REMO_PROVIDER === "local" ? createLocalRemo({ baseUrl: env.REMO_LOCAL_BASE_URL, apiKey: env.REMO_LOCAL_API_KEY, timeoutMs: env.REMO_TIMEOUT_MS }) : null;
   }
 
   /** Crée l'événement chez Remo et mémorise l'identifiant ; DealPME reste la référence des inscriptions. */
   async publishToRemo(event: DealPmeEvent): Promise<DealPmeEvent> {
-    const created = await this.remo.createEvent({ title: event.title, startsAt: event.startsAt, endsAt: event.endsAt, capacity: event.capacity });
+    if (!this.remo || event.mode !== "DEALPME_FIRST") throw new RemoError("DISABLED");
+    const created = await this.remo.createEvent({ requestKey: event.publicationKey, title: event.title, startsAt: event.startsAt, endsAt: event.endsAt, capacity: event.capacity, branding: event.branding });
     return { ...event, remoEventId: created.remoEventId };
   }
 
   /** Lien d'accès unique pour un participant confirmé (inscription et paiement validés côté DealPME). */
   joinUrl(event: DealPmeEvent, participantUserId: string, displayName: string): Promise<string> {
-    if (!event.remoEventId) {
+    if (!event.remoEventId || !this.remo) {
       throw new Error("Événement non publié chez Remo");
     }
     return this.remo.participantJoinUrl(event.remoEventId, participantUserId, displayName);
   }
 
+  async cancel(publicationKey: string) { if (!this.remo) throw new RemoError("DISABLED"); await this.remo.cancelEvent(publicationKey); }
+  async attendance(remoEventId: string) { if (!this.remo) throw new RemoError("DISABLED"); return this.remo.attendance(remoEventId); }
+
   /** Webhook de présence : signature vérifiée avant tout traitement ; présence rattachée à l'identifiant DealPME. */
   async ingestAttendance(rawBody: string, signatureHeader: string, correlationId: string, tx: CoreTx): Promise<RemoAttendance[]> {
-    if (!this.remo.verifyWebhook(rawBody, signatureHeader)) {
+    if (!this.remo || !this.remo.verifyWebhook(rawBody, signatureHeader)) {
       throw new Error("Signature de webhook Remo invalide");
     }
-    const attendances = this.remo.parseAttendance(rawBody);
+    const attendances = AttendanceSchema.parse(JSON.parse(rawBody)).events;
+    await tx.execute(sql`select set_config('app.service','event-webhook',true)`);
     for (const a of attendances) {
-      await this.audit.record({ action: "PRIVILEGED_ACCESS_USED", actorUserId: null, subjectType: "remo_event", subjectId: a.remoEventId, outcome: "OK", correlationId, metadata: { participant: a.externalUserId, joinedAt: a.joinedAt } }, tx);
+      const event = (await tx.select().from(events).where(and(eq(events.remoEventId,a.remoEventId),eq(events.provider,"local"))).limit(1))[0];
+      let matched = false;
+      if (event && event.status === "PUBLISHED" && z.uuid().safeParse(a.externalUserId).success && Date.parse(a.joinedAt) >= event.startsAt.getTime()-900000 && Date.parse(a.joinedAt) <= event.endsAt.getTime()+900000) {
+        const updated = await tx.update(eventRegistrations).set({ joinedAt: sql`least(coalesce(${eventRegistrations.joinedAt},${a.joinedAt}::timestamptz),${a.joinedAt}::timestamptz)` }).where(and(eq(eventRegistrations.eventId,event.id),eq(eventRegistrations.userId,a.externalUserId),isNull(eventRegistrations.cancelledAt))).returning({id:eventRegistrations.id});
+        matched = updated.length > 0;
+      }
+      await this.audit.record({ action: "PRIVILEGED_ACCESS_USED", actorUserId: null, subjectType: "remo_event", subjectId: a.remoEventId, outcome: "OK", correlationId, metadata: { participant: a.externalUserId, joinedAt: a.joinedAt, matched, provider: "local" } }, tx);
     }
     return attendances;
   }

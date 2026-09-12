@@ -193,6 +193,13 @@ _check_progress_keys()
 # Les acquis V1 de PROGRESS restent inchangés ; leurs compléments ont leurs propres tâches.
 # (statut, avancement estimé, preuve / reste à faire)
 AUDIT_REVIEW = {
+    "V1-007": ("En revue", 0.8, "Matrice et contrats locaux L05 préparés. SSO SAML documenté, unique et global au compte ; IdP commun et métadonnées réelles à raccorder. Branding complet et protocoles privés restent ouverts avec A17."),
+    "V1-068": ("En revue", 0.8, "HTTP local persistant éprouvé : création, admission opaque, annulation, présence rapprochée et reprise. Adaptateur Remo réel en attente du contrat détaillé et des accès A17 ; aucun faux lien live."),
+    "V1-071": ("En revue", 0.85, "Front/backend diaspora éprouvés : avis, demande, décision humaine motivée, salle privée et admission nominative. Entretien vidéo et SSO Remo réels à qualifier."),
+    "V1-104": ("En revue", 0.65, "Sources officielles API, SAML, white label, simultanéité et transcription native table/scène examinées ; matrice et fiche de branchement dans docs/INTEGRATION_REMO.md. Recette des offres A17/A18 encore ouverte."),
+    "V1-105": ("En revue", 0.9, "Console organisateur front/backend et BFF éprouvés desktop/mobile : brouillon, publication, annulation, présences, héritage d'un profil global versionné et surcharge événement. White label complet et configuration fournisseur restent à raccorder."),
+    "V1-106": ("En revue", 0.9, "Réservations atomiques par compte/produit/ressource, bornes communes inclusives, concurrence et résultat inconnu éprouvés. Quota contractuel et couverture des créations hors registre à qualifier A18."),
+    "V1-107": ("En cours", 0.55, "Prototype navigateur local : admission, consentement, audio synthétique et arrêt sur révocation éprouvés. Aucune voix réelle ni couverture scène/tables attestée ; comparer l'export natif de transcripts à l'agent avec A17/A21."),
     "V1-109": ("Complétée", 1, "L04 : mock HTTP, sélection stricte, manuel sans réseau, historique append-only, reprise motivée, concurrence et navigateur éprouvés. Aucun octroi depuis une preuve synthétique. Preuve : qa/l04-verification.json."),
     "V1-035": ("En revue", 0.95, "Parcours manuel/mock éprouvés ; identité modifiée invalide preuve et badge sans effacer la décision historique. Contrat CFE réel A02 toujours attendu ; fournisseur réel refusé tant qu'il n'est pas qualifié."),
     "V1-096": ("Complétée", 1, "L04 : matching T0 explicable, intentions persistées, worker et SMTP, consentement/droits relus à l'envoi, reprise bornée, dédoublonnage et résultat inconnu éprouvés. Recette SMTP fournisseur séparée V1-093."),
@@ -223,6 +230,9 @@ AUDIT_REVIEW = {
 }
 
 AUDIT_CRITERIA = {
+    "V1-007": "Contrats d'intégration Remo préparés : API et admission/SSO si disponible, branding global du compte et par événement, profils versionnés, identités et erreurs ; raccordement réel sans refonte UI/métier après confirmation du protocole",
+    "V1-104": "Matrice exhaustive des capacités Remo pertinentes et de l'offre possédée : API, SSO, branding global/événement, rôles, quotas, inscriptions, présence, webhooks et exports ; suite de contrats et fiche de branchement prêtes ; qualification réelle à réception des accès",
+    "V1-105": "Console organisateur : créer, personnaliser et gérer les événements ; branding global et surcharges par événement séparés ; états de synchronisation, erreurs et reprise visibles ; parcours conservés lors de la bascule Remo réelle",
     "V1-028": "Code reçu et validé en moins de 60 s en sandbox opérateur ; mêmes contrats que le local V1-101/102 ; configuration réelle sans modification des parcours métier",
     "V1-035": "Source et horodatage stockés ; API désactivée = cycle manuel complet ; API activée = mock local puis adaptateur réel ; absence, divergence et panne distinctes (complément V1-109)",
     "V1-067": "Accès organisateur/API reçus, plan et capacités consignés ; API, SSO, branding et limites à confronter aux essais V1-104 ; un accès participant ne suffit pas",

@@ -63,7 +63,7 @@ export default tseslint.config(
     rules: { "no-console": "off" },
   },
   {
-    files: ["codebases/devtools/sms-inbox/public/*.js"],
+    files: ["codebases/devtools/sms-inbox/public/*.js", "codebases/devtools/event-simulator/public/*.js"],
     extends: [js.configs.recommended],
     languageOptions: { globals: globals.browser },
   },

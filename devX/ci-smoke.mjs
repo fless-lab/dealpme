@@ -27,6 +27,7 @@ const env = {
   DEMO_CREDENTIALS_FILE: join(privateDir, "credentials.json"),
   CI_TEST_PROJECT: project,
   SMS_LOCAL_API_KEY: randomBytes(24).toString("hex"),
+  REMO_LOCAL_API_KEY: randomBytes(24).toString("hex"),
 };
 const compose = ["compose", "--env-file", composeEnv, "--profile", "local", "-p", project,
   "-f", join(root, "infra/docker-compose.yml"), "-f", join(root, "infra/docker-compose.ci.yml")];
@@ -148,7 +149,7 @@ try {
     dc(["up", "-d", "--build"], { timeout: 180_000 });
     await waitFor("Postgres, Redis, ClamAV et stockage", () => {
       const ids = dc(["ps", "-aq"]).split(/\s+/).filter(Boolean);
-      if (ids.length !== 10) return false;
+      if (ids.length !== 11) return false;
       const containers = JSON.parse(command("docker", ["inspect", ...ids]));
       return containers.every((container) => {
         const name = container.Config.Labels["com.docker.compose.service"];
@@ -182,6 +183,8 @@ try {
     env.SMS_LOCAL_BASE_URL = `http://127.0.0.1:${mappedPort("sms-inbox", 8026)}`;
     env.CFE_API_ENABLED = "false";
     env.CFE_API_BASE_URL = `http://127.0.0.1:${mappedPort("registry-mock", 8027)}`;
+    env.REMO_LOCAL_BASE_URL = `http://127.0.0.1:${mappedPort("event-simulator", 8028)}`;
+    env.CONNECTOR_REMO_PROVIDER = "local";
     await waitFor("MinIO", () => httpReady(`${env.S3_ENDPOINT}/minio/health/ready`, 200));
   });
   await step("Migrations et RLS", () => {
@@ -227,6 +230,9 @@ try {
   });
   await step("L04 : incident reçu et restauration complète", () => {
     command(process.execPath, ["devX/l04-operations.mjs"], { timeout: 300_000 });
+  });
+  await step("L05 : événements, réservations, diaspora, navigateur et captation", () => {
+    command(process.execPath, ["devX/l05-integration.mjs"], { timeout: 240_000 });
   });
   report.status = "PASS";
 } catch (error) {

@@ -138,7 +138,23 @@ services:
       timeout: 3s
       retries: 20
 
+  event-simulator:
+    profiles: [local]
+    build:
+      context: ..
+      dockerfile: codebases/devtools/event-simulator/Dockerfile
+    environment:
+      REMO_LOCAL_API_KEY: ${REMO_LOCAL_API_KEY:-dealpme-local-events}
+    volumes: [event-simulator:/data]
+    ports: ["127.0.0.1:8028:8028"]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8028/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
 volumes:
+  event-simulator:
   clamav:
   pg-core:
   pg-vdr:

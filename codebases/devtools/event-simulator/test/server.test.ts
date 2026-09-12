@@ -1,0 +1,15 @@
+import { beforeAll,afterAll,describe,it,expect } from "vitest";
+import { randomUUID } from "node:crypto";
+import { createEventSimulator } from "../src/server.js";
+import { createLocalRemo } from "@dealpme/connector-remo";
+describe("Simulateur événementiel HTTP",()=>{
+  const key="test-events-key-2026",server=createEventSimulator({database:":memory:",apiKey:key,nodeEnv:"test"});let base:string;
+  beforeAll(async()=>{await new Promise<void>(ok=>server.listen(0,"127.0.0.1",ok));const a=server.address();if(!a||typeof a==="string")throw new Error("Port absent");base=`http://127.0.0.1:${a.port}`;});
+  afterAll(async()=>{server.closeAllConnections();await new Promise<void>(ok=>server.close(()=>ok()));});
+  const input=()=>({requestKey:randomUUID(),title:"Réunion synthétique",startsAt:"2026-10-22T10:00:00Z",endsAt:"2026-10-22T11:00:00Z",capacity:10,branding:{label:"Produit A",accent:"#123456",welcome:"Bienvenue"}});
+  it("création rejouable, changement de contenu refusé",async()=>{const port=createLocalRemo({baseUrl:base,apiKey:key}),req=input();const a=await port.createEvent(req);expect(await port.createEvent(req)).toEqual(a);await expect(port.createEvent({...req,title:"Autre titre"})).rejects.toMatchObject({code:"REJECTED"});});
+  it("admission opaque, présence réelle dans le simulateur et annulation",async()=>{const port=createLocalRemo({baseUrl:base,apiKey:key}),req=input();const event=await port.createEvent(req);const url=await port.participantJoinUrl(event.remoEventId,"participant-test","<script>bad()</script>");expect(url).not.toContain("participant-test");const res=await fetch(url);expect(res.ok).toBe(true);expect(await res.text()).toContain("&lt;script&gt;");expect((await port.attendance(event.remoEventId)).length).toBe(1);await port.cancelEvent(req.requestKey);expect((await fetch(url)).status).toBe(403);await expect(port.createEvent(req)).rejects.toMatchObject({code:"REJECTED"});});
+  it("annuler une création indéterminée empêche son arrivée tardive",async()=>{const port=createLocalRemo({baseUrl:base,apiKey:key}),req=input();await port.cancelEvent(req.requestKey);await expect(port.createEvent(req)).rejects.toMatchObject({code:"REJECTED"});});
+  it("timeout après acceptation rapproché par la même clé",async()=>{const req=input(),port=createLocalRemo({baseUrl:base,apiKey:key,timeoutMs:100});await fetch(`${base}/test-controls`,{method:"POST",headers:{authorization:`Bearer ${key}`},body:JSON.stringify({mode:"accepted-timeout",requestKey:req.requestKey})});await expect(port.createEvent(req)).rejects.toMatchObject({code:"UNKNOWN"});expect((await port.createEvent(req)).remoEventId).toBe(req.requestKey);});
+  it("clé et origine vérifiées ; simulateur refusé en production",async()=>{expect((await fetch(`${base}/events`,{method:"POST",body:"{}"})).status).toBe(401);expect((await fetch(`${base}/health`,{headers:{origin:"https://evil.example"}})).status).toBe(403);expect(()=>createEventSimulator({database:":memory:",apiKey:key,nodeEnv:"production"})).toThrow();});
+});

@@ -1,0 +1,43 @@
+{
+  "schemaVersion":1,
+  "lot":"L05",
+  "sourceBase":"2ee77f7",
+  "verifiedOn":"2026-09-12",
+  "localStatus":"BASE_PASS",
+  "overallStatus":"IN_PROGRESS_SAML_WHITE_LABEL_AND_PROVIDER_QUALIFICATION",
+  "tasks":["V1-007","V1-068","V1-071","V1-104","V1-105","V1-106","V1-107"],
+  "checks":{
+    "cleanInstall":"PASS","types":"PASS","lint":"PASS","buildWorkspaces":25,
+    "unitTests":{"passed":145,"files":15},
+    "smokeV1":101,"l02Regression":33,"l03Regression":17,"l04Regression":32,
+    "l05":{"passed":13,"browserAndCapture":4},
+    "rejectionProbes":13,
+    "restoration":{"databases":3,"tables":49,"decryptedObjects":5},
+    "dependencyAudit":{"high":0,"critical":0,"moderate":4}
+  },
+  "verifiedBehaviours":[
+    "Brouillon rejouable et audit unique ; contenu modifié avec même clé refusé",
+    "Édition avec révision, brouillons non publics et rôles contrôlés",
+    "Profil général copié/versionné, surcharge événement indépendante",
+    "Publication rejouable et réservation persistée",
+    "Trois publications concurrentes respectent le quota local de deux",
+    "Autre produit sur le même compte pris en compte dans les réservations",
+    "Timeout après acceptation : réservation conservée et reprise avec clé stable",
+    "Places d'inscription atomiques et décompte public exact sous RLS",
+    "Admission opaque, présence rattachée et annulation de la salle",
+    "Diaspora : décision nominative, salle privée, demandeur seul admis avec l'organisateur",
+    "Navigateur organisateur : erreur réseau récupérable, création et publication",
+    "Vue mobile sans débordement et accès participant à la salle personnalisée",
+    "Prototype local : consentement, audio synthétique et arrêt après révocation"
+  ],
+  "notYetVerifiedOrImplemented":[
+    "Adaptateur Remo réel : contrat API privé et accès propriétaire/add-on attendus",
+    "SSO SAML documenté mais raccordement IdP/SP non implémenté ni qualifié ; une configuration globale au compte",
+    "White label fournisseur complet : logos, favicon, fond de connexion, domaine et emails",
+    "Quota réel et synchronisation des créations extérieures au registre",
+    "Captation de voix réelles, couverture multi-table/scène, exports natifs et résumé",
+    "Comparaison des autres abonnements tant que noms exacts et accès ne sont pas reçus"
+  ],
+  "replay":"npm ci && npm run build && npm run typecheck && npm test && npm run lint && npm run ci:verify-gates && npm run ci:smoke",
+  "documentation":["docs/EVENEMENTS_L05.md","docs/INTEGRATION_REMO.md"]
+}

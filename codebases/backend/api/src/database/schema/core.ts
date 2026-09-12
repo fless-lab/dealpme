@@ -284,6 +284,16 @@ export const events = pgTable("event", {
   organiserUserId: uuid("organiser_user_id").notNull(), // officier CCI-Togo ou administrateur
   campaignId: varchar("campaign_id", { length: 64 }), // attribution des inscriptions issues de l'événement
   status: varchar("status", { length: 16 }).notNull().default("DRAFT"), // DRAFT | PUBLISHED | CLOSED
+  audience: varchar("audience", { length: 16 }).notNull().default("PUBLIC"),
+  branding: jsonb("branding").$type<{ label: string; accent: string; welcome: string }>().notNull().default(sql`'{"label":"DealPME","accent":"#1C2751","welcome":"Bienvenue"}'::jsonb`),
+  revision: integer("revision").notNull().default(1),
+  publicationKey: uuid("publication_key"),
+  creationHash: varchar("creation_hash", { length: 64 }),
+  brandingOrigin: jsonb("branding_origin").$type<{scope:"ACCOUNT"|"EVENT";version:string}>().notNull().default(sql`'{"scope":"EVENT","version":"legacy"}'::jsonb`),
+  provider: varchar("provider", { length: 16 }).notNull().default("legacy"),
+  syncError: varchar("sync_error", { length: 64 }),
+  syncStartedAt: timestamp("sync_started_at", { withTimezone: true }),
+  cancellationReason: varchar("cancellation_reason", { length: 2000 }),
   createdAt: createdAt(),
 });
 
@@ -297,6 +307,7 @@ export const eventRegistrations = pgTable(
     consentContactAt: timestamp("consent_contact_at", { withTimezone: true }), // échange de contacts avec consentement (P20)
     ticketRef: varchar("ticket_ref", { length: 128 }), // référence du paiement mobile money ou du billet Remo
     joinedAt: timestamp("joined_at", { withTimezone: true }), // présence remontée par webhook
+    cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
     createdAt: createdAt(),
   },
   (t) => [uniqueIndex("registration_unique_idx").on(t.eventId, t.userId)],
@@ -311,9 +322,27 @@ export const diasporaAppointments = pgTable("diaspora_appointment", {
   status: varchar("status", { length: 16 }).notNull().default("REQUESTED"), // REQUESTED | CONFIRMED | HELD | CANCELLED
   remoEventId: varchar("remo_event_id", { length: 128 }),
   confirmedBy: uuid("confirmed_by"),
+  eventId: uuid("event_id").references(() => events.id),
+  decisionReason: varchar("decision_reason", { length: 2000 }),
   crossBorderNoticeShownAt: timestamp("cross_border_notice_shown_at", { withTimezone: true }), // contraintes présentées avant la phase finale (K21.3)
   createdAt: createdAt(),
 });
+
+/** Référentiel de réservation commun aux produits utilisant ce compte, pas compteur global chez le fournisseur. */
+export const eventProviderAccounts = pgTable("event_provider_account", {
+  key: varchar("key", { length: 64 }).primaryKey(),
+  provider: varchar("provider", { length: 16 }).notNull(),
+  concurrentLimit: integer("concurrent_limit").notNull(),
+  marginMinutes: integer("margin_minutes").notNull(),
+  qualificationRef: varchar("qualification_ref", { length: 200 }).notNull(),
+});
+export const eventReservations = pgTable("event_reservation", {
+  id: id(), accountKey: varchar("account_key", { length: 64 }).notNull().references(() => eventProviderAccounts.key),
+  productKey: varchar("product_key", { length: 64 }).notNull(), resourceId: uuid("resource_id").notNull(),
+  startsAt: timestamp("starts_at", { withTimezone: true }).notNull(), endsAt: timestamp("ends_at", { withTimezone: true }).notNull(),
+  state: varchar("state", { length: 16 }).notNull(), providerRef: varchar("provider_ref", { length: 128 }),
+  createdAt: createdAt(),
+}, (t) => [uniqueIndex("event_reservation_resource_idx").on(t.productKey,t.resourceId), index("event_reservation_account_idx").on(t.accountKey,t.startsAt,t.endsAt)]);
 
 /** Idempotence des POST créateurs d'état et des webhooks (rejeu à l'identique). */
 export const idempotencyKeys = pgTable("idempotency_key", {
