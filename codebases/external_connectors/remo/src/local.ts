@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { RemoError, type RemoPort } from "./port.js";
 
-export const BrandingSchema = z.object({ label: z.string().trim().min(1).max(100), accent: z.string().regex(/^#[0-9a-fA-F]{6}$/), welcome: z.string().max(300) }).strict();
-export const LocalEventSchema = z.object({ requestKey: z.uuid(), title: z.string().min(3).max(200), startsAt: z.iso.datetime(), endsAt: z.iso.datetime(), capacity: z.number().int().min(1).max(5000), branding: BrandingSchema }).strict();
+const PublicImageUrl = z.url().max(2048).refine(v => new URL(v).protocol === "https:" && !new URL(v).username && !new URL(v).password, "URL HTTPS publique attendue");
+export const BrandingSchema = z.object({ label: z.string().trim().min(1).max(100), accent: z.string().regex(/^#[0-9a-fA-F]{6}$/), welcome: z.string().max(300), logoUrl: PublicImageUrl.optional(), coverUrl: PublicImageUrl.optional(), welcomeMediaUrl: PublicImageUrl.optional() }).strict();
+export const LocalEventSchema = z.object({ requestKey: z.uuid(), title: z.string().min(3).max(200), startsAt: z.iso.datetime(), endsAt: z.iso.datetime(), capacity: z.number().int().min(1).max(5000), branding: BrandingSchema, description: z.string().max(4000).optional() }).strict();
 export const AttendanceSchema = z.object({ events: z.array(z.object({ remoEventId: z.string().min(1).max(64), externalUserId: z.string().min(1).max(64), joinedAt: z.iso.datetime(), leftAt: z.iso.datetime().optional() }).strict()).max(500) }).strict();
 
 /** Routes du simulateur local, jamais présentées comme le protocole Remo officiel. */

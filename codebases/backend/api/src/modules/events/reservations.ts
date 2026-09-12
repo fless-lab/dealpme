@@ -16,11 +16,13 @@ export function peakReservations(intervals: { startsAt: Date; endsAt: Date }[], 
   for (const [,delta] of points) { current += delta; peak = Math.max(peak,current); }
   return peak;
 }
-export async function reserveSharedEvent(tx: CoreTx, input: { accountKey: string; productKey: string; resourceId: string; startsAt: Date; endsAt: Date; limit: number; marginMinutes: number }) {
-  await tx.insert(eventProviderAccounts).values({ key: input.accountKey, provider: "local", concurrentLimit: input.limit, marginMinutes: input.marginMinutes, qualificationRef: "SIMULATION_LOCALE_NON_CONTRACTUELLE" }).onConflictDoNothing();
+export async function reserveSharedEvent(tx: CoreTx, input: { accountKey: string; productKey: string; resourceId: string; startsAt: Date; endsAt: Date; limit: number; marginMinutes: number; provider?: string; externalAccountId?: string | undefined; qualificationRef?: string | undefined }) {
+  const provider = input.provider ?? "local";
+  await tx.insert(eventProviderAccounts).values({ key: input.accountKey, provider, concurrentLimit: input.limit, marginMinutes: input.marginMinutes, qualificationRef: input.qualificationRef ?? "SIMULATION_LOCALE_NON_CONTRACTUELLE", externalAccountId: input.externalAccountId ?? null }).onConflictDoNothing();
   const account = (await tx.select().from(eventProviderAccounts).where(eq(eventProviderAccounts.key,input.accountKey)).for("update"))[0]!;
-  if (account.concurrentLimit !== input.limit || account.marginMinutes !== input.marginMinutes || account.provider !== "local") throw new DealPmeError(ErrorCode.CONFLICT,"Configuration du compte partagé divergente ; rapprocher son quota avant publication");
+  if (account.concurrentLimit !== input.limit || account.marginMinutes !== input.marginMinutes || account.provider !== provider || account.externalAccountId !== (input.externalAccountId ?? null)) throw new DealPmeError(ErrorCode.CONFLICT,"Configuration du compte partagé divergente ; rapprocher son quota avant publication");
   const existing = (await tx.select().from(eventReservations).where(and(eq(eventReservations.productKey,input.productKey),eq(eventReservations.resourceId,input.resourceId))))[0];
+  if (existing && existing.accountKey !== input.accountKey) throw new DealPmeError(ErrorCode.CONFLICT,"La réservation appartient à un autre compte fournisseur");
   if (existing && existing.state !== "RELEASED") return existing.id;
   const start = new Date(input.startsAt.getTime() - account.marginMinutes * 60000), end = new Date(input.endsAt.getTime() + account.marginMinutes * 60000);
   const active = await tx.select().from(eventReservations).where(and(eq(eventReservations.accountKey,input.accountKey),ne(eventReservations.state,"RELEASED"),lte(eventReservations.startsAt,end),gte(eventReservations.endsAt,start)));

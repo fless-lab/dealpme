@@ -4,8 +4,8 @@ import { api, ApiError, SESSION_COOKIE, messageFor } from "../../../../../lib/ap
 
 /**
  * BFF Deal-Connect : inscription, consentement d'échange de contacts, et redirection vers la salle.
- * Le lien d'accès n'est jamais rendu dans une page : il est obtenu au moment du clic puis suivi,
- * pour qu'une adresse d'accès ne traîne pas dans l'historique ni dans une capture d'écran.
+ * L'accès est demandé au moment du clic : admission temporaire locale ou connexion Remo après
+ * rapprochement de l'invitation. Une URL Remo n'est pas présentée comme un jeton SSO individuel.
  */
 export async function POST(req: NextRequest, ctx: { params: Promise<{ eventId: string; action: string }> }) {
   const { eventId, action } = await ctx.params;

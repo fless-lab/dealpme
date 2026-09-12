@@ -3,7 +3,7 @@
 **Révision : 12/09/2026, après réunion direction et clarification CFE.**
 
 **État : L01/L02 vérifiés ; L03/L04 opérationnels en local, recettes fournisseurs et serveur encore ouvertes.**
-**L05 est engagé : socle local front/backend éprouvé ; extension SAML/white label et qualification à poursuivre.** [Usage des notifications](NOTIFICATIONS.md),
+**L05 : socle local et adaptateur Remo/SAML éprouvés ; recette du compte et captation/export live à poursuivre.** [Usage des notifications](NOTIFICATIONS.md),
 [exploitation L04](EXPLOITATION_L04.md), [preuves locales L04](../qa/l04-verification.json).
 Preuves et commandes de reprise : [CI.md](CI.md) et [qa/l01-ci.json](../qa/l01-ci.json).
 Les autres lots restent à réaliser ; les acquis historiques sont conservés.
@@ -209,6 +209,12 @@ Tâches : **V1-007/068/071/104/105/106/107** ; dépendances A17/A18/A21.
 
 Socle local et reprise : [EVENEMENTS_L05.md](EVENEMENTS_L05.md).
 Matrice fournisseur, SAML et branding complet : [INTEGRATION_REMO.md](INTEGRATION_REMO.md).
+Implémentation et branchement effectifs : [REMO_RACCORDEMENT.md](REMO_RACCORDEMENT.md).
+
+**Mise à jour de recherche :** le Swagger officiel a été retrouvé sur
+<https://api.virtual.events.com/api/docs/> et se consulte sans clé. L'adaptateur exact et ses tests
+de contrat ont été implémentés **avant** réception des accès. A17 bloque la recette du compte,
+pas l'accès à cette documentation. Voir la source OpenAPI et les opérations dans la matrice Remo.
 
 **Précision du chef de projet pendant L05 :** préparer l'ensemble de l'intégration Remo utile à DealPME
 avant réception des accès, pour limiter la bascule à la configuration, au raccordement du contrat réel,
@@ -394,7 +400,8 @@ Pour chaque tâche engagée :
 6. Régénérer le classeur, vérifier dates/identifiants/formules et committer le lot cohérent.
 7. Laisser une note de reprise : dernier contrôle réussi, accès manquant éventuel, prochaine action exacte.
 
-**Première action applicative de reprise : poursuivre L05**, raccorder le SSO SAML avec l'IdP retenu,
-compléter le white label global/événement et l'adaptateur Remo depuis les métadonnées/contrats reçus.
-Le socle console, réservation, diaspora et simulateur est éprouvé. Reprendre les sous-recettes L04 dès réception des accès
+**Reprise :** les fonctions API Remo/SAML implémentables hors compte sont éprouvées ; poursuivre la recette
+L05 dès réception des accès, paramètres du compte et choix d'IdP commun. Les fonctions globales absentes
+du Swagger sont identifiées pour l'initialisation chez le fournisseur. L06 peut avancer sur la fidélité
+des interfaces pendant cette attente. Reprendre les sous-recettes L04 dès réception des accès
 CFE/fournisseurs/serveur : A02, A16 et A19. Les dates des versions et les acquis restent inchangés.

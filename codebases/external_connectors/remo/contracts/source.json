@@ -1,0 +1,8 @@
+{
+  "source": "https://api.virtual.events.com/api/docs/swagger-ui-init.js",
+  "fetchedAt": "2026-09-12T13:11:09.168Z",
+  "sha256": "a2af6ccc4ee1b8df3b83fb49dccbeccd729dfe202a5a326fb03b11d5f37bf382",
+  "originalSha256": "249466bf9742d9cd4057685d7702e91985a0ac863c8faf6a548efc70e78a2b26",
+  "exampleRedaction": "Emails et tokens des URL remplacés uniquement dans les exemples",
+  "authenticated": false
+}

@@ -18,6 +18,8 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [hint, setHint] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // Destination fermée : aucune URL arbitraire de retour n'est suivie après authentification.
+  const destination = () => new URLSearchParams(window.location.search).get("next") === "/sso/remo/complete" ? "/sso/remo/complete" : "/";
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -26,6 +28,7 @@ export default function LoginPage() {
     try {
     const data = await authRequest("login", { email, password });
     if (data.ok) {
+      if (destination() !== "/") { window.location.assign(destination()); return; }
       router.push("/");
       router.refresh();
       return;
@@ -52,6 +55,7 @@ export default function LoginPage() {
     try {
     const data = await authRequest("mfa", { challengeId, code });
     if (data.ok) {
+      if (destination() !== "/") { window.location.assign(destination()); return; }
       router.push("/");
       router.refresh();
       return;

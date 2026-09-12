@@ -209,6 +209,7 @@ export const CLASSIFICATION: Record<string, Record<string, DataClass>> = {
     occurredAt: "INTERNAL",
   },
   events: {
+    providerAccountKey: "INTERNAL", providerCompanyId: "INTERNAL",
     creationHash: "INTERNAL",
     brandingOrigin: "INTERNAL",
     audience: "INTERNAL", branding: "PUBLIC", revision: "INTERNAL", publicationKey: "INTERNAL", provider: "INTERNAL", syncError: "INTERNAL", syncStartedAt: "INTERNAL", cancellationReason: "INTERNAL",
@@ -226,6 +227,7 @@ export const CLASSIFICATION: Record<string, Record<string, DataClass>> = {
     createdAt: "INTERNAL",
   },
   eventRegistrations: {
+    providerConsentAt: "INTERNAL", providerEmail: "PERSONAL", invitationState: "INTERNAL", invitationStartedAt: "INTERNAL", providerRole: "INTERNAL",
     cancelledAt: "INTERNAL",
     id: "INTERNAL",
     eventId: "INTERNAL",
@@ -237,6 +239,7 @@ export const CLASSIFICATION: Record<string, Record<string, DataClass>> = {
     createdAt: "INTERNAL",
   },
   diasporaAppointments: {
+    providerConsentAt: "INTERNAL",
     eventId: "INTERNAL", decisionReason: "INTERNAL",
     id: "INTERNAL",
     investorUserId: "INTERNAL",
@@ -248,7 +251,7 @@ export const CLASSIFICATION: Record<string, Record<string, DataClass>> = {
     crossBorderNoticeShownAt: "INTERNAL",
     createdAt: "INTERNAL",
   },
-  eventProviderAccounts: { key: "INTERNAL", provider: "INTERNAL", concurrentLimit: "INTERNAL", marginMinutes: "INTERNAL", qualificationRef: "INTERNAL" },
+  eventProviderAccounts: { key: "INTERNAL", provider: "INTERNAL", concurrentLimit: "INTERNAL", marginMinutes: "INTERNAL", qualificationRef: "INTERNAL", externalAccountId: "INTERNAL", branding: "PUBLIC", brandRevision: "INTERNAL" },
   eventReservations: { id: "INTERNAL", accountKey: "INTERNAL", productKey: "INTERNAL", resourceId: "INTERNAL", startsAt: "INTERNAL", endsAt: "INTERNAL", state: "INTERNAL", providerRef: "INTERNAL", createdAt: "INTERNAL" },
   idempotencyKeys: {
     requestHash: "INTERNAL",

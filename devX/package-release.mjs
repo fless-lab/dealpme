@@ -11,7 +11,7 @@ const revision = git(["rev-parse", "HEAD"]);
 const out = resolve(root, ".ci-artifacts/release"); await mkdir(out, { recursive: true });
 const archive = resolve(out, "dealpme-release.tar.gz");
 const result = spawnSync("tar", ["-czf", archive, "--exclude=node_modules", "--exclude=.next/cache", "--exclude=.env", "--exclude=.env.*", "--exclude=*.log", "--exclude=*.tsbuildinfo", "--exclude=coverage",
-  "package.json", "package-lock.json", "tsconfig.base.json", "eslint.config.mjs", "packages", "codebases", "devX", "infra", "docs/EXPLOITATION_L04.md", "docs/EVENEMENTS_L05.md", "docs/INTEGRATION_REMO.md"], { cwd: root, encoding: "utf8" });
+  "package.json", "package-lock.json", "tsconfig.base.json", "eslint.config.mjs", "packages", "codebases", "devX", "infra", "docs/EXPLOITATION_L04.md", "docs/EVENEMENTS_L05.md", "docs/INTEGRATION_REMO.md", "docs/REMO_RACCORDEMENT.md"], { cwd: root, encoding: "utf8" });
 if (result.status !== 0) throw new Error(result.stderr);
 const hash = createHash("sha256"); for await (const chunk of createReadStream(archive)) hash.update(chunk);
 const digest = hash.digest("hex");

@@ -19,15 +19,16 @@ export interface DealConnectEvent {
   integrationMode: string;
   liveReady: boolean;
   simulated:boolean;
+  provider:string;
   ended:boolean;
   branding:{label:string;accent:string;welcome:string};
-  myRegistration: { displayName: string; consentContact: boolean } | null;
+  myRegistration: { displayName: string; consentContact: boolean; invitationState:string;providerConsent:boolean } | null;
 }
 
 /**
  * Deal-Connect (P20) : rencontres B2B dont la session live est hébergée par un partenaire externe.
  * DealPME reste la référence des inscriptions et de l'attribution ; le partenaire n'héberge que la salle,
- * et ne reçoit que le nom d'affichage choisi par le participant.
+ * Le mode Remo réel utilise l'email vérifié pour l'invitation et la fédération d'identité.
  */
 export default async function EventsPage() {
   const session = await getSession();
@@ -54,7 +55,7 @@ export default async function EventsPage() {
 
       <PartnerResponsibilityStrip
         partner="Partenaire d'hébergement des sessions live"
-        text="La salle virtuelle et la vidéo relèvent du partenaire. DealPME tient les inscriptions, les consentements et l'attribution, et ne lui transmet que le nom d'affichage que vous choisissez."
+         text="La salle virtuelle et la vidéo relèvent du partenaire. DealPME tient les inscriptions, les consentements et l'attribution. Pour Remo, l'email vérifié sert à l'invitation et à l'identification SAML ; l'échange de contacts entre participants reste un choix distinct."
       />
 
       {error ? <StateBanner tone="warning" title="Événements indisponibles" controlId="EVENTS_ERROR">{error}</StateBanner> : null}
@@ -72,10 +73,10 @@ export default async function EventsPage() {
         <Panel title="Ce qui est partagé, et avec qui" controlId="EVENTS_PRIVACY">
           <ul style={{ margin: 0, paddingLeft: 20 }}>
             <li>Votre inscription est enregistrée par DealPME, avec la campagne à laquelle l'événement se rattache.</li>
-            <li>Le partenaire qui héberge la salle reçoit uniquement le nom d'affichage que vous saisissez.</li>
+            <li>Pour une salle Remo réelle, votre email vérifié est transmis pour l'invitation et l'identification. Le simulateur local utilise un identifiant technique et votre nom choisi.</li>
             <li>
-              Vos coordonnées ne sont échangées avec un autre participant que si vous y consentez explicitement, et ce
-              consentement se retire à tout moment avant l'événement.
+              Le choix de partage de contacts est conservé dans DealPME et reste distinct de l'invitation Remo.
+              La visibilité du profil chez le fournisseur fait partie des paramètres de l'événement à vérifier.
             </li>
             <li>Votre présence effective est enregistrée pour le compte rendu de la rencontre, jamais revendue.</li>
           </ul>

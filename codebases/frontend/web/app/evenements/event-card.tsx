@@ -18,6 +18,7 @@ export function EventCard({ event, canRegister, connected }: { event: DealConnec
   const [open, setOpen] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [consent, setConsent] = useState(false);
+  const [providerConsent, setProviderConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const full = event.seatsLeft === 0 && !event.myRegistration;
@@ -29,7 +30,7 @@ export function EventCard({ event, canRegister, connected }: { event: DealConnec
     try { const res = await fetch(`/api/events/${event.id}/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ displayName, consentContact: consent }),
+      body: JSON.stringify({ displayName, consentContact: consent, providerConsent }),
     });
     const data = (await res.json()) as { ok: boolean; message?: string };
     setBusy(false);
@@ -77,8 +78,8 @@ export function EventCard({ event, canRegister, connected }: { event: DealConnec
       {event.myRegistration ? (
         <div style={{ marginTop: 16 }}>
           <p style={{ margin: "0 0 8px" }}>
-            Vous participez sous le nom <b>{event.myRegistration.displayName}</b>. C'est la seule information
-            transmise au partenaire qui héberge la salle.
+            Vous participez sous le nom <b>{event.myRegistration.displayName}</b>.
+            {event.provider==="remo"?` Votre email vérifié identifie l'invitation Remo (${event.myRegistration.invitationState}). La connexion Remo, éventuellement via SAML DealPME, reste soumise à cette invitation.`:" Le simulateur ne reçoit pas votre email."}
           </p>
           <div className="dp-actions" style={{ alignItems: "center" }}>
             <StatusBadge
@@ -105,9 +106,10 @@ export function EventCard({ event, canRegister, connected }: { event: DealConnec
         open ? (
           <form onSubmit={register} style={{ marginTop: 16 }} noValidate>
             {error ? <StateBanner tone="danger" title="Inscription refusée" controlId="EVENT_ERROR">{error}</StateBanner> : null}
-            <Field id={`name-${event.id}`} label="Nom d'affichage" hint="Ce que les autres participants verront. C'est la seule donnée transmise au partenaire.">
+            <Field id={`name-${event.id}`} label="Nom d'affichage" hint="Nom utilisé dans DealPME ; votre profil Remo peut disposer de son propre nom.">
               <Input id={`name-${event.id}`} required minLength={2} value={displayName} onChange={(e) => setDisplayName(e.target.value)} data-control-id="EVENT_DISPLAY_NAME" />
             </Field>
+            {event.provider==="remo"?<Checkbox id={`provider-${event.id}`} data-control-id="EVENT_PROVIDER_CONSENT" label="J'autorise l'envoi de mon email vérifié à Remo pour l'invitation et la connexion à cette salle." checked={providerConsent} onChange={e=>setProviderConsent(e.target.checked)}/>:null}
             <Checkbox
               id={`consent-${event.id}`}
               label="J'accepte d'échanger mes coordonnées avec les participants que je rencontre."
@@ -116,8 +118,8 @@ export function EventCard({ event, canRegister, connected }: { event: DealConnec
               data-control-id="EVENT_CONSENT"
             />
             <p className="dp-muted" style={{ fontSize: "0.82rem" }}>
-              Sans cette case, vous participez normalement : seul l'échange de coordonnées est désactivé. Le
-              consentement se retire à tout moment.
+              Cette préférence de partage est conservée dans DealPME et peut être retirée à tout moment.
+              L'invitation Remo utilise un accord distinct.
             </p>
             <Actions>
               <Button controlId="EVENT_REGISTER_SUBMIT" type="submit" state={busy ? "loading" : "default"}>

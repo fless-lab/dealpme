@@ -31,7 +31,8 @@ const env = {
 };
 const compose = ["compose", "--env-file", composeEnv, "--profile", "local", "-p", project,
   "-f", join(root, "infra/docker-compose.yml"), "-f", join(root, "infra/docker-compose.ci.yml")];
-const report = { startedAt: new Date().toISOString(), project, status: "RUNNING", steps: [], checks: [] };
+const onlyRemo = process.argv.includes("--only=remo");
+const report = { startedAt: new Date().toISOString(), project, scope: onlyRemo ? "remo-contract-only" : "all", status: "RUNNING", steps: [], checks: [] };
 const children = [];
 let infrastructureStarted = false;
 let commandNumber = 0;
@@ -205,6 +206,7 @@ try {
     await waitFor("API /ready", () => httpReady(`http://127.0.0.1:${env.API_PORT}/v1/ready`, 200, api));
     await waitFor("RPS et sa base", () => httpReady(`http://127.0.0.1:${env.RPS_PORT}/v1/deals/018f0000-0000-7000-8000-000000000001/circle`, 404, rps));
   });
+  if (!onlyRemo) {
   await step("Smoke V1 et antivirus réel", () => {
     const result = spawnSync("bash", ["devX/smoke_v1.sh", `http://127.0.0.1:${env.API_PORT}/v1`],
       { cwd: root, env, encoding: "utf8", timeout: 180_000, maxBuffer: 16 * 1024 * 1024 });
@@ -234,6 +236,10 @@ try {
   await step("L05 : événements, réservations, diaspora, navigateur et captation", () => {
     command(process.execPath, ["devX/l05-integration.mjs"], { timeout: 240_000 });
   });
+  }
+  await step("L05 : adaptateur Remo officiel, invitations et SAML de bout en bout", () => {
+    command(process.execPath, ["devX/remo-api-integration.mjs"], { timeout: 240_000 });
+  });
   report.status = "PASS";
 } catch (error) {
   report.status = "FAIL";
@@ -253,5 +259,5 @@ try {
   saveReport();
   if (report.status === "PASS") rmSync(privateDir, { recursive: true });
   else console.error(`[ci:smoke] Journaux privés de diagnostic : ${privateDir}`);
-  console.log(`[ci:smoke] ${report.status} — ${report.checks.length} contrôles ; preuve : .ci-artifacts/smoke-results.json`);
+  console.log(`[ci:smoke] ${report.status} (${report.scope}) — ${report.checks.length} contrôles smoke ; preuve : .ci-artifacts/smoke-results.json`);
 }

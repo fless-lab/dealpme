@@ -4,11 +4,38 @@ Demande du chef de projet pendant L05 : préparer l'intégration complète utile
 si proposé, marque générale du compte et personnalisation par événement. Les accès doivent permettre
 de raccorder les adaptateurs, rejouer les contrats et corriger les écarts plutôt que refaire les parcours.
 
+**Mise à jour d'implémentation :** adaptateur du Swagger public, invitations/intervenants/groupes,
+visuels événementiels, profil général DealPME et SAML sont implémentés et éprouvés hors compte fournisseur.
+Voir [REMO_RACCORDEMENT.md](REMO_RACCORDEMENT.md) et [la preuve correspondante](../qa/l05-remo-verification.json).
+
 ## Sources officielles consultées le 12/09/2026
+
+### Documentation API détaillée retrouvée publiquement
+
+Recherche complémentaire du 12/09/2026, à la demande du chef de projet : le Swagger officiel est
+accessible **sans authentification** sur <https://api.virtual.events.com/api/docs/>. Le lien
+`external.api` publié par l'application dans <https://virtual.events.com/locales/en/url.json> pointe
+encore vers `https://live.remo.co/api/docs`, qui renvoie aujourd'hui l'application web.
+
+Le document OpenAPI 3.0 est embarqué comme objet JSON `swaggerDoc` dans
+<https://api.virtual.events.com/api/docs/swagger-ui-init.js>. Il s'intitule **Remo - External API**, version
+`1.0.0`, et décrit **11 opérations et 68 schémas** au moment de cette consultation. Serveur indiqué :
+`https://api.virtual.events.com/api/v1`. Le schéma de sécurité indique un en-tête `Authorization`
+dont la valeur a la forme `Token: xxxxxx` ; ce format devra être reproduit puis vérifié en recette réelle.
+
+Opérations documentées : découverte d'événements publics, rapport de présence, ajout de membres,
+lecture/modification/suppression d'événement, création pour une compagnie explicite ou principale,
+liste des participants, ajout/retrait d'un participant d'un groupe.
+
+**Correction du blocage précédent : la documentation exacte est disponible ; l'adaptateur et ses tests
+de contrat ont été réalisés sans accès au compte.** Les droits/add-ons,
+identifiants et clés restent nécessaires pour la validation réelle. La présence d'un schéma de données
+ne prouve pas l'existence d'une opération API pour SSO, white label ou téléchargements : vérifier les
+opérations effectivement décrites, puis les capacités supplémentaires avec le fournisseur.
 
 | Sujet | Capacité documentée | Qualification du compte possédé |
 |---|---|---|
-| [API externe](https://help.virtual.events.com/hc/en-us/articles/39817557368077) | Création/modification/suppression et détail d'événement, liste participants/intervenants, ajout de participants. Add-on integrations, Company ID, App Token ; documentation détaillée dans Account Settings / Third-party integration, accès propriétaire. | Accès et contrat détaillé A17 attendus. Aucun endpoint privé inventé. |
+| [API externe](https://api.virtual.events.com/api/docs/) | Swagger public retrouvé : 11 opérations, 68 schémas. L'article d'aide indique aussi l'accès depuis Account Settings / Third-party integration et les prérequis Company ID/App Token/add-on. | Documentation disponible pour implémenter ; accès A17 requis pour la recette du compte. |
 | [SSO personnalisé](https://help.virtual.events.com/hc/en-us/articles/40045169811085) | **SAML uniquement**, une configuration par compte, appliquée à tous ses événements. NameID = email principal ; assertion signée RSA-SHA256 ; requête non signée, assertion non chiffrée selon la fiche. | Offre, métadonnées SP, certificats, IdP commun aux produits et parcours exact à qualifier. |
 | [White Label](https://help.virtual.events.com/hc/en-us/articles/39817840288781) | Add-on : logo, favicon, fond de connexion, bouton support, sous-domaine, expéditeur et textes des emails événementiels. | Étendue compte/événement et paramètres API à éprouver. |
 | Limites White Label | Emails de connexion/magic links gardent l'expéditeur fournisseur ; des logos fournisseur restent sur le tableau de bord My Events. | Ne pas promettre une marque blanche intégrale. |
@@ -56,9 +83,10 @@ vérifiée, compte révoqué, cookies et retour après connexion, absence d'insc
 deux produits sur le même compte, rotation de certificat. Vérifier les méthodes alternatives de connexion
 que Remo conserve même avec le SSO activé ; elles ne doivent pas contourner l'admission événementielle.
 
-Le port d'admission local n'est pas qualifié comme SSO SAML. L'activation du protocole réel et son
-adaptateur restent à réaliser/éprouver avec l'IdP retenu et les métadonnées du compte ; cette étape reste
-explicitement dans la liste L05 plutôt que d'être considérée comme faite par la présence d'un lien signé.
+Le port d'admission du simulateur reste distinct du SSO SAML. Un IdP SAML réutilisable est désormais
+implémenté dans `packages/federation`, raccordé à la session DealPME et testé avec un SP HTTPS, y compris
+en navigateur. L'adoption de cet IdP pour le compte mutualisé, la configuration chez Remo et la recette
+avec ses métadonnées/droits restent à confirmer. Aucune activation sur le compte réel n'a été effectuée.
 
 ## Fiche de branchement à réception des accès
 
@@ -66,7 +94,7 @@ explicitement dans la liste L05 plutôt que d'être considérée comme faite par
 2. Archiver capacités/limites de l'offre ; identifier les autres produits et leurs usages hors registre.
 3. Configurer compte, marque globale, marque d'un événement témoin et domaine/certificats.
 4. Configurer le SAML avec l'IdP retenu ; tester l'email NameID, la session et les admissions privées.
-5. Implémenter/ajuster l'adaptateur Remo à partir du contrat réel ; conserver le port et les parcours UI.
+5. Raccorder l'adaptateur développé en amont à partir du Swagger public, vérifier les écarts du compte et ajuster ; conserver les parcours UI.
 6. Rejouer création, modification, rejeu, timeout après acceptation, rapprochement, annulation et quotas.
 7. Tester inscription/entrée, callback ou synchronisation de présence et isolement entre organisations.
 8. Comparer enregistrement présentation, transcription table/scène et agent ; vérifier les exports réels.

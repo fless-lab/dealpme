@@ -1,0 +1,11 @@
+{
+  "name": "@dealpme/federation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": { "build": "tsc -p tsconfig.json", "typecheck": "tsc -p tsconfig.json --noEmit", "test": "vitest run" },
+  "dependencies": { "samlify": "2.13.1", "@authenio/samlify-xmllint-wasm": "1.0.1", "xmllint-wasm": "^4.0.0" },
+  "devDependencies": { "@dealpme/config": "*" }
+}

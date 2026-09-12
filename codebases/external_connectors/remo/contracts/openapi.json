@@ -1,0 +1,3543 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Remo - External API",
+    "description": "Documentation for Remo's external API endpoints. You'll need an API key to access these endpoints, generate one from [the Account Settings -> Third-party Integration page](https://live.remo.co/account-settings/third-party-integration).",
+    "version": "1.0.0",
+    "termsOfService": "https://remo.co/customers-terms-of-service",
+    "contact": {
+      "email": "support@virtual.events.com"
+    }
+  },
+  "tags": [
+    {
+      "name": "Companies",
+      "description": "Endpoints for managing company-level settings and resources"
+    },
+    {
+      "name": "Events",
+      "description": "Endpoints for managing Remo events"
+    }
+  ],
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "current host (Try-it-out)"
+    },
+    {
+      "url": "https://api.virtual.events.com/api/v1",
+      "description": "production environment"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "components": {
+    "schemas": {
+      "ExportedAttendeeUser": {
+        "properties": {
+          "user": {
+            "properties": {
+              "id": {
+                "title": "ExportedAttendeeUser.user.id",
+                "type": "string"
+              },
+              "email": {
+                "title": "ExportedAttendeeUser.user.email",
+                "type": "string"
+              },
+              "profile": {
+                "title": "ExportedAttendeeUser.user.profile",
+                "$ref": "#/components/schemas/IUserProfile"
+              }
+            },
+            "required": [
+              "id",
+              "email",
+              "profile"
+            ],
+            "additionalProperties": false,
+            "title": "ExportedAttendeeUser.user",
+            "type": "object"
+          },
+          "id": {
+            "title": "ExportedAttendeeUser.id",
+            "type": "string"
+          },
+          "_id": {
+            "title": "ExportedAttendeeUser._id",
+            "type": "string"
+          },
+          "role": {
+            "title": "ExportedAttendeeUser.role",
+            "type": "string"
+          },
+          "isBlocked": {
+            "title": "ExportedAttendeeUser.isBlocked",
+            "type": "boolean"
+          },
+          "status": {
+            "title": "ExportedAttendeeUser.status",
+            "type": "string"
+          },
+          "reminderEmailStatus": {
+            "title": "ExportedAttendeeUser.reminderEmailStatus",
+            "$ref": "#/components/schemas/ReminderEmailStatus"
+          },
+          "createdAt": {
+            "title": "ExportedAttendeeUser.createdAt"
+          },
+          "updatedAt": {
+            "title": "ExportedAttendeeUser.updatedAt"
+          }
+        },
+        "required": [
+          "user",
+          "role",
+          "status",
+          "reminderEmailStatus",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false,
+        "title": "ExportedAttendeeUser",
+        "type": "object"
+      },
+      "ExportedAttendeeInvite": {
+        "properties": {
+          "user": {
+            "properties": {
+              "id": {
+                "title": "ExportedAttendeeInvite.user.id",
+                "type": "string"
+              },
+              "email": {
+                "title": "ExportedAttendeeInvite.user.email",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "email"
+            ],
+            "additionalProperties": false,
+            "title": "ExportedAttendeeInvite.user",
+            "type": "object"
+          },
+          "role": {
+            "title": "ExportedAttendeeInvite.role"
+          },
+          "invite": {
+            "title": "ExportedAttendeeInvite.invite"
+          }
+        },
+        "required": [
+          "user",
+          "role",
+          "invite"
+        ],
+        "additionalProperties": false,
+        "title": "ExportedAttendeeInvite",
+        "type": "object"
+      },
+      "ExportedAttendee": {
+        "allOf": [
+          {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExportedAttendeeUser"
+              },
+              {
+                "$ref": "#/components/schemas/ExportedAttendeeInvite"
+              }
+            ]
+          },
+          {
+            "properties": {
+              "sessionData": {
+                "title": "sessionData",
+                "$ref": "#/components/schemas/IUserSessionMap"
+              },
+              "answer": {
+                "title": "answer",
+                "$ref": "#/components/schemas/ICustomRegistrationAnswer"
+              }
+            },
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "ExportedAttendee"
+      },
+      "IUserSessionMap": {
+        "properties": {
+          "enteredEventAt": {
+            "title": "IUserSessionMap.enteredEventAt",
+            "type": "number"
+          },
+          "leftEventAt": {
+            "title": "IUserSessionMap.leftEventAt",
+            "type": "number"
+          },
+          "timeSpent": {
+            "title": "IUserSessionMap.timeSpent",
+            "type": "number"
+          },
+          "duration": {
+            "title": "IUserSessionMap.duration",
+            "type": "number"
+          }
+        },
+        "required": [
+          "enteredEventAt",
+          "leftEventAt",
+          "timeSpent",
+          "duration"
+        ],
+        "additionalProperties": false,
+        "title": "IUserSessionMap",
+        "type": "object"
+      },
+      "IAuthToken": {
+        "properties": {
+          "token": {
+            "title": "IAuthToken.token",
+            "type": "string"
+          },
+          "kind": {
+            "title": "IAuthToken.kind",
+            "type": "string"
+          },
+          "expiresAt": {
+            "title": "IAuthToken.expiresAt",
+            "type": "number"
+          }
+        },
+        "required": [
+          "token",
+          "kind"
+        ],
+        "additionalProperties": false,
+        "title": "IAuthToken",
+        "type": "object"
+      },
+      "ILinkedInLocation": {
+        "properties": {
+          "name": {
+            "title": "ILinkedInLocation.name",
+            "type": "string"
+          },
+          "city": {
+            "title": "ILinkedInLocation.city",
+            "type": "string"
+          },
+          "country": {
+            "title": "ILinkedInLocation.country",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "city",
+          "country"
+        ],
+        "additionalProperties": false,
+        "title": "ILinkedInLocation",
+        "type": "object"
+      },
+      "ILinkedInPosition": {
+        "properties": {
+          "company": {
+            "properties": {
+              "name": {
+                "title": "ILinkedInPosition.company.name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false,
+            "title": "ILinkedInPosition.company",
+            "type": "object"
+          }
+        },
+        "required": [
+          "company"
+        ],
+        "additionalProperties": false,
+        "title": "ILinkedInPosition",
+        "type": "object"
+      },
+      "ILinkedInProfile": {
+        "properties": {
+          "disconnected": {
+            "title": "ILinkedInProfile.disconnected",
+            "type": "boolean"
+          },
+          "headline": {
+            "title": "ILinkedInProfile.headline",
+            "type": "string"
+          },
+          "id": {
+            "title": "ILinkedInProfile.id",
+            "type": "string",
+            "readOnly": true
+          },
+          "formattedName": {
+            "title": "ILinkedInProfile.formattedName",
+            "type": "string"
+          },
+          "firstName": {
+            "title": "ILinkedInProfile.firstName",
+            "type": "string"
+          },
+          "lastName": {
+            "title": "ILinkedInProfile.lastName",
+            "type": "string"
+          },
+          "location": {
+            "$ref": "#/components/schemas/ILinkedInLocation",
+            "title": "ILinkedInProfile.location"
+          },
+          "pictureUrl": {
+            "title": "ILinkedInProfile.pictureUrl",
+            "type": "string"
+          },
+          "industry": {
+            "title": "ILinkedInProfile.industry",
+            "type": "string"
+          },
+          "positions": {
+            "properties": {
+              "_total": {
+                "title": "ILinkedInProfile.positions._total",
+                "type": "number"
+              },
+              "values": {
+                "items": {
+                  "$ref": "#/components/schemas/ILinkedInPosition",
+                  "title": "ILinkedInProfile.positions.values.[]"
+                },
+                "title": "ILinkedInProfile.positions.values",
+                "type": "array"
+              }
+            },
+            "required": [
+              "_total",
+              "values"
+            ],
+            "additionalProperties": false,
+            "title": "ILinkedInProfile.positions",
+            "type": "object"
+          },
+          "publicProfileUrl": {
+            "title": "ILinkedInProfile.publicProfileUrl",
+            "type": "string"
+          },
+          "email": {
+            "title": "ILinkedInProfile.email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "disconnected",
+          "headline",
+          "id",
+          "formattedName",
+          "firstName",
+          "lastName",
+          "location",
+          "pictureUrl",
+          "industry",
+          "positions",
+          "publicProfileUrl",
+          "email"
+        ],
+        "additionalProperties": false,
+        "title": "ILinkedInProfile",
+        "type": "object"
+      },
+      "IUserProfile": {
+        "properties": {
+          "name": {
+            "title": "IUserProfile.name",
+            "type": "string"
+          },
+          "firstName": {
+            "title": "IUserProfile.firstName",
+            "type": "string"
+          },
+          "lastName": {
+            "title": "IUserProfile.lastName",
+            "type": "string"
+          },
+          "picture": {
+            "title": "IUserProfile.picture",
+            "type": "string"
+          },
+          "headline": {
+            "title": "IUserProfile.headline",
+            "type": "string"
+          },
+          "title": {
+            "title": "IUserProfile.title",
+            "type": "string"
+          },
+          "company": {
+            "title": "IUserProfile.company",
+            "type": "string"
+          },
+          "meetingLink": {
+            "title": "IUserProfile.meetingLink",
+            "type": "string"
+          },
+          "linkedInProfileURL": {
+            "title": "IUserProfile.linkedInProfileURL",
+            "type": "string"
+          },
+          "facebookProfileURL": {
+            "title": "IUserProfile.facebookProfileURL",
+            "type": "string"
+          },
+          "website": {
+            "title": "IUserProfile.website",
+            "type": "string"
+          },
+          "timezone": {
+            "title": "IUserProfile.timezone",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "title": "IUserProfile",
+        "type": "object"
+      },
+      "IUser": {
+        "properties": {
+          "email": {
+            "title": "IUser.email",
+            "type": "string"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/IUserProfile",
+            "title": "IUser.profile"
+          },
+          "status": {
+            "title": "IUser.status",
+            "type": "string"
+          },
+          "google": {
+            "title": "IUser.google",
+            "type": "string"
+          },
+          "tokens": {
+            "items": {
+              "$ref": "#/components/schemas/IAuthToken",
+              "title": "IUser.tokens.[]"
+            },
+            "title": "IUser.tokens",
+            "type": "array"
+          },
+          "linkedIn": {
+            "$ref": "#/components/schemas/ILinkedInProfile",
+            "title": "IUser.linkedIn"
+          },
+          "gravatar": {
+            "title": "IUser.gravatar"
+          },
+          "event": {
+            "title": "IUser.event"
+          },
+          "guest": {
+            "title": "IUser.guest",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "email",
+          "profile",
+          "status"
+        ],
+        "additionalProperties": false,
+        "title": "IUser",
+        "type": "object"
+      },
+      "IUserModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IUser"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "IUserModel"
+      },
+      "IYoutube": {
+        "properties": {
+          "accessToken": {
+            "title": "IYoutube.accessToken",
+            "type": "string"
+          },
+          "tokenExpiresAt": {
+            "title": "IYoutube.tokenExpiresAt",
+            "type": "number"
+          },
+          "disconnected": {
+            "title": "IYoutube.disconnected",
+            "type": "boolean"
+          },
+          "refreshToken": {
+            "title": "IYoutube.refreshToken",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accessToken",
+          "tokenExpiresAt",
+          "disconnected",
+          "refreshToken"
+        ],
+        "additionalProperties": false,
+        "title": "IYoutube",
+        "type": "object"
+      },
+      "ISpeaker": {
+        "properties": {
+          "name": {
+            "title": "ISpeaker.name",
+            "type": "string"
+          },
+          "title": {
+            "title": "ISpeaker.title",
+            "type": "string"
+          },
+          "email": {
+            "title": "ISpeaker.email",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "title",
+          "email"
+        ],
+        "additionalProperties": false,
+        "title": "ISpeaker",
+        "type": "object"
+      },
+      "IBillboard": {
+        "properties": {
+          "position": {
+            "title": "IBillboard.position",
+            "type": "string"
+          },
+          "title": {
+            "title": "IBillboard.title",
+            "type": "string"
+          },
+          "content": {
+            "title": "IBillboard.content",
+            "type": "string"
+          },
+          "link": {
+            "title": "IBillboard.link",
+            "type": "string"
+          },
+          "videoURL": {
+            "title": "IBillboard.videoURL",
+            "type": "string"
+          },
+          "autoplay": {
+            "title": "IBillboard.autoplay",
+            "type": "boolean"
+          },
+          "loopPlayback": {
+            "title": "IBillboard.loopPlayback",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "position",
+          "title",
+          "content",
+          "link",
+          "videoURL",
+          "autoplay",
+          "loopPlayback"
+        ],
+        "additionalProperties": false,
+        "title": "IBillboard",
+        "type": "object"
+      },
+      "IAppliedBy": {
+        "properties": {
+          "code": {
+            "title": "IAppliedBy.code",
+            "type": "string"
+          },
+          "user": {
+            "title": "IAppliedBy.user"
+          }
+        },
+        "required": [
+          "code",
+          "user"
+        ],
+        "additionalProperties": false,
+        "title": "IAppliedBy",
+        "type": "object"
+      },
+      "ITheater": {
+        "properties": {
+          "_id": {
+            "title": "ITheater._id",
+            "type": "string",
+            "readOnly": true
+          },
+          "event": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/components/schemas/IEvent"
+              }
+            ],
+            "title": "ITheater.event",
+            "readOnly": true
+          },
+          "company": {
+            "title": "ITheater.company",
+            "readOnly": true
+          },
+          "capacity": {
+            "title": "ITheater.capacity",
+            "type": "number"
+          },
+          "code": {
+            "title": "ITheater.code",
+            "type": "string"
+          },
+          "template": {
+            "title": "ITheater.template",
+            "$ref": "#/components/schemas/IMapTemplate"
+          },
+          "templateOverrides": {
+            "title": "ITheater.templateOverrides"
+          },
+          "theme": {
+            "title": "ITheater.theme",
+            "nullable": true,
+            "type": "string"
+          },
+          "showMapBanner": {
+            "title": "ITheater.showMapBanner",
+            "type": "boolean"
+          },
+          "interactionToolURL": {
+            "title": "ITheater.interactionToolURL",
+            "type": "string"
+          },
+          "isQARequired": {
+            "title": "ITheater.isQARequired",
+            "type": "boolean"
+          },
+          "spaces": {
+            "items": {
+              "title": "ITheater.spaces.[]",
+              "type": "string"
+            },
+            "title": "ITheater.spaces",
+            "type": "array"
+          },
+          "speakers": {
+            "items": {
+              "$ref": "#/components/schemas/ISpeaker",
+              "title": "ITheater.speakers.[]"
+            },
+            "title": "ITheater.speakers",
+            "type": "array"
+          },
+          "youtube": {
+            "$ref": "#/components/schemas/IYoutube",
+            "title": "ITheater.youtube"
+          },
+          "whiteboard": {
+            "title": "ITheater.whiteboard",
+            "type": "string"
+          },
+          "cfpAppliedBy": {
+            "items": {
+              "$ref": "#/components/schemas/IAppliedBy",
+              "title": "ITheater.cfpAppliedBy.[]"
+            },
+            "title": "ITheater.cfpAppliedBy",
+            "type": "array"
+          },
+          "disableEmailLimit": {
+            "title": "ITheater.disableEmailLimit",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "event",
+          "company",
+          "capacity",
+          "code",
+          "template",
+          "theme",
+          "interactionToolURL",
+          "spaces",
+          "speakers"
+        ],
+        "additionalProperties": false,
+        "title": "ITheater",
+        "type": "object"
+      },
+      "ITheaterModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ITheater"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "ITheaterModel"
+      },
+      "ITag": {
+        "properties": {
+          "name": {
+            "title": "ITag.name",
+            "type": "string"
+          },
+          "slug": {
+            "title": "ITag.slug",
+            "type": "string"
+          },
+          "company": {
+            "anyOf": [],
+            "title": "ITag.company"
+          }
+        },
+        "required": [
+          "name",
+          "slug",
+          "company"
+        ],
+        "additionalProperties": false,
+        "title": "ITag",
+        "type": "object"
+      },
+      "ITagsModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ITag"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "ITagsModel"
+      },
+      "ISeat": {
+        "properties": {
+          "x": {
+            "title": "ISeat.x",
+            "type": "number"
+          },
+          "y": {
+            "title": "ISeat.y",
+            "type": "number"
+          }
+        },
+        "required": [
+          "x",
+          "y"
+        ],
+        "additionalProperties": false,
+        "title": "ISeat",
+        "type": "object"
+      },
+      "IRoom": {
+        "properties": {
+          "adminSeats": {
+            "items": {
+              "$ref": "#/components/schemas/ISeat",
+              "title": "IRoom.adminSeats.[]"
+            },
+            "title": "IRoom.adminSeats",
+            "type": "array"
+          },
+          "code": {
+            "title": "IRoom.code",
+            "type": "string"
+          },
+          "name": {
+            "title": "IRoom.name",
+            "type": "string"
+          },
+          "_id": {
+            "title": "IRoom._id",
+            "readOnly": true
+          },
+          "nameParams": {
+            "title": "IRoom.nameParams"
+          },
+          "positions": {
+            "items": {
+              "$ref": "#/components/schemas/ISeat",
+              "title": "IRoom.positions.[]"
+            },
+            "title": "IRoom.positions",
+            "type": "array"
+          },
+          "order": {
+            "title": "IRoom.order",
+            "type": "number"
+          },
+          "x": {
+            "title": "IRoom.x",
+            "type": "number"
+          },
+          "y": {
+            "title": "IRoom.y",
+            "type": "number"
+          },
+          "width": {
+            "title": "IRoom.width",
+            "type": "number"
+          },
+          "height": {
+            "title": "IRoom.height",
+            "type": "number"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "_id",
+          "nameParams",
+          "positions",
+          "x",
+          "y",
+          "width",
+          "height"
+        ],
+        "additionalProperties": false,
+        "title": "IRoom",
+        "type": "object"
+      },
+      "ISlot": {
+        "properties": {
+          "x": {
+            "title": "ISlot.x",
+            "type": "number"
+          },
+          "y": {
+            "title": "ISlot.y",
+            "type": "number"
+          },
+          "width": {
+            "title": "ISlot.width",
+            "type": "number"
+          },
+          "height": {
+            "title": "ISlot.height",
+            "type": "number"
+          }
+        },
+        "required": [
+          "x",
+          "y",
+          "width",
+          "height"
+        ],
+        "additionalProperties": false,
+        "title": "ISlot",
+        "type": "object"
+      },
+      "IMapTemplate": {
+        "properties": {
+          "description": {
+            "title": "IMapTemplate.description",
+            "type": "string"
+          },
+          "width": {
+            "title": "IMapTemplate.width",
+            "type": "number"
+          },
+          "height": {
+            "title": "IMapTemplate.height",
+            "type": "number"
+          },
+          "code": {
+            "title": "IMapTemplate.code",
+            "type": "string"
+          },
+          "name": {
+            "title": "IMapTemplate.name",
+            "type": "string"
+          },
+          "image": {
+            "title": "IMapTemplate.image",
+            "type": "string"
+          },
+          "backgroundColor": {
+            "title": "IMapTemplate.backgroundColor",
+            "type": "string"
+          },
+          "themes": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "title": "IMapTemplate.themes",
+            "type": "object"
+          },
+          "isPrivate": {
+            "title": "IMapTemplate.isPrivate",
+            "type": "boolean"
+          },
+          "conferenceArea": {
+            "properties": {
+              "x": {
+                "title": "IMapTemplate.conferenceArea.x",
+                "type": "number"
+              },
+              "y": {
+                "title": "IMapTemplate.conferenceArea.y",
+                "type": "number"
+              },
+              "width": {
+                "title": "IMapTemplate.conferenceArea.width",
+                "type": "number"
+              },
+              "height": {
+                "title": "IMapTemplate.conferenceArea.height",
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y",
+              "width",
+              "height"
+            ],
+            "additionalProperties": false,
+            "title": "IMapTemplate.conferenceArea",
+            "type": "object"
+          },
+          "seatRadius": {
+            "title": "IMapTemplate.seatRadius",
+            "type": "number"
+          },
+          "sponsors": {
+            "items": {
+              "$ref": "#/components/schemas/ISlot",
+              "title": "IMapTemplate.sponsors.[]"
+            },
+            "title": "IMapTemplate.sponsors",
+            "type": "array"
+          },
+          "origin": {
+            "properties": {
+              "x": {
+                "title": "IMapTemplate.origin.x",
+                "type": "number"
+              },
+              "y": {
+                "title": "IMapTemplate.origin.y",
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y"
+            ],
+            "additionalProperties": false,
+            "title": "IMapTemplate.origin",
+            "type": "object"
+          },
+          "rooms": {
+            "items": {
+              "$ref": "#/components/schemas/IRoom"
+            },
+            "title": "IMapTemplate.rooms",
+            "type": "array"
+          },
+          "zoom": {
+            "properties": {
+              "max": {
+                "title": "IMapTemplate.zoom.max",
+                "type": "number"
+              },
+              "min": {
+                "title": "IMapTemplate.zoom.min",
+                "type": "number"
+              }
+            },
+            "required": [
+              "max",
+              "min"
+            ],
+            "additionalProperties": false,
+            "title": "IMapTemplate.zoom",
+            "type": "object"
+          },
+          "seats": {
+            "title": "IMapTemplate.seats",
+            "type": "number"
+          },
+          "maxCapacity": {
+            "title": "IMapTemplate.maxCapacity",
+            "type": "number"
+          },
+          "createdAt": {
+            "title": "IMapTemplate.createdAt",
+            "type": "number"
+          },
+          "updatedAt": {
+            "title": "IMapTemplate.updatedAt",
+            "type": "number"
+          },
+          "tags": {
+            "items": {
+              "title": "IMapTemplate.tags.[]",
+              "type": "string"
+            },
+            "title": "IMapTemplate.tags",
+            "type": "array"
+          }
+        },
+        "required": [
+          "description",
+          "width",
+          "height",
+          "code",
+          "name",
+          "image",
+          "backgroundColor",
+          "isPrivate",
+          "conferenceArea",
+          "seatRadius",
+          "origin",
+          "rooms",
+          "zoom",
+          "seats",
+          "maxCapacity"
+        ],
+        "additionalProperties": false,
+        "title": "IMapTemplate",
+        "type": "object"
+      },
+      "IMapTemplateModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IMapTemplate"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "IMapTemplateModel"
+      },
+      "ILiveStream": {
+        "properties": {
+          "id": {
+            "title": "ILiveStream.id",
+            "type": "string",
+            "readOnly": true
+          },
+          "serverUrl": {
+            "title": "ILiveStream.serverUrl",
+            "type": "string"
+          },
+          "streamKey": {
+            "title": "ILiveStream.streamKey",
+            "type": "string"
+          },
+          "playbackUrl": {
+            "title": "ILiveStream.playbackUrl",
+            "type": "string"
+          },
+          "destinationName": {
+            "title": "ILiveStream.destinationName",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "serverUrl",
+          "streamKey",
+          "playbackUrl",
+          "destinationName"
+        ],
+        "additionalProperties": false,
+        "title": "ILiveStream",
+        "type": "object"
+      },
+      "IEventSponsorsMembersModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IEventSponsorsMembers"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "IEventSponsorsMembersModel"
+      },
+      "IEventSponsorsMembers": {
+        "properties": {
+          "event": {
+            "title": "IEventSponsorsMembers.event"
+          },
+          "sponsor": {
+            "title": "IEventSponsorsMembers.sponsor"
+          },
+          "members": {
+            "items": {
+              "properties": {
+                "user": {
+                  "title": "IEventSponsorsMembers.members.0.user"
+                },
+                "clickedOn": {
+                  "title": "IEventSponsorsMembers.members.0.clickedOn"
+                }
+              },
+              "required": [
+                "user",
+                "clickedOn"
+              ],
+              "additionalProperties": false,
+              "title": "IEventSponsorsMembers.members.0",
+              "type": "object"
+            },
+            "minItems": 1,
+            "title": "IEventSponsorsMembers.members",
+            "type": "array"
+          }
+        },
+        "required": [
+          "event",
+          "sponsor",
+          "members"
+        ],
+        "additionalProperties": false,
+        "title": "IEventSponsorsMembers",
+        "type": "object"
+      },
+      "ISponsors": {
+        "properties": {
+          "_id": {
+            "title": "ISponsors._id",
+            "type": "string",
+            "readOnly": true
+          },
+          "id": {
+            "title": "ISponsors.id",
+            "type": "string",
+            "readOnly": true
+          },
+          "slot": {
+            "title": "ISponsors.slot",
+            "type": "number"
+          },
+          "name": {
+            "title": "ISponsors.name",
+            "type": "string"
+          },
+          "ctaLabel": {
+            "title": "ISponsors.ctaLabel",
+            "type": "string"
+          },
+          "ctaLink": {
+            "title": "ISponsors.ctaLink",
+            "type": "string"
+          },
+          "logo": {
+            "title": "ISponsors.logo",
+            "type": "string"
+          },
+          "media": {
+            "title": "ISponsors.media",
+            "type": "string"
+          },
+          "mediaType": {
+            "title": "ISponsors.mediaType",
+            "type": "string"
+          },
+          "createdBy": {
+            "title": "ISponsors.createdBy"
+          }
+        },
+        "required": [
+          "_id",
+          "id",
+          "slot",
+          "name",
+          "logo",
+          "media",
+          "mediaType",
+          "createdBy"
+        ],
+        "additionalProperties": false,
+        "title": "ISponsors",
+        "type": "object"
+      },
+      "IEventSponsorsModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IEventSponsors"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "IEventSponsorsModel"
+      },
+      "IEventSponsors": {
+        "properties": {
+          "event": {
+            "title": "IEventSponsors.event"
+          },
+          "sponsors": {
+            "items": {
+              "$ref": "#/components/schemas/ISponsors",
+              "title": "IEventSponsors.sponsors.[]"
+            },
+            "title": "IEventSponsors.sponsors",
+            "type": "array"
+          },
+          "createdAt": {
+            "title": "IEventSponsors.createdAt"
+          },
+          "updatedAt": {
+            "title": "IEventSponsors.updatedAt"
+          }
+        },
+        "required": [
+          "event",
+          "sponsors",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false,
+        "title": "IEventSponsors",
+        "type": "object"
+      },
+      "IEventMemberInviteModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IEventMemberInvite"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "IEventMemberInviteModel"
+      },
+      "IEventMemberInvite": {
+        "properties": {
+          "email": {
+            "title": "IEventMemberInvite.email",
+            "type": "string"
+          },
+          "role": {
+            "title": "IEventMemberInvite.role"
+          },
+          "code": {
+            "title": "IEventMemberInvite.code",
+            "type": "string"
+          },
+          "event": {
+            "title": "IEventMemberInvite.event"
+          },
+          "theater": {
+            "title": "IEventMemberInvite.theater"
+          },
+          "eventMember": {
+            "title": "IEventMemberInvite.eventMember"
+          },
+          "isAccepted": {
+            "title": "IEventMemberInvite.isAccepted",
+            "type": "boolean"
+          },
+          "acceptedAt": {
+            "title": "IEventMemberInvite.acceptedAt"
+          },
+          "createdAt": {
+            "title": "IEventMemberInvite.createdAt"
+          },
+          "updatedAt": {
+            "title": "IEventMemberInvite.updatedAt"
+          },
+          "status": {
+            "title": "IEventMemberInvite.status"
+          },
+          "addedvia": {
+            "title": "IEventMemberInvite.addedvia"
+          },
+          "invitedBy": {
+            "title": "IEventMemberInvite.invitedBy"
+          },
+          "emailStatus": {
+            "anyOf": [
+              {
+                "properties": {
+                  "status": {
+                    "title": "IEventMemberInvite.emailStatus.status"
+                  },
+                  "message": {
+                    "title": "IEventMemberInvite.emailStatus.message",
+                    "type": "string"
+                  },
+                  "time": {
+                    "title": "IEventMemberInvite.emailStatus.time",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "status",
+                  "message",
+                  "time"
+                ],
+                "additionalProperties": false,
+                "title": "IEventMemberInvite.emailStatus",
+                "type": "object"
+              },
+              {
+                "title": "IEventMemberInvite.emailStatus",
+                "nullable": true
+              }
+            ],
+            "title": "IEventMemberInvite.emailStatus"
+          }
+        },
+        "required": [
+          "email",
+          "role",
+          "code",
+          "event",
+          "theater",
+          "status",
+          "invitedBy",
+          "emailStatus"
+        ],
+        "additionalProperties": false,
+        "title": "IEventMemberInvite",
+        "type": "object"
+      },
+      "IEventMemberGroup": {
+        "properties": {
+          "event": {
+            "title": "IEventMemberGroup.event"
+          },
+          "name": {
+            "title": "IEventMemberGroup.name",
+            "type": "string"
+          },
+          "code": {
+            "title": "IEventMemberGroup.code",
+            "type": "string"
+          },
+          "emails": {
+            "items": {
+              "title": "IEventMemberGroup.emails.[]",
+              "type": "string"
+            },
+            "title": "IEventMemberGroup.emails",
+            "type": "array"
+          }
+        },
+        "required": [
+          "event",
+          "name",
+          "code",
+          "emails"
+        ],
+        "additionalProperties": false,
+        "title": "IEventMemberGroup",
+        "type": "object"
+      },
+      "IEventMemberGroupModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IEventMemberGroup"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "IEventMemberGroupModel"
+      },
+      "IEventMemberModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IEventMember"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "IEventMemberModel"
+      },
+      "IEventMember": {
+        "properties": {
+          "role": {
+            "title": "IEventMember.role"
+          },
+          "user": {
+            "title": "IEventMember.user"
+          },
+          "event": {
+            "title": "IEventMember.event"
+          },
+          "theater": {
+            "title": "IEventMember.theater"
+          },
+          "space": {
+            "title": "IEventMember.space"
+          },
+          "isBlocked": {
+            "title": "IEventMember.isBlocked",
+            "type": "boolean"
+          },
+          "status": {
+            "title": "IEventMember.status",
+            "type": "string"
+          },
+          "reminderEmailStatus": {
+            "title": "IEventMember.reminderEmailStatus"
+          },
+          "createdAt": {
+            "title": "IEventMember.createdAt"
+          },
+          "updatedAt": {
+            "title": "IEventMember.updatedAt"
+          }
+        },
+        "required": [
+          "role",
+          "user",
+          "event",
+          "theater",
+          "space",
+          "status",
+          "reminderEmailStatus",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false,
+        "title": "IEventMember",
+        "type": "object"
+      },
+      "IEventDirectory": {
+        "properties": {
+          "name": {
+            "title": "IEventDirectory.name",
+            "type": "string"
+          },
+          "events": {
+            "items": {},
+            "title": "IEventDirectory.events",
+            "type": "array"
+          },
+          "company": {
+            "title": "IEventDirectory.company"
+          },
+          "creator": {
+            "title": "IEventDirectory.creator"
+          }
+        },
+        "required": [
+          "name",
+          "events",
+          "company",
+          "creator"
+        ],
+        "additionalProperties": false,
+        "title": "IEventDirectory",
+        "type": "object"
+      },
+      "IEventDirectoryModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IEventDirectory"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "IEventDirectoryModel"
+      },
+      "IEventContentMappingPopulated": {
+        "properties": {
+          "eventContent": {
+            "title": "IEventContentMappingPopulated.eventContent"
+          },
+          "event": {
+            "title": "IEventContentMappingPopulated.event"
+          },
+          "floor": {
+            "title": "IEventContentMappingPopulated.floor"
+          },
+          "slot": {
+            "title": "IEventContentMappingPopulated.slot",
+            "type": "string"
+          }
+        },
+        "required": [
+          "eventContent",
+          "event",
+          "floor",
+          "slot"
+        ],
+        "additionalProperties": false,
+        "title": "IEventContentMappingPopulated",
+        "type": "object"
+      },
+      "IEventContentMapping": {
+        "properties": {
+          "eventContent": {
+            "title": "IEventContentMapping.eventContent"
+          },
+          "event": {
+            "title": "IEventContentMapping.event"
+          },
+          "floor": {
+            "title": "IEventContentMapping.floor"
+          },
+          "slot": {
+            "title": "IEventContentMapping.slot",
+            "type": "string"
+          }
+        },
+        "required": [
+          "eventContent",
+          "event",
+          "floor",
+          "slot"
+        ],
+        "additionalProperties": false,
+        "title": "IEventContentMapping",
+        "type": "object"
+      },
+      "IEventContentMappingPopulatedModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IEventContentMappingPopulated"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "IEventContentMappingPopulatedModel"
+      },
+      "IEventContentMappingModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IEventContentMapping"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "IEventContentMappingModel"
+      },
+      "IEventContent": {
+        "properties": {
+          "company": {
+            "title": "IEventContent.company"
+          },
+          "name": {
+            "title": "IEventContent.name",
+            "type": "string"
+          },
+          "type": {
+            "title": "IEventContent.type"
+          },
+          "mediaType": {
+            "title": "IEventContent.mediaType"
+          },
+          "media": {
+            "title": "IEventContent.media",
+            "type": "string"
+          },
+          "ctaLink": {
+            "title": "IEventContent.ctaLink",
+            "type": "string"
+          },
+          "ctaText": {
+            "title": "IEventContent.ctaText",
+            "type": "string"
+          },
+          "floorImage": {
+            "title": "IEventContent.floorImage",
+            "type": "string"
+          },
+          "createdBy": {
+            "title": "IEventContent.createdBy"
+          },
+          "createdAt": {
+            "title": "IEventContent.createdAt"
+          },
+          "updatedAt": {
+            "title": "IEventContent.updatedAt"
+          }
+        },
+        "required": [
+          "company",
+          "name",
+          "type",
+          "mediaType",
+          "media",
+          "createdBy"
+        ],
+        "additionalProperties": false,
+        "title": "IEventContent",
+        "type": "object"
+      },
+      "IEventContentModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IEventContent"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "IEventContentModel"
+      },
+      "WelcomeMessage": {
+        "properties": {
+          "title": {
+            "title": "WelcomeMessage.title",
+            "type": "string"
+          },
+          "message": {
+            "title": "WelcomeMessage.message",
+            "type": "string"
+          },
+          "videoURL": {
+            "title": "WelcomeMessage.videoURL",
+            "type": "string"
+          },
+          "imageURL": {
+            "title": "WelcomeMessage.imageURL",
+            "type": "string"
+          },
+          "mediaURL": {
+            "title": "WelcomeMessage.mediaURL",
+            "type": "string"
+          },
+          "mediaType": {
+            "enum": [
+              "image",
+              "video"
+            ],
+            "title": "WelcomeMessage.mediaType",
+            "type": "string"
+          },
+          "toJSON": {
+            "title": "WelcomeMessage.toJSON"
+          }
+        },
+        "required": [
+          "title",
+          "mediaURL",
+          "mediaType"
+        ],
+        "additionalProperties": false,
+        "title": "WelcomeMessage",
+        "type": "object"
+      },
+      "IContactChannel": {
+        "properties": {
+          "type": {
+            "title": "IContactChannel.type"
+          },
+          "value": {
+            "title": "IContactChannel.value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "value"
+        ],
+        "additionalProperties": false,
+        "title": "IContactChannel",
+        "type": "object"
+      },
+      "ReminderEmailStatus": {
+        "properties": {
+          "sevenDayReminderSentOn": {
+            "title": "ReminderEmailStatus.sevenDayReminderSentOn"
+          },
+          "threeDayReminderSentOn": {
+            "title": "ReminderEmailStatus.threeDayReminderSentOn"
+          },
+          "fifteenMinsReminderSentOn": {
+            "title": "ReminderEmailStatus.fifteenMinsReminderSentOn"
+          }
+        },
+        "required": [
+          "sevenDayReminderSentOn",
+          "threeDayReminderSentOn",
+          "fifteenMinsReminderSentOn"
+        ],
+        "additionalProperties": false,
+        "title": "ReminderEmailStatus",
+        "type": "object"
+      },
+      "IEvent": {
+        "properties": {
+          "_id": {
+            "title": "IEvent._id",
+            "type": "string",
+            "readOnly": true
+          },
+          "code": {
+            "title": "IEvent.code",
+            "type": "string"
+          },
+          "name": {
+            "title": "IEvent.name",
+            "type": "string"
+          },
+          "eventType": {
+            "title": "IEvent.eventType",
+            "type": "string"
+          },
+          "eventOutcome": {
+            "title": "IEvent.eventOutcome",
+            "type": "string"
+          },
+          "isPrivate": {
+            "title": "IEvent.isPrivate",
+            "type": "boolean"
+          },
+          "eventSignUpURL": {
+            "title": "IEvent.eventSignUpURL",
+            "type": "string"
+          },
+          "company": {
+            "title": "IEvent.company",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ICompany"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "readOnly": true
+          },
+          "startTime": {
+            "title": "IEvent.startTime",
+            "type": "number"
+          },
+          "endTime": {
+            "title": "IEvent.endTime",
+            "type": "number"
+          },
+          "shortDescription": {
+            "title": "IEvent.shortDescription",
+            "type": "string"
+          },
+          "description": {
+            "title": "IEvent.description",
+            "type": "string"
+          },
+          "logoURL": {
+            "title": "IEvent.logoURL",
+            "type": "string"
+          },
+          "welcomeMessage": {
+            "$ref": "#/components/schemas/WelcomeMessage",
+            "title": "IEvent.welcomeMessage"
+          },
+          "theaters": {
+            "items": {
+              "$ref": "#/components/schemas/ITheater"
+            },
+            "title": "IEvent.theaters",
+            "type": "array"
+          },
+          "status": {
+            "title": "IEvent.status"
+          },
+          "creator": {
+            "title": "IEvent.creator"
+          },
+          "reminderEmailStatus": {
+            "$ref": "#/components/schemas/ReminderEmailStatus",
+            "title": "IEvent.reminderEmailStatus"
+          },
+          "sendReminders": {
+            "title": "IEvent.sendReminders",
+            "type": "boolean"
+          },
+          "isLobbyActive": {
+            "title": "IEvent.isLobbyActive",
+            "type": "boolean"
+          },
+          "lobbyWelcomeMessage": {
+            "title": "IEvent.lobbyWelcomeMessage",
+            "type": "string"
+          },
+          "isAudienceViewDisabled": {
+            "title": "IEvent.isAudienceViewDisabled",
+            "type": "boolean"
+          },
+          "isScreenShareDisabled": {
+            "title": "IEvent.isScreenShareDisabled",
+            "type": "boolean"
+          },
+          "isRemojiDisabled": {
+            "title": "IEvent.isRemojiDisabled",
+            "type": "boolean"
+          },
+          "isQnADisabled": {
+            "title": "IEvent.isQnADisabled",
+            "type": "boolean"
+          },
+          "isQnAModerationEnabled": {
+            "title": "IEvent.isQnAModerationEnabled",
+            "type": "boolean"
+          },
+          "isChatSupportDisabled": {
+            "title": "IEvent.isChatSupportDisabled",
+            "type": "boolean"
+          },
+          "isChatDisabled": {
+            "title": "IEvent.isChatDisabled",
+            "type": "boolean"
+          },
+          "isWhiteboardDisabled": {
+            "title": "IEvent.isWhiteboardDisabled",
+            "type": "boolean"
+          },
+          "isGuestExperienceSurveyDisabled": {
+            "title": "IEvent.isGuestExperienceSurveyDisabled",
+            "type": "boolean"
+          },
+          "isOverflowSeatingDisabled": {
+            "title": "IEvent.isOverflowSeatingDisabled",
+            "type": "boolean"
+          },
+          "isLockTablesDisabled": {
+            "title": "IEvent.isOverflowSeatingDisabled",
+            "type": "boolean"
+          },
+          "isPollsDisabled": {
+            "title": "IEvent.isOverflowSeatingDisabled",
+            "type": "boolean"
+          },
+          "isTableKnockSoundDisabled": {
+            "title": "IEvent.isTableKnockSoundDisabled",
+            "type": "boolean"
+          },
+          "directoryId": {
+            "title": "IEvent.directoryId",
+            "description": "@deprecated using directories"
+          },
+          "directories": {
+            "items": {},
+            "title": "IEvent.directories",
+            "type": "array"
+          },
+          "isEventBrandingEnabled": {
+            "title": "IEvent.isEventBrandingEnabled",
+            "type": "boolean"
+          },
+          "eventBrandingLogoURL": {
+            "title": "IEvent.eventBrandingLogoURL",
+            "type": "string"
+          },
+          "admins": {
+            "items": {
+              "title": "IEvent.admins.[]",
+              "type": "string"
+            },
+            "title": "IEvent.admins",
+            "type": "array"
+          },
+          "domain": {
+            "title": "IEvent.domain",
+            "type": "string"
+          },
+          "isDiscoveryOptedOut": {
+            "title": "IEvent.isDiscoveryOptedOut",
+            "type": "boolean"
+          },
+          "isUserIdDisplayed": {
+            "title": "IEvent.isUserIdDisplayed",
+            "type": "boolean"
+          },
+          "contactChannels": {
+            "items": {
+              "$ref": "#/components/schemas/IContactChannel",
+              "title": "IEvent.contactChannels.[]"
+            },
+            "title": "IEvent.contactChannels",
+            "type": "array"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "isPrivate",
+          "company",
+          "startTime",
+          "endTime",
+          "theaters",
+          "status",
+          "creator",
+          "reminderEmailStatus",
+          "sendReminders",
+          "isLobbyActive",
+          "lobbyWelcomeMessage",
+          "isGuestExperienceSurveyDisabled",
+          "isOverflowSeatingDisabled"
+        ],
+        "additionalProperties": false,
+        "title": "IEvent",
+        "type": "object"
+      },
+      "ICompanySettingsOnBoardingData": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IEvent"
+          },
+          {
+            "properties": {
+              "isTextDefault": {
+                "title": "ICompanySettingsOnBoardingData.isTextDefault",
+                "type": "boolean"
+              },
+              "isMediaDefault": {
+                "title": "ICompanySettingsOnBoardingData.isMediaDefault",
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "ICompanySettingsOnBoardingData"
+      },
+      "IEventModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/IEvent"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "IEventModel"
+      },
+      "ICustomRegistrationQuestion": {
+        "properties": {
+          "event": {
+            "title": "ICustomRegistrationQuestion.event"
+          },
+          "type": {
+            "title": "ICustomRegistrationQuestion.type"
+          },
+          "question": {
+            "title": "ICustomRegistrationQuestion.question",
+            "type": "string"
+          },
+          "isRequired": {
+            "title": "ICustomRegistrationQuestion.isRequired",
+            "type": "boolean"
+          },
+          "options": {
+            "items": {
+              "title": "ICustomRegistrationQuestion.options.[]",
+              "type": "string"
+            },
+            "title": "ICustomRegistrationQuestion.options",
+            "type": "array"
+          },
+          "order": {
+            "title": "ICustomRegistrationQuestion.order",
+            "type": "number"
+          },
+          "createdAt": {
+            "title": "ICustomRegistrationQuestion.createdAt"
+          },
+          "updatedAt": {
+            "title": "ICustomRegistrationQuestion.updatedAt"
+          }
+        },
+        "required": [
+          "event",
+          "type",
+          "question",
+          "isRequired",
+          "order"
+        ],
+        "additionalProperties": false,
+        "title": "ICustomRegistrationQuestion",
+        "type": "object"
+      },
+      "ICustomRegistrationQuestionModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ICustomRegistrationQuestion"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "ICustomRegistrationQuestionModel"
+      },
+      "ICustomRegistrationAnswer": {
+        "properties": {
+          "event": {
+            "title": "ICustomRegistrationAnswer.event"
+          },
+          "question": {
+            "title": "ICustomRegistrationAnswer.question"
+          },
+          "answer": {
+            "title": "ICustomRegistrationAnswer.answer",
+            "type": "string"
+          },
+          "user": {
+            "title": "ICustomRegistrationAnswer.user"
+          },
+          "createdAt": {
+            "title": "ICustomRegistrationAnswer.createdAt"
+          },
+          "updatedAt": {
+            "title": "ICustomRegistrationAnswer.updatedAt"
+          }
+        },
+        "required": [
+          "event",
+          "question",
+          "answer",
+          "user"
+        ],
+        "additionalProperties": false,
+        "title": "ICustomRegistrationAnswer",
+        "type": "object"
+      },
+      "ICustomRegistrationAnswerModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ICustomRegistrationAnswer"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "ICustomRegistrationAnswerModel"
+      },
+      "ICompanySurvey": {
+        "properties": {
+          "company": {
+            "title": "ICompanySurvey.company",
+            "type": "string"
+          },
+          "event": {
+            "title": "ICompanySurvey.event",
+            "type": "string"
+          },
+          "scheduledDate": {
+            "title": "ICompanySurvey.scheduledDate",
+            "type": "number"
+          },
+          "emails": {
+            "items": {
+              "title": "ICompanySurvey.emails.[]",
+              "type": "string"
+            },
+            "title": "ICompanySurvey.emails",
+            "type": "array"
+          }
+        },
+        "required": [
+          "company",
+          "event",
+          "scheduledDate",
+          "emails"
+        ],
+        "additionalProperties": false,
+        "title": "ICompanySurvey",
+        "type": "object"
+      },
+      "ICompanySurveyModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ICompanySurvey"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "ICompanySurveyModel"
+      },
+      "IOnboardMediaSettings": {
+        "properties": {
+          "mediaType": {
+            "enum": [
+              "image",
+              "video"
+            ],
+            "title": "IOnboardMediaSettings.mediaType",
+            "type": "string"
+          },
+          "url": {
+            "title": "IOnboardMediaSettings.url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mediaType",
+          "url"
+        ],
+        "additionalProperties": false,
+        "title": "IOnboardMediaSettings",
+        "type": "object"
+      },
+      "IIdentityProvider": {
+        "properties": {
+          "name": {
+            "title": "IIdentityProvider.name",
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "saml2",
+              "social-network",
+              "openid"
+            ],
+            "title": "IIdentityProvider.type",
+            "type": "string"
+          },
+          "providerId": {
+            "title": "IIdentityProvider.providerId",
+            "type": "string"
+          },
+          "isEnabled": {
+            "title": "IIdentityProvider.isEnabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "providerId"
+        ],
+        "additionalProperties": false,
+        "title": "IIdentityProvider",
+        "type": "object"
+      },
+      "ICompanySettings": {
+        "properties": {
+          "company": {
+            "title": "ICompanySettings.company",
+            "type": "string"
+          },
+          "defaultOnboardText": {
+            "title": "ICompanySettings.defaultOnboardText",
+            "type": "string"
+          },
+          "defaultOnboardMedia": {
+            "$ref": "#/components/schemas/IOnboardMediaSettings",
+            "title": "ICompanySettings.defaultOnboardMedia"
+          },
+          "exitURL": {
+            "title": "ICompanySettings.exitURL",
+            "nullable": true,
+            "type": "string"
+          },
+          "disableVPNCheck": {
+            "title": "ICompanySettings.disableVPNCheck",
+            "type": "boolean"
+          },
+          "discoveryDisabledByDefault": {
+            "title": "ICompanySettings.discoveryDisabledByDefault",
+            "type": "boolean"
+          },
+          "companyBadgeURL": {
+            "title": "ICompanySettings.companyBadgeURL",
+            "type": "string"
+          },
+          "enableCompanyBadge": {
+            "title": "ICompanySettings.enableCompanyBadge",
+            "type": "boolean"
+          },
+          "templates": {
+            "items": {
+              "title": "ICompanySettings.templates.[]",
+              "type": "string"
+            },
+            "title": "ICompanySettings.templates",
+            "type": "array"
+          },
+          "identityProviders": {
+            "$ref": "#/components/schemas/IIdentityProvider",
+            "title": "ICompanySettings.identityProviders"
+          },
+          "disabledFeatures": {
+            "title": "ICompanySettings.disabledFeatures"
+          },
+          "loginOptions": {
+            "title": "ICompanySettings.loginOptions"
+          },
+          "enableAgencyWhiteLabelling": {
+            "title": "ICompanySettings.enableAgencyWhiteLabelling",
+            "type": "boolean"
+          },
+          "whiteLabelLogoURL": {
+            "title": "ICompanySettings.whiteLabelLogoURL",
+            "type": "string"
+          },
+          "whiteLabelFaviconURL": {
+            "title": "ICompanySettings.whiteLabelFaviconURL",
+            "type": "string"
+          },
+          "customDomain": {
+            "title": "ICompanySettings.customDomain",
+            "type": "string"
+          },
+          "isCustomDomainVerified": {
+            "title": "ICompanySettings.isCustomDomainVerified",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "company",
+          "exitURL",
+          "loginOptions"
+        ],
+        "additionalProperties": false,
+        "title": "ICompanySettings",
+        "type": "object"
+      },
+      "ICompanySettingsModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ICompanySettings"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "ICompanySettingsModel"
+      },
+      "ICompanyServicePlanModel": {
+        "additionalProperties": false,
+        "title": "ICompanyServicePlanModel",
+        "type": "object"
+      },
+      "ICompanyMemberInvite": {
+        "properties": {
+          "role": {
+            "title": "ICompanyMemberInvite.role",
+            "type": "string"
+          },
+          "email": {
+            "title": "ICompanyMemberInvite.email",
+            "type": "string"
+          },
+          "company": {
+            "title": "ICompanyMemberInvite.company"
+          }
+        },
+        "required": [
+          "role",
+          "email",
+          "company"
+        ],
+        "additionalProperties": false,
+        "title": "ICompanyMemberInvite",
+        "type": "object"
+      },
+      "ICompanyMemberInviteModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ICompanyMemberInvite"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "ICompanyMemberInviteModel"
+      },
+      "IExtendedMemberData": {
+        "properties": {
+          "id": {
+            "title": "IExtendedMemberData.id",
+            "type": "string",
+            "readOnly": true
+          },
+          "role": {
+            "title": "IExtendedMemberData.role"
+          },
+          "email": {
+            "title": "IExtendedMemberData.email",
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "title": "IExtendedMemberData.events.[]",
+              "type": "string"
+            },
+            "title": "IExtendedMemberData.events",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "role",
+          "email"
+        ],
+        "additionalProperties": false,
+        "title": "IExtendedMemberData",
+        "type": "object"
+      },
+      "ICompanyMemberModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ICompanyMember"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "ICompanyMemberModel"
+      },
+      "ICompanyMember": {
+        "properties": {
+          "role": {
+            "title": "ICompanyMember.role",
+            "type": "string"
+          },
+          "user": {
+            "title": "ICompanyMember.user"
+          },
+          "company": {
+            "title": "ICompanyMember.company"
+          }
+        },
+        "required": [
+          "role",
+          "user",
+          "company"
+        ],
+        "additionalProperties": false,
+        "title": "ICompanyMember",
+        "type": "object"
+      },
+      "ICompany": {
+        "properties": {
+          "_id": {
+            "title": "ICompany._id",
+            "type": "string",
+            "readOnly": true
+          },
+          "id": {
+            "title": "ICompany.id",
+            "type": "string",
+            "readOnly": true
+          },
+          "name": {
+            "title": "ICompany.name",
+            "type": "string"
+          },
+          "code": {
+            "title": "ICompany.code",
+            "type": "string"
+          },
+          "domain": {
+            "title": "ICompany.domain",
+            "type": "string"
+          },
+          "chargebeeCustomerId": {
+            "title": "ICompany.chargebeeCustomerId",
+            "type": "string"
+          },
+          "owner": {
+            "title": "ICompany.owner"
+          },
+          "enabledWhiteLabel": {
+            "title": "ICompany.enabledWhiteLabel",
+            "type": "boolean"
+          },
+          "logoURL": {
+            "title": "ICompany.logoURL",
+            "type": "string"
+          },
+          "createdAt": {
+            "title": "ICompany.createdAt"
+          },
+          "updatedAt": {
+            "title": "ICompany.updatedAt"
+          }
+        },
+        "required": [
+          "code",
+          "domain",
+          "owner"
+        ],
+        "additionalProperties": false,
+        "title": "ICompany",
+        "type": "object"
+      },
+      "ICompanyModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ICompany"
+          },
+          {
+            "additionalProperties": false,
+            "type": "object"
+          }
+        ],
+        "title": "ICompanyModel"
+      }
+    },
+    "responses": {
+      "OK": {
+        "description": "Operation concluded successfully.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isSuccess": {
+                  "type": "boolean",
+                  "description": "Indicates whether the operation was successful or not"
+                }
+              }
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "Bad request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isSuccess": {
+                  "type": "boolean",
+                  "description": "Indicates whether the operation was successful or not"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Indicates the error that occurred"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Missing or incorrect authorization",
+        "content": {
+          "text/plain": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "GenericError": {
+        "description": "An error occurred.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isSuccess": {
+                  "type": "boolean",
+                  "description": "Indicates whether the operation was successful or not"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Indicates the error that occurred"
+                }
+              }
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Entity or endpoint not found"
+      }
+    },
+    "examples": {
+      "createdEvent": {
+        "value": "{\"isSuccess\":true,\"event\":{\"_id\":\"65e679489d9954bfc7e10f42\",\"code\":\"event-created-via-api\",\"name\":\"Event created via API\",\"eventType\":\"other\",\"eventOutcome\":\"other\",\"isPrivate\":false,\"eventAccess\":\"public\",\"description\":\"\",\"company\":\"644662cc766fdabb714cf9f9\",\"logoURL\":\"https://images.unsplash.com/photo-1571645163064-77faa9676a46?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=490&ixid=MnwxfDB8MXxyYW5kb218MHw5NTM3MjQ0fHx8fHx8fDE3MDk2MDI3ODE&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=780\",\"startTime\":1709602800000,\"endTime\":1709619000000,\"theaters\":[{\"_id\":\"65e6794a9d9954bfc7e10f43\",\"company\":\"644662cc766fdabb714cf9f9\",\"event\":\"65e679489d9954bfc7e10f42\",\"code\":\"event-created-via-api-theater\",\"capacity\":20,\"template\":\"PHOTOREALISTIC-PHOTO-REALISTIC\",\"theme\":\"REALISTIC\",\"isQARequired\":true,\"speakers\":[],\"spaces\":[\"65e6794a9d9954bfc7e10f5c\"],\"billboards\":[],\"cfpAppliedBy\":[],\"createdAt\":\"2026-03-05T01:45:46.473Z\",\"updatedAt\":\"2026-03-05T01:45:46.473Z\",\"__v\":0,\"id\":\"65e6794a9d9954bfc7e10f43\"}],\"status\":\"active\",\"creator\":\"644662bf766fdabb714cf9e5\",\"sendReminders\":true,\"isLobbyActive\":false,\"isAudienceViewDisabled\":true,\"isScreenShareDisabled\":false,\"isRemojiDisabled\":false,\"isQnADisabled\":false,\"isChatSupportDisabled\":false,\"isChatDisabled\":false,\"isWhiteboardDisabled\":false,\"isGuestExperienceSurveyDisabled\":true,\"isOverflowSeatingDisabled\":true,\"isEventBrandingEnabled\":false,\"isDiscoveryOptedOut\":false,\"isUserIdDisplayed\":false,\"directories\":[],\"contactChannels\":[],\"createdAt\":\"2026-03-05T01:45:46.496Z\",\"updatedAt\":\"2026-03-05T01:45:46.496Z\",\"__v\":0,\"id\":\"65e679489d9954bfc7e10f42\"}}"
+      },
+      "createEventRequest": {
+        "value": "{\n    \"isAudienceViewDisabled\": true,\n    \"isScreenShareDisabled\": false,\n    \"isRemojiDisabled\": false,\n    \"isQnADisabled\": false,\n    \"isChatSupportDisabled\": false,\n    \"isChatDisabled\": false,\n    \"isWhiteboardDisabled\": false,\n    \"isLobbyActive\": false,\n    \"isGuestExperienceSurveyDisabled\": true,\n    \"isOverflowSeatingDisabled\": true,\n    \"isUserIdDisplayed\": false,\n    \"startTime\": 1772679420000,\n    \"endTime\": 1772695620000,\n    \"description\": \"\",\n    \"isPrivate\": false,\n    \"eventAccess\": \"public\",\n    \"logoURL\": \"https://images.unsplash.com/photo-1571645163064-77faa9676a46?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=490&ixid=MnwxfDB8MXxyYW5kb218MHw5NTM3MjQ0fHx8fHx8fDE3MDk2MDI3ODE&ixlib=rb-4.0.3&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=780\",\n    \"name\": \"Event created via API\",\n    \"isTextDefault\": false,\n    \"isMediaDefault\": false,\n    \"theaters\": [\n        {\n            \"capacity\": 20,\n            \"theme\": \"REALISTIC\",\n            \"template\": \"PHOTOREALISTIC-PHOTO-REALISTIC\"\n        }\n    ],\n    \"isDiscoveryOptedOut\": false,\n    \"eventOutcome\": \"other\",\n    \"eventType\": \"other\",\n    \"updatedAt\": 1709602794,\n    \"contactChannels\": []\n}"
+      },
+      "attendeeResponse": {
+        "value": "{\n  \"isSuccess\": \"true\",\n  \"attendees\": [\n    {\n      \"_id\": \"6572ec96ab6681f3a70fd782\",\n      \"event\": \"65659950201a2fc2761dc4e7\",\n      \"user\": {\n        \"id\": \"644662bf766fdabb714cf9e5\",\n        \"email\": \"fixture@example.test\",\n        \"profile\": {\n          \"name\": \"John\",\n          \"firstName\": \"John\",\n          \"lastName\": \"Doe\",\n          \"picture\": \"https://firebasestorage.googleapis.com/v0/b/remo-local.appspot.com/o/User%2FProfileImage%2Fi2d7qlno0b%2F2023-06-05_11-47-37?alt=media&token=REDACTED\",\n          \"timezone\": \"Asia/Manila\"\n        }\n      },\n      \"__v\": 0,\n      \"createdAt\": \"2023-12-08T10:14:46.046Z\",\n      \"isBlocked\": false,\n      \"role\": \"admin\",\n      \"status\": \"attended\",\n      \"updatedAt\": \"2024-02-27T03:52:44.884Z\",\n      \"sessionData\": {\n        \"enteredEventAt\": \"2023-12-08T11:34:18.000Z\",\n        \"leftEventAt\": \"2024-02-27T03:52:49.000Z\",\n        \"timeSpent\": 1762,\n        \"duration\": 105771\n      },\n      \"answers\": []\n    },\n    {\n      \"_id\": \"65b8c4508516f393304c1e46\",\n      \"event\": \"65659950201a2fc2761dc4e7\",\n      \"user\": {\n        \"id\": \"65b8c444cb9fc694343ac40b\",\n        \"email\": \"fixture@example.test\",\n        \"profile\": {\n          \"name\": \"asd\",\n          \"picture\": \"default\",\n          \"timezone\": \"Asia/Manila\"\n        }\n      },\n      \"__v\": 0,\n      \"createdAt\": \"2024-01-30T09:41:36.723Z\",\n      \"isBlocked\": false,\n      \"role\": \"attendee\",\n      \"status\": \"attended\",\n      \"updatedAt\": \"2024-01-30T09:41:57.021Z\",\n      \"sessionData\": {\n        \"enteredEventAt\": \"2024-01-30T09:42:07.000Z\",\n        \"leftEventAt\": \"2024-01-30T09:42:07.000Z\",\n        \"timeSpent\": 0,\n        \"duration\": 0\n      },\n      \"answers\": [\n        {\n          \"_id\": \"65b8c44fcb9fc694343ac42e\",\n          \"event\": \"65659950201a2fc2761dc4e7\",\n          \"question\": \"659e2f52ee63640e55a06c14\",\n          \"answer\": \"Answer to the question\",\n          \"user\": \"65b8c444cb9fc694343ac40b\",\n          \"createdAt\": \"2024-01-30T09:41:35.941Z\",\n          \"updatedAt\": \"2024-01-30T09:41:35.941Z\",\n          \"__v\": 0\n        }\n      ]\n    },\n    {\n      \"invite\": {\n        \"_id\": \"657bf253bea1030b641c3646\",\n        \"isAccepted\": false,\n        \"status\": \"sent\",\n        \"code\": \"4699d4e60c2efd71194431265da5013a\",\n        \"event\": \"65659950201a2fc2761dc4e7\",\n        \"theater\": \"65659950201a2fc2761dc4e8\",\n        \"email\": \"fixture@example.test\",\n        \"role\": \"attendee\",\n        \"invitedBy\": \"644662bf766fdabb714cf9e5\",\n        \"createdAt\": \"2023-12-15T06:29:39.113Z\",\n        \"updatedAt\": \"2023-12-15T06:29:39.113Z\",\n        \"__v\": 0\n      },\n      \"status\": \"sent\",\n      \"role\": \"attendee\",\n      \"user\": {\n        \"id\": null,\n        \"email\": \"fixture@example.test\"\n      },\n      \"sessionData\": {},\n      \"answers\": []\n    }\n  ]\n}\n"
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Format of Authorization value should be `Token: xxxxxx`"
+      }
+    }
+  },
+  "paths": {
+    "/events/discovery": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Discover public events",
+        "description": "Returns public Remo events that have opted into discovery, most recently created first. Results exclude private, archived, ended, and trial-company events. Ordered by creation time descending.\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "query",
+            "description": "Optional case-insensitive prefix filter on the event name.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "count",
+            "description": "Maximum number of events to return (1-100, default 9).",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 9
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "description": "Number of events to skip for pagination (default 0).",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          {
+            "in": "query",
+            "name": "order",
+            "description": "Sort direction by creation time (default desc, newest first).",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of discoverable events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "code": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "tagline": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "description": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "startTime": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          },
+                          "endTime": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          },
+                          "eventUrl": {
+                            "type": "string"
+                          },
+                          "coverImageURL": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "company": {
+                            "type": "object",
+                            "nullable": true,
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string",
+                                "nullable": true
+                              },
+                              "code": {
+                                "type": "string",
+                                "nullable": true
+                              },
+                              "domain": {
+                                "type": "string",
+                                "nullable": true
+                              },
+                              "logoURL": {
+                                "type": "string",
+                                "nullable": true
+                              },
+                              "createdAt": {
+                                "type": "string",
+                                "format": "date-time",
+                                "nullable": true
+                              },
+                              "updatedAt": {
+                                "type": "string",
+                                "format": "date-time",
+                                "nullable": true
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid count parameter"
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "API key is not authorized for event discovery"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        }
+      }
+    },
+    "/events/attendance": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Attendance report for a host's events",
+        "description": "Returns the attendees who actually joined the events created by the given host between the From and To dates (filtered by event start time). Each row reports the attendee's email, the event URL, their login and logout times (ISO-8601), and their role. Only attendees with a recorded session are included.\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "hostEmail",
+            "description": "Email address of the host who created the events.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "email"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "description": "Start of the event date range (inclusive), ISO-8601.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "description": "End of the event date range (inclusive), ISO-8601.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of attendance rows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "attendances": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "attendeeEmail": {
+                            "type": "string"
+                          },
+                          "eventUrl": {
+                            "type": "string"
+                          },
+                          "loginTime": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "logoutTime": {
+                            "type": "string",
+                            "format": "date-time",
+                            "nullable": true
+                          },
+                          "role": {
+                            "type": "string"
+                          },
+                          "attended": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing query parameters"
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          },
+          "403": {
+            "description": "API key is not authorized for event attendance reporting"
+          },
+          "429": {
+            "description": "Too many requests"
+          }
+        }
+      }
+    },
+    "/events/{eventId}/members": {
+      "post": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Add event members",
+        "description": "Adds the provided email addresses as event members, and sends out email invites.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "description": "ID of event where members are being added",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "emails": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "attendee",
+                      "speaker"
+                    ]
+                  }
+                },
+                "required": [
+                  "emails",
+                  "role"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Event members successfully added",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/OK"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or incorrect authorization for adding members to this event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/Unauthorized"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/{eventId}": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Get an event's data",
+        "description": "Returns event data",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "description": "ID of event being retrieved",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include",
+            "description": "Comma-separated list of additional entities to be fetched for this entity.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "registrationQuestions"
+                ]
+              }
+            },
+            "explode": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event data fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/OK"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "event": {
+                          "$ref": "#/components/schemas/IEvent"
+                        },
+                        "eventLiveStreams": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "questions": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ICustomRegistrationQuestion"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or incorrect authorization for fetching this event's data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/Unauthorized"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Delete an event",
+        "description": "Deletes an event and all associated data",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "description": "ID of event being deleted",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event data deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/OK"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - most likely, event does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/BadRequest"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or incorrect authorization for deleting the event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/Unauthorized"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An error occurred while attempting to delete the event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/GenericError"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Update event data",
+        "description": "Updates the Remo event",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "description": "ID of event being updated",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Event updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/OK"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or incorrect authorization for updating the event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/Unauthorized"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An error occurred while attempting to update the event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/GenericError"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies/{companyId}/events": {
+      "post": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "Create a Remo event for this company",
+        "description": "Creates event under this company",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "companyId",
+            "description": "ID of company under which the event is being created",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IEvent"
+              },
+              "examples": {
+                "Sample event data": {
+                  "$ref": "#/components/examples/createEventRequest"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Event created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/OK"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Successful event creation response": {
+                    "$ref": "#/components/examples/createdEvent"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or incorrect authorization for creating the event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/Unauthorized"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An error occurred while attempting to create the event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/GenericError"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events": {
+      "post": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Create a Remo event for your main company",
+        "description": "Creates event under your user account's main company",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IEvent"
+              },
+              "examples": {
+                "Sample event data": {
+                  "$ref": "#/components/examples/createEventRequest"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Event created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/OK"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Successful event creation response": {
+                    "$ref": "#/components/examples/createdEvent"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or incorrect authorization for creating the event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/Unauthorized"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An error occurred while attempting to create the event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/GenericError"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/{eventId}/attendees": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Get an event's attendees",
+        "description": "Returns event attendees",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "description": "ID of event being retrieved for attendees",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include",
+            "description": "Comma-separated list of additional entities to be fetched for this entity.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "attendance",
+                  "registrationAnswers"
+                ]
+              }
+            },
+            "explode": false
+          },
+          {
+            "in": "query",
+            "name": "role",
+            "description": "Filter the exported data by role. If not provided, returns all by default.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "attendee",
+                "speaker"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event attendees fetched successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/OK"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "attendees": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ExportedAttendee"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                },
+                "examples": {
+                  "Full response with session data and registration answer": {
+                    "$ref": "#/components/examples/attendeeResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or incorrect authorization for fetching this event's attendees",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/responses/Unauthorized"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/{eventId}/groups/{code}/attendees": {
+      "post": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Add attendee to member group",
+        "description": "Adds the provided attendee email to the specified member group.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "description": "ID of the event",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Member group code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "emailId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "emailId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Attendee added to group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/OK"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid event ID, email, or group code",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or incorrect authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Member group not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An error occurred",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/GenericError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Remove attendee from member group",
+        "description": "Removes the provided attendee email from the specified member group.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "description": "ID of the event",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "code",
+            "description": "Member group code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "emailId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "emailId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Attendee removed from group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/OK"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid event ID, email, or group code",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or incorrect authorization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/Unauthorized"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Member group not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An error occurred",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/responses/GenericError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

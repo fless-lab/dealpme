@@ -58,6 +58,21 @@ const EnvSchema = z.object({
   NOTIFICATION_MAX_ATTEMPTS: z.coerce.number().int().min(1).max(5).default(3),
   NOTIFICATION_RETRY_DELAY_MS: z.coerce.number().int().min(0).max(5000).default(100),
   CONNECTOR_REMO_API_KEY: z.string().default(""),
+  REMO_API_BASE_URL: z.url().default("https://api.virtual.events.com/api/v1"),
+  REMO_EVENT_BASE_URL: z.url().default("https://virtual.events.com"),
+  REMO_COMPANY_ID: z.string().regex(/^[a-f0-9]{24}$/i).optional(),
+  REMO_QUOTA_REFERENCE: z.string().trim().min(3).max(200).optional(),
+  REMO_HOST_EMAIL: z.email().optional(),
+  REMO_FLOOR_TEMPLATE: z.string().min(1).max(100).default("PHOTOREALISTIC-PHOTO-REALISTIC"),
+  REMO_FLOOR_THEME: z.string().min(1).max(100).default("REALISTIC"),
+  REMO_SSO_ENABLED: bool,
+  REMO_SAML_IDP_ENTITY_ID: z.string().optional(),
+  REMO_SAML_SSO_URL: z.string().optional(),
+  REMO_SAML_SP_ENTITY_ID: z.string().optional(),
+  REMO_SAML_ACS_URL: z.string().optional(),
+  REMO_SAML_KEY_FILE: z.string().optional(),
+  REMO_SAML_CERT_FILE: z.string().optional(),
+  REMO_SAML_PREVIOUS_CERT_FILE: z.string().optional(),
   CONNECTOR_REMO_PROVIDER: z.enum(["disabled", "local", "remo"]).default("disabled"),
   REMO_LOCAL_BASE_URL: z.url().default("http://127.0.0.1:8028"),
   REMO_LOCAL_API_KEY: z.string().min(16).default("dealpme-local-events"),
@@ -102,7 +117,18 @@ const EnvSchema = z.object({
     if (!env.SMTP_SECURE && !env.SMTP_REQUIRE_TLS) issue("SMTP_REQUIRE_TLS", "TLS obligatoire en production");
     if (!env.SMTP_USER || !env.SMTP_PASSWORD) issue("SMTP_USER", "Authentification SMTP requise en production");
   }
-  if (env.CONNECTOR_REMO_PROVIDER === "remo") issue("CONNECTOR_REMO_PROVIDER", "Adaptateur réel en attente du contrat API et de sa qualification A17");
+  if (env.CONNECTOR_REMO_PROVIDER === "remo") {
+    if (!env.CONNECTOR_REMO_API_KEY.trim() || /[\r\n]/.test(env.CONNECTOR_REMO_API_KEY)) issue("CONNECTOR_REMO_API_KEY", "App Token requis");
+    if (!env.REMO_COMPANY_ID) issue("REMO_COMPANY_ID", "Company ID requis");
+    if (!env.REMO_QUOTA_REFERENCE || env.REMO_ACCOUNT_KEY === "local-shared") issue("REMO_ACCOUNT_KEY", "Compte réel distinct et référence de quota requis");
+    for (const field of ["REMO_API_BASE_URL", "REMO_EVENT_BASE_URL"] as const) { const url = new URL(env[field]); if (url.protocol !== "https:" || url.username || url.password || url.search || url.hash) issue(field, "URL HTTPS sans identifiants ni paramètres requise"); }
+  }
+  if (env.REMO_SSO_ENABLED) {
+    for (const field of ["REMO_SAML_IDP_ENTITY_ID", "REMO_SAML_SSO_URL", "REMO_SAML_ACS_URL"] as const) {
+      try { const url = new URL(env[field] ?? ""); if (url.protocol !== "https:" || url.username || url.password || url.search || url.hash) issue(field, "URL SAML HTTPS fixe requise"); } catch { issue(field, "URL SAML requise"); }
+    }
+    for (const field of ["REMO_SAML_SP_ENTITY_ID", "REMO_SAML_KEY_FILE", "REMO_SAML_CERT_FILE"] as const) if (!env[field]?.trim()) issue(field, "Paramètre SAML requis lorsque le SSO est activé");
+  }
 });
 
 export type Env = z.infer<typeof EnvSchema>;

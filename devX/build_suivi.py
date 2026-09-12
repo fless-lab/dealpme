@@ -193,12 +193,12 @@ _check_progress_keys()
 # Les acquis V1 de PROGRESS restent inchangés ; leurs compléments ont leurs propres tâches.
 # (statut, avancement estimé, preuve / reste à faire)
 AUDIT_REVIEW = {
-    "V1-007": ("En revue", 0.8, "Matrice et contrats locaux L05 préparés. SSO SAML documenté, unique et global au compte ; IdP commun et métadonnées réelles à raccorder. Branding complet et protocoles privés restent ouverts avec A17."),
-    "V1-068": ("En revue", 0.8, "HTTP local persistant éprouvé : création, admission opaque, annulation, présence rapprochée et reprise. Adaptateur Remo réel en attente du contrat détaillé et des accès A17 ; aucun faux lien live."),
-    "V1-071": ("En revue", 0.85, "Front/backend diaspora éprouvés : avis, demande, décision humaine motivée, salle privée et admission nominative. Entretien vidéo et SSO Remo réels à qualifier."),
-    "V1-104": ("En revue", 0.65, "Sources officielles API, SAML, white label, simultanéité et transcription native table/scène examinées ; matrice et fiche de branchement dans docs/INTEGRATION_REMO.md. Recette des offres A17/A18 encore ouverte."),
-    "V1-105": ("En revue", 0.9, "Console organisateur front/backend et BFF éprouvés desktop/mobile : brouillon, publication, annulation, présences, héritage d'un profil global versionné et surcharge événement. White label complet et configuration fournisseur restent à raccorder."),
-    "V1-106": ("En revue", 0.9, "Réservations atomiques par compte/produit/ressource, bornes communes inclusives, concurrence et résultat inconnu éprouvés. Quota contractuel et couverture des créations hors registre à qualifier A18."),
+    "V1-007": ("En revue", 0.95, "Swagger public archivé, adaptateur et SAML implémentés ; assertions, rotation, session et navigateur éprouvés. Choix de l'IdP commun et recette des paramètres du compte restent ouverts A17. Preuve : qa/l05-remo-verification.json."),
+    "V1-068": ("En revue", 0.95, "Adaptateur du Swagger public opérationnel et testé sur serveur HTTPS de contrat : création, contenu, invitations/intervenants, présence, groupes et suppression. Pas de recréation sur timeout ; HMAC local refusé en mode réel. Recette du compte A17 attendue."),
+    "V1-071": ("En revue", 0.95, "Diaspora front/backend, accord email, salle privée, confirmation humaine et raccordement SAML disponibles. Connexion et confidentialité du véritable entretien Remo à qualifier avec A17."),
+    "V1-104": ("En revue", 0.9, "Contrat OpenAPI public retrouvé et archivé (11 opérations / 68 schémas), tests HTTP/SAML et fiche de branchement réalisés. Les fonctions globales non exposées sont identifiées. Qualification des offres et paramètres A17/A18 encore ouverte."),
+    "V1-105": ("Complétée", 1, "Console DealPME livrée : création/reprise, contenu et visuels Remo, profil général versionné, invitations paginées, intervenants, groupes, présences et suppression explicite. Front et BFF éprouvés, SAML intégré. Activation/recette fournisseur suivies en V1-104/068. Preuve : qa/l05-remo-verification.json."),
+    "V1-106": ("En revue", 0.95, "Réservations et liaison immuable au compte/Company ID éprouvées ; concurrence, changements de configuration et résultats incertains testés. Quota contractuel et couverture des créations hors registre restent à qualifier A18."),
     "V1-107": ("En cours", 0.55, "Prototype navigateur local : admission, consentement, audio synthétique et arrêt sur révocation éprouvés. Aucune voix réelle ni couverture scène/tables attestée ; comparer l'export natif de transcripts à l'agent avec A17/A21."),
     "V1-109": ("Complétée", 1, "L04 : mock HTTP, sélection stricte, manuel sans réseau, historique append-only, reprise motivée, concurrence et navigateur éprouvés. Aucun octroi depuis une preuve synthétique. Preuve : qa/l04-verification.json."),
     "V1-035": ("En revue", 0.95, "Parcours manuel/mock éprouvés ; identité modifiée invalide preuve et badge sans effacer la décision historique. Contrat CFE réel A02 toujours attendu ; fournisseur réel refusé tant qu'il n'est pas qualifié."),
@@ -246,6 +246,7 @@ AUDIT_CRITERIA = {
 # Dates de clôture du suivi par identifiant, selon le calendrier de livraison.
 # Une date après la fin prévue est conservée ; aucune borne liée à la date du jour.
 COMPLETION_DATES: dict[str, dt.date] = {
+    "V1-105": dt.date(2026, 10, 5),
     "V1-109": dt.date(2026, 9, 28),
     "V1-096": dt.date(2026, 10, 2),
     "V1-091": dt.date(2026, 9, 16),

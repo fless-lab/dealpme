@@ -285,12 +285,14 @@ export const events = pgTable("event", {
   campaignId: varchar("campaign_id", { length: 64 }), // attribution des inscriptions issues de l'événement
   status: varchar("status", { length: 16 }).notNull().default("DRAFT"), // DRAFT | PUBLISHED | CLOSED
   audience: varchar("audience", { length: 16 }).notNull().default("PUBLIC"),
-  branding: jsonb("branding").$type<{ label: string; accent: string; welcome: string }>().notNull().default(sql`'{"label":"DealPME","accent":"#1C2751","welcome":"Bienvenue"}'::jsonb`),
+  branding: jsonb("branding").$type<import("@dealpme/connector-remo").RemoEventRequest["branding"]>().notNull().default(sql`'{"label":"DealPME","accent":"#1C2751","welcome":"Bienvenue"}'::jsonb`),
   revision: integer("revision").notNull().default(1),
   publicationKey: uuid("publication_key"),
   creationHash: varchar("creation_hash", { length: 64 }),
   brandingOrigin: jsonb("branding_origin").$type<{scope:"ACCOUNT"|"EVENT";version:string}>().notNull().default(sql`'{"scope":"EVENT","version":"legacy"}'::jsonb`),
   provider: varchar("provider", { length: 16 }).notNull().default("legacy"),
+  providerAccountKey: varchar("provider_account_key", { length: 64 }),
+  providerCompanyId: varchar("provider_company_id", { length: 128 }),
   syncError: varchar("sync_error", { length: 64 }),
   syncStartedAt: timestamp("sync_started_at", { withTimezone: true }),
   cancellationReason: varchar("cancellation_reason", { length: 2000 }),
@@ -308,9 +310,14 @@ export const eventRegistrations = pgTable(
     ticketRef: varchar("ticket_ref", { length: 128 }), // référence du paiement mobile money ou du billet Remo
     joinedAt: timestamp("joined_at", { withTimezone: true }), // présence remontée par webhook
     cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
+    providerConsentAt: timestamp("provider_consent_at", { withTimezone: true }),
+    providerEmail: varchar("provider_email", { length: 254 }),
+    invitationState: varchar("invitation_state", { length: 16 }).notNull().default("NONE"),
+    providerRole: varchar("provider_role", { length: 16 }).notNull().default("attendee"),
+    invitationStartedAt: timestamp("invitation_started_at", { withTimezone: true }),
     createdAt: createdAt(),
   },
-  (t) => [uniqueIndex("registration_unique_idx").on(t.eventId, t.userId)],
+  (t) => [uniqueIndex("registration_unique_idx").on(t.eventId, t.userId), uniqueIndex("registration_provider_email_idx").on(t.eventId, t.providerEmail)],
 );
 
 /** Guichet Diaspora (V1 léger) : demande de rendez-vous sécurisé, entretien vidéo via Remo une fois confirmé. */
@@ -324,6 +331,7 @@ export const diasporaAppointments = pgTable("diaspora_appointment", {
   confirmedBy: uuid("confirmed_by"),
   eventId: uuid("event_id").references(() => events.id),
   decisionReason: varchar("decision_reason", { length: 2000 }),
+  providerConsentAt: timestamp("provider_consent_at", { withTimezone: true }),
   crossBorderNoticeShownAt: timestamp("cross_border_notice_shown_at", { withTimezone: true }), // contraintes présentées avant la phase finale (K21.3)
   createdAt: createdAt(),
 });
@@ -335,6 +343,9 @@ export const eventProviderAccounts = pgTable("event_provider_account", {
   concurrentLimit: integer("concurrent_limit").notNull(),
   marginMinutes: integer("margin_minutes").notNull(),
   qualificationRef: varchar("qualification_ref", { length: 200 }).notNull(),
+  externalAccountId: varchar("external_account_id", { length: 128 }),
+  branding: jsonb("branding").$type<import("@dealpme/connector-remo").RemoEventRequest["branding"]>(),
+  brandRevision: integer("brand_revision").notNull().default(1),
 });
 export const eventReservations = pgTable("event_reservation", {
   id: id(), accountKey: varchar("account_key", { length: 64 }).notNull().references(() => eventProviderAccounts.key),

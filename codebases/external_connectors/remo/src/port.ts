@@ -8,7 +8,8 @@ export interface RemoEventRequest {
   startsAt: string;
   endsAt: string;
   capacity: number;
-  branding: { label: string; accent: string; welcome: string };
+  branding: { label: string; accent: string; welcome: string; logoUrl?: string | undefined; coverUrl?: string | undefined; welcomeMediaUrl?: string | undefined };
+  description?: string | undefined;
 }
 export interface RemoEvent {
   remoEventId: string;
@@ -25,14 +26,14 @@ export interface RemoPort {
   createEvent(req: RemoEventRequest): Promise<RemoEvent>;
   cancelEvent(requestKey: string): Promise<void>;
   attendance(remoEventId: string): Promise<RemoAttendance[]>;
-  /** Lien de connexion unique par participant (SSO ou jeton), sans exposer l'identité aux autres participants. */
+  /** Admission locale ; Remo réel utilise une invitation email et son parcours de connexion. */
   participantJoinUrl(remoEventId: string, externalUserId: string, displayName: string): Promise<string>;
   verifyWebhook(rawBody: string, signatureHeader: string): boolean;
   parseAttendance(rawBody: string): RemoAttendance[];
 }
 
 export class RemoError extends Error {
-  constructor(readonly code: "DISABLED" | "UNAVAILABLE" | "UNKNOWN" | "REJECTED" | "MALFORMED") {
+  constructor(readonly code: "DISABLED" | "UNAVAILABLE" | "UNKNOWN" | "REJECTED" | "MALFORMED" | "AUTHENTICATION" | "FORBIDDEN" | "NOT_FOUND" | "RATE_LIMITED", readonly retryAfterMs = 0) {
     super(`Intégration événementielle : ${code}`); this.name = "RemoError";
   }
 }

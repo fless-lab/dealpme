@@ -3,6 +3,8 @@ import { EventsController } from "./events.controller.js";
 import { EventsService } from "./events.service.js";
 import { RemoBridgeService } from "./remo-bridge.service.js";
 import { RemoWebhookController } from "./remo-webhook.controller.js";
+import { RemoMembersService } from "./remo-members.service.js";
+import { RemoSsoController } from "./remo-sso.controller.js";
 
 /**
  * Modules CNX + DIA : Deal-Connect (événements B2B) et Guichet Diaspora.
@@ -12,8 +14,8 @@ import { RemoWebhookController } from "./remo-webhook.controller.js";
  * Processus : P20, P21. Point de branchement de Remo.co : RemoBridgeService.
  */
 @Module({
-  controllers: [EventsController, RemoWebhookController],
-  providers: [EventsService, RemoBridgeService],
+  controllers: [EventsController, RemoWebhookController, RemoSsoController],
+  providers: [EventsService, RemoBridgeService, RemoMembersService],
   exports: [RemoBridgeService],
 })
 export class EventsModule {}

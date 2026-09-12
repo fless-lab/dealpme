@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "lot": "L05 — extension API Remo et SAML",
+  "sourceBase": "abc6b5c",
+  "verifiedOn": "2026-09-12",
+  "implementationStatus": "PASS",
+  "providerAccountStatus": "PENDING_ACCESS_AND_QUALIFICATION_A17_A18_A21",
+  "contract": {
+    "source": "https://api.virtual.events.com/api/docs/swagger-ui-init.js",
+    "openapi": "3.0.0",
+    "version": "1.0.0",
+    "operations": 11,
+    "schemas": 68,
+    "archivedSha256": "a2af6ccc4ee1b8df3b83fb49dccbeccd729dfe202a5a326fb03b11d5f37bf382",
+    "examples": "Emails et tokens de médias neutralisés"
+  },
+  "checks": {
+    "cleanInstall": "PASS",
+    "types": "PASS",
+    "lint": "PASS",
+    "buildWorkspaces": 26,
+    "unitTests": { "passed": 167, "files": 17, "remoHttp": 14, "saml": 8 },
+    "smokeV1": 101,
+    "l02Regression": 33,
+    "l03Regression": 17,
+    "l04Regression": 32,
+    "l05BaseRegression": 13,
+    "remoIntegration": { "passed": 15, "browser": 2, "target": "HTTPS_CONTRACT_FIXTURE_NOT_REMO_ACCOUNT" },
+    "rejectionProbes": 13,
+    "restoration": { "databases": 3, "tables": 49, "decryptedObjects": 5 },
+    "dependencyAudit": { "critical": 0, "high": 0, "moderate": 4 }
+  },
+  "verifiedBehaviours": [
+    "App Token dans l'en-tête documenté, Company ID explicite, temps en millisecondes et projection bornée",
+    "Création sur invitation, paramètres de visuels mappés aux champs du Swagger",
+    "Pas de second POST après création incertaine ; rapprochement de référence sur compte/code/créneau/visibilité",
+    "Refus certain de création distinct du résultat inconnu : correction/reprise ou annulation sans référence distante",
+    "Invitation avec email vérifié et accord distinct ; réponse perdue rapprochée sans nouvel email",
+    "Invitations paginées, rôle intervenant explicite et gestion des groupes existants",
+    "Présence rapprochée sous l'inscription interne ; profils et tokens fournisseur exclus",
+    "Changement de compte fournisseur refusé ; HMAC local refusé avant cache en mode réel",
+    "Modification distante acceptée puis audit en panne : état indéterminé et reprise du PUT",
+    "Profil général éditable par l'administration, héritage versionné et événements antérieurs conservés",
+    "SSO SAML SP-initiated : XML/XSD validé, issuer/destination/ACS épinglés, signature RSA-SHA256",
+    "Altération, XML externe, décompression excessive, expiration et ForceAuthn testés",
+    "RelayState par requête, émission à usage unique, email vérifié et rôles actuels requis",
+    "Rotation de certificat et validation des assertions anciennes/nouvelles",
+    "Navigateur : connexion DealPME puis POST SAML vérifié par le SP HTTPS ; visuels Remo modifiés depuis la console mobile"
+  ],
+  "remainingProviderChecks": [
+    "Clés, Company ID, droits/add-ons et quota effectivement souscrits",
+    "Adoption de l'IdP commun au compte mutualisé, métadonnées et login Remo réels",
+    "Visibilité des profils/contacts et absence d'accès élargi par domaine pour les salles privées",
+    "Paramètres de marque blanche globale non exposés par le Swagger : activation initiale chez Remo",
+    "Rétention, transcription/captation table/scène et téléchargement des exports réels",
+    "Single Logout non exposé/implémenté ; une session Remo déjà ouverte n'est pas réputée révoquée par DealPME"
+  ],
+  "documentation": "docs/REMO_RACCORDEMENT.md"
+}

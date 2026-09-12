@@ -8,7 +8,8 @@ Plan actif après réunion direction : [plan d'exécution par lots](docs/PLAN_EX
 l'onglet `Plan_execution` du classeur. **L01/L02 terminés, L03/L04 opérationnels en local**
 ([notifications](docs/NOTIFICATIONS.md), [registre et exploitation](docs/EXPLOITATION_L04.md)) ;
 recettes fournisseurs et installation sur serveur dédié encore ouvertes. **L05 — événements** :
-[socle front/backend local éprouvé](docs/EVENEMENTS_L05.md), [SSO et branding Remo complet dans la suite du lot](docs/INTEGRATION_REMO.md).
+[front/backend, adaptateur API et SAML éprouvés](docs/REMO_RACCORDEMENT.md) ;
+la recette du compte Remo et les capacités live restent à qualifier.
 Contexte : [bilan initial du 12/09/2026](docs/BILAN_AVANCEMENT_2026-09-12.md) et
 [compte rendu de direction](docs/COMPTE_RENDU_DIRECTION_2026-09-12.md).
 Le fichier `DealPME_Suivi.ods` est une archive d'un ancien calendrier ; le suivi actif est le `.xlsx`.

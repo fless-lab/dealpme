@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@dealpme/notifications": "*",
+    "@dealpme/federation": "*",
     "@dealpme/connector-antivirus": "*",
     "@dealpme/connector-email": "*",
     "@dealpme/connector-registry": "*",

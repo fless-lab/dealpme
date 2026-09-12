@@ -13,6 +13,7 @@
     "packages/i18n",
     "packages/testing",
     "packages/notifications",
+    "packages/federation",
     "codebases/engine/rules",
     "codebases/external_connectors/*",
     "codebases/frontend/ui",
@@ -25,7 +26,7 @@
     "codebases/devtools/event-simulator"
   ],
   "scripts": {
-    "build:libs": "npm run build -w packages/domain -w packages/contracts -w packages/i18n -w packages/testing -w packages/notifications -w codebases/engine/rules -w codebases/external_connectors -w codebases/frontend/ui",
+    "build:libs": "npm run build -w packages/domain -w packages/contracts -w packages/i18n -w packages/testing -w packages/notifications -w packages/federation -w codebases/engine/rules -w codebases/external_connectors -w codebases/frontend/ui",
     "build:apps": "npm run build -w codebases/engine/rps -w codebases/backend/api -w codebases/backend/worker -w codebases/frontend/web -w codebases/devtools/sms-inbox -w codebases/devtools/registry-mock -w codebases/devtools/event-simulator",
     "build": "npm run build:libs && npm run build:apps",
     "dev:api": "npm run dev -w codebases/backend/api",

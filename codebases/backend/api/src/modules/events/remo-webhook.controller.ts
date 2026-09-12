@@ -5,6 +5,7 @@ import { IdempotencyInterceptor, type IdempotentRequest } from "../../platform/i
 import { AuditService } from "../../platform/audit.service.js";
 import { assertValidSignature, type RequestWithRawBody } from "../../platform/webhook-signature.js";
 import { RemoBridgeService } from "./remo-bridge.service.js";
+import { DealPmeError, ErrorCode } from "@dealpme/contracts";
 
 @Injectable()
 export class RemoSignatureGuard implements CanActivate {
@@ -12,6 +13,7 @@ export class RemoSignatureGuard implements CanActivate {
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const req = ctx.switchToHttp().getRequest<RequestWithRawBody>();
     try {
+      if (loadEnv().CONNECTOR_REMO_PROVIDER !== "local") throw new DealPmeError(ErrorCode.FORBIDDEN, "Le contrat HMAC du simulateur n'est pas un webhook Remo qualifié");
       assertValidSignature(req, "x-remo-signature", loadEnv().CONNECTOR_REMO_WEBHOOK_SECRET);
       return true;
     } catch (error) {

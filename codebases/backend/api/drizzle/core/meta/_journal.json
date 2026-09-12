@@ -78,6 +78,27 @@
       "when": 1789215696463,
       "tag": "0010_event_brand_origin",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1789221930110,
+      "tag": "0011_remo_provider_and_invitations",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1789222530891,
+      "tag": "0012_event_provider_binding",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1789233484253,
+      "tag": "0013_remo_speaker_role",
+      "breakpoints": true
     }
   ]
 }

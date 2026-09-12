@@ -2,10 +2,11 @@
 
 ## État
 
-Le socle front/backend local est éprouvé. La demande complémentaire du chef de projet est intégrée
-au plan et au classeur : couvrir toute l'intégration Remo pertinente, SSO et branding général/événement
-compris. **L05 reste en cours sur ce périmètre élargi**, en particulier l'IdP SAML commun, l'adaptateur
-API réel, les fonctions white label complètes et la qualification captation/export.
+Le socle front/backend local et son extension API/SAML sont éprouvés. L'adaptateur Remo fondé sur le
+Swagger public, les invitations/intervenants/groupes, les visuels et le profil général DealPME ainsi que
+le SSO SAML sont implémentés. **L05 garde ses sous-recettes fournisseur ouvertes** : adoption/configuration
+du SSO commun, droits et quotas du compte, paramètres globaux non exposés par API et captation/export réels.
+Guide actuel : [REMO_RACCORDEMENT.md](REMO_RACCORDEMENT.md).
 
 Références et fiche de branchement : [INTEGRATION_REMO.md](INTEGRATION_REMO.md).
 
@@ -41,14 +42,14 @@ REMO_ACCOUNT_BRAND_VERSION=local-v1
 ```
 
 `npm run infra:up` construit le simulateur et son volume SQLite. Celui-ci est interdit en production.
-Sans sélection, le fournisseur est `disabled`. La sélection `remo` est refusée tant que l'adaptateur
-fondé sur le contrat réel n'est pas implémenté/qualifié. Une clé API seule n'active pas un protocole supposé.
+Sans sélection, le fournisseur est `disabled`. La sélection `remo` utilise maintenant l'adaptateur du
+Swagger public ; App Token, Company ID, compte distinct, HTTPS et référence de quota sont requis.
 
-Le branding local implémenté couvre le nom de marque, l'accent et le texte d'accueil. Le formulaire
-permet de copier le profil général configuré et d'en conserver la version, ou de définir une surcharge
-propre à l'événement. Les valeurs sont figées à l'enregistrement ; un changement général ne réécrit pas
-les événements déjà préparés/publiés. Logos, favicon, fond de connexion, sous-domaine et emails fournisseur
-restent dans la préparation white label détaillée, pas annoncés comme déjà raccordés.
+Le branding couvre le nom de marque, l'accent DealPME, le texte/média d'accueil, le logo et la couverture
+par URL HTTPS publique. Le profil général est éditable dans DealPME par l'administration, avec versions
+et surcharges événementielles. Les valeurs sont figées à l'enregistrement. Favicon, fond de connexion,
+sous-domaine et emails globaux nécessitent l'initialisation du compte Remo : le Swagger n'en expose pas
+les opérations d'écriture. Les visuels d'événement, eux, sont envoyés par l'adaptateur.
 
 ## Réservation et synchronisation
 
@@ -92,6 +93,6 @@ publication concurrente, autres produits sur le compte, reprise après timeout, 
 admission/présence, diaspora privée, navigateur et capture synthétique. Le test de restauration L04
 couvre aussi les nouvelles tables (49 tables au total dans les trois bases à ce stade).
 
-Prochaine tranche L05 : implémenter et éprouver le raccordement SAML avec l'IdP retenu et les métadonnées
-SP, compléter le branding fournisseur général/événement, puis adapter les opérations au contrat API réel
-et rejouer la matrice. A17/A18/A21 restent ouverts. Aucune date de version ni tâche historique n'est déplacée.
+Suite L05 : configurer le compte reçu et ses métadonnées SAML, rejouer la matrice contre le fournisseur,
+vérifier les profils/contacts et les paramètres globaux, puis éprouver la captation et les exports réels.
+A17/A18/A21 restent ouverts. Aucune date de version ni tâche historique n'est déplacée.

@@ -1,0 +1,1 @@
+ALTER TABLE "event_registration" ADD COLUMN "provider_role" varchar(16) DEFAULT 'attendee' NOT NULL;
