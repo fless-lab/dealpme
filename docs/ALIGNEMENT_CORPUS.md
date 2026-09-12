@@ -56,7 +56,8 @@ Trois points restent à traiter :
   comportements dans un navigateur.
 
 La fiche opportunité reprend déjà `EXPRESS_INTEREST`, mais reste un teaser T0 sans les six onglets du
-critère V1-057. L'écart doit être résolu ou explicitement approuvé dans le journal de fidélité.
+corpus. L'acquis V1-057 est conservé ; l'extension V1-099 traite cet écart, à résoudre ou explicitement
+approuver dans le journal de fidélité.
 
 **Travail à faire** : V1-092 pour les parcours V1 ; V2-003 pour terminer et étendre. Aucun besoin de rouvrir A15.
 
@@ -83,7 +84,8 @@ d'ingestion ne fait encore que journaliser les jobs.
 Le Release Gate exige que la livraison produise `qa/e2e-results.json`, `qa/control-coverage.json`, des
 captures desktop et mobile, et `qa/fidelity-ledger.md`. La couverture statique existe et a été régénérée le
 12/09. Les trois autres preuves n'ont pas été trouvées. Le smoke API existe mais n'a pas été rejoué pendant
-cet audit, la pile Docker étant arrêtée. La recette navigateur doit commencer en V1 (V1-084/086/092).
+cet audit, la pile Docker étant arrêtée. La recette navigateur est suivie dans les compléments
+V1-092/100 et la tâche de captures V1-086 ; les travaux de tests V1-084/085 restent acquis.
 
 ### 5. RPS : socle réel, garanties encore à construire
 

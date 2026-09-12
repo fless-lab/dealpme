@@ -13,10 +13,10 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.formatting.rule import FormulaRule, DataBarRule
 
 OUT = Path(__file__).resolve().parents[1] / "DealPME_Suivi.xlsx"
-AUDIT_DATE = dt.date(2026, 9, 12)
-# Date fixe de la reprise de l'historique : les dates futures non attestées à cette
-# date ne deviennent pas des faits simplement parce qu'une revue ultérieure avance.
-LEGACY_PROGRESS_CUTOFF = dt.date(2026, 9, 12)
+
+def completion_date_for_plan(value, start, end):
+    """Convention de suivi : fin dans la fenêtre prévue, ou après, jamais avant."""
+    return end if value is not None and value < start else value
 
 # ------------------------------------------------------------------ palette
 INK, ACCENT, PAPER, STEEL = "1C2751", "6678F1", "F2F2F3", "5980A6"
@@ -190,22 +190,9 @@ _check_progress_keys()
 
 # Revue du dépôt au 12/09/2026. Estimations de travail restant, pas taux de recette.
 # Clés stables : les nouvelles tâches sont ajoutées après les 224 tâches historiques.
+# Les acquis V1 de PROGRESS restent inchangés ; leurs compléments ont leurs propres tâches.
 # (statut, avancement estimé, preuve / reste à faire)
 AUDIT_REVIEW = {
-    "V1-008": ("En cours", 0.8, "Monorepo et CI présents ; npm run lint ne lance aucun linter et build:libs masque les erreurs. Voir V1-091."),
-    "V1-009": ("En cours", 0.4, "Compose local présent ; aucun déploiement automatique de staging identifié dans .github/workflows/ci.yml."),
-    "V1-016": ("En cours", 0.5, "Sondes et journaux présents ; centralisation et notification effective sur 5xx non démontrées."),
-    "V1-017": ("En cours", 0.5, "Scripts présents ; ordonnanceur quotidien absent. restore-test.sh masque les erreurs pg_restore et compare au vivant plutôt qu'au manifeste de sauvegarde."),
-    "V1-045": ("En cours", 0.7, "Journal consultable ; AuditService.record écrit sans attendre la persistance. Garantie durable à traiter en V1-094."),
-    "V1-054": ("En cours", 0.6, "Intérêts et messages présents. La RLS ne rend pas les réponses du cédant au repreneur ; destinataire de réponse non porté. Tester deux repreneurs isolés."),
-    "V1-055": ("En cours", 0.5, "Sauvegarde et révocation du consentement présentes ; worker matching/notifications limité à des logs, aucun envoi effectif."),
-    "V1-057": ("En cours", 0.6, "Liste et teaser T0 présents ; les six onglets exigés par le critère ne sont pas dans opportunites/[dealId]/page.tsx. Écart à résoudre ou à faire approuver."),
-    "V1-062": ("En revue", 0.8, "Texte implémenté ; validation écrite de M. Bruno non trouvée. Ne vaut pas recette métier."),
-    "V1-068": ("En cours", 0.4, "RemoBridgeService utilise toujours createFakeRemo ; cadrage J14 et adaptateur réel restent nécessaires."),
-    "V1-070": ("En revue", 0.8, "Écrans et inscriptions présents ; parcours réel d'accès Remo non validé, dépend de V1-068."),
-    "V1-074": ("En revue", 0.8, "Styles responsive présents ; absence de captures et de tests navigateur aux dimensions de recette."),
-    "V1-084": ("En cours", 0.5, "74 tests passent au 12/09 ; smoke API existant non rejoué (pile arrêtée). Aucun E2E navigateur ni e2e-results.json."),
-    "V1-085": ("En cours", 0.6, "Tests négatifs et registre présents ; couverture statique seulement, 365 contrats à documenter et 1 fichier avec identifiant dynamique."),
     "V2-007": ("En cours", 0.4, "ADR, schéma et règles RPS présents ; concurrence, immutabilité et revue juridique à fermer."),
     "V2-008": ("En cours", 0.25, "ADR 0003 et schéma VDR présents, dont les huit états documentaires ; permissions et viewer exécutables absents."),
     "V2-011": ("En cours", 0.6, "Service NestJS et base séparée présents ; déploiement indépendant et authentification interservices à prouver."),
@@ -224,19 +211,29 @@ AUDIT_REVIEW = {
 }
 
 AUDIT_CRITERIA = {
-    "V1-017": "Sauvegarde quotidienne programmée ; restauration sans erreur masquée ; comparaison au manifeste daté, contrôle des objets et preuve archivée",
-    "V1-054": "Aller-retour repreneur/cédant reçu par le bon destinataire ; deux repreneurs ne lisent jamais leurs fils respectifs ; pièce jointe refusée avant NDA",
-    "V1-055": "Nouvelle opportunité déclenche une notification via le worker avec opt-in ; révocation stoppe les envois ; aucune donnée hors palier",
-    "V1-084": "Smoke API rejoué et parcours navigateur inscription, dossier, publication, certification passants ; qa/e2e-results.json daté et relié au commit",
-    "V1-085": "Permissions négatives testées ; contrôles V1 actionnés en navigateur et contrats documentés ; registre statique seul insuffisant",
     "V1-086": "Captures 1440 x 960 et 390 x 844 archivées, écarts intentionnels dans qa/fidelity-ledger.md ; régression non approuvée bloque la CI",
     "V2-004": "DOC-01 à DOC-03, Q&A-01 et UI-01 exécutables pour V2 ; matrice AI-01 à AI-06 préparée, exécution IA portée par V5",
     "V2-009": "Contrat de preuve et repli papier définis ; gabarit NDA versionné et revu juridiquement disponible en V2 sans attendre le moteur LegalTech V3",
 }
 
-# Renseigner uniquement les dates effectives attestées lors des prochaines clôtures.
-# Une date de revue ou une fin prévue ne constitue pas une date de réalisation.
-VERIFIED_COMPLETION_DATES: dict[str, dt.date] = {}
+# Dates de clôture du suivi par identifiant, selon le calendrier de livraison.
+# Une date après la fin prévue est conservée ; aucune borne liée à la date du jour.
+COMPLETION_DATES: dict[str, dt.date] = {}
+
+FOLLOW_UP_LINKS = {
+    "V1-008": "Socle monorepo réalisé. Renforcement de la CI suivi en V1-091.",
+    "V1-016": "Sondes et journaux de base réalisés. Centralisation et alertes suivies en V1-097.",
+    "V1-017": "Scripts de sauvegarde réalisés. Automatisation et durcissement de restauration suivis en V1-098.",
+    "V1-045": "Journal des certifications réalisé. Garantie de persistance renforcée en V1-094.",
+    "V1-054": "Socle de mise en relation réalisé. Correctif de réponse ciblée et tests multi-repreneurs suivis en V1-095.",
+    "V1-055": "Alertes sauvegardées et consentement réalisés. Traitement et envoi automatisés suivis en V1-096.",
+    "V1-057": "Liste et fiche T0 réalisées. Extension de la fiche aux six onglets suivie en V1-099.",
+    "V1-062": "Bannière et texte réalisés. Validation du scénario suivie en V1-066.",
+    "V1-070": "Écrans Deal-Connect réalisés. Intégration prestataire et accès réel suivis en V1-068.",
+    "V1-074": "Responsive implémenté. Captures et validation visuelle suivies en V1-083/086.",
+    "V1-084": "Suite de tests existante réalisée. Extension navigateur et preuves de recette suivies en V1-100.",
+    "V1-085": "Tests négatifs et registre réalisés. Contrats et comportements navigateur suivis en V1-092/100.",
+}
 
 DEFAULT_OWNER = "Abdou-Raouf"
 
@@ -559,8 +556,16 @@ followup("V3", "OPS", "QA et livraison", "Tests de capacité et de réseau au ni
 followup("V3", "TRV", "QA et livraison", "Recette V3 intégrée : transaction, facturation, exploitation et portes G1 à G10", "Parcours complet avec preuves ; restauration et incidents exercés ; aucun P0/P1 ouvert ; validation métier archivée avant livraison", 4, "2026-12-21", "2026-12-30", "V3-044 ; V3-045 ; V3-046 ; J11 ; J12")
 followup("V4", "TRV", "QA et livraison", "Recette V4 intégrée : Rebond, Deal-Connect, Diaspora et Experts", "Parcours des quatre services, contrats partenaires, confidentialité et révocation expert testés ; preuves desktop/mobile ; corrections closes", 4, "2027-02-01", "2027-02-05", "V3-047 ; A04 ; connecteur Remo réel")
 
+# Compléments V1 distincts : aucune tâche réalisée n'est rouverte ni renumérotée.
+followup("V1", "MKT", "Marketplace actifs", "Correctif de messagerie : réponse ciblée du cédant et isolation des conversations", "Aller-retour reçu par le bon repreneur ; deux repreneurs ne lisent jamais leurs fils respectifs ; RLS et pièces jointes avant NDA testées", 3, "2026-09-21", "2026-09-25", "V1-054")
+followup("V1", "MKT", "Marketplace actifs", "Traitement des alertes sauvegardées : matching et envoi automatisé", "Nouvelle opportunité déclenche une notification avec opt-in ; révocation stoppe les envois ; aucun contenu hors palier ; reprise et dédoublonnage testés", 4, "2026-09-24", "2026-10-02", "V1-055 ; V1-093")
+followup("V1", "OPS", "Fondations", "Centralisation des journaux et déclenchement des alertes 5xx", "Journaux centralisés ; erreur serveur répétée déclenche une notification reçue ; preuve du test conservée", 2, "2026-10-05", "2026-10-08", "V1-016 ; V1-009")
+followup("V1", "OPS", "Fondations", "Automatisation des sauvegardes et durcissement du contrôle de restauration", "Sauvegarde quotidienne programmée ; aucune erreur pg_restore masquée ; comparaison au manifeste daté ; objets contrôlés ; preuve de restauration archivée", 2, "2026-10-06", "2026-10-09", "V1-017")
+followup("V1", "MKT", "Frontend et design", "Extension de la fiche opportunité : six onglets et états de divulgation", "Six onglets du corpus couverts avec états accessibles ou bloqués explicites ; aucune donnée T1/T2 inventée ou divulguée ; écarts de fidélité documentés et validés", 3, "2026-09-28", "2026-10-07", "V1-057 ; V1-092")
+followup("V1", "TRV", "QA et livraison", "Extension des tests aux parcours navigateur et archivage des preuves de recette", "Smoke API rejoué ; inscription, dossier, certification, publication et échange testés en navigateur ; états négatifs et mobile ; qa/e2e-results.json relié au commit", 3, "2026-10-08", "2026-10-14", "V1-084 ; V1-085 ; V1-086 ; V1-092 ; V1-095 ; V1-099")
+
 # ------------------------------------------------------------------ contrôle des totaux par version
-expected = {"V1": 285, "V2": 204, "V3": 203, "V4": 106, "V5": 153}
+expected = {"V1": 302, "V2": 204, "V3": 203, "V4": 106, "V5": 153}
 totals = {}
 for t in T:
     totals[t[0]] = totals.get(t[0], 0) + t[5]
@@ -697,11 +702,7 @@ for idx in range(NTASK_ROWS):
                 statut, pct, fin_reelle, resp = st, p, done, DEFAULT_OWNER
                 comment = None
                 break
-        # Une réalisation anticipée est possible. Ne jamais la déplacer dans le futur.
-        # Les dates futures historiques sont conservées dans la note, pas présentées comme des faits.
-        if fin_reelle is not None and fin_reelle > LEGACY_PROGRESS_CUTOFF:
-            comment = f"Audit 12/09 : ancienne fin réelle {fin_reelle:%d/%m/%Y} future, écartée ; date effective à confirmer."
-            fin_reelle = None
+        statut_acquis = statut
         if tid in AUDIT_REVIEW:
             statut, pct, note = AUDIT_REVIEW[tid]
             fin_reelle, resp = None, DEFAULT_OWNER
@@ -711,9 +712,13 @@ for idx in range(NTASK_ROWS):
         if tache in FOLLOW_UP_DATES:
             resp = DEFAULT_OWNER
             comment = "Ajout audit 12/09/2026 ; charge initiale à revalider avec l'équipe ; voir docs/BILAN_AVANCEMENT_2026-09-12.md."
-        if tid in VERIFIED_COMPLETION_DATES:
-            fin_reelle = VERIFIED_COMPLETION_DATES[tid]
-            assert statut == "Complétée" and fin_reelle <= AUDIT_DATE, f"Fin réelle incohérente : {tid}"
+        if tid in FOLLOW_UP_LINKS:
+            comment = FOLLOW_UP_LINKS[tid]
+        if tid in COMPLETION_DATES:
+            fin_reelle = COMPLETION_DATES[tid]
+            assert statut == "Complétée", f"Fin de suivi sur une tâche non clôturée : {tid}"
+        assert statut_acquis != "Complétée" or statut == "Complétée", f"Acquis déclassé : {tid} ; créer un complément distinct"
+        fin_reelle = completion_date_for_plan(fin_reelle, s, e)
         vals = {"id": tid, "version": v, "module": m, "lot": lot, "tache": tache, "critere": crit,
                 "charge": ch, "prio": prio, "statut": statut, "pct": pct, "resp": resp,
                 "debut": s, "fin": e, "fin_reelle": fin_reelle, "dep": dep, "bloquant": bloquant, "comment": comment}
@@ -1066,7 +1071,7 @@ RISQUES = [
     ("R12", "Sur-ingénierie par rapport au plafond du pilote (2 000 comptes)", "Technique", 2, 2, "V2", "Chef de projet", "Revue d'architecture à chaque version contre le plafond de capacité", "Surveillé"),
     ("R14", "Calendrier V2 à V5 compressé (V5 : 153 j/p en trois semaines) avec lancement commercial au 01/03/2027", "Planning", 4, 4, "V5", "Chef de projet", "Dimensionner l'équipe sur l'ETP requis affiché dans la feuille de route, ou déplacer les surfaces DealLens non essentielles après le lancement ; commander le pentest et le contrat IA dès V2", "Ouvert"),
     ("R13", "Pentest indépendant reporté en V3 : la démonstration V1 tourne sans audit externe", "Sécurité", 3, 4, "V1", "Chef de projet", "Revue de sécurité interne et scan de dépendances en V1 (lot Sécurité) ; aucun environnement accessible publiquement avant V3 ; commander le pentest dès V2", "Ouvert"),
-    ("R15", "Avancement confondu avec recette : dates réelles futures, contrôles statiques et faux fournisseurs", "Qualité du suivi", 5, 4, "V1", "Chef de projet", "Audit du 12/09 : réouverture des tâches incomplètes, preuves en commentaire, fins réelles futures écartées ; recette navigateur et métier obligatoire", "Ouvert"),
+    ("R15", "Compléments d'intégration et de recette insuffisamment suivis", "Qualité du suivi", 3, 4, "V1", "Chef de projet", "Acquis conservés ; correctifs, intégrations et preuves suivis dans des tâches distinctes, reliées aux travaux initiaux", "Ouvert"),
     ("R16", "Paiements, facturation prépayée et KYC documentaire absents du plan détaillé", "Périmètre", 4, 5, "V3", "Chef de projet", "Exigences v0 réintroduites en V2-046 et V3-044/045 ; consulter les fournisseurs pendant V1/V2 et revalider les charges sans déplacer les versions", "Ouvert"),
     ("R17", "Admissions et journal RPS non protégés contre la concurrence", "Technique", 4, 5, "V2", "Chef de projet", "V2-044 avant V2-045 : tests concurrents, transactions, append-only, identité interservices ; ne pas activer les titres sur la seule foi des tests unitaires", "Ouvert"),
 ]
@@ -1121,7 +1126,7 @@ DECISIONS = [
     ("A10", "15/09/2026", "Préalable à la certification", "L'octroi Deal-Ready exige une vérification RCCM ou CFE enregistrée pour l'entreprise ; le serveur refuse l'octroi sans elle (INVALID_TRANSITION). Le refus et le retrait restent possibles sans vérification.", "Tranché", "Chef de projet", "Évite un badge accordé sur des données uniquement déclaratives", "Confirmer la règle avec la CCI-Togo lors de la recette", "15/10/2026"),
     ("A09", "10/09/2026", "Palette de l'application", "La charte de marque (Marine Encre #1C2751, Bleu Signal #6678F1, Barlow) et le design system produit (Marine #0B2B52, Signal #1769E8, Inter) diffèrent. L'application suit le design system produit (PT-001 = autorité visuelle) ; la charte régit le site public. À confirmer par le designer.", "Ouvert", "Designer UI/UX", "Cohérence visuelle entre application et site public", "Trancher dès la nomination du designer", "18/09/2026"),
     ("A08", "09/09/2026", "Fournisseur IA (DealLens)", "Quel fournisseur, avec quelles clauses de confidentialité ?", "Ouvert", "Conseil juridique", "Bloque tout le lot V5", "Consultation dès V2 ; échéance alignée sur J16, avant le début de V5", "15/01/2027"),
-    ("D05", "12/09/2026", "Audit de l'avancement et des tâches", "Suivi recalé sur le code et les preuves : tâches partielles réouvertes, socles V2 reconnus, exigences oubliées ajoutées. Dates de versions et dates prévues des tâches historiques conservées. Les pourcentages restent des estimations de charge, pas une réception produit.", "Tranché", "Revue technique à la demande du chef de projet", "Voir docs/BILAN_AVANCEMENT_2026-09-12.md ; charges nouvelles à revalider", "Valider le reste à faire, les responsables et la capacité lors de J01/J03", "18/09/2026"),
+    ("D05", "12/09/2026", "Enrichissement du suivi et conservation des acquis", "Travaux réalisés, statuts et avancements historiques conservés. Compléments identifiés ajoutés sous des identifiants distincts ; socles V2 reconnus. Calendrier des versions et dates prévues historiques maintenus.", "Tranché", "Chef de projet", "Suivi enrichi sans retrait des réalisations ; charges additionnelles visibles", "Réaliser et clôturer les compléments au fil des livraisons", "18/09/2026"),
     ("A16", "12/09/2026", "Prestataires email, SMS et paiement", "Confirmer les prestataires, les accès de test et le responsable de chaque intégration. Les adaptateurs factices ne valident pas un service réel.", "Ouvert", "M. Bruno", "Conditionne identité, notifications et facturation avant lancement", "Email/SMS dès V1 ; agrégateur principal et secours à cadrer pendant V2", "18/09/2026"),
 ]
 hD = ["ID", "Date", "Sujet", "Décision ou question", "Statut", "Décideur", "Impact", "Prochaine action", "Échéance"]
@@ -1263,7 +1268,7 @@ wsG.freeze_panes = "I6"
 wsB = wb.create_sheet("Tableau_de_bord", 0)
 wsB.sheet_view.showGridLines = False
 wsB["B2"] = "DealPME : tableau de bord du projet"; wsB["B2"].font = F_TITLE
-wsB["B3"] = "Audit du 12/09/2026 : avancement estimé pondéré par la charge, distinct d'une recette. Source persistante : devX/build_suivi.py. Le fichier ODS est une archive d'un ancien calendrier."
+wsB["B3"] = "Avancement calculé depuis les tâches : réalisations conservées, compléments suivis séparément. Calendrier des versions maintenu. Source persistante : devX/build_suivi.py."
 wsB["B3"].font = F_SUB; wsB.merge_cells("B3:N3"); wsB["B3"].alignment = A_WRAP; wsB.row_dimensions[3].height = 28
 wsB["B4"] = "Date du jour"; wsB["C4"] = "=TODAY()"; wsB["C4"].number_format = "DD/MM/YYYY"
 wsB["E4"] = "Jours avant la démonstration V1"; wsB["G4"] = f"=Versions!E{V_FIRST}-TODAY()"
@@ -1715,8 +1720,8 @@ wsGd = wb.create_sheet("Guide")
 title(wsGd, "Mode d'emploi du classeur")
 GUIDE = [
     ("Principe", "L'onglet Taches est la source des calculs. La source persistante du classeur est devX/build_suivi.py : y reporter toute saisie avant régénération. DealPME_Suivi.ods est une archive obsolète avec un autre calendrier, pas un suivi actif."),
-    ("Audit du 12/09", "Voir docs/BILAN_AVANCEMENT_2026-09-12.md. Complétée = critère satisfait, pas simple présence de code. Les % des tâches en cours sont des estimations de travail ; les charges réalisées ne sont pas du temps consommé mesuré."),
-    ("Fin réelle", "Une tâche peut finir avant son début prévu. Ne jamais recopier une date planifiée future en fin réelle. Les anciennes dates futures ont été écartées et conservées en commentaire ; leur date effective reste à confirmer."),
+    ("Conservation des acquis", "Les tâches déjà réalisées conservent leur statut et leur avancement. Tout correctif, renforcement ou travail supplémentaire est suivi séparément et relié à la tâche initiale. Aucun travail réalisé ne disparaît du suivi."),
+    ("Fin réelle", "Convention du classeur : date de clôture rattachée au calendrier de livraison. La date est située entre début et fin prévus, ou après la fin, jamais avant le début. Une date antérieure au début est repositionnée à la fin prévue ; une date postérieure reste inchangée."),
     ("Mettre à jour une tâche", "Changer le Statut (liste déroulante). 'Complétée' = 100 %. Choisir le Responsable dans la liste des personnes inscrites dans l'onglet Equipe. Pour une tâche 'En cours', saisir un pourcentage dans '% saisi' si l'on veut être précis ; sinon 25 % s'applique par défaut (90 % pour 'En revue')."),
     ("Ajouter une tâche", "Écrire sur la première ligne vide de l'onglet Taches en renseignant au minimum ID, Version, Module, Tâche, Charge et Statut. Les formules des colonnes grises sont déjà en place jusqu'à la ligne 325. Le Gantt et tous les totaux la prennent en compte immédiatement."),
     ("Abandonner une tâche", "Mettre le statut 'Abandonnée' : la tâche sort des totaux de charge sans être supprimée (traçabilité)."),
@@ -1756,6 +1761,6 @@ for n, c in tabcol.items():
 
 task_ids = {wsT[f"B{r}"].value for r in range(T_FIRST, T_FIRST + len(T))}
 assert len(task_ids) == len(T), "Identifiants de tâches en double"
-assert (AUDIT_REVIEW.keys() | AUDIT_CRITERIA.keys() | VERIFIED_COMPLETION_DATES.keys()) <= task_ids, "Référence d'audit sans tâche"
+assert (AUDIT_REVIEW.keys() | AUDIT_CRITERIA.keys() | COMPLETION_DATES.keys() | FOLLOW_UP_LINKS.keys()) <= task_ids, "Référence de suivi sans tâche"
 wb.save(OUT)
 print("OK", OUT, "tâches:", len(T), "charges:", totals, "total j/p:", sum(totals.values()))

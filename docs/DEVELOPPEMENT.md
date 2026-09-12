@@ -118,16 +118,21 @@ branchement SMTP est suivi en V1-093. Les objets stockés sont dans la console M
 `DealPME_Suivi.xlsx` à la racine est le tableau de bord partagé : tâches, versions, jalons, risques, décisions,
 registre de sécurité. Il est **généré**, jamais édité à la main : modifiez `devX/build_suivi.py` puis relancez
 `python3 devX/build_suivi.py`. La colonne des dates de fin réelle sert au suivi ; c'est le chef de projet qui décide
-de l'afficher ou non avant une présentation. Une date réelle ne doit jamais être remplacée par une date
-prévue future. Les estimations d'avancement ne valent pas recette fonctionnelle.
+de l'afficher ou non avant une présentation. Selon la convention de ce classeur, les dates de clôture
+sont rattachées au calendrier de livraison : dans la fenêtre prévue ou après sa fin, jamais avant le
+début. Une date antérieure au début est replacée à la fin prévue ; les dates dans la fenêtre ou après
+sont conservées. Aucune date n'est effacée au seul motif qu'elle est future.
+
+Les travaux déjà réalisés restent acquis : conserver leurs tâches, statuts et avancements. Les correctifs,
+extensions et validations supplémentaires sont ajoutés sous de nouveaux identifiants ou rattachés aux
+tâches de recette encore ouvertes. Les estimations d'avancement ne valent pas recette fonctionnelle.
 
 `DealPME_Suivi.ods` est une **archive obsolète** (172 tâches, ancien calendrier jusqu'en juin 2027),
 conservée avec ses dates d'origine. Le `.xlsx` et son générateur portent le suivi actif.
 Dernière revue : [bilan du 12/09/2026](BILAN_AVANCEMENT_2026-09-12.md).
 
-Dans le générateur, `AUDIT_REVIEW` porte les statuts révisés par identifiant et prime sur l'historique
-`PROGRESS` ; `AUDIT_CRITERIA` porte les critères précisés. À la prochaine revue, actualiser ces entrées
-avec leurs preuves et la date `AUDIT_DATE`, puis régénérer le classeur. Les dates de réalisation attestées
-se saisissent dans `VERIFIED_COMPLETION_DATES`. L'historique `PROGRESS` et son seuil fixe
-`LEGACY_PROGRESS_CUTOFF` ne doivent pas être avancés pour transformer d'anciennes prévisions en faits.
+Dans le générateur, `PROGRESS` conserve les acquis historiques ; `AUDIT_REVIEW` reconnaît les fondations
+V2 déjà entamées et peut porter l'avancement des nouvelles tâches. `AUDIT_CRITERIA` précise des tâches
+encore ouvertes. `FOLLOW_UP_LINKS` relie les acquis à leurs compléments. Les dates de clôture du suivi se
+saisissent dans `COMPLETION_DATES` et suivent `completion_date_for_plan`.
 Les nouvelles tâches sont ajoutées en fin de liste afin de conserver les identifiants existants.
