@@ -1,5 +1,9 @@
 # DealPME — bilan réel et prochaines étapes
 
+> Instantané de l'analyse initiale, avant les ajouts issus de la réunion direction. Les chiffres ci-dessous
+> décrivent le suivi à `2dd4e3d`. Pour le suivi actif (259 tâches) et l'ordre de réalisation, consulter
+> [PLAN_EXECUTION.md](PLAN_EXECUTION.md) et l'onglet `Plan_execution` du classeur.
+
 **Date : 12 septembre 2026.** Base examinée : commit `c2239ae`, puis corrections documentaires et du suivi
 issues de cette revue. Aucun changement de logique applicative n'a été effectué pendant l'audit.
 

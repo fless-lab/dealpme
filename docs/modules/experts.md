@@ -13,6 +13,11 @@ l'organisation des missions nécessaires avant la livraison du module complet V4
 à confirmer avec la CCI-Togo. Le statut contractuel est établi par la source ; la modalité opérationnelle
 anticipée reste à valider.
 
+La réunion direction ajoute un référentiel commun des prestataires en V3-049 (profil, inscription,
+screening et publication) pour le catalogue de services, dont TaxeFacile. Le module de missions V4
+réutilisera ce référentiel ; ses conflits d'intérêts, contrats directs, livrables et accès temporaires
+restent des exigences distinctes. Voir le [plan d'exécution](../PLAN_EXECUTION.md), lots L10/L11.
+
 ## Sous-modules
 
 - registry (experts, conflits)

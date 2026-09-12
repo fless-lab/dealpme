@@ -211,9 +211,14 @@ AUDIT_REVIEW = {
 }
 
 AUDIT_CRITERIA = {
+    "V1-028": "Code reçu et validé en moins de 60 s en sandbox opérateur ; mêmes contrats que le local V1-101/102 ; configuration réelle sans modification des parcours métier",
+    "V1-035": "Source et horodatage stockés ; API désactivée = cycle manuel complet ; API activée = mock local puis adaptateur réel ; absence, divergence et panne distinctes (complément V1-109)",
+    "V1-067": "Accès organisateur/API reçus, plan et capacités consignés ; API, SSO, branding et limites à confronter aux essais V1-104 ; un accès participant ne suffit pas",
+    "V1-075": "Revue contre les références fournies, notamment VDR ; contributions du designer évaluées et validées avant intégration ; aucune refonte imposée sans valeur démontrée",
     "V1-086": "Captures 1440 x 960 et 390 x 844 archivées, écarts intentionnels dans qa/fidelity-ledger.md ; régression non approuvée bloque la CI",
     "V2-004": "DOC-01 à DOC-03, Q&A-01 et UI-01 exécutables pour V2 ; matrice AI-01 à AI-06 préparée, exécution IA portée par V5",
     "V2-009": "Contrat de preuve et repli papier définis ; gabarit NDA versionné et revu juridiquement disponible en V2 sans attendre le moteur LegalTech V3",
+    "V3-012": "TaxeFacile confirmé comme service ; intégration fonctionnelle et responsabilités cadrées en V3-050 ; API fiscale et attestation uniquement si disponibles et justifiées",
 }
 
 # Dates de clôture du suivi par identifiant, selon le calendrier de livraison.
@@ -250,7 +255,7 @@ MODULES = [
     ("VDR", "Data room et questions-réponses", "Socle V0", "P12", "V2", "Rendu serveur, filigrane, révocation < 60 s"),
     ("NEG", "Négociation : offre, LOI, audit d'acquisition", "Socle V0", "P14, P15", "V3", ""),
     ("REA", "Réalisation et traçabilité de la transmission", "Socle V0", "P16", "V3", "Sans Deal-Pay natif"),
-    ("LEG", "LegalTech OHADA et conformité fiscale", "Partenaire-dépendant", "P19", "V3", "Partenaire fiscal à confirmer"),
+    ("LEG", "LegalTech OHADA et conformité fiscale", "Partenaire-dépendant", "P19", "V3", "TaxeFacile confirmé comme service par la direction ; contrat d'intégration à cadrer (A20)"),
     ("FIN", "Finance : frais, rétrocession CCI, reporting", "Socle V0", "P24", "V3", "Barème activable après avis juridique écrit"),
     ("SUP", "Support et accès privilégiés", "Socle V0", "P23", "V3", "Moindre privilège"),
     ("OPS", "Exploitation, sécurité, continuité (SLA 99,5 %)", "Socle V0", "P25", "V1 (base) / V3 (durci)", "Obligation de résultat contractuelle"),
@@ -564,8 +569,30 @@ followup("V1", "OPS", "Fondations", "Automatisation des sauvegardes et durcissem
 followup("V1", "MKT", "Frontend et design", "Extension de la fiche opportunité : six onglets et états de divulgation", "Six onglets du corpus couverts avec états accessibles ou bloqués explicites ; aucune donnée T1/T2 inventée ou divulguée ; écarts de fidélité documentés et validés", 3, "2026-09-28", "2026-10-07", "V1-057 ; V1-092")
 followup("V1", "TRV", "QA et livraison", "Extension des tests aux parcours navigateur et archivage des preuves de recette", "Smoke API rejoué ; inscription, dossier, certification, publication et échange testés en navigateur ; états négatifs et mobile ; qa/e2e-results.json relié au commit", 3, "2026-10-08", "2026-10-14", "V1-084 ; V1-085 ; V1-086 ; V1-092 ; V1-095 ; V1-099")
 
+# Réunion direction et précisions du chef de projet : seuls les sujets sans tâche
+# dédiée sont ajoutés. Les 242 lignes antérieures gardent identifiants et dates.
+meeting_start = len(T)
+followup("V1", "IDN", "Auth et rôles", "Boîte SMS locale réutilisable : API HTTP, interface de réception et simulation d'incidents", "OTP lisible dans une boîte locale indépendante du métier ; filtres et API de test ; 429/5xx/timeout simulables ; aucune remise opérateur annoncée", 4, "2026-09-17", "2026-09-23", "V1-091 ; SmsPort")
+followup("V1", "IDN", "QA et livraison", "Contrats email/SMS et bascule de fournisseur par configuration", "Même suite fake/local/sandbox ; aucun repli silencieux ; timeouts, rejeu, expiration et consommation OTP concurrente testés ; E2E lit les boîtes plutôt que devCode", 2, "2026-09-23", "2026-09-25", "V1-093 ; V1-101 ; V1-028 pour recette opérateur")
+followup("V1", "TRV", "Conception", "Cartographie du corpus par module : exigences, écrans, reporting et preuves VDR", "Chaque famille de ressources inventoriée, autorité et doublons indiqués ; lien source > tâche > écran > test ; références VDR et services consultables avant chaque lot", 3, "2026-09-14", "2026-09-18", "Master Handoff ; V1-089")
+followup("V1", "CNX", "Deal-Connect (Remo)", "Qualification technique des abonnements événementiels et prototype d'intégration", "Essais organisateur/API : création, entrée, branding par événement, quotas simultanés, tables/scène et enregistrements ; comparaison des options disponibles ; preuves et limites documentées", 4, "2026-09-18", "2026-09-24", "V1-067 ; A17 : accès et plans exacts")
+followup("V1", "CNX", "Deal-Connect (Remo)", "Console organisateur DealPME : création, personnalisation et gestion de l'événement", "Organisateur crée et publie depuis DealPME via API ; branding propre à l'événement ; état et erreurs de synchronisation visibles ; permissions et rejeu testés", 5, "2026-09-24", "2026-10-05", "V1-068 ; V1-104 ; V1-106")
+followup("V1", "CNX", "Deal-Connect (Remo)", "Réservations du compte événementiel partagé : quotas, concurrence et séparation des produits", "Deux réservations concurrentes respectent le quota vérifié ; compte, produit et événement distincts ; annulation/reprise rapprochées ; créations hors registre explicitement couvertes ou signalées", 3, "2026-09-24", "2026-09-29", "V1-104 ; A18 : quota simultané et usage multi-produits")
+followup("V1", "CNX", "Conception", "Prototype de captation des réunions : agent participant, exports et couverture des sessions", "Sur réunion synthétique : connexion autorisée, captation et arrêt démontrés ; scène et tables vérifiées séparément ; quotas agents, reprise et portions manquantes mesurés ; stratégie retenue tracée", 3, "2026-09-25", "2026-10-02", "V1-104 ; A17 ; A21")
+followup("V1", "OPS", "Conception", "Dimensionnement du serveur dédié et demande d'accès pour DealPME et les services associés", "Spécifications et enveloppe stockage/sauvegarde envoyées et validées ; accès, DNS et isolation par service confirmés ; charge ASR/agents distinguée du serveur applicatif", 2, "2026-09-14", "2026-09-18", "A19 : serveur dédié ; V1-009")
+followup("V2", "CNX", "Réunions et comptes rendus", "Mini-réunions privées depuis un dossier avec plusieurs repreneurs invités", "Création depuis le dossier ; invitations nominatives, consentement à visibilité mutuelle ; qualification/RPS/NDA selon palier ; accès revérifié à l'entrée ; révocation testée ; aucun listing public", 6, "2026-11-02", "2026-11-13", "V2-045 ; V2-046 ; V2-025 ; V1-106")
+followup("V2", "CNX", "Réunions et comptes rendus", "Connecteur réutilisable d'agent de réunion et captation résiliente", "Agent admis uniquement aux sessions autorisées ; états connecté/captation/partiel/échec ; reprise bornée, dédoublonnage, arrêt et couverture testés ; adaptateur réellement éprouvé sur la plateforme retenue", 8, "2026-10-16", "2026-11-04", "V1-107 ; A17 ; A21")
+followup("V2", "CNX", "Réunions et comptes rendus", "Transcription et compte rendu de contenu : sources, revue et distribution ciblée", "Segments horodatés et couverture visibles ; résumé sourcé avec moteur autorisé ; brouillon puis revue ; seuls participants autorisés reçoivent le lien ; import de transcript distingué du live", 6, "2026-11-04", "2026-11-18", "V2-048 ; V1-093 ; A21 : traitement audio et résumé")
+followup("V2", "OPS", "QA et sécurité", "Recette des agents et rapports : injections, permissions, révocation et reprises", "Une instruction dans un transcript ne change ni outils ni destinataires ; aucune fuite inter-session/produit ; révocation effective ; pannes audio/IA, sources manquantes et double envoi testés", 4, "2026-11-18", "2026-11-24", "V2-047 ; V2-048 ; V2-049")
+followup("V3", "LEG", "Catalogue de services", "Catalogue de services et prestataires avec TaxeFacile sélectionnable", "Service accessible depuis DealPME ; fiche, périmètre, prestataire, état de disponibilité et parcours de demande ; responsabilités du prestataire visibles ; aucune prestation fictive présentée comme exécutée", 5, "2026-11-26", "2026-12-08", "A06 ; A20 ; V3-049")
+followup("V3", "EXP", "Catalogue de services", "Référentiel commun des prestataires : inscription, screening, validation et publication du profil", "Identité/organisation réutilisées ; un profil prestataire de référence ; soumission, compléments, acceptation/refus, publication et suspension tracés ; liaison aux missions Experts V4 sans duplication", 6, "2026-11-26", "2026-12-04", "V2-046 ; A04 ; A20")
+followup("V3", "LEG", "Catalogue de services", "Parcours TaxeFacile : contrat d'échange, demande et suivi de prestation", "De la sélection au retour de statut ; API/SSO ou renvoi contrôlé selon capacités confirmées ; références et consentement tracés ; refus/panne testés ; données métier isolées sur hébergement mutualisé", 5, "2026-12-08", "2026-12-18", "V3-048 ; A20 ; V1-108")
+followup("V4", "CNX", "Deal-Connect", "Comptes rendus de contenu par session de salon et distribution aux participants concernés", "Présence par session vérifiée ; rapports sourcés et validés diffusés selon droits/préférences ; contenu d'une autre table absent ; couverture partielle explicitée ; statistiques P20 conservées séparément", 5, "2027-01-18", "2027-01-29", "V2-049 ; V2-050 ; connecteur sessions qualifié")
+followup("V1", "GOV", "Espace CCI-Togo", "Mock CFE/RCCM local et bascule API activée ou validation manuelle complète", "API désactivée : zéro appel réseau et décisions manuelles motivées ; API active/mock : trouvé, absent, divergent, 429/5xx/timeout ; provenance conservée ; remplacement par adaptateur réel ; aucune certification automatique", 4, "2026-09-21", "2026-09-28", "V1-035 ; V1-091 ; D10")
+MEETING_FOLLOWUPS = {t[3] for t in T[meeting_start:]}
+
 # ------------------------------------------------------------------ contrôle des totaux par version
-expected = {"V1": 302, "V2": 204, "V3": 203, "V4": 106, "V5": 153}
+expected = {"V1": 332, "V2": 228, "V3": 219, "V4": 111, "V5": 153}
 totals = {}
 for t in T:
     totals[t[0]] = totals.get(t[0], 0) + t[5]
@@ -712,6 +739,8 @@ for idx in range(NTASK_ROWS):
         if tache in FOLLOW_UP_DATES:
             resp = DEFAULT_OWNER
             comment = "Ajout audit 12/09/2026 ; charge initiale à revalider avec l'équipe ; voir docs/BILAN_AVANCEMENT_2026-09-12.md."
+        if tache in MEETING_FOLLOWUPS:
+            comment = "Réunion direction / précisions du chef de projet, 12/09/2026. Lot et preuves : docs/PLAN_EXECUTION.md. Charge initiale estimée ; dates des versions maintenues."
         if tid in FOLLOW_UP_LINKS:
             comment = FOLLOW_UP_LINKS[tid]
         if tid in COMPLETION_DATES:
@@ -1058,14 +1087,14 @@ wsR = wb.create_sheet("Risques")
 title(wsR, "Registre des risques", "Score = probabilité x impact (1 à 5). Niveau et alerte calculés. Statut et mitigation à tenir à jour.")
 RISQUES = [
     ("R01", "Équipe de développement non confirmée ou sous-dimensionnée", "Organisation", 4, 5, "V1", "Chef de projet", "Une seule personne enregistrée. Recalculer le reste à faire par version et affecter les responsables ; préserver les dates, soumettre toute coupe de périmètre à décision (A01). Ne pas retirer une démo RPS déjà construite.", "Ouvert"),
-    ("R02", "Aucune API CFE / RCCM disponible", "Dépendance externe", 3, 4, "V1", "Chef de projet", "Adaptateur à double mode : API ou saisie manuelle supervisée", "Ouvert"),
-    ("R03", "Designer UI/UX non disponible de bout en bout", "Organisation", 3, 3, "V1", "M. Bruno", "Confirmer la proposition Bouley avant J04", "Ouvert"),
+    ("R02", "API CFE / RCCM indisponible ou non documentée", "Dépendance externe", 3, 4, "V1", "Chef de projet", "V1-109 : mock HTTP pour avancer ; API désactivée = instruction manuelle ; contrat réel à qualifier sans modifier les parcours", "Ouvert"),
+    ("R03", "Designer UI/UX non disponible de bout en bout", "Organisation", 3, 3, "V1", "M. Bruno", "Partir des références fournies ; proposer une revue ciblée au designer ; ses apports sont évalués avant intégration, sans bloquer le socle existant", "Ouvert"),
     ("R04", "Périmètre V1 qui s'élargit pendant le mois", "Périmètre", 4, 4, "V1", "Chef de projet", "Gel du périmètre à J03, toute demande passe par l'onglet Decisions", "Ouvert"),
     ("R05", "Démonstration perçue comme un produit fini (sur-promesse)", "Communication", 3, 4, "V1", "M. Bruno", "Note de cadrage V1, étiquette 'démonstration synthétique' sur chaque écran", "Ouvert"),
     ("R06", "Prestataire de signature qualifiée non contractualisé à temps", "Dépendance externe", 3, 4, "V2", "M. Bruno", "Lancer la consultation PSC/PSAE pendant V1 ; disposer d'un gabarit NDA revu en V2, sans attendre LegalTech V3 ; jalon J08 maintenu", "Ouvert"),
     ("R07", "Retard des portes de conformité (IPDCP, DPO, pentest)", "Réglementaire", 3, 5, "V3", "Conseil juridique / DPO", "Démarrer les démarches IPDCP pendant V2", "Ouvert"),
-    ("R08", "Partenaire fiscal non identifié", "Dépendance externe", 3, 2, "V3", "M. Bruno", "Confirmer TaxeFacile ou qualifier une alternative avant V3", "Ouvert"),
-    ("R09", "Périmètre de l'intégration Remo.co plus large que prévu", "Technique", 2, 3, "V4", "Chef de projet", "Cadrage écrit avant chiffrage définitif (J14)", "Ouvert"),
+    ("R08", "Contrat d'intégration TaxeFacile non défini", "Dépendance externe", 3, 3, "V3", "M. Bruno", "Nom du service confirmé (A06) ; préciser API/SSO ou renvoi, demandes, statuts, responsabilités et isolation (A20 / V3-050)", "Ouvert"),
+    ("R09", "Périmètre de l'intégration Remo.co plus large que prévu", "Technique", 3, 4, "V1", "Chef de projet", "V1-104 : tests des droits admin/API, limites, branding et enregistrements ; abonnement annoncé ne vaut pas contrat testé", "Ouvert"),
     ("R10", "Fournisseur IA sans clauses de confidentialité acceptables", "Dépendance externe", 3, 5, "V5", "Conseil juridique", "Consultation dès V2, clauses de non-réutilisation des données ; contrat attendu le 15/01/2027 (J16 et A08 alignés)", "Ouvert"),
     ("R11", "Fuite de divulgation T0 / T1 sur un dossier titres en production", "Sécurité", 2, 5, "V2", "Équipe de développement", "Allow-list serveur, tests DISCLOSURE_LEAK sur les 12 cas de référence", "Surveillé"),
     ("R12", "Sur-ingénierie par rapport au plafond du pilote (2 000 comptes)", "Technique", 2, 2, "V2", "Chef de projet", "Revue d'architecture à chaque version contre le plafond de capacité", "Surveillé"),
@@ -1074,6 +1103,8 @@ RISQUES = [
     ("R15", "Compléments d'intégration et de recette insuffisamment suivis", "Qualité du suivi", 3, 4, "V1", "Chef de projet", "Acquis conservés ; correctifs, intégrations et preuves suivis dans des tâches distinctes, reliées aux travaux initiaux", "Ouvert"),
     ("R16", "Paiements, facturation prépayée et KYC documentaire absents du plan détaillé", "Périmètre", 4, 5, "V3", "Chef de projet", "Exigences v0 réintroduites en V2-046 et V3-044/045 ; consulter les fournisseurs pendant V1/V2 et revalider les charges sans déplacer les versions", "Ouvert"),
     ("R17", "Admissions et journal RPS non protégés contre la concurrence", "Technique", 4, 5, "V2", "Chef de projet", "V2-044 avant V2-045 : tests concurrents, transactions, append-only, identité interservices ; ne pas activer les titres sur la seule foi des tests unitaires", "Ouvert"),
+    ("R18", "Quota d'un événement simultané incompatible avec les mini-réunions et le compte partagé", "Dépendance externe", 4, 4, "V1", "Chef de projet", "Confirmer A18 et tester V1-104 ; réservation commune V1-106 ; couvrir les créations externes ; comparaison des autres abonnements avant choix définitif", "Ouvert"),
+    ("R19", "Captation partielle ou rapport remis aux mauvais participants", "Technique", 4, 4, "V2", "Chef de projet", "Prototype scène/tables V1-107 ; provenance et couverture visibles ; droits par session et révocation ; tests d'injection et de distribution V2-050", "Ouvert"),
 ]
 hR = ["ID", "Risque", "Catégorie", "Probabilité (1-5)", "Impact (1-5)", "Score", "Niveau", "Version", "Responsable", "Mitigation", "Statut"]
 for i, h in enumerate(hR):
@@ -1113,11 +1144,11 @@ DECISIONS = [
     ("D04", "10/09/2026", "Lot Sécurité en V1", "Huit constats de sécurité traités avant la présentation (RLS effective, anti-force-brute, MFA, chiffrement applicatif, en-têtes, idempotence et signatures, revue interne, mots de passe de démonstration). Le pentest indépendant reste en V3 (porte G10).", "Tranché", "Chef de projet", "+19 j/p sur V1 ; voir l'onglet Securite", "Commencer par la RLS effective", "18/09/2026"),
     ("D03", "09/09/2026", "Démonstration RPS en V1", "V1 inclut une démonstration maquettée du blocage de publication d'une cession de titres ; le circuit réel reste en V2.", "Tranché", "Chef de projet", "+20 j/p sur V1", "", ""),
     ("A01", "09/09/2026", "Équipe de développement", "Taille et séniorité de l'équipe disponible dès maintenant ?", "Ouvert", "M. Bruno", "Détermine si V1 tient en 5 semaines ou nécessite des coupes", "Réponse attendue avant J01", "14/09/2026"),
-    ("A02", "09/09/2026", "API CFE / RCCM", "Une API existe-t-elle, ou faut-il un échange de fichier supervisé ?", "Ouvert", "CCI-Togo", "Bloque le lot Espace CCI-Togo", "Vérifier avant le démarrage du lot", "16/09/2026"),
-    ("A03", "09/09/2026", "Designer UI/UX", "Confirmation d'un designer de bout en bout (proposition Bouley) ?", "Ouvert", "M. Bruno", "Sans lui, la charge frontend absorbe la conception", "Décision avant J04", "18/09/2026"),
+    ("A02", "09/09/2026", "API CFE / RCCM", "Automatisation souhaitée en réunion ; disponibilité et contrat réels encore inconnus. D10 : API désactivée = instruction manuelle ; API activée avec fournisseur mock = simulation locale.", "En discussion", "CCI-Togo", "Le développement local peut avancer ; la vérification réelle dépend des accès et de la source", "Obtenir documentation, sandbox, limites et référence de preuve ; conserver la reprise manuelle", "16/09/2026"),
+    ("A03", "09/09/2026", "Designer UI/UX", "Partir des références institutionnelles et VDR fournies ; évaluer une contribution ciblée du designer plutôt qu'une refonte imposée. Disponibilité et mission à confirmer.", "En discussion", "M. Bruno", "Préserve la cohérence du corpus et permet d'évaluer la valeur ajoutée", "Contacter le designer avec un écran de référence, objectifs et critères de revue", "18/09/2026"),
     ("A04", "09/09/2026", "Articulation Deal-Experts (P13)", "Le référentiel p. 23-24 classe explicitement P13 en socle contractuel, art. 12.3. Confirmer l'organisation des missions nécessaires à Deal-Ready et à l'audit avant le module complet V4.", "Ouvert", "CCI-Togo", "V4 conservée ; responsabilités et accès experts des parcours antérieurs à expliciter", "Valider une modalité opérationnelle avec la CCI-Togo avant V2", "15/10/2026"),
     ("A05", "09/09/2026", "Numérotation P01-P03", "Processus manquants ou numérotation volontaire à partir de P04 ?", "Ouvert", "CCI-Togo", "Faible impact sur le plan", "Confirmer avec le juridique", ""),
-    ("A06", "09/09/2026", "Partenaire fiscal", "'TaxeFacile' est-il le partenaire réel, ou faut-il en qualifier un ?", "Ouvert", "M. Bruno", "Impacte le lot Conformité fiscale de V3", "Qualifier avant V3", "30/11/2026"),
+    ("A06", "09/09/2026", "Partenaire fiscal", "TaxeFacile confirmé comme service sélectionnable depuis DealPME lors de la réunion (49:04–51:30). Cette confirmation ne prouve pas l'existence d'une API fiscale ni d'une attestation automatique.", "Tranché", "M. Bruno", "Catalogue de services et référentiel prestataires à partager ; intégration détaillée en A20", "Préciser le parcours et les accès avec le responsable TaxeFacile", "30/11/2026"),
     ("A07", "09/09/2026", "Charte du COPIL", "Composition, cadence exacte, règles de vote ?", "Ouvert", "CCI-Togo", "Gouvernance inter-version", "Récupérer l'annexe de la Convention", ""),
     ("A15", "11/09/2026", "Registre d'interactions", "Le registre officiel ne couvre que trois surfaces de référence et compte 76 identifiants, alors que le produit compte une vingtaine de surfaces. Décision interne conservée : reprendre les identifiants officiels sur leurs surfaces et étendre le registre pour le produit. Le test actuel vérifie l'appartenance statique, pas le comportement.", "Tranché", "Chef de projet", "Au 12/09 : 371 identifiants relevés, 365 contrats à documenter ; PASS de couverture ne vaut pas PASS de recette", "Documenter et tester les parcours V1 en V1-092, puis terminer et étendre en V2-003", "25/11/2026"),
     ("A13", "02/10/2026", "Retrait d'une publication", "La machine à états du v0 ne prévoit aucun retour depuis LISTED_OPEN : un dossier publié ne peut être fermé qu'en l'abandonnant, ce qui est définitif. L'écran le dit désormais au lieu de promettre un retrait. Une suspension réversible est inscrite en V2, sous réserve d'un amendement accepté par M. Bruno.", "Ouvert", "M. Bruno", "Un cédant qui suspend une vente ne doit pas avoir à abandonner son dossier", "Trancher avant le début de V2", "16/10/2026"),
@@ -1128,6 +1159,17 @@ DECISIONS = [
     ("A08", "09/09/2026", "Fournisseur IA (DealLens)", "Quel fournisseur, avec quelles clauses de confidentialité ?", "Ouvert", "Conseil juridique", "Bloque tout le lot V5", "Consultation dès V2 ; échéance alignée sur J16, avant le début de V5", "15/01/2027"),
     ("D05", "12/09/2026", "Enrichissement du suivi et conservation des acquis", "Travaux réalisés, statuts et avancements historiques conservés. Compléments identifiés ajoutés sous des identifiants distincts ; socles V2 reconnus. Calendrier des versions et dates prévues historiques maintenus.", "Tranché", "Chef de projet", "Suivi enrichi sans retrait des réalisations ; charges additionnelles visibles", "Réaliser et clôturer les compléments au fil des livraisons", "18/09/2026"),
     ("A16", "12/09/2026", "Prestataires email, SMS et paiement", "Confirmer les prestataires, les accès de test et le responsable de chaque intégration. Les adaptateurs factices ne valident pas un service réel.", "Ouvert", "M. Bruno", "Conditionne identité, notifications et facturation avant lancement", "Email/SMS dès V1 ; agrégateur principal et secours à cadrer pendant V2", "18/09/2026"),
+    ("D06", "12/09/2026", "Services et prestataires", "TaxeFacile fait partie des services à proposer ; réutiliser le parcours d'inscription, screening et validation des prestataires, avec un référentiel commun dans DealPME.", "Tranché", "M. Bruno", "V3-048/049/050 ; rattachement ultérieur aux missions Experts V4", "Spécifier le contrat TaxeFacile (A20)", "20/11/2026"),
+    ("D07", "12/09/2026", "Design et documentation", "Références fournies comme base, attention prioritaire au VDR ; cartographier les documents par module et évaluer les apports du designer contre cette base.", "Tranché", "M. Bruno", "V1-103 et V1-075 ; aucune remise à zéro du design existant", "Construire la carte source/tâche/écran/test", "18/09/2026"),
+    ("D08", "12/09/2026", "Hébergement et antivirus", "Préparer un serveur dédié à DealPME et aux services associés dont TaxeFacile ; antivirus intégré à l'environnement. Le socle ClamAV existant est conservé.", "Tranché", "M. Bruno", "V1-108 puis V1-009 ; séparation des services, données et accès à préciser", "Envoyer les spécifications et obtenir les accès", "18/09/2026"),
+    ("D09", "12/09/2026", "Réunions et comptes rendus", "Prévoir mini-réunions depuis un dossier et comptes rendus du contenu des sessions. Étudier un agent participant réutilisable et les enregistrements natifs ; faisabilité à tester.", "Tranché", "M. Bruno / chef de projet", "Cadrage et prototype V1, socle réunions/rapports V2, multi-sessions salon V4 ; affectation technique inscrite sans déplacement des versions", "Tester V1-104/107, trancher limites A18 et traitement A21", "02/10/2026"),
+    ("D10", "12/09/2026", "CFE activé, mock ou manuel", "API désactivée par environnement : validation manuelle complète. API activée : mock HTTP local puis adaptateur réel disponible. La décision Deal-Ready demeure nominative et distincte.", "Tranché", "Chef de projet", "V1-109 complète V1-035 ; le mock ne vaut pas preuve réelle du registre", "Implémenter sélection, scénarios et reprise manuelle tracée", "28/09/2026"),
+    ("D11", "12/09/2026", "Email et SMS locaux", "Mailpit pour l'email et boîte SMS HTTP locale réutilisable ; conserver les ports métier lors de la bascule vers un adaptateur fournisseur testé et configuré.", "Tranché", "Chef de projet", "V1-093/101/102 et V1-028 pour le fournisseur SMS réel", "Réaliser le lot L03 du plan d'exécution", "25/09/2026"),
+    ("A17", "12/09/2026", "Accès et offres événementielles", "Transmettre un accès organisateur/API, pas seulement une invitation participant ; confirmer l'offre Remo/Events.com Virtual et les autres abonnements mentionnés oralement.", "Ouvert", "M. Bruno", "Conditionne les essais réels V1-104 et le connecteur", "Partager documentation, droits, clés de test et noms exacts des solutions", "18/09/2026"),
+    ("A18", "12/09/2026", "Événements simultanés et branding", "Vérifier la limite évoquée d'un événement à la fois, la portée compte/événement du branding et l'usage d'un abonnement sur plusieurs produits.", "Ouvert", "M. Bruno / fournisseur", "Conditionne réservations et mini-réunions simultanées", "Tester deux événements et deux profils de branding ; archiver les limites réelles", "24/09/2026"),
+    ("A19", "12/09/2026", "Serveur dédié et accès", "Valider les spécifications, l'hébergement, les accès et le DNS ; présence d'un serveur Hostinger évoquée, ressources et renouvellement non confirmés.", "Ouvert", "M. Bruno", "Déploiement V1-009 ; partage physique possible avec isolation des services et bases", "Envoyer docs/DEMANDE_INFRA_ACCES.md et confirmer le provisioning", "18/09/2026"),
+    ("A20", "12/09/2026", "Contrat TaxeFacile", "Définir catalogue, identité prestataire, demande, suivi, retour, responsabilités et frontières de données ; préciser API/SSO ou renvoi contrôlé et capacité d'hébergement.", "Ouvert", "M. Bruno / responsable TaxeFacile", "Complète A06 ; ne présume pas une API d'attestation fiscale", "Fournir parcours, documentation et accès de test avant V3", "20/11/2026"),
+    ("A21", "12/09/2026", "Captation, transcription et résumé", "Valider la connexion de l'agent, la couverture scène/tables, le moteur de transcription/résumé et les conditions d'usage des enregistrements. Un abonnement annoncé ne démontre pas ces capacités.", "Ouvert", "M. Bruno / technique / juridique", "Traitement des réunions V2 distinct de DealLens V5 ; qualification nécessaire avant utilisation réelle", "Prototype synthétique V1-107 ; choix et accès de traitement pour V2-048/049", "16/10/2026"),
 ]
 hD = ["ID", "Date", "Sujet", "Décision ou question", "Statut", "Décideur", "Impact", "Prochaine action", "Échéance"]
 for i, h in enumerate(hD):
@@ -1484,7 +1526,7 @@ r = small_table(wsX, r, ["Besoin", "Vendeurs retenus", "Note"], [
     ("Registre des entreprises", "CFE / RCCM", "Si aucune API : échange de fichier supervisé"),
     ("Archivage de preuve", "PSAE accrédité", "Valeur probante du NDA"),
     ("Événements et rendez-vous virtuels", "Remo.co", "Connecteur externe pour Deal-Connect et Guichet Diaspora"),
-    ("Fiscalité", "Partenaire tiers à confirmer", "Le nom TaxeFacile n'apparaît que dans le blueprint v5"),
+    ("Fiscalité", "TaxeFacile, confirmé en réunion", "Service du catalogue ; intégration et responsabilités à préciser (A20)"),
 ])
 r = section(wsX, r, "6. Exigences transverses")
 r = small_table(wsX, r, ["Domaine", "Exigence"], [
@@ -1517,13 +1559,15 @@ ROADMAP = {
                    "Badge Deal-Ready affiché, workflow porté par la CCI-Togo",
                    "Démonstration maquettée du blocage RPS (bannière de nullité, scénario scripté)",
                    "Deal-Connect via Remo.co : événements, inscriptions avec consentement, lien d'accès unique, présence par webhook",
+                   "Console organisateur, branding par événement et réservation du compte partagé ; qualification des limites et prototype de captation",
+                   "Email Mailpit, boîte SMS et mock CFE locaux ; mode CFE manuel quand l'API est désactivée",
                    "Guichet Diaspora léger : demande de rendez-vous avec avis transfrontalier, entretien vidéo Remo après confirmation humaine",
                    "Lot Sécurité : RLS effective, anti-force-brute, MFA officiers et administrateurs, chiffrement applicatif, en-têtes, idempotence et signatures de webhooks, revue interne"],
         "exclu": ["Circuit RPS réel : admission humaine, compteur, plafond, journal réglementaire (V2)",
                   "Data room chiffrée, filigranée, révocable et Q&R (V2)",
                   "Moteur d'honoraires et rétrocession CCI (V3)",
                   "Alerte & Rebond, billetterie et sponsoring Deal-Connect, rendez-vous mutuels, rapport post-événement, profil diaspora complet (V4)"],
-        "prerequis": "Capacité et responsables confirmés sur le reste à faire ; réponse sur l'API CFE/RCCM ; designer UI/UX ; cadrage Remo et fournisseurs email/SMS.",
+        "prerequis": "Capacité et responsables ; mocks locaux pour avancer ; accès fournisseur pour les recettes réelles ; références de design disponibles, revue ciblée du designer ; serveur à confirmer.",
         "decision": "Conserver la démo RPS déjà implémentée. Priorité à la messagerie bidirectionnelle, l'audit durable, aux notifications, à la CI et aux preuves navigateur ; validation métier avant le 15/10.",
         "lots": ["Conception", "Fondations", "Auth et rôles", "Espace CCI-Togo", "Deal-Ready", "Dossier cédant", "Marketplace actifs", "Évaluation indicative", "Démonstration RPS", "Deal-Connect (Remo)", "Sécurité", "Frontend et design", "Finition frontend", "QA et livraison"],
     },
@@ -1532,11 +1576,12 @@ ROADMAP = {
         "inclus": ["Circuit RPS complet : admission humaine, plafond de cercle (défaut 50), journal réglementaire haché",
                    "Signature électronique et preuve : prestataire PSC togolais, repli papier, archivage PSAE",
                    "Data room : arborescence OHADA, rendu serveur, filigrane dynamique, téléchargement contrôlé, révocation en moins de 60 s",
-                   "Fils de questions-réponses par document"],
+                    "Fils de questions-réponses par document",
+                    "Mini-réunions privées depuis les dossiers ; socle réutilisable captation/transcription/rapports, sous capacités vérifiées"],
         "exclu": ["Négociation, LOI, audit d'acquisition et réalisation (V3)", "Génération documentaire LegalTech (V3)"],
         "prerequis": "V1 stabilisée ; identité documentaire et qualification ; RPS durci puis branché ; contrat PSC/PSAE et NDA revu juridiquement en V2.",
         "decision": "Construire une tranche complète qualification > admission > NDA > T2 > document > révocation. Les tests IA exécutables restent en V5 ; leurs contrats sont préparés en V2.",
-        "lots": ["Conception", "Mise en relation", "Circuit RPS réel", "Signature électronique", "Data room", "Questions-réponses", "QA et sécurité"],
+        "lots": ["Conception", "Mise en relation", "Circuit RPS réel", "Signature électronique", "Data room", "Questions-réponses", "Réunions et comptes rendus", "QA et sécurité"],
     },
     "V3": {
         "focus": "Ce qui rend une transaction réelle facturable et légalement défendable : négociation et réalisation, LegalTech OHADA, moteur de frais et rétrocession, support, fermeture des dix portes de conformité et durcissement de l'exploitation.",
@@ -1544,19 +1589,21 @@ ROADMAP = {
                    "Réalisation documentée sans Deal-Pay natif, création automatique du FeeEvent",
                    "LegalTech OHADA : NDA, LOI, pacte simplifié, SPA, cession d'actifs, contrat de travail (droit togolais)",
                     "Finance : barème de frais sous drapeau juridique, rétrocession CCI, journal de calcul recalculable, rapport trimestriel",
-                    "Abonnements prépayés, grâce, factures NIF, paiements des services et rapprochement par rail (sans séquestre de cession)",
+                     "Abonnements prépayés, grâce, factures NIF, paiements des services et rapprochement par rail (sans séquestre de cession)",
+                    "Catalogue de services, référentiel prestataires commun et parcours TaxeFacile",
                    "Support et accès privilégiés, mode break-glass journalisé",
                    "Portes de conformité G1 à G10 : IPDCP, revues juridiques, DPO, pentest indépendant",
                    "Exploitation : supervision SLA 99,5 %, sauvegardes testées, procédure d'incident"],
         "exclu": ["Module Deal-Experts complet (V4 ; articulation des missions antérieures en A04)", "Modules réseau : Alerte & Rebond, Deal-Connect, Guichet Diaspora (V4)"],
         "prerequis": "Qualification, NDA, T2 et data room validés en V2 ; contractualisation paiement ; avis juridique écrit sur le barème. CLOSED_REPORTED est réalisé dans V3, pas un prérequis V2.",
         "decision": "Le barème de frais et la rétrocession ne s'activent qu'après avis juridique écrit, jamais par simple décision produit.",
-        "lots": ["Conception", "LegalTech OHADA", "Conformité fiscale", "Négociation", "Audit d'acquisition", "Réalisation", "Finance", "Facturation abonnements", "Support", "Portes de conformité", "Exploitation", "QA et livraison"],
+        "lots": ["Conception", "LegalTech OHADA", "Conformité fiscale", "Catalogue de services", "Négociation", "Audit d'acquisition", "Réalisation", "Finance", "Facturation abonnements", "Support", "Portes de conformité", "Exploitation", "QA et livraison"],
     },
     "V4": {
         "focus": "Les modules réseau. Seul changement d'architecture notable : la brique de salons et rendez-vous virtuels est externalisée vers Remo.co plutôt que construite en propre.",
         "inclus": ["Alerte & Rebond : auto-diagnostic, cellule de crise confidentielle, listings d'actifs en difficulté, coupe-circuit",
-                   "Deal-Connect : événements B2B via connecteur Remo.co ; DealPME gère inscriptions, billetterie, attribution et reporting",
+                    "Deal-Connect : événements B2B via connecteur Remo.co ; DealPME gère inscriptions, billetterie, attribution et reporting",
+                    "Comptes rendus du contenu des sessions, ciblés sur leurs participants autorisés, distincts des statistiques de présence",
                    "Guichet Diaspora : liste de suivi, rendez-vous sécurisé via Remo.co, contraintes transfrontalières, renvoi vers banque et conseil",
                     "Deal-Experts (P13 contractuel) : registre d'experts, routage, accès temporaire scopé"],
         "exclu": ["Mécanismes d'enchère en temps réel (non présumés contractuels)", "Tout conseil de change ou d'investissement fourni par la plateforme"],
@@ -1715,12 +1762,59 @@ wsS.merge_cells(start_row=r, start_column=3, end_row=r, end_column=10); wsS.row_
 widths(wsS, [3, 6, 40, 34, 52, 10, 44, 14, 11, 24])
 wsS.freeze_panes = "C6"
 
+# ================================================================== PLAN D'EXECUTION
+wsPlan = wb.create_sheet("Plan_execution")
+title(wsPlan, "Plan d'exécution par lots", "Prochain lot technique : L01. L00 coordonne les accès en parallèle. Avancement calculé depuis Taches ; détail : docs/PLAN_EXECUTION.md.")
+# Chaque tâche restant à traiter appartient à un lot unique. Les tâches déjà
+# acquises restent dans Taches et ne sont pas recomptées comme du nouveau travail.
+EXECUTION_LOTS = [
+    ("L00", "Références, serveur et accès", "V1", ["V1-067", "V1-103", "V1-108"], "Coordination parallèle ; ne bloque pas L01", "Carte du corpus et demandes d'accès/serveur suivies", "docs/COMPTE_RENDU_DIRECTION_2026-09-12.md ; docs/DEMANDE_INFRA_ACCES.md"),
+    ("L01", "CI réellement bloquante", "V1", ["V1-091"], "Aucun accès fournisseur requis", "Lint, tests et tous les builds font échouer la CI en cas de défaut", "Rapport CI et échec contrôlé"),
+    ("L02", "Messagerie et audit durable", "V1", ["V1-094", "V1-095"], "L01", "Échanges ciblés et traces persistées malgré les pannes", "Tests multi-repreneurs, transaction/outbox et panne"),
+    ("L03", "Email et SMS local/réel", "V1", ["V1-093", "V1-101", "V1-102", "V1-028"], "L02 ; accès opérateur pour la sous-recette réelle seulement", "OTP reçu dans les boîtes, contrats testés puis activables chez le fournisseur", "Contrats transports, E2E sans devCode, preuve sandbox opérateur"),
+    ("L04", "CFE, alertes et exploitation", "V1", ["V1-109", "V1-035", "V1-096", "V1-097", "V1-098", "V1-009"], "L03 ; A19 pour staging, A02 pour API CFE réelle", "CFE manuel/mock, notifications consenties et environnement reproductible", "Tests trois modes CFE, livraison, supervision et restauration"),
+    ("L05", "Événements et prototype de captation", "V1", ["V1-007", "V1-068", "V1-071", "V1-104", "V1-105", "V1-106", "V1-107"], "L03 ; A17/A18 ; code local possible avant accès", "Création depuis DealPME, quotas partagés et faisabilité captation démontrés", "Matrice fournisseur, scénario organisateur, réservation concurrente et enregistrement"),
+    ("L06", "Interface, accessibilité et fidélité", "V1", ["V1-092", "V1-099", "V1-080", "V1-081", "V1-083", "V1-086", "V1-075"], "Contrats dès L01 ; recette finale après L04/L05", "Surfaces cohérentes avec références et accessibles", "Registre, contrôles navigateur, captures et journal de fidélité"),
+    ("L07", "Recette et démonstration V1", "V1", ["V1-100", "V1-066", "V1-088", "V1-090"], "L02 à L06 ; validation métier", "Parcours complet rejouable, validations et anomalies closes", "qa/e2e-results.json et compte rendu de recette"),
+    ("L08", "Cœur V2 : RPS, NDA et VDR", "V2", [f"V2-{i:03d}" for i in range(1, 47) if i != 43], "L07 ; PSC/PSAE pour signature réelle", "Qualification > admission > NDA > T2 > document > révocation > Q&R", "Paliers, concurrence RPS, viewer, preuves et 12 cas du corpus"),
+    ("L09", "Mini-réunions, rapports et recette V2", "V2", ["V2-047", "V2-048", "V2-049", "V2-050", "V2-043"], "L08 pour accès dossiers ; L05 et A21 pour captation", "Réunions privées, rapports sourcés et permissions éprouvées", "Tests de captation, injection, révocation et recette V2 intégrée"),
+    ("L10", "V3 : transaction, services et exploitation", "V3", [f"V3-{i:03d}" for i in range(1, 51)], "L09 ; A20, paiement et portes de conformité", "TaxeFacile/prestataires, transaction, facturation et exploitation intégrés", "Recette V3, rapprochements et preuves G1–G10"),
+    ("L11", "V4 : services étendus et salons", "V4", [f"V4-{i:03d}" for i in range(1, 27)], "L10 ; captation par session qualifiée", "Rebond, Diaspora, Experts et rapports multi-sessions", "Recette V4 et distribution ciblée par session"),
+    ("L12", "V5 : DealLens et intelligence VDR", "V5", [f"V5-{i:03d}" for i in range(1, 25)], "L08/L11 ; contrat IA J16", "IA documentaire fondée sur les preuves et permissions", "AI-01 à AI-06, DOC-01 à DOC-03, Q&A-01, UI-01 et recette finale"),
+]
+plan_headers = ["Lot", "Objet", "Version", "Tâches liées", "Prérequis / accès", "Résultat attendu", "Charge (j/p)", "Réalisé estimé", "Reste (j/p)", "Avancement", "État du lot", "Preuves attendues"]
+for i, label in enumerate(plan_headers, start=2):
+    wsPlan.cell(row=5, column=i, value=label)
+head(wsPlan, 5, 2, 13, height=32)
+planned_ids = []
+for r, (lot_id, name, version, ids, prereq, goal, evidence) in enumerate(EXECUTION_LOTS, start=6):
+    planned_ids.extend(ids)
+    for col, value in zip("BCDEFGM", (lot_id, name, version, ", ".join(ids), prereq, goal, evidence)):
+        wsPlan[f"{col}{r}"] = value
+    for col, source_col in (("H", "charge_ret"), ("I", "charge_real")):
+        wsPlan[f"{col}{r}"] = "=" + "+".join(f'SUMIF({rng("id")},"{tid}",{rng(source_col)})' for tid in ids)
+    wsPlan[f"J{r}"] = f"=H{r}-I{r}"
+    wsPlan[f"K{r}"] = f"=IF(H{r}=0,0,I{r}/H{r})"
+    wsPlan[f"L{r}"] = f'=IF(K{r}>=0.999,"Terminé",IF(I{r}>0,"Amorcé","À engager"))'
+    body(wsPlan, r, 2, 13)
+    for col in "HIJKL":
+        wsPlan[f"{col}{r}"].fill = FILL_CALC
+        wsPlan[f"{col}{r}"].alignment = A_CENTER
+    for col in "HIJ":
+        wsPlan[f"{col}{r}"].number_format = "0.0"
+    wsPlan[f"K{r}"].number_format = "0%"
+    wsPlan.row_dimensions[r].height = max(80, math.ceil(len(ids) / 8) * 15)
+widths(wsPlan, [3, 8, 34, 9, 54, 46, 54, 12, 12, 12, 12, 14, 60])
+wsPlan.freeze_panes = "E6"
+wsPlan.auto_filter.ref = f"B5:M{5 + len(EXECUTION_LOTS)}"
+
 # ================================================================== GUIDE
 wsGd = wb.create_sheet("Guide")
 title(wsGd, "Mode d'emploi du classeur")
 GUIDE = [
     ("Principe", "L'onglet Taches est la source des calculs. La source persistante du classeur est devX/build_suivi.py : y reporter toute saisie avant régénération. DealPME_Suivi.ods est une archive obsolète avec un autre calendrier, pas un suivi actif."),
     ("Conservation des acquis", "Les tâches déjà réalisées conservent leur statut et leur avancement. Tout correctif, renforcement ou travail supplémentaire est suivi séparément et relié à la tâche initiale. Aucun travail réalisé ne disparaît du suivi."),
+    ("Plan d'exécution", "Plan_execution regroupe les tâches restantes par lots L00 à L12. Il calcule leurs charges et avancements depuis Taches. Suivre docs/PLAN_EXECUTION.md pour l'ordre technique, les sous-étapes, les dépendances externes et les preuves de sortie."),
     ("Fin réelle", "Convention du classeur : date de clôture rattachée au calendrier de livraison. La date est située entre début et fin prévus, ou après la fin, jamais avant le début. Une date antérieure au début est repositionnée à la fin prévue ; une date postérieure reste inchangée."),
     ("Mettre à jour une tâche", "Changer le Statut (liste déroulante). 'Complétée' = 100 %. Choisir le Responsable dans la liste des personnes inscrites dans l'onglet Equipe. Pour une tâche 'En cours', saisir un pourcentage dans '% saisi' si l'on veut être précis ; sinon 25 % s'applique par défaut (90 % pour 'En revue')."),
     ("Ajouter une tâche", "Écrire sur la première ligne vide de l'onglet Taches en renseignant au minimum ID, Version, Module, Tâche, Charge et Statut. Les formules des colonnes grises sont déjà en place jusqu'à la ligne 325. Le Gantt et tous les totaux la prennent en compte immédiatement."),
@@ -1748,12 +1842,12 @@ for i, (k, v) in enumerate(GUIDE):
 widths(wsGd, [3, 22, 110])
 
 # ordre des onglets
-order = ["Tableau_de_bord", "Presentation", "Feuille_de_route", "Guide", "Taches", "Equipe", "Modules", "Versions", "Gantt", "Jalons", "Risques", "Securite", "Decisions", "Processus", "Acteurs", "Parametres"]
+order = ["Tableau_de_bord", "Plan_execution", "Presentation", "Feuille_de_route", "Guide", "Taches", "Equipe", "Modules", "Versions", "Gantt", "Jalons", "Risques", "Securite", "Decisions", "Processus", "Acteurs", "Parametres"]
 wb._sheets = [wb[n] for n in order]
 wb.active = 0
 
 # couleurs d'onglet
-tabcol = {"Tableau_de_bord": INK, "Presentation": INK, "Feuille_de_route": INK, "Guide": STEEL, "Taches": ACCENT, "Equipe": ACCENT,
+tabcol = {"Tableau_de_bord": INK, "Plan_execution": ACCENT, "Presentation": INK, "Feuille_de_route": INK, "Guide": STEEL, "Taches": ACCENT, "Equipe": ACCENT,
           "Modules": OK, "Versions": OK, "Gantt": ACCENT,
           "Jalons": WARN, "Risques": DANGER, "Securite": DANGER, "Decisions": WARN, "Processus": STEEL, "Acteurs": STEEL, "Parametres": "AAAAAA"}
 for n, c in tabcol.items():
@@ -1762,5 +1856,11 @@ for n, c in tabcol.items():
 task_ids = {wsT[f"B{r}"].value for r in range(T_FIRST, T_FIRST + len(T))}
 assert len(task_ids) == len(T), "Identifiants de tâches en double"
 assert (AUDIT_REVIEW.keys() | AUDIT_CRITERIA.keys() | COMPLETION_DATES.keys() | FOLLOW_UP_LINKS.keys()) <= task_ids, "Référence de suivi sans tâche"
+assert len(planned_ids) == len(set(planned_ids)), "Tâche affectée à plusieurs lots d'exécution"
+assert set(planned_ids) <= task_ids, "Lot d'exécution référençant une tâche absente"
+remaining_ids = {wsT[f"B{r}"].value for r in range(T_FIRST, T_FIRST + len(T)) if wsT[f"J{r}"].value not in ("Complétée", "Abandonnée")}
+assert remaining_ids <= set(planned_ids), f"Tâches restantes sans lot : {remaining_ids - set(planned_ids)}"
+for version, data in ROADMAP.items():
+    assert {t[2] for t in T if t[0] == version} <= set(data["lots"]), f"Lot absent de la feuille de route {version}"
 wb.save(OUT)
 print("OK", OUT, "tâches:", len(T), "charges:", totals, "total j/p:", sum(totals.values()))

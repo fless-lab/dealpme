@@ -3,6 +3,10 @@
 Relecture initiale du 11/09/2026, actualisée le 12/09/2026 après confrontation au code et aux tests.
 Voir [le bilan d'avancement](BILAN_AVANCEMENT_2026-09-12.md) pour les preuves, le reste à faire et les limites de vérification.
 
+Les compléments de la réunion direction et le mode CFE manuel/mock sont tracés dans le
+[compte rendu](COMPTE_RENDU_DIRECTION_2026-09-12.md) et le [plan actif](PLAN_EXECUTION.md). Les besoins de
+services TaxeFacile et de comptes rendus événementiels ne réactivent pas globalement le blueprint v5 écarté.
+
 ## Ce qui fait autorité, et sur quoi
 
 | Source | Autorité sur | Statut |
@@ -103,6 +107,9 @@ Les tâches V2-044/045 couvrent le durcissement et l'intégration ; un simple ch
 - P13 est explicitement **contractuel** dans le référentiel, pages 23-24. A04 porte désormais sur
   l'organisation des missions avant le module complet V4, pas sur l'existence de l'exigence.
 - Capacité pilote et recettes intégrées V3/V4 : tâches V3-046/047 et V4-025.
+- Compléments de réunion : boîte SMS et mock CFE, console organisateur, limites de compte partagé,
+  mini-réunions privées, captation et rapports de contenu, catalogue/prestataires et parcours TaxeFacile.
+  Voir la matrice de couverture du compte rendu ; les travaux préexistants restent acquis.
 
 ## Ce que le corpus apporte pour la suite
 

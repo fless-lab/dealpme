@@ -136,3 +136,9 @@ V2 déjà entamées et peut porter l'avancement des nouvelles tâches. `AUDIT_CR
 encore ouvertes. `FOLLOW_UP_LINKS` relie les acquis à leurs compléments. Les dates de clôture du suivi se
 saisissent dans `COMPLETION_DATES` et suivent `completion_date_for_plan`.
 Les nouvelles tâches sont ajoutées en fin de liste afin de conserver les identifiants existants.
+
+Le travail restant est affecté à un lot unique dans `Plan_execution`, avec charges et avancement calculés
+depuis `Taches`. Le [plan détaillé](PLAN_EXECUTION.md) précise les sous-étapes, preuves et accès nécessaires.
+Pour les évolutions locales prévues (SMTP/Mailpit, boîte SMS, CFE API activée/mock ou manuel), consulter
+[INTEGRATIONS_LOCALES.md](INTEGRATIONS_LOCALES.md) : ses variables et routes proposées seront ajoutées
+pendant les lots L03/L04, elles ne sont pas encore implémentées dans la configuration actuelle.
