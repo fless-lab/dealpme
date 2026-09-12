@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "verifiedOn": "2026-09-12",
+  "sourceBase": "48b8d9b",
+  "purpose": "Suivi explicite des compléments L05 et prévention de leur perte entre contextes",
+  "status": "PASS",
+  "taskCounts": { "before": 259, "after": 266, "completedBefore": 82, "completedAfter": 82 },
+  "newTasks": {
+    "withoutProviderAccess": ["V1-110", "V1-111"],
+    "blockedByProviderAccess": ["V1-112", "V1-113", "V1-114", "V1-115"],
+    "finalCorrectionsAndClosure": ["V1-116"]
+  },
+  "checks": {
+    "oldIdsTitlesCriteriaChargesDatesStatusesAndCompletionPreserved": true,
+    "onlyRelatedOldTaskCommentsExtended": true,
+    "newIdsUniqueAndAssignedOnlyToL05": true,
+    "newTasksHaveOwnerDependenciesDatesAndClosureCriteria": true,
+    "newTasksAtZeroWithoutCompletionDate": true,
+    "versionWindowsUnchanged": true,
+    "odsArchiveUnchanged": true,
+    "libreOfficeRecalculationWithoutFormulaErrors": true,
+    "blockedTaskPercentRecalculatedAsZero": true
+  },
+  "additionalEstimatedEffort": { "unit": "jours-personne", "V1": 13, "oldV1": 332, "newV1": 345, "oldTotal": 1043, "newTotal": 1056 },
+  "closureGuardScenario": {
+    "copyOnly": true,
+    "setup": "Toutes les tâches L05 à 100 % ; toutes clôturées sauf V1-112 maintenue Bloquée",
+    "observedL05Progress": 1,
+    "observedL05State": "Amorcé",
+    "notFalselyCompleted": true
+  },
+  "persistentRule": "AGENTS.md",
+  "sourceOfTruth": "devX/build_suivi.py",
+  "workbook": "DealPME_Suivi.xlsx",
+  "executionPlan": "docs/PLAN_EXECUTION.md"
+}

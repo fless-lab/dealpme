@@ -8,6 +8,11 @@ le SSO SAML sont implémentés. **L05 garde ses sous-recettes fournisseur ouvert
 du SSO commun, droits et quotas du compte, paramètres globaux non exposés par API et captation/export réels.
 Guide actuel : [REMO_RACCORDEMENT.md](REMO_RACCORDEMENT.md).
 
+Compléments désormais suivis sous IDs propres : **V1-110/111** (câblage et bascule sans accès),
+**V1-112 à 115** (activation et recettes réelles) et **V1-116** (corrections/clôture du lot).
+Ils restent ouverts à 0 %, indépendamment de la console V1-105 livrée. Détail, dépendances et dates
+dans [le plan L05](PLAN_EXECUTION.md#8-l05--événements-administrés-depuis-dealpme).
+
 Références et fiche de branchement : [INTEGRATION_REMO.md](INTEGRATION_REMO.md).
 
 ## Parcours livrés

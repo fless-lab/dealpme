@@ -19,6 +19,11 @@ et vérifié par une implémentation SAML côté service destinataire, y compris
 Cela valide le code et son raccordement ; la recette avec les droits et données du compte Remo demeure
 une étape distincte à réaliser dès réception des accès.
 
+Le suivi de clôture est explicite : V1-110/111 restent à faire pour la revue exhaustive du câblage
+et le précontrôle/bascule hors compte ; V1-112 à 115 portent l'activation et les recettes réelles ;
+V1-116 clôt L05 après corrections et qualification V1-107. Les preuves archivées ne ferment pas ces
+compléments nouveaux. Voir [PLAN_EXECUTION.md](PLAN_EXECUTION.md).
+
 ## Écrans
 
 - `/organisateur/integration` : compte configuré, quota/référence, profil général versionné, paramètres

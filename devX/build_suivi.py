@@ -193,6 +193,13 @@ _check_progress_keys()
 # Les acquis V1 de PROGRESS restent inchangés ; leurs compléments ont leurs propres tâches.
 # (statut, avancement estimé, preuve / reste à faire)
 AUDIT_REVIEW = {
+    "V1-110": ("À faire", 0, "Complément L05 : revue exhaustive du câblage encore à exécuter, sans attendre les accès. Les suites déjà passées restent des acquis ; elles ne clôturent pas cette revue de couverture."),
+    "V1-111": ("À faire", 0, "Complément L05 : automatiser et éprouver le précontrôle et la bascule de configuration hors compte fournisseur ; distinct de la documentation de branchement déjà livrée."),
+    "V1-112": ("Bloquée", 0, "Activation du compte réel non exécutée : accès propriétaire, Company ID, App Token, add-ons et quota contractuel A17/A18 attendus."),
+    "V1-113": ("Bloquée", 0, "Le SAML local est éprouvé, mais la recette avec le SP et l'IdP retenus pour le compte mutualisé reste à exécuter après V1-112."),
+    "V1-114": ("Bloquée", 0, "La console et les profils sont livrés ; activation et vérification des visuels, domaines et emails sur le compte Remo réel restent ouvertes."),
+    "V1-115": ("Bloquée", 0, "La fixture HTTPS valide le code, pas le fournisseur. Parcours réels, droits, quotas et incidents à éprouver après réception des accès."),
+    "V1-116": ("À faire", 0, "Réserver le traitement des écarts fournisseur et la clôture explicite de L05 ; aucune clôture par le seul succès des mocks ou par la disponibilité des accès."),
     "V1-007": ("En revue", 0.95, "Swagger public archivé, adaptateur et SAML implémentés ; assertions, rotation, session et navigateur éprouvés. Choix de l'IdP commun et recette des paramètres du compte restent ouverts A17. Preuve : qa/l05-remo-verification.json."),
     "V1-068": ("En revue", 0.95, "Adaptateur du Swagger public opérationnel et testé sur serveur HTTPS de contrat : création, contenu, invitations/intervenants, présence, groupes et suppression. Pas de recréation sur timeout ; HMAC local refusé en mode réel. Recette du compte A17 attendue."),
     "V1-071": ("En revue", 0.95, "Diaspora front/backend, accord email, salle privée, confirmation humaine et raccordement SAML disponibles. Connexion et confidentialité du véritable entretien Remo à qualifier avec A17."),
@@ -256,6 +263,20 @@ COMPLETION_DATES: dict[str, dt.date] = {
 }
 
 FOLLOW_UP_LINKS = {
+    "V1-007": "Architecture et SAML implémentés : qa/l05-remo-verification.json. Revue exhaustive V1-110, bascule V1-111 et recette SAML réelle V1-113 restent distinctes et ouvertes.",
+    "V1-068": "Adaptateur du Swagger public éprouvé sur fixture HTTPS. Activation V1-112, recette API réelle V1-115 et corrections/clôture V1-116 ne sont pas réalisées par ces tests locaux.",
+    "V1-071": "Parcours diaspora local acquis. Admission privée et véritable entretien à vérifier dans V1-113/115 ; pas de validation fournisseur par la seule présence d'un lien.",
+    "V1-104": "Matrice et sources disponibles. Sous-recettes explicites V1-112 à V1-115 ; V1-107 conserve la qualification captation/export. Clôture d'ensemble en V1-116.",
+    "V1-105": "Acquis conservé : console organisateur livrée et testée, qa/l05-remo-verification.json. Sa clôture ne clôt pas L05 : compléments de câblage V1-110/111, recette branding V1-114 et recette bout en bout V1-115 restent ouverts.",
+    "V1-106": "Registre partagé éprouvé localement. Le quota de simulation ne valide pas l'offre : paramètres réels V1-112, concurrence et couverture du compte V1-115, écarts V1-116.",
+    "V1-107": "Prototype synthétique conservé ; voix réelles, tables/scène, agent et exports natifs restent à qualifier avec A17/A21. Cette tâche reste un prérequis de clôture V1-116 ; le pipeline de rapports V2 n'est pas anticipé.",
+    "V1-110": "À exécuter sans accès Remo : audit de couverture API/BFF/UI/configuration, correction des trous de câblage et rapport relié au commit. Complément à V1-007/068/105, pas reprise des fonctionnalités déjà acquises.",
+    "V1-111": "À exécuter sans accès Remo : précontrôle automatisé et scénarios de changement de configuration/reprise, avec fixtures et certificats de test ; les accès ne bloquent que l'activation réelle V1-112.",
+    "V1-112": "Bloquée par A17/A18 : activer le compte reçu et consigner droits, paramètres, add-ons et quota. Le Swagger public est disponible ; son accès n'est plus un blocage.",
+    "V1-113": "Bloquée jusqu'à activation réelle : IdP commun, métadonnées, NameID email, MFA, sessions, rotation et admissions privées vérifiés chez Remo ; les résultats locaux restent des preuves distinctes.",
+    "V1-114": "Bloquée jusqu'à activation réelle : compte et événement, héritage/surcharges, logo/couverture/accueil, favicon, domaine et emails. Paramètres hors API configurés initialement chez Remo, effets et limites documentés.",
+    "V1-115": "Bloquée jusqu'à activation réelle : l'organisateur et le participant rejouent les parcours depuis DealPME contre Remo ; confidentialité, visibilité des profils, quotas et incidents documentés.",
+    "V1-116": "À faire après les recettes : corriger les écarts, rejouer les contrôles et archiver la décision de clôture L05. Un accès reçu, une tâche UI close ou un mock PASS ne suffisent pas.",
     "V1-008": "Socle monorepo réalisé. Renforcement de la CI suivi en V1-091.",
     "V1-016": "Sondes et journaux de base réalisés. Centralisation et alertes suivies en V1-097.",
     "V1-017": "Scripts de sauvegarde réalisés. Automatisation et durcissement de restauration suivis en V1-098.",
@@ -621,8 +642,18 @@ followup("V4", "CNX", "Deal-Connect", "Comptes rendus de contenu par session de 
 followup("V1", "GOV", "Espace CCI-Togo", "Mock CFE/RCCM local et bascule API activée ou validation manuelle complète", "API désactivée : zéro appel réseau et décisions manuelles motivées ; API active/mock : trouvé, absent, divergent, 429/5xx/timeout ; provenance conservée ; remplacement par adaptateur réel ; aucune certification automatique", 4, "2026-09-21", "2026-09-28", "V1-035 ; V1-091 ; D10")
 MEETING_FOLLOWUPS = {t[3] for t in T[meeting_start:]}
 
+# Clarification L05 : compléments de câblage et sous-recettes sous nouveaux IDs.
+# Append après les 259 tâches : aucune charge, date ni clôture historique n'est modifiée.
+followup("V1", "CNX", "Deal-Connect (Remo)", "Revue exhaustive du câblage L05 sans accès fournisseur", "Matrice exigence > opération documentée > service/API > BFF > contrôle UI > test ; scénarios positifs et négatifs rejoués ; trous de câblage corrigés ; limitations hors API sourcées avec traitement explicite ; rapport et commit archivés", 2, "2026-09-24", "2026-10-02", "Acquis locaux V1-007/068/105 ; Swagger public ; ne pas attendre leur clôture fournisseur ni un accès Remo")
+followup("V1", "CNX", "Deal-Connect (Remo)", "Précontrôle automatisé et recette de bascule de configuration Remo", "Précontrôle exécutable sans secrets dans les sorties ; local/remo/disabled, paramètres incomplets ou contradictoires, certificats, changement de compte et reprise après redémarrage éprouvés sur fixtures ; fiche de branchement reliée aux résultats", 2, "2026-09-28", "2026-10-06", "V1-110 ; docs/REMO_RACCORDEMENT.md ; aucun accès fournisseur pour cette préparation")
+followup("V1", "CNX", "Deal-Connect (Remo)", "Activation du compte Remo réel et vérification des droits et quotas", "Accès propriétaire et add-ons vérifiés ; Company ID, App Token, hôte, quota et contexte multi-produits configurés hors dépôt ; précontrôle V1-111 exécuté ; preuve de connexion au compte réel sans exposition de secrets", 1, "2026-10-05", "2026-10-08", "Dossier de préparation V1-104 déjà disponible ; V1-111 ; A17 : accès et offre ; A18 : quota confirmé")
+followup("V1", "IDN", "Deal-Connect (Remo)", "Recette SSO SAML réelle du compte Remo mutualisé", "IdP commun et métadonnées SP configurés ; connexion depuis DealPME, MFA, email NameID, expiration/rejeu, changement de session et rotation éprouvés chez Remo ; accès privé et méthodes alternatives testés ; limites de logout et effets sur les autres produits documentés", 2, "2026-10-06", "2026-10-12", "Implémentations locales V1-007/071 acquises ; V1-112 ; A17 : paramètres SAML du compte")
+followup("V1", "CNX", "Deal-Connect (Remo)", "Activation et recette du branding global et par événement chez Remo", "Profil général et surcharges appliqués sur deux événements ; logo, couverture, accueil, connexion, favicon, domaine et emails vérifiés selon l'offre ; initialisation des paramètres non exposés par API effectuée ; absence d'effet indésirable sur les autres produits et captures réelles archivées", 2, "2026-10-06", "2026-10-12", "V1-105 ; V1-112 ; A17 : options white label et droits")
+followup("V1", "CNX", "Deal-Connect (Remo)", "Recette bout en bout DealPME vers l'API et les salles Remo réelles", "Création, contenu, invitations/intervenants, groupes, présence et entretien diaspora rejoués contre le compte réel ; droits, profils/contacts, email modifié, quota partagé, erreurs/reprise et suppression contrôlée vérifiés ; distinction des effets fournisseur et des fixtures dans les preuves", 2, "2026-10-08", "2026-10-14", "Acquis locaux V1-068/071/106 ; V1-112 ; V1-113 ; V1-114 ; A17/A18")
+followup("V1", "CNX", "Deal-Connect (Remo)", "Corrections des écarts fournisseur et clôture documentée de L05", "Écarts des recettes réelles corrigés et rejoués ; revue de câblage et bascule closes ; qualification captation/export V1-107 instruite avec preuves ; aucun point bloquant non résolu ou non arbitré ; validation et preuves L05 archivées ; un test fournisseur non exécuté n'est jamais déclaré réussi", 2, "2026-10-12", "2026-10-15", "V1-110 ; V1-111 ; V1-113 ; V1-114 ; V1-115 ; V1-107 ; A21")
+
 # ------------------------------------------------------------------ contrôle des totaux par version
-expected = {"V1": 332, "V2": 228, "V3": 219, "V4": 111, "V5": 153}
+expected = {"V1": 345, "V2": 228, "V3": 219, "V4": 111, "V5": 153}
 totals = {}
 for t in T:
     totals[t[0]] = totals.get(t[0], 0) + t[5]
@@ -1794,7 +1825,7 @@ wsS.freeze_panes = "C6"
 
 # ================================================================== PLAN D'EXECUTION
 wsPlan = wb.create_sheet("Plan_execution")
-title(wsPlan, "Plan d'exécution par lots", "L03 opérationnel en local ; qualification des fournisseurs ouverte. Prochain lot technique indépendant : L04. Détail : docs/PLAN_EXECUTION.md.")
+title(wsPlan, "Plan d'exécution par lots", "L05 : API/SAML et console livrés ; revue de câblage et bascule V1-110/111 à faire sans accès, activation/recettes réelles V1-112 à 115 ouvertes, clôture en V1-116. Détail : docs/PLAN_EXECUTION.md.")
 # Chaque tâche restant à traiter appartient à un lot unique. Les tâches déjà
 # acquises restent dans Taches et ne sont pas recomptées comme du nouveau travail.
 EXECUTION_LOTS = [
@@ -1803,7 +1834,7 @@ EXECUTION_LOTS = [
     ("L02", "Messagerie et audit durable", "V1", ["V1-094", "V1-095"], "L01", "Échanges ciblés et traces persistées malgré les pannes", "Tests multi-repreneurs, transaction/outbox et panne"),
     ("L03", "Email et SMS local/réel", "V1", ["V1-093", "V1-101", "V1-102", "V1-028"], "L02 ; accès opérateur pour la sous-recette réelle seulement", "OTP reçu dans les boîtes, contrats testés puis activables chez le fournisseur", "Contrats transports, E2E sans devCode, preuve sandbox opérateur"),
     ("L04", "CFE, alertes et exploitation", "V1", ["V1-109", "V1-035", "V1-096", "V1-097", "V1-098", "V1-009"], "L03 ; A19 pour staging, A02 pour API CFE réelle", "CFE manuel/mock, notifications consenties et environnement reproductible", "Tests trois modes CFE, livraison, supervision et restauration"),
-    ("L05", "Événements et prototype de captation", "V1", ["V1-007", "V1-068", "V1-071", "V1-104", "V1-105", "V1-106", "V1-107"], "L03 ; A17/A18 ; code local possible avant accès", "Création depuis DealPME, quotas partagés et faisabilité captation démontrés", "Matrice fournisseur, scénario organisateur, réservation concurrente et enregistrement"),
+    ("L05", "Événements et prototype de captation", "V1", ["V1-007", "V1-068", "V1-071", "V1-104", "V1-105", "V1-106", "V1-107", *[f"V1-{i:03d}" for i in range(110, 117)]], "V1-110/111 sans accès ; V1-112 à 115 avec A17/A18 ; captation A21", "Câblage complet éprouvé, compte activé et parcours réels validés ; clôture distincte V1-116", "Matrice API/BFF/UI/tests, précontrôle, recettes SAML/branding/API réelles, captation et corrections"),
     ("L06", "Interface, accessibilité et fidélité", "V1", ["V1-092", "V1-099", "V1-080", "V1-081", "V1-083", "V1-086", "V1-075"], "Contrats dès L01 ; recette finale après L04/L05", "Surfaces cohérentes avec références et accessibles", "Registre, contrôles navigateur, captures et journal de fidélité"),
     ("L07", "Recette et démonstration V1", "V1", ["V1-100", "V1-066", "V1-088", "V1-090"], "L02 à L06 ; validation métier", "Parcours complet rejouable, validations et anomalies closes", "qa/e2e-results.json et compte rendu de recette"),
     ("L08", "Cœur V2 : RPS, NDA et VDR", "V2", [f"V2-{i:03d}" for i in range(1, 47) if i != 43], "L07 ; PSC/PSAE pour signature réelle", "Qualification > admission > NDA > T2 > document > révocation > Q&R", "Paliers, concurrence RPS, viewer, preuves et 12 cas du corpus"),
@@ -1826,6 +1857,10 @@ for r, (lot_id, name, version, ids, prereq, goal, evidence) in enumerate(EXECUTI
     wsPlan[f"J{r}"] = f"=H{r}-I{r}"
     wsPlan[f"K{r}"] = f"=IF(H{r}=0,0,I{r}/H{r})"
     wsPlan[f"L{r}"] = f'=IF(K{r}>=0.999,"Terminé",IF(I{r}>0,"Amorcé","À engager"))'
+    if lot_id == "L05":
+        # Un pourcentage estimé à 100 % ne remplace pas la clôture des tâches de câblage/recette.
+        open_terms = [f'COUNTIFS({rng("id")},"{tid}",{rng("statut")},"<>Complétée",{rng("statut")},"<>Abandonnée")' for tid in ids]
+        wsPlan[f"L{r}"] = f'=IF(({"+".join(open_terms)})=0,"Terminé",IF(I{r}>0,"Amorcé","À engager"))'
     body(wsPlan, r, 2, 13)
     for col in "HIJKL":
         wsPlan[f"{col}{r}"].fill = FILL_CALC
@@ -1844,10 +1879,12 @@ title(wsGd, "Mode d'emploi du classeur")
 GUIDE = [
     ("Principe", "L'onglet Taches est la source des calculs. La source persistante du classeur est devX/build_suivi.py : y reporter toute saisie avant régénération. DealPME_Suivi.ods est une archive obsolète avec un autre calendrier, pas un suivi actif."),
     ("Conservation des acquis", "Les tâches déjà réalisées conservent leur statut et leur avancement. Tout correctif, renforcement ou travail supplémentaire est suivi séparément et relié à la tâche initiale. Aucun travail réalisé ne disparaît du suivi."),
+    ("Complément découvert", "Créer immédiatement une nouvelle tâche persistante pour toute exigence, intégration, correction hors portée ou sous-recette distincte découverte pendant l'exécution. Renseigner ID, lot, dépendances, critère, responsable, charge et dates dans devX/build_suivi.py avant de poursuivre. Une note de conversation ou un titre général ne suffit pas ; voir AGENTS.md."),
+    ("L05 : deux fins distinctes", "V1-110/111 vérifient le câblage et la bascule sans accès. V1-112 à 115 portent activation et recettes réelles. V1-116 clôt le lot après corrections et qualification V1-107. La console V1-105 reste acquise ; ni sa clôture ni un mock PASS ne clôturent L05."),
     ("Plan d'exécution", "Plan_execution regroupe les tâches restantes par lots L00 à L12. Il calcule leurs charges et avancements depuis Taches. Suivre docs/PLAN_EXECUTION.md pour l'ordre technique, les sous-étapes, les dépendances externes et les preuves de sortie."),
     ("Fin réelle", "Convention du classeur : date de clôture rattachée au calendrier de livraison. La date est située entre début et fin prévus, ou après la fin, jamais avant le début. Une date antérieure au début est repositionnée à la fin prévue ; une date postérieure reste inchangée."),
     ("Mettre à jour une tâche", "Changer le Statut (liste déroulante). 'Complétée' = 100 %. Choisir le Responsable dans la liste des personnes inscrites dans l'onglet Equipe. Pour une tâche 'En cours', saisir un pourcentage dans '% saisi' si l'on veut être précis ; sinon 25 % s'applique par défaut (90 % pour 'En revue')."),
-    ("Ajouter une tâche", "Écrire sur la première ligne vide de l'onglet Taches en renseignant au minimum ID, Version, Module, Tâche, Charge et Statut. Les formules des colonnes grises sont déjà en place jusqu'à la ligne 325. Le Gantt et tous les totaux la prennent en compte immédiatement."),
+    ("Ajouter une tâche", "Ajouter d'abord le complément dans devX/build_suivi.py, en append avec un nouvel ID stable, puis régénérer le classeur et mettre à jour son lot dans Plan_execution. Les lignes réservées de Taches permettent la saisie de travail, mais toute saisie doit être reportée dans le générateur pour survivre à la régénération."),
     ("Abandonner une tâche", "Mettre le statut 'Abandonnée' : la tâche sort des totaux de charge sans être supprimée (traçabilité)."),
     ("Codes couleur", "Cellules jaune pâle : à saisir. Cellules grises : calculées, ne pas modifier. Statuts colorés automatiquement (vert complétée, ambre en cours, rouge bloquée)."),
     ("Modules", "Avancement pondéré par la charge des tâches du module. Colonnes Responsable et Commentaire à saisir. Les éléments hors périmètre v0 sont listés pour mémoire, sans tâche."),

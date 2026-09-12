@@ -205,7 +205,43 @@ en A19/A02 ; ils ne remplacent pas les tests locaux.
 
 ## 8. L05 — événements administrés depuis DealPME
 
-Tâches : **V1-007/068/071/104/105/106/107** ; dépendances A17/A18/A21.
+Tâches : **V1-007/068/071/104/105/106/107 et V1-110 à V1-116** ; dépendances A17/A18/A21.
+
+### Suivi explicite du reste à faire
+
+La clôture de V1-105 atteste la console livrée et ses essais archivés. **Elle ne clôture ni tout le
+câblage L05, ni l'intégration au compte réel.** Les tests de contrat déjà réussis restent acquis ; une
+revue exhaustive, le précontrôle de bascule et les recettes ci-dessous doivent encore être exécutés.
+
+| ID | Travail restant | Statut initial | Accès nécessaires | Dates prévues |
+|---|---|---|---|---|
+| V1-110 | Revue exhaustive API/BFF/UI/configuration, matrice de couverture et correction des trous de câblage | À faire, 0 % | Aucun compte Remo requis | 24/09–02/10/2026 |
+| V1-111 | Précontrôle automatisé et recette de changement de configuration/reprise | À faire, 0 % | Aucun compte Remo requis ; fixtures et certificats de test | 28/09–06/10/2026 |
+| V1-112 | Activation du compte réel, droits/add-ons, Company ID et quota | Bloquée, 0 % | A17/A18 | 05/10–08/10/2026 |
+| V1-113 | Recette SAML réelle, IdP commun, sessions et admissions privées | Bloquée, 0 % | V1-112 et paramètres SAML du compte | 06/10–12/10/2026 |
+| V1-114 | Activation et recette du branding global/par événement, domaines et emails | Bloquée, 0 % | V1-112 et options white label | 06/10–12/10/2026 |
+| V1-115 | Parcours organisateur/participant/diaspora, droits, quotas et incidents sur Remo réel | Bloquée, 0 % | V1-112/113/114 et A17/A18 | 08/10–14/10/2026 |
+| V1-116 | Corrections des écarts fournisseur, rejeu et décision documentée de clôture L05 | À faire, 0 % | Résultats des recettes et qualification V1-107/A21 | 12/10–15/10/2026 |
+
+V1-107 garde la captation/export live ouverte ; V1-007/068/071/104/106 conservent leurs statuts de revue.
+Les références à leurs **acquis locaux** sont des sources de travail, pas l'obligation d'attendre leur
+clôture fournisseur pour commencer V1-110/111. Cela évite une dépendance circulaire entre préparation
+et recette réelle. Les résultats des sous-recettes permettront ensuite de clore les tâches historiques
+encore en revue, sous le contrôle de V1-116.
+Les nouvelles lignes sont des compléments de vérification, bascule, activation et corrections : elles
+ne remplacent pas les tâches initiales et ne réestiment pas leurs charges. **13 j/p supplémentaires**
+sont provisionnés, à confirmer avec l'équipe : V1 passe de 332 à 345 j/p, total de 1043 à 1056 j/p.
+Les 259 lignes antérieures, leurs dates et leurs charges sont conservées. Le suivi compte désormais
+**266 tâches, dont 82 complétées** ; aucune nouvelle ligne n'a de date de clôture.
+
+**Deux conditions de sortie distinctes :**
+
+1. Préparation hors accès : V1-110/111 terminées avec matrice exhaustive et preuves de câblage/bascule.
+   L'attente du compte ne bloque pas ce travail.
+2. Clôture de L05 : activation et recettes réelles exécutées, V1-107 instruite, écarts traités et
+   V1-116 clôturée sur preuves. Un accès reçu ou un mock PASS ne remplace pas cette recette.
+
+L'état `Terminé` de L05 dans le classeur dépend de la clôture de ses tâches, pas du seul pourcentage estimé.
 
 Socle local et reprise : [EVENEMENTS_L05.md](EVENEMENTS_L05.md).
 Matrice fournisseur, SAML et branding complet : [INTEGRATION_REMO.md](INTEGRATION_REMO.md).
@@ -389,6 +425,12 @@ Tâches : **V5-001 à V5-024**.
 
 ## 16. Discipline de clôture et reprise
 
+**Règle permanente du chef de projet :** dès qu'une situation révèle un travail supplémentaire,
+ajouter sa tâche persistante sous un nouvel identifiant, avec dépendances et critères de clôture,
+avant de poursuivre. Ne pas conserver un complément seulement dans le fil de discussion, un commentaire
+général ou la liste temporaire de session. Les consignes de reprise sont également inscrites dans `AGENTS.md`.
+Une tâche couvrant déjà exactement l'action est réutilisée ; un complément distinct reçoit sa propre ligne.
+
 Pour chaque tâche engagée :
 
 1. Lire sa source et sa dépendance ; noter le contrat et le résultat attendu avant modification.
@@ -400,8 +442,9 @@ Pour chaque tâche engagée :
 6. Régénérer le classeur, vérifier dates/identifiants/formules et committer le lot cohérent.
 7. Laisser une note de reprise : dernier contrôle réussi, accès manquant éventuel, prochaine action exacte.
 
-**Reprise :** les fonctions API Remo/SAML implémentables hors compte sont éprouvées ; poursuivre la recette
-L05 dès réception des accès, paramètres du compte et choix d'IdP commun. Les fonctions globales absentes
-du Swagger sont identifiées pour l'initialisation chez le fournisseur. L06 peut avancer sur la fidélité
-des interfaces pendant cette attente. Reprendre les sous-recettes L04 dès réception des accès
+**Reprise prioritaire L05 : V1-110 puis V1-111**, revue exhaustive du câblage et précontrôle/bascule,
+sans attendre les accès. Exécuter V1-112 à 115 dès réception du compte et de ses paramètres ; conserver
+V1-107 et V1-116 ouvertes jusqu'aux preuves de qualification et de clôture. Les fonctions globales absentes
+du Swagger ont une initialisation fournisseur explicite. L06 peut préparer les surfaces indépendantes,
+mais ne remplace pas ces tâches L05. Reprendre les sous-recettes L04 dès réception des accès
 CFE/fournisseurs/serveur : A02, A16 et A19. Les dates des versions et les acquis restent inchangés.
