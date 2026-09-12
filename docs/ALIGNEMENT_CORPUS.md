@@ -1,7 +1,7 @@
 # Alignement avec le corpus de référence
 
-Relecture du 11/09/2026 du Master Developer Handoff V3.1 et du cahier des charges v0, comparée à ce qui est
-construit. Ce document sert à décider quoi reprendre, quoi étendre, et quoi laisser tel quel.
+Relecture initiale du 11/09/2026, actualisée le 12/09/2026 après confrontation au code et aux tests.
+Voir [le bilan d'avancement](BILAN_AVANCEMENT_2026-09-12.md) pour les preuves, le reste à faire et les limites de vérification.
 
 ## Ce qui fait autorité, et sur quoi
 
@@ -29,13 +29,15 @@ construit. Ce document sert à décider quoi reprendre, quoi étendre, et quoi l
 
 ## Écarts constatés
 
-### 1. Registre d'interactions : 376 identifiants hors registre
+### 1. Registre d'interactions : appartenance vérifiée, contrats encore incomplets
 
 Le standard impose que chaque contrôle visible porte un `data-control-id` **présent dans le registre**. Le
 Release Gate en fait une condition bloquante (`UNREGISTERED_CONTROL`, P0).
 
-État réel : le registre officiel compte **76 identifiants** ; le code en utilise **382**, dont **6 seulement**
-figurent au registre. En l'état, la recette officielle échouerait.
+Le constat initial de 376 identifiants hors registre a été traité par A15 et l'ajout d'un registre local.
+Au 12/09, `npm test` produit **441 entrées** (76 issues du corpus, 365 du dépôt), **371 identifiants
+statiquement relevés**, **0 hors registre**, mais **365 contrats à documenter** et **1 fichier avec identifiant
+dynamique**. Le `PASS` de `qa/control-coverage.json` porte uniquement sur l'appartenance au registre.
 
 Nuance importante : le registre ne couvre que trois surfaces de référence, la fiche d'opportunité PT-001, la
 data room et un gabarit de scénario de service. Il ne dit rien de la connexion, de l'inscription, du dossier
@@ -43,22 +45,20 @@ cédant, de la console CCI-Togo, de l'espace investisseur ni de Deal-Connect, qu
 cinquièmes de ce qui est construit. Le registre n'est donc pas un catalogue complet du produit : c'est le
 catalogue des surfaces livrées avec le corpus.
 
-Trois écarts de forme, eux, sont incontestables :
+Trois points restent à traiter :
 
-- **Nommage** : la convention officielle est un nom fonctionnel neutre, réutilisable d'une fixture à l'autre
-  (`TAB_OVERVIEW`, `EXPRESS_INTEREST`, `PRIMARY_ACTION`). Le contexte est porté par les colonnes du registre,
-  pas par l'identifiant. Le code préfixe par écran (`CCI_CERT_SUBMIT`, `OPP_DETAIL_NEXT`), ce qui interdit la
-  réutilisation d'un contrat d'une surface à l'autre.
+- **Nommage** : reprendre les identifiants du corpus sur les surfaces correspondantes ; les extensions du
+  produit suivent la décision A15, désormais tranchée.
 - **Contrôles contre états** : le registre ne référence que des éléments actionnables. Le code étiquette aussi
   des zones d'affichage (`_ERROR`, `_EMPTY`, `_BADGE`, `_ROW`), ce qui n'a pas de contrat d'interaction possible.
-- **Identifiants dynamiques** : deux identifiants sont construits à l'exécution, donc non énumérables et non
-  vérifiables par la preuve de recette `qa/control-coverage.json`.
+- **Couverture** : le test tolère jusqu'à deux fichiers avec identifiant dynamique et ne parcourt que
+  `web/app` et `ui/src`, pas `web/components`. Il ne prouve ni l'absence de contrôles non étiquetés ni les
+  comportements dans un navigateur.
 
-Sur les surfaces que le registre couvre, le code aurait dû reprendre les identifiants officiels : la fiche
-d'opportunité devrait porter `EXPRESS_INTEREST`, `CONTACT_SELLER`, `REQUEST_MEETING`, `TOGGLE_FAVORITE`,
-`OPEN_VDR` et les six onglets, au lieu de `OPP_DETAIL_*`.
+La fiche opportunité reprend déjà `EXPRESS_INTEREST`, mais reste un teaser T0 sans les six onglets du
+critère V1-057. L'écart doit être résolu ou explicitement approuvé dans le journal de fidélité.
 
-**Décision à prendre** : voir A15 au classeur.
+**Travail à faire** : V1-092 pour les parcours V1 ; V2-003 pour terminer et étendre. Aucun besoin de rouvrir A15.
 
 ### 2. Modèle de données financières plus pauvre que le standard
 
@@ -73,15 +73,34 @@ pour le rapprochement financier attendu en V2 et V3.
 ### 3. Vocabulaire des états d'un document
 
 Le guide VDR fixe huit états d'ingestion : `UPLOADED`, `SCANNING`, `PROCESSING`, `REVIEW_REQUIRED`,
-`PUBLISHED`, `SUPERSEDED`, `REVOKED`, `QUARANTINED`. Le dossier cédant en V1 utilise un état de scan à trois
-valeurs, ce qui convient à son usage mais ne préfigure pas la data room. La V2 doit adopter le vocabulaire du
-guide plutôt que d'étendre celui de V1.
+`PUBLISHED`, `SUPERSEDED`, `REVOKED`, `QUARANTINED`. Ils sont **déjà présents** dans
+`codebases/backend/api/src/database/schema/vdr.ts`. Le scan à trois états du dossier V1 a un autre usage.
+Le travail V2 porte sur le pipeline et les transitions exécutables : `DataroomModule` est vide et le worker
+d'ingestion ne fait encore que journaliser les jobs.
 
-### 4. Preuves de recette absentes
+### 4. Preuves de recette partielles
 
 Le Release Gate exige que la livraison produise `qa/e2e-results.json`, `qa/control-coverage.json`, des
-captures desktop et mobile, et `qa/fidelity-ledger.md`. Les contrôles de fumée existent et passent, mais ils
-ne produisent aucun de ces artefacts. Le corpus fournit d'ailleurs un exemple de format consolidé.
+captures desktop et mobile, et `qa/fidelity-ledger.md`. La couverture statique existe et a été régénérée le
+12/09. Les trois autres preuves n'ont pas été trouvées. Le smoke API existe mais n'a pas été rejoué pendant
+cet audit, la pile Docker étant arrêtée. La recette navigateur doit commencer en V1 (V1-084/086/092).
+
+### 5. RPS : socle réel, garanties encore à construire
+
+Les règles, routes et tables existent, mais l'API conserve `rpsPublicationAuthorized: false`. Dans le RPS,
+le plafond est lu avant la transaction d'admission, le journal calcule sa prochaine séquence sans verrou,
+la révocation modifie les lignes de divulgation et les migrations ne posent pas de protection append-only.
+Les tâches V2-044/045 couvrent le durcissement et l'intégration ; un simple changement de drapeau ne suffit pas.
+
+### 6. Exigences du v0 et du référentiel oubliées dans le plan
+
+- DP-IDN-050 / P08 : vérification documentaire d'identité, distincte de l'email vérifié (V2-046).
+- DP-IDN-041 à 045 : abonnement prépayé, renouvellement, grâce, facture NIF et virement (V3-044).
+- DP-OPS-030 à 032 : paiements des services, secours fournisseur, carte diaspora et rapprochement par rail
+  (V3-045). Cela ne réintroduit pas le séquestre des transactions, exclu du v0.
+- P13 est explicitement **contractuel** dans le référentiel, pages 23-24. A04 porte désormais sur
+  l'organisation des missions avant le module complet V4, pas sur l'existence de l'exigence.
+- Capacité pilote et recettes intégrées V3/V4 : tâches V3-046/047 et V4-025.
 
 ## Ce que le corpus apporte pour la suite
 
@@ -97,16 +116,15 @@ ne produisent aucun de ces artefacts. Le corpus fournit d'ailleurs un exemple de
 - **Registre d'incidents** : champs obligatoires d'un risque, qui évitent la note libre.
 - **Q&R** : rôles du circuit, du brouillon à l'approbation.
 
-Autrement dit, V2 n'est pas à concevoir : elle est à transposer. C'est la raison pour laquelle la relecture
-avant écriture change le résultat.
+Le corpus fournit une base de conception détaillée. La transposition demande encore des contrats de sécurité,
+de persistance, d'intégration et de recette adaptés au produit réel.
 
 ## Ordre de travail proposé pour V2
 
-1. **Trancher la question du registre** (A15), parce qu'elle conditionne le nommage de tout ce qui sera écrit.
-2. **Transposer les tests d'acceptation P0 du corpus** en contrôles de fumée, avant d'écrire les surfaces :
-   ils définissent le comportement attendu mieux qu'une spécification rédigée après coup.
-3. **Data room** : schéma et états d'ingestion du guide, permissions serveur, viewer, révocation, Q&R.
-4. **Circuit RPS réel** : il est déjà en place et éprouvé ; restent le pack de preuves et le branchement de
-   l'API sur le service, aujourd'hui court-circuité par un drapeau fonctionnel.
-5. **Signature électronique** : dépend d'un contrat avec un prestataire accrédité, donc à cadrer tôt.
-6. **Preuves de recette** : produire les artefacts attendus par le Release Gate.
+1. **Stabiliser V1 et sa recette** : messagerie, notifications, audit durable, CI, contrats et preuves navigateur.
+2. **Préparer PSC/PSAE et le NDA** pendant V1 ; le modèle NDA V2 ne doit pas attendre le moteur LegalTech V3.
+3. **Définir les tests de la tranche V2** : identité vérifiée, qualification, admission, NDA, T2, document,
+   révocation ; préparer les contrats IA dont l'exécution reste en V5.
+4. **Durcir le RPS puis le brancher** : concurrence, append-only, identité de l'opérateur, panne refusée.
+5. **Implémenter une tranche VDR complète**, puis étendre l'arborescence, le viewer et les Q&R.
+6. **Archiver les preuves** à chaque tranche et conserver une recette finale V2.

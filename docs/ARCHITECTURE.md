@@ -31,7 +31,7 @@ Pas de microservices partout : le plafond du pilote est de 2 000 comptes et le v
 | OPS | platform, infra | V1 base / V3 durci | P25 | - |
 | REB | rebound | V4 | P17, P18 | core |
 | CNX / DIA | events (pont Remo.co) | V4 | P20, P21 | core |
-| EXP | experts | V4 (à confirmer) | P13 | core |
+| EXP | experts | V4 (module complet ; articulation antérieure en A04) | P13 | core |
 | VDR-IA | engine/deallens (Python) | V5 | - | vdr (lecture) |
 
 Chaque module a sa fiche dans `docs/modules/` et ses tâches dans `DealPME_Suivi.xlsx` (onglet Taches, colonne Module).

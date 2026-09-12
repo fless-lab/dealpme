@@ -5,13 +5,18 @@ Source unique de vérité : l'onglet Taches. Tout le reste est calculé par form
 """
 import datetime as dt
 import math
+from pathlib import Path
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.formatting.rule import FormulaRule, DataBarRule
 
-OUT = "/home/raouf/Workspaces/Free/Projects/deal_pme/DealPME_Suivi.xlsx"
+OUT = Path(__file__).resolve().parents[1] / "DealPME_Suivi.xlsx"
+AUDIT_DATE = dt.date(2026, 9, 12)
+# Date fixe de la reprise de l'historique : les dates futures non attestées à cette
+# date ne deviennent pas des faits simplement parce qu'une revue ultérieure avance.
+LEGACY_PROGRESS_CUTOFF = dt.date(2026, 9, 12)
 
 # ------------------------------------------------------------------ palette
 INK, ACCENT, PAPER, STEEL = "1C2751", "6678F1", "F2F2F3", "5980A6"
@@ -183,6 +188,56 @@ def _check_progress_keys() -> None:
 
 _check_progress_keys()
 
+# Revue du dépôt au 12/09/2026. Estimations de travail restant, pas taux de recette.
+# Clés stables : les nouvelles tâches sont ajoutées après les 224 tâches historiques.
+# (statut, avancement estimé, preuve / reste à faire)
+AUDIT_REVIEW = {
+    "V1-008": ("En cours", 0.8, "Monorepo et CI présents ; npm run lint ne lance aucun linter et build:libs masque les erreurs. Voir V1-091."),
+    "V1-009": ("En cours", 0.4, "Compose local présent ; aucun déploiement automatique de staging identifié dans .github/workflows/ci.yml."),
+    "V1-016": ("En cours", 0.5, "Sondes et journaux présents ; centralisation et notification effective sur 5xx non démontrées."),
+    "V1-017": ("En cours", 0.5, "Scripts présents ; ordonnanceur quotidien absent. restore-test.sh masque les erreurs pg_restore et compare au vivant plutôt qu'au manifeste de sauvegarde."),
+    "V1-045": ("En cours", 0.7, "Journal consultable ; AuditService.record écrit sans attendre la persistance. Garantie durable à traiter en V1-094."),
+    "V1-054": ("En cours", 0.6, "Intérêts et messages présents. La RLS ne rend pas les réponses du cédant au repreneur ; destinataire de réponse non porté. Tester deux repreneurs isolés."),
+    "V1-055": ("En cours", 0.5, "Sauvegarde et révocation du consentement présentes ; worker matching/notifications limité à des logs, aucun envoi effectif."),
+    "V1-057": ("En cours", 0.6, "Liste et teaser T0 présents ; les six onglets exigés par le critère ne sont pas dans opportunites/[dealId]/page.tsx. Écart à résoudre ou à faire approuver."),
+    "V1-062": ("En revue", 0.8, "Texte implémenté ; validation écrite de M. Bruno non trouvée. Ne vaut pas recette métier."),
+    "V1-068": ("En cours", 0.4, "RemoBridgeService utilise toujours createFakeRemo ; cadrage J14 et adaptateur réel restent nécessaires."),
+    "V1-070": ("En revue", 0.8, "Écrans et inscriptions présents ; parcours réel d'accès Remo non validé, dépend de V1-068."),
+    "V1-074": ("En revue", 0.8, "Styles responsive présents ; absence de captures et de tests navigateur aux dimensions de recette."),
+    "V1-084": ("En cours", 0.5, "74 tests passent au 12/09 ; smoke API existant non rejoué (pile arrêtée). Aucun E2E navigateur ni e2e-results.json."),
+    "V1-085": ("En cours", 0.6, "Tests négatifs et registre présents ; couverture statique seulement, 365 contrats à documenter et 1 fichier avec identifiant dynamique."),
+    "V2-007": ("En cours", 0.4, "ADR, schéma et règles RPS présents ; concurrence, immutabilité et revue juridique à fermer."),
+    "V2-008": ("En cours", 0.25, "ADR 0003 et schéma VDR présents, dont les huit états documentaires ; permissions et viewer exécutables absents."),
+    "V2-011": ("En cours", 0.6, "Service NestJS et base séparée présents ; déploiement indépendant et authentification interservices à prouver."),
+    "V2-012": ("En cours", 0.4, "Compteur par personne présent ; revoke fait UPDATE et aucune protection append-only RPS trouvée dans les migrations."),
+    "V2-013": ("En cours", 0.25, "Table et dédoublonnage par groupe présents ; déclaration, validation et administration des liens absentes."),
+    "V2-014": ("En cours", 0.5, "Seuils testés en fonctions pures ; contrôle du plafond hors transaction d'admission, concurrence non couverte."),
+    "V2-015": ("En cours", 0.4, "Route et justification présentes ; decidedBy provient du corps, file et identité de l'opérateur authentifié à intégrer."),
+    "V2-016": ("En cours", 0.3, "Règle et route présentes ; les communications de la plateforme n'appellent pas encore le RPS."),
+    "V2-017": ("En cours", 0.3, "Chaînage implémenté ; séquence concurrente non sérialisée, pack signé et contraintes append-only absents."),
+    "V2-018": ("En cours", 0.7, "projectForTier testé et utilisé en V1 ; parcours T1/T2 réel et 12 cas à valider en V2."),
+    "V2-023": ("En cours", 0.2, "Table signature_evidence présente ; aucun circuit PSC/PSAE exécuté."),
+    "V2-029": ("En cours", 0.2, "Table folder présente ; création automatique de l'arborescence OHADA à implémenter."),
+    "V2-031": ("En cours", 0.2, "Table access_grant avec expiration obligatoire ; délivrance, contrôle serveur et révocation absents."),
+    "V2-033": ("En cours", 0.2, "Table document_view présente ; enregistrement réel et export absents."),
+    "V2-036": ("En cours", 0.15, "Table qa_thread présente ; API, isolation et circuit de réponse absents."),
+}
+
+AUDIT_CRITERIA = {
+    "V1-017": "Sauvegarde quotidienne programmée ; restauration sans erreur masquée ; comparaison au manifeste daté, contrôle des objets et preuve archivée",
+    "V1-054": "Aller-retour repreneur/cédant reçu par le bon destinataire ; deux repreneurs ne lisent jamais leurs fils respectifs ; pièce jointe refusée avant NDA",
+    "V1-055": "Nouvelle opportunité déclenche une notification via le worker avec opt-in ; révocation stoppe les envois ; aucune donnée hors palier",
+    "V1-084": "Smoke API rejoué et parcours navigateur inscription, dossier, publication, certification passants ; qa/e2e-results.json daté et relié au commit",
+    "V1-085": "Permissions négatives testées ; contrôles V1 actionnés en navigateur et contrats documentés ; registre statique seul insuffisant",
+    "V1-086": "Captures 1440 x 960 et 390 x 844 archivées, écarts intentionnels dans qa/fidelity-ledger.md ; régression non approuvée bloque la CI",
+    "V2-004": "DOC-01 à DOC-03, Q&A-01 et UI-01 exécutables pour V2 ; matrice AI-01 à AI-06 préparée, exécution IA portée par V5",
+    "V2-009": "Contrat de preuve et repli papier définis ; gabarit NDA versionné et revu juridiquement disponible en V2 sans attendre le moteur LegalTech V3",
+}
+
+# Renseigner uniquement les dates effectives attestées lors des prochaines clôtures.
+# Une date de revue ou une fin prévue ne constitue pas une date de réalisation.
+VERIFIED_COMPLETION_DATES: dict[str, dt.date] = {}
+
 DEFAULT_OWNER = "Abdou-Raouf"
 
 MODULES = [
@@ -205,7 +260,7 @@ MODULES = [
     ("REB", "Alerte & Rebond : entreprises en difficulté", "Socle V0", "P17, P18", "V4", "Confidentialité renforcée"),
     ("CNX", "Deal-Connect : événements B2B (Remo.co)", "Socle V0", "P20", "V4", "Connecteur externe Remo.co"),
     ("DIA", "Guichet Diaspora et investissement", "Socle V0", "P21", "V4", "Rendez-vous vidéo via Remo.co"),
-    ("EXP", "Deal-Experts : mobilisation d'expert indépendant", "Arbitrage requis", "P13", "V4 (à confirmer)", "Contractuel (P13) ou cible future : à trancher"),
+    ("EXP", "Deal-Experts : mobilisation d'expert indépendant", "Socle V0", "P13", "V4", "Référentiel p. 23-24 : socle contractuel art. 12.3 ; articulation avec les besoins experts V2/V3 à confirmer (A04)"),
     ("VDR-IA", "VDR Intelligence : DealLens et surfaces de diligence", "Extension conçue, non prod", "-", "V5", "Aucun fournisseur IA contracté"),
 ]
 
@@ -331,8 +386,8 @@ add("V1", "TRV", "QA et livraison", "Préparation de la démonstration du 15/10 
 # ---------------- V2 (190 j/p) ----------------
 add("V2", "MKT", "Mise en relation", "Qualification d'un repreneur par le cédant : décision tracée qui ouvre le palier suivant", "Aucune ouverture de palier sans décision nommée du cédant", 4, "Haute")
 add("V2", "MKT", "Mise en relation", "Suspension réversible d'une publication (amendement de la machine à états du v0)", "Un dossier suspendu redevient invisible sans être abandonné ; la transition est journalisée", 3, "Moyenne", bloquant="Oui", dep="Accord de M. Bruno sur l'amendement")
-add("V2", "TRV", "Conception", "Contrats d'interaction : documenter les 368 contrôles du dépôt (déclencheur, autorisation, source, succès, blocage, audit) et reprendre les identifiants officiels sur les surfaces couvertes par le corpus", "Aucun contrat marqué à documenter ; conformité au corpus en hausse à chaque surface reprise", 5, "Haute")
-add("V2", "TRV", "QA et sécurité", "Transposition des tests d'acceptation P0 du corpus (AI-01 à AI-06, DOC-01 à DOC-03, Q&A-01, UI-01) en contrôles automatisés", "Chaque test du corpus a son contrôle exécutable, avant écriture des surfaces", 4, "Haute")
+add("V2", "TRV", "Conception", "Contrats d'interaction : terminer les contrats du dépôt (déclencheur, autorisation, source, succès, blocage, audit) et reprendre les identifiants officiels sur les surfaces couvertes par le corpus", "Aucun contrat marqué à documenter ; nouveaux contrôles documentés dès leur ajout ; surfaces V1 traitées en priorité en V1-092", 5, "Haute", dep="V1-092")
+add("V2", "TRV", "QA et sécurité", "Transposition des tests d'acceptation P0 du corpus (AI-01 à AI-06, DOC-01 à DOC-03, Q&A-01, UI-01) en contrôles automatisés", "Tests VDR exécutables en V2 ; tests IA exécutés en V5", 4, "Haute")
 add("V2", "TRV", "QA et sécurité", "Preuves de recette du Release Gate : résultats de bout en bout, couverture des contrôles, captures desktop et mobile, journal de fidélité", "La livraison produit les quatre artefacts attendus par le Release Gate", 3, "Moyenne")
 add("V2", "MKT", "Mise en relation", "Vérité financière canonique : compte de résultat 5 ans, bilan et flux 3 ans, besoin en fonds de roulement, délais clients et fournisseurs, dette brute et nette, avec provenance et unité", "Le poste de travail de transaction dispose des données exigées par le standard d'implémentation", 6, "Haute")
 add("V2", "RPS", "Conception", "Conception du circuit RPS réel : modèle de cercle et de personne unique, plafond et seuils, admission humaine, journal réglementaire à chaîne de hachage, contrat d'API du service", "Spécification relue par le conseil juridique ; chaque règle du v0 (P07, P10) a sa contrepartie technique", 4, "Haute", bloquant="Oui")
@@ -431,7 +486,7 @@ add("V3", "OPS", "Exploitation", "Rotation des clés, gestion des secrets, scan 
 # ---------------- V4 (102 j/p) ----------------
 add("V4", "REB", "Conception", "Conception Alerte & Rebond : confidentialité renforcée, signalement, actifs en difficulté et lien avec le périmètre RPS", "Modèle de données et parcours validés ; aucune fuite d'identité d'une entreprise en difficulté", 3, "Haute", bloquant="Oui")
 add("V4", "CNX", "Conception", "Conception Deal-Connect et Guichet Diaspora complets : billetterie et sponsoring via Remo.co, rendez-vous mutuels, profil diaspora, rapport post-événement", "Séquences et contrats d'échange avec Remo.co validés sur la documentation à jour", 2, "Haute")
-add("V4", "EXP", "Conception", "Conception Deal-Experts : mobilisation d'expert indépendant, conflit d'intérêts, périmètre de mission, traçabilité", "Décision d'arbitrage (P13) prise et modèle de mission spécifié", 2, "Moyenne", dep="Arbitrage Deal-Experts")
+add("V4", "EXP", "Conception", "Conception Deal-Experts : mobilisation d'expert indépendant, conflit d'intérêts, périmètre de mission, traçabilité", "Contrôles K13.1 à K13.5 couverts ; articulation avec les missions V2/V3 confirmée", 2, "Moyenne", dep="A04 : articulation P13")
 add("V4", "REB", "Alerte & Rebond", "Auto-diagnostic : arbre logique et score de santé financière", "Score expliqué, jamais un conseil personnalisé", 6, "Haute")
 add("V4", "REB", "Alerte & Rebond", "Dossier de crise confidentiel, INVITE_ONLY, registre d'investisseurs de retournement", "Dossier absent de toute recherche ouverte (test négatif)", 6, "Haute")
 add("V4", "REB", "Alerte & Rebond", "Signalement statutaire (mandataire de justice) et avertissement sur les clauses bancaires", "Avertissement affiché avant tout changement de visibilité", 3, "Moyenne")
@@ -451,7 +506,7 @@ add("V4", "DIA", "Guichet Diaspora", "Renvoi vers banque / conseil pour les aspe
 add("V4", "DIA", "Guichet Diaspora", "Signal de demande diaspora (agrégé, anonymisé)", "Aucune donnée nominative dans le signal", 3, "Basse")
 add("V4", "DIA", "Guichet Diaspora", "Écrans Guichet Diaspora", "Contraintes affichées avant la phase finale", 5, "Moyenne")
 
-add("V4", "EXP", "Deal-Experts", "Registre d'experts qualifiés et déclaration de conflit d'intérêts", "Conflit déclaré avant toute proposition", 5, "Moyenne", dep="Arbitrage statut P13")
+add("V4", "EXP", "Deal-Experts", "Registre d'experts qualifiés et déclaration de conflit d'intérêts", "Conflit déclaré avant toute proposition", 5, "Moyenne", dep="A04 : articulation P13")
 add("V4", "EXP", "Deal-Experts", "Routage du besoin, propositions, sélection par le client", "Client choisit seul, DealPME n'oriente pas le fond", 5, "Moyenne")
 add("V4", "EXP", "Deal-Experts", "Accès temporaire scopé en lecture, expiration à la remise du livrable", "Accès fermé automatiquement à la livraison", 5, "Haute")
 add("V4", "EXP", "Deal-Experts", "Contrat direct client-expert (hors facturation DealPME) et journal", "Aucune facturation de prestation par DealPME", 3, "Moyenne")
@@ -483,8 +538,29 @@ add("V5", "VDR-IA", "QA IA", "Tests AI-01 à AI-06, DOC-01 à DOC-03, Q&A-01, UI
 add("V5", "VDR-IA", "QA IA", "Performance : viewer progressif, streaming des réponses, recherche < 1,5 s", "Mesures sur réseau de référence", 5, "Moyenne")
 add("V5", "VDR-IA", "QA IA", "Recette V5 et corrections", "Zéro anomalie bloquante ouverte", 5, "Haute")
 
+# Ajouts de l'audit : append uniquement, pour conserver les identifiants historiques.
+# Les charges sont des estimations initiales à revalider, pas des jours consommés.
+PLAN_BASELINE_CHARGES = {"V1": 274, "V2": 190, "V3": 179, "V4": 102, "V5": 153}
+FOLLOW_UP_DATES = {}
+def followup(v, m, lot, tache, crit, ch, debut, fin, dep=""):
+    add(v, m, lot, tache, crit, ch, "Haute", bloquant="Oui", dep=dep)
+    FOLLOW_UP_DATES[tache] = (dt.date.fromisoformat(debut), dt.date.fromisoformat(fin))
+
+followup("V1", "TRV", "QA et livraison", "CI réellement bloquante : lint effectif et compilation de tous les workspaces sans erreur masquée", "Un défaut de lint ou de compilation web/worker fait échouer la CI ; supprimer le succès forcé de build:libs", 2, "2026-09-14", "2026-09-16")
+followup("V1", "TRV", "QA et livraison", "Contrats et contrôles des parcours V1 : registre actionnable et preuves navigateur", "Contrats des parcours V1 documentés ; composants partagés inclus dans le scan ; aucun identifiant dynamique non couvert ; DEAD_CONTROL testé", 3, "2026-09-16", "2026-10-09", "V1-091 ; A15")
+followup("V1", "IDN", "Auth et rôles", "Adaptateur email effectif et sélection stricte des fournisseurs", "Message reçu via SMTP/Mailpit puis fournisseur retenu ; aucun mode réel ne retourne un faux connecteur ; erreur fournisseur explicite", 3, "2026-09-14", "2026-09-21", "Choix fournisseur email pour la cible hors local")
+followup("V1", "OPS", "Sécurité", "Persistance garantie des événements d'audit sensibles", "Action et preuve durables par transaction ou outbox ; panne du journal et rollback testés ; aucun succès perdu après arrêt du processus", 3, "2026-09-16", "2026-09-23", "V1-045 ; AuditService.record")
+followup("V2", "RPS", "Circuit RPS réel", "Durcissement RPS : admissions atomiques, journal append-only et identité interservices", "Admissions concurrentes ne dépassent pas le plafond ; chaîne séquentielle vérifiable ; UPDATE/DELETE refusés ; révocation ajoutée ; opérateur authentifié", 5, "2026-10-16", "2026-10-23", "V2-012 ; V2-014 ; V2-017")
+followup("V2", "RPS", "Circuit RPS réel", "Branchement API vers RPS réel et refus par défaut en cas de panne", "Publication et communications passent par le RPS ; indisponibilité bloque la divulgation ; activation du drapeau seule insuffisante ; parcours intégré testé", 4, "2026-10-22", "2026-10-30", "V2-044 ; V2-001")
+followup("V2", "IDN", "Mise en relation", "Vérification documentaire d'identité et qualification avec preuves (DP-IDN-050 / P08)", "Capture privée, revue humaine, OTP et recoupement registre tracés ; refus/expiration testés ; distinct de la simple vérification email ; sans biométrie", 5, "2026-10-16", "2026-10-28", "V1-028 ; V1-035 ; V1-093")
+followup("V3", "IDN", "Facturation abonnements", "Abonnements prépayés, renouvellement, grâce et factures NIF (DP-IDN-041 à 045)", "Périodes prépayées ; lecture seule puis teaser puis suspension sans effacement ; facture NIF ; promotions et virement institutionnel tracés", 8, "2026-11-26", "2026-12-11", "V1-032 ; prestataire de paiement")
+followup("V3", "FIN", "Facturation abonnements", "Paiement des services et rapprochement par rail (DP-OPS-030 à 032)", "Agrégateur principal et secours ; mobile money et carte diaspora ; états autorisé/capturé/réglé/rapproché datés ; rejeu et panne testés ; aucun séquestre de cession", 8, "2026-11-26", "2026-12-16", "Contrat agrégateur ; V1-023")
+followup("V3", "OPS", "QA et livraison", "Tests de capacité et de réseau au niveau du pilote", "Scénarios à 2x la cible documentée ; latences, erreurs, viewer 3G et limites mesurées ; rapport archivé", 4, "2026-12-14", "2026-12-21", "V2-043 ; staging")
+followup("V3", "TRV", "QA et livraison", "Recette V3 intégrée : transaction, facturation, exploitation et portes G1 à G10", "Parcours complet avec preuves ; restauration et incidents exercés ; aucun P0/P1 ouvert ; validation métier archivée avant livraison", 4, "2026-12-21", "2026-12-30", "V3-044 ; V3-045 ; V3-046 ; J11 ; J12")
+followup("V4", "TRV", "QA et livraison", "Recette V4 intégrée : Rebond, Deal-Connect, Diaspora et Experts", "Parcours des quatre services, contrats partenaires, confidentialité et révocation expert testés ; preuves desktop/mobile ; corrections closes", 4, "2027-02-01", "2027-02-05", "V3-047 ; A04 ; connecteur Remo réel")
+
 # ------------------------------------------------------------------ contrôle des totaux par version
-expected = {"V1": 274, "V2": 190, "V3": 179, "V4": 102, "V5": 153}
+expected = {"V1": 285, "V2": 204, "V3": 203, "V4": 106, "V5": 153}
 totals = {}
 for t in T:
     totals[t[0]] = totals.get(t[0], 0) + t[5]
@@ -499,6 +575,11 @@ def plan_dates():
     for t in T:
         v = t[0]
         start, end = vwin[v]
+        if t[3] in FOLLOW_UP_DATES:
+            s, e = FOLLOW_UP_DATES[t[3]]
+            assert start <= s <= e <= end, f"Dates hors version : {t[3]}"
+            out.append((s, e))
+            continue
         if v == "V1":
             # Décision du 10/09/2026 : développement du 03/09 au 12/10, QA et livraison du 13 au 15/10.
             if t[2] == "QA et livraison":
@@ -508,7 +589,7 @@ def plan_dates():
             end = dt.date(2026, 10, 12)
         win = (end - start).days
         before = cum.get(v, 0)
-        frac = before / expected[v]
+        frac = before / PLAN_BASELINE_CHARGES[v]
         s = start + dt.timedelta(days=int(round(frac * win * 0.85)))
         dur = max(2, int(math.ceil(t[5] * 1.4)))
         e = min(end, s + dt.timedelta(days=dur))
@@ -616,10 +697,23 @@ for idx in range(NTASK_ROWS):
                 statut, pct, fin_reelle, resp = st, p, done, DEFAULT_OWNER
                 comment = None
                 break
-        # Une fin réelle n'est jamais antérieure au début prévu : elle tombe dans l'intervalle prévu ou après,
-        # même si cela la place dans le futur (la colonne est masquée par défaut).
-        if fin_reelle is not None and fin_reelle < s:
-            fin_reelle = e
+        # Une réalisation anticipée est possible. Ne jamais la déplacer dans le futur.
+        # Les dates futures historiques sont conservées dans la note, pas présentées comme des faits.
+        if fin_reelle is not None and fin_reelle > LEGACY_PROGRESS_CUTOFF:
+            comment = f"Audit 12/09 : ancienne fin réelle {fin_reelle:%d/%m/%Y} future, écartée ; date effective à confirmer."
+            fin_reelle = None
+        if tid in AUDIT_REVIEW:
+            statut, pct, note = AUDIT_REVIEW[tid]
+            fin_reelle, resp = None, DEFAULT_OWNER
+            comment = " ".join(x for x in (comment, f"Audit 12/09 : {note}") if x)
+        if tid in AUDIT_CRITERIA:
+            crit = AUDIT_CRITERIA[tid]
+        if tache in FOLLOW_UP_DATES:
+            resp = DEFAULT_OWNER
+            comment = "Ajout audit 12/09/2026 ; charge initiale à revalider avec l'équipe ; voir docs/BILAN_AVANCEMENT_2026-09-12.md."
+        if tid in VERIFIED_COMPLETION_DATES:
+            fin_reelle = VERIFIED_COMPLETION_DATES[tid]
+            assert statut == "Complétée" and fin_reelle <= AUDIT_DATE, f"Fin réelle incohérente : {tid}"
         vals = {"id": tid, "version": v, "module": m, "lot": lot, "tache": tache, "critere": crit,
                 "charge": ch, "prio": prio, "statut": statut, "pct": pct, "resp": resp,
                 "debut": s, "fin": e, "fin_reelle": fin_reelle, "dep": dep, "bloquant": bloquant, "comment": comment}
@@ -761,7 +855,7 @@ for i, m in enumerate(MODULES):
     wsM[f"G{r}"] = f'=SUMIF({rng("module")},$B{r},{rng("charge_ret")})'
     wsM[f"H{r}"] = f'=SUMIF({rng("module")},$B{r},{rng("charge_real")})'
     wsM[f"I{r}"] = f'=IF(G{r}=0,0,H{r}/G{r})'
-    wsM[f"J{r}"] = f'=COUNTIFS({rng("module")},$B{r},{rng("statut")},"<>Annulé",{rng("id")},"<>")'
+    wsM[f"J{r}"] = f'=COUNTIFS({rng("module")},$B{r},{rng("statut")},"<>Abandonnée",{rng("id")},"<>")'
     wsM[f"K{r}"] = f'=COUNTIFS({rng("module")},$B{r},{rng("statut")},"Complétée")'
     wsM[f"L{r}"] = f'=COUNTIFS({rng("module")},$B{r},{rng("statut")},"En cours")+COUNTIFS({rng("module")},$B{r},{rng("statut")},"En revue")'
     wsM[f"M{r}"] = f'=COUNTIFS({rng("module")},$B{r},{rng("statut")},"Bloquée")'
@@ -958,20 +1052,23 @@ wsJ.freeze_panes = "D6"
 wsR = wb.create_sheet("Risques")
 title(wsR, "Registre des risques", "Score = probabilité x impact (1 à 5). Niveau et alerte calculés. Statut et mitigation à tenir à jour.")
 RISQUES = [
-    ("R01", "Équipe de développement non confirmée ou sous-dimensionnée", "Organisation", 4, 5, "V1", "Chef de projet", "Décision de M. Bruno avant J01 ; sinon retrait de la démo RPS puis du matching automatisé", "Ouvert"),
+    ("R01", "Équipe de développement non confirmée ou sous-dimensionnée", "Organisation", 4, 5, "V1", "Chef de projet", "Une seule personne enregistrée. Recalculer le reste à faire par version et affecter les responsables ; préserver les dates, soumettre toute coupe de périmètre à décision (A01). Ne pas retirer une démo RPS déjà construite.", "Ouvert"),
     ("R02", "Aucune API CFE / RCCM disponible", "Dépendance externe", 3, 4, "V1", "Chef de projet", "Adaptateur à double mode : API ou saisie manuelle supervisée", "Ouvert"),
     ("R03", "Designer UI/UX non disponible de bout en bout", "Organisation", 3, 3, "V1", "M. Bruno", "Confirmer la proposition Bouley avant J04", "Ouvert"),
     ("R04", "Périmètre V1 qui s'élargit pendant le mois", "Périmètre", 4, 4, "V1", "Chef de projet", "Gel du périmètre à J03, toute demande passe par l'onglet Decisions", "Ouvert"),
     ("R05", "Démonstration perçue comme un produit fini (sur-promesse)", "Communication", 3, 4, "V1", "M. Bruno", "Note de cadrage V1, étiquette 'démonstration synthétique' sur chaque écran", "Ouvert"),
-    ("R06", "Prestataire de signature qualifiée non contractualisé à temps", "Dépendance externe", 3, 4, "V2", "M. Bruno", "Lancer la consultation des PSC accrédités dès la fin de V1", "Ouvert"),
+    ("R06", "Prestataire de signature qualifiée non contractualisé à temps", "Dépendance externe", 3, 4, "V2", "M. Bruno", "Lancer la consultation PSC/PSAE pendant V1 ; disposer d'un gabarit NDA revu en V2, sans attendre LegalTech V3 ; jalon J08 maintenu", "Ouvert"),
     ("R07", "Retard des portes de conformité (IPDCP, DPO, pentest)", "Réglementaire", 3, 5, "V3", "Conseil juridique / DPO", "Démarrer les démarches IPDCP pendant V2", "Ouvert"),
     ("R08", "Partenaire fiscal non identifié", "Dépendance externe", 3, 2, "V3", "M. Bruno", "Confirmer TaxeFacile ou qualifier une alternative avant V3", "Ouvert"),
     ("R09", "Périmètre de l'intégration Remo.co plus large que prévu", "Technique", 2, 3, "V4", "Chef de projet", "Cadrage écrit avant chiffrage définitif (J14)", "Ouvert"),
-    ("R10", "Fournisseur IA sans clauses de confidentialité acceptables", "Dépendance externe", 3, 5, "V5", "Conseil juridique", "Consultation dès V3, clauses de non-réutilisation des données", "Ouvert"),
+    ("R10", "Fournisseur IA sans clauses de confidentialité acceptables", "Dépendance externe", 3, 5, "V5", "Conseil juridique", "Consultation dès V2, clauses de non-réutilisation des données ; contrat attendu le 15/01/2027 (J16 et A08 alignés)", "Ouvert"),
     ("R11", "Fuite de divulgation T0 / T1 sur un dossier titres en production", "Sécurité", 2, 5, "V2", "Équipe de développement", "Allow-list serveur, tests DISCLOSURE_LEAK sur les 12 cas de référence", "Surveillé"),
     ("R12", "Sur-ingénierie par rapport au plafond du pilote (2 000 comptes)", "Technique", 2, 2, "V2", "Chef de projet", "Revue d'architecture à chaque version contre le plafond de capacité", "Surveillé"),
     ("R14", "Calendrier V2 à V5 compressé (V5 : 153 j/p en trois semaines) avec lancement commercial au 01/03/2027", "Planning", 4, 4, "V5", "Chef de projet", "Dimensionner l'équipe sur l'ETP requis affiché dans la feuille de route, ou déplacer les surfaces DealLens non essentielles après le lancement ; commander le pentest et le contrat IA dès V2", "Ouvert"),
     ("R13", "Pentest indépendant reporté en V3 : la démonstration V1 tourne sans audit externe", "Sécurité", 3, 4, "V1", "Chef de projet", "Revue de sécurité interne et scan de dépendances en V1 (lot Sécurité) ; aucun environnement accessible publiquement avant V3 ; commander le pentest dès V2", "Ouvert"),
+    ("R15", "Avancement confondu avec recette : dates réelles futures, contrôles statiques et faux fournisseurs", "Qualité du suivi", 5, 4, "V1", "Chef de projet", "Audit du 12/09 : réouverture des tâches incomplètes, preuves en commentaire, fins réelles futures écartées ; recette navigateur et métier obligatoire", "Ouvert"),
+    ("R16", "Paiements, facturation prépayée et KYC documentaire absents du plan détaillé", "Périmètre", 4, 5, "V3", "Chef de projet", "Exigences v0 réintroduites en V2-046 et V3-044/045 ; consulter les fournisseurs pendant V1/V2 et revalider les charges sans déplacer les versions", "Ouvert"),
+    ("R17", "Admissions et journal RPS non protégés contre la concurrence", "Technique", 4, 5, "V2", "Chef de projet", "V2-044 avant V2-045 : tests concurrents, transactions, append-only, identité interservices ; ne pas activer les titres sur la seule foi des tests unitaires", "Ouvert"),
 ]
 hR = ["ID", "Risque", "Catégorie", "Probabilité (1-5)", "Impact (1-5)", "Score", "Niveau", "Version", "Responsable", "Mitigation", "Statut"]
 for i, h in enumerate(hR):
@@ -1013,17 +1110,19 @@ DECISIONS = [
     ("A01", "09/09/2026", "Équipe de développement", "Taille et séniorité de l'équipe disponible dès maintenant ?", "Ouvert", "M. Bruno", "Détermine si V1 tient en 5 semaines ou nécessite des coupes", "Réponse attendue avant J01", "14/09/2026"),
     ("A02", "09/09/2026", "API CFE / RCCM", "Une API existe-t-elle, ou faut-il un échange de fichier supervisé ?", "Ouvert", "CCI-Togo", "Bloque le lot Espace CCI-Togo", "Vérifier avant le démarrage du lot", "16/09/2026"),
     ("A03", "09/09/2026", "Designer UI/UX", "Confirmation d'un designer de bout en bout (proposition Bouley) ?", "Ouvert", "M. Bruno", "Sans lui, la charge frontend absorbe la conception", "Décision avant J04", "18/09/2026"),
-    ("A04", "09/09/2026", "Statut Deal-Experts (P13)", "Processus contractuel déjà opposable, ou cible future ?", "Ouvert", "CCI-Togo", "Change le dimensionnement du module EXP et sa version", "Clarifier avec la CCI-Togo avant V4", "31/01/2027"),
+    ("A04", "09/09/2026", "Articulation Deal-Experts (P13)", "Le référentiel p. 23-24 classe explicitement P13 en socle contractuel, art. 12.3. Confirmer l'organisation des missions nécessaires à Deal-Ready et à l'audit avant le module complet V4.", "Ouvert", "CCI-Togo", "V4 conservée ; responsabilités et accès experts des parcours antérieurs à expliciter", "Valider une modalité opérationnelle avec la CCI-Togo avant V2", "15/10/2026"),
     ("A05", "09/09/2026", "Numérotation P01-P03", "Processus manquants ou numérotation volontaire à partir de P04 ?", "Ouvert", "CCI-Togo", "Faible impact sur le plan", "Confirmer avec le juridique", ""),
     ("A06", "09/09/2026", "Partenaire fiscal", "'TaxeFacile' est-il le partenaire réel, ou faut-il en qualifier un ?", "Ouvert", "M. Bruno", "Impacte le lot Conformité fiscale de V3", "Qualifier avant V3", "30/11/2026"),
     ("A07", "09/09/2026", "Charte du COPIL", "Composition, cadence exacte, règles de vote ?", "Ouvert", "CCI-Togo", "Gouvernance inter-version", "Récupérer l'annexe de la Convention", ""),
-    ("A15", "11/09/2026", "Registre d'interactions", "Le registre officiel ne couvre que trois surfaces de référence et compte 76 identifiants, alors que le produit en compte une vingtaine. Tranché en interne, car ce registre vient du travail de préparation et non d'un engagement envers la CCI-Togo : les identifiants officiels sont repris sur les surfaces que le corpus décrit, et le dépôt tient son propre registre, au même format et avec la même discipline, pour les autres. Un test refuse tout identifiant inconnu.", "Tranché", "Chef de projet", "La recette reste vérifiable sur l'ensemble du produit, et la conformité au corpus augmente à mesure que ses surfaces sont construites", "Documenter les 368 contrats du dépôt pendant V2", "25/11/2026"),
+    ("A15", "11/09/2026", "Registre d'interactions", "Le registre officiel ne couvre que trois surfaces de référence et compte 76 identifiants, alors que le produit compte une vingtaine de surfaces. Décision interne conservée : reprendre les identifiants officiels sur leurs surfaces et étendre le registre pour le produit. Le test actuel vérifie l'appartenance statique, pas le comportement.", "Tranché", "Chef de projet", "Au 12/09 : 371 identifiants relevés, 365 contrats à documenter ; PASS de couverture ne vaut pas PASS de recette", "Documenter et tester les parcours V1 en V1-092, puis terminer et étendre en V2-003", "25/11/2026"),
     ("A13", "02/10/2026", "Retrait d'une publication", "La machine à états du v0 ne prévoit aucun retour depuis LISTED_OPEN : un dossier publié ne peut être fermé qu'en l'abandonnant, ce qui est définitif. L'écran le dit désormais au lieu de promettre un retrait. Une suspension réversible est inscrite en V2, sous réserve d'un amendement accepté par M. Bruno.", "Ouvert", "M. Bruno", "Un cédant qui suspend une vente ne doit pas avoir à abandonner son dossier", "Trancher avant le début de V2", "16/10/2026"),
     ("A12", "24/09/2026", "Certification visible dans le jeu de démonstration", "Aucune fixture de référence ne certifie un dossier publié : le badge Deal-Ready n'apparaîtrait jamais sur la place de marché pendant la démonstration. Le chargement de démonstration certifie donc PT-003, avec une portée explicite. Les fixtures restent intactes et demeurent l'oracle des tests.", "Tranché", "Chef de projet", "La démonstration montre les deux états, certifié et non certifié, sans altérer les cas de référence", "Confirmer le choix du dossier certifié avec M. Bruno avant la répétition générale", "12/10/2026"),
     ("A11", "23/09/2026", "Formats acceptés en pièce de dossier", "Documents, tableurs, présentations et images sont acceptés, anciens formats compris (PDF, Word, Excel, PowerPoint, OpenDocument, RTF, CSV, texte, JPEG, PNG, WebP, TIFF, HEIC) : ces formats sont ceux qui circulent réellement au Togo. Tous passent par l'antivirus, ne sont jamais exécutés, et seuls les PDF et images s'ouvrent dans le navigateur, le reste se télécharge. Les archives compressées restent exclues (ADR 0007).", "Tranché", "Chef de projet", "Ergonomie réelle contre surface de risque, arbitrée par l'analyse antivirus obligatoire", "Revoir si le pentest de V3 signale un vecteur bureautique", "18/12/2026"),
     ("A10", "15/09/2026", "Préalable à la certification", "L'octroi Deal-Ready exige une vérification RCCM ou CFE enregistrée pour l'entreprise ; le serveur refuse l'octroi sans elle (INVALID_TRANSITION). Le refus et le retrait restent possibles sans vérification.", "Tranché", "Chef de projet", "Évite un badge accordé sur des données uniquement déclaratives", "Confirmer la règle avec la CCI-Togo lors de la recette", "15/10/2026"),
     ("A09", "10/09/2026", "Palette de l'application", "La charte de marque (Marine Encre #1C2751, Bleu Signal #6678F1, Barlow) et le design system produit (Marine #0B2B52, Signal #1769E8, Inter) diffèrent. L'application suit le design system produit (PT-001 = autorité visuelle) ; la charte régit le site public. À confirmer par le designer.", "Ouvert", "Designer UI/UX", "Cohérence visuelle entre application et site public", "Trancher dès la nomination du designer", "18/09/2026"),
-    ("A08", "09/09/2026", "Fournisseur IA (DealLens)", "Quel fournisseur, avec quelles clauses de confidentialité ?", "Ouvert", "Conseil juridique", "Bloque tout le lot V5", "Lancer la consultation dès V3", "09/04/2027"),
+    ("A08", "09/09/2026", "Fournisseur IA (DealLens)", "Quel fournisseur, avec quelles clauses de confidentialité ?", "Ouvert", "Conseil juridique", "Bloque tout le lot V5", "Consultation dès V2 ; échéance alignée sur J16, avant le début de V5", "15/01/2027"),
+    ("D05", "12/09/2026", "Audit de l'avancement et des tâches", "Suivi recalé sur le code et les preuves : tâches partielles réouvertes, socles V2 reconnus, exigences oubliées ajoutées. Dates de versions et dates prévues des tâches historiques conservées. Les pourcentages restent des estimations de charge, pas une réception produit.", "Tranché", "Revue technique à la demande du chef de projet", "Voir docs/BILAN_AVANCEMENT_2026-09-12.md ; charges nouvelles à revalider", "Valider le reste à faire, les responsables et la capacité lors de J01/J03", "18/09/2026"),
+    ("A16", "12/09/2026", "Prestataires email, SMS et paiement", "Confirmer les prestataires, les accès de test et le responsable de chaque intégration. Les adaptateurs factices ne valident pas un service réel.", "Ouvert", "M. Bruno", "Conditionne identité, notifications et facturation avant lancement", "Email/SMS dès V1 ; agrégateur principal et secours à cadrer pendant V2", "18/09/2026"),
 ]
 hD = ["ID", "Date", "Sujet", "Décision ou question", "Statut", "Décideur", "Impact", "Prochaine action", "Échéance"]
 for i, h in enumerate(hD):
@@ -1164,7 +1263,7 @@ wsG.freeze_panes = "I6"
 wsB = wb.create_sheet("Tableau_de_bord", 0)
 wsB.sheet_view.showGridLines = False
 wsB["B2"] = "DealPME : tableau de bord du projet"; wsB["B2"].font = F_TITLE
-wsB["B3"] = "Toutes les valeurs de cette page sont calculées. Pour mettre à jour le projet, modifier uniquement l'onglet Taches (statuts, % saisi, dates) et les onglets Jalons, Risques, Decisions."
+wsB["B3"] = "Audit du 12/09/2026 : avancement estimé pondéré par la charge, distinct d'une recette. Source persistante : devX/build_suivi.py. Le fichier ODS est une archive d'un ancien calendrier."
 wsB["B3"].font = F_SUB; wsB.merge_cells("B3:N3"); wsB["B3"].alignment = A_WRAP; wsB.row_dimensions[3].height = 28
 wsB["B4"] = "Date du jour"; wsB["C4"] = "=TODAY()"; wsB["C4"].number_format = "DD/MM/YYYY"
 wsB["E4"] = "Jours avant la démonstration V1"; wsB["G4"] = f"=Versions!E{V_FIRST}-TODAY()"
@@ -1419,8 +1518,8 @@ ROADMAP = {
                   "Data room chiffrée, filigranée, révocable et Q&R (V2)",
                   "Moteur d'honoraires et rétrocession CCI (V3)",
                   "Alerte & Rebond, billetterie et sponsoring Deal-Connect, rendez-vous mutuels, rapport post-événement, profil diaspora complet (V4)"],
-        "prerequis": "Équipe de développement confirmée (5 à 6 profils) ; réponse sur l'API CFE/RCCM ; designer UI/UX confirmé.",
-        "decision": "La démonstration RPS fait partie de V1. Sans équipe à 5 ou 6 profils, la démonstration RPS est le premier lot à retirer, avant le matching automatisé.",
+        "prerequis": "Capacité et responsables confirmés sur le reste à faire ; réponse sur l'API CFE/RCCM ; designer UI/UX ; cadrage Remo et fournisseurs email/SMS.",
+        "decision": "Conserver la démo RPS déjà implémentée. Priorité à la messagerie bidirectionnelle, l'audit durable, aux notifications, à la CI et aux preuves navigateur ; validation métier avant le 15/10.",
         "lots": ["Conception", "Fondations", "Auth et rôles", "Espace CCI-Togo", "Deal-Ready", "Dossier cédant", "Marketplace actifs", "Évaluation indicative", "Démonstration RPS", "Deal-Connect (Remo)", "Sécurité", "Frontend et design", "Finition frontend", "QA et livraison"],
     },
     "V2": {
@@ -1430,34 +1529,35 @@ ROADMAP = {
                    "Data room : arborescence OHADA, rendu serveur, filigrane dynamique, téléchargement contrôlé, révocation en moins de 60 s",
                    "Fils de questions-réponses par document"],
         "exclu": ["Négociation, LOI, audit d'acquisition et réalisation (V3)", "Génération documentaire LegalTech (V3)"],
-        "prerequis": "Modèle de données Deal et Organisation de V1 ; contrat avec le prestataire de signature qualifiée.",
-        "decision": "",
-        "lots": ["Conception", "Circuit RPS réel", "Signature électronique", "Data room", "Questions-réponses", "QA et sécurité"],
+        "prerequis": "V1 stabilisée ; identité documentaire et qualification ; RPS durci puis branché ; contrat PSC/PSAE et NDA revu juridiquement en V2.",
+        "decision": "Construire une tranche complète qualification > admission > NDA > T2 > document > révocation. Les tests IA exécutables restent en V5 ; leurs contrats sont préparés en V2.",
+        "lots": ["Conception", "Mise en relation", "Circuit RPS réel", "Signature électronique", "Data room", "Questions-réponses", "QA et sécurité"],
     },
     "V3": {
         "focus": "Ce qui rend une transaction réelle facturable et légalement défendable : négociation et réalisation, LegalTech OHADA, moteur de frais et rétrocession, support, fermeture des dix portes de conformité et durcissement de l'exploitation.",
         "inclus": ["Offre, contre-offre, LOI et registre des points ouverts d'audit d'acquisition",
                    "Réalisation documentée sans Deal-Pay natif, création automatique du FeeEvent",
                    "LegalTech OHADA : NDA, LOI, pacte simplifié, SPA, cession d'actifs, contrat de travail (droit togolais)",
-                   "Finance : barème de frais sous drapeau juridique, rétrocession CCI, journal de calcul recalculable, rapport trimestriel",
+                    "Finance : barème de frais sous drapeau juridique, rétrocession CCI, journal de calcul recalculable, rapport trimestriel",
+                    "Abonnements prépayés, grâce, factures NIF, paiements des services et rapprochement par rail (sans séquestre de cession)",
                    "Support et accès privilégiés, mode break-glass journalisé",
                    "Portes de conformité G1 à G10 : IPDCP, revues juridiques, DPO, pentest indépendant",
                    "Exploitation : supervision SLA 99,5 %, sauvegardes testées, procédure d'incident"],
-        "exclu": ["Deal-Experts (V4, sous réserve d'arbitrage)", "Modules réseau : Alerte & Rebond, Deal-Connect, Guichet Diaspora (V4)"],
-        "prerequis": "Des transactions peuvent atteindre CLOSED_REPORTED (V2) ; avis juridique écrit sur le barème de frais.",
+        "exclu": ["Module Deal-Experts complet (V4 ; articulation des missions antérieures en A04)", "Modules réseau : Alerte & Rebond, Deal-Connect, Guichet Diaspora (V4)"],
+        "prerequis": "Qualification, NDA, T2 et data room validés en V2 ; contractualisation paiement ; avis juridique écrit sur le barème. CLOSED_REPORTED est réalisé dans V3, pas un prérequis V2.",
         "decision": "Le barème de frais et la rétrocession ne s'activent qu'après avis juridique écrit, jamais par simple décision produit.",
-        "lots": ["Conception", "LegalTech OHADA", "Conformité fiscale", "Négociation", "Audit d'acquisition", "Réalisation", "Finance", "Support", "Portes de conformité", "Exploitation"],
+        "lots": ["Conception", "LegalTech OHADA", "Conformité fiscale", "Négociation", "Audit d'acquisition", "Réalisation", "Finance", "Facturation abonnements", "Support", "Portes de conformité", "Exploitation", "QA et livraison"],
     },
     "V4": {
         "focus": "Les modules réseau. Seul changement d'architecture notable : la brique de salons et rendez-vous virtuels est externalisée vers Remo.co plutôt que construite en propre.",
         "inclus": ["Alerte & Rebond : auto-diagnostic, cellule de crise confidentielle, listings d'actifs en difficulté, coupe-circuit",
                    "Deal-Connect : événements B2B via connecteur Remo.co ; DealPME gère inscriptions, billetterie, attribution et reporting",
                    "Guichet Diaspora : liste de suivi, rendez-vous sécurisé via Remo.co, contraintes transfrontalières, renvoi vers banque et conseil",
-                   "Deal-Experts : registre d'experts, routage, accès temporaire scopé (sous réserve de l'arbitrage P13)"],
+                    "Deal-Experts (P13 contractuel) : registre d'experts, routage, accès temporaire scopé"],
         "exclu": ["Mécanismes d'enchère en temps réel (non présumés contractuels)", "Tout conseil de change ou d'investissement fourni par la plateforme"],
         "prerequis": "Portes de conformité fermées (V3) ; cadrage écrit de l'intégration Remo.co.",
         "decision": "Remo.co est retenu. Le périmètre exact (SSO natif, webhooks de présence, marque blanche) dépend du plan Remo.co choisi.",
-        "lots": ["Conception", "Alerte & Rebond", "Actifs en difficulté", "Deal-Connect", "Guichet Diaspora", "Deal-Experts"],
+        "lots": ["Conception", "Alerte & Rebond", "Actifs en difficulté", "Deal-Connect", "Guichet Diaspora", "Deal-Experts", "QA et livraison"],
     },
     "V5": {
         "focus": "Le module le plus spécifié du corpus existant et pourtant le plus éloigné de la production : aucun fournisseur IA n'est engagé. Placé en dernier car le moins urgent contractuellement et le plus risqué techniquement.",
@@ -1614,7 +1714,9 @@ wsS.freeze_panes = "C6"
 wsGd = wb.create_sheet("Guide")
 title(wsGd, "Mode d'emploi du classeur")
 GUIDE = [
-    ("Principe", "L'onglet Taches est la seule source de vérité. Tout le reste (Modules, Versions, Processus, Jalons, Tableau de bord, Gantt) se recalcule automatiquement à partir des tâches."),
+    ("Principe", "L'onglet Taches est la source des calculs. La source persistante du classeur est devX/build_suivi.py : y reporter toute saisie avant régénération. DealPME_Suivi.ods est une archive obsolète avec un autre calendrier, pas un suivi actif."),
+    ("Audit du 12/09", "Voir docs/BILAN_AVANCEMENT_2026-09-12.md. Complétée = critère satisfait, pas simple présence de code. Les % des tâches en cours sont des estimations de travail ; les charges réalisées ne sont pas du temps consommé mesuré."),
+    ("Fin réelle", "Une tâche peut finir avant son début prévu. Ne jamais recopier une date planifiée future en fin réelle. Les anciennes dates futures ont été écartées et conservées en commentaire ; leur date effective reste à confirmer."),
     ("Mettre à jour une tâche", "Changer le Statut (liste déroulante). 'Complétée' = 100 %. Choisir le Responsable dans la liste des personnes inscrites dans l'onglet Equipe. Pour une tâche 'En cours', saisir un pourcentage dans '% saisi' si l'on veut être précis ; sinon 25 % s'applique par défaut (90 % pour 'En revue')."),
     ("Ajouter une tâche", "Écrire sur la première ligne vide de l'onglet Taches en renseignant au minimum ID, Version, Module, Tâche, Charge et Statut. Les formules des colonnes grises sont déjà en place jusqu'à la ligne 325. Le Gantt et tous les totaux la prennent en compte immédiatement."),
     ("Abandonner une tâche", "Mettre le statut 'Abandonnée' : la tâche sort des totaux de charge sans être supprimée (traçabilité)."),
@@ -1652,5 +1754,8 @@ tabcol = {"Tableau_de_bord": INK, "Presentation": INK, "Feuille_de_route": INK, 
 for n, c in tabcol.items():
     wb[n].sheet_properties.tabColor = c
 
+task_ids = {wsT[f"B{r}"].value for r in range(T_FIRST, T_FIRST + len(T))}
+assert len(task_ids) == len(T), "Identifiants de tâches en double"
+assert (AUDIT_REVIEW.keys() | AUDIT_CRITERIA.keys() | VERIFIED_COMPLETION_DATES.keys()) <= task_ids, "Référence d'audit sans tâche"
 wb.save(OUT)
 print("OK", OUT, "tâches:", len(T), "charges:", totals, "total j/p:", sum(totals.values()))

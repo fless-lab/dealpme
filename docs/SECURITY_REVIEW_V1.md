@@ -1,5 +1,11 @@
 # Revue de sécurité interne V1
 
+> Actualisation du 12/09/2026 : les résultats ci-dessous sont historiques, pas une nouvelle certification.
+> Les tests unitaires et l'audit de dépendances ont été rejoués ; la pile réelle était arrêtée.
+> La revue a identifié une persistance d'audit non garantie et un RPS encore à durcir :
+> [bilan et actions V1-094 / V2-044](BILAN_AVANCEMENT_2026-09-12.md).
+> L'absence de contrôles morts et la recette navigateur restent à établir.
+
 Périmètre : API plateforme, service RPS, bases core / vdr / rps, connecteurs (faux), jeu de démonstration.
 Référence : cahier des charges v0 (sections 3, 10 et annexe C), registre de sécurité du classeur de suivi (onglet Securite).
 Méthode : contrôle de chaque point par un test négatif rejouable (`devX/smoke_v1.sh`, 40 contrôles) ou par une tentative

@@ -5,7 +5,7 @@ avant midi, et sache où se trouve chaque chose l'après-midi.
 
 ## Ce qu'il faut sur le poste
 
-Node 22 ou plus, npm 10, Docker avec Compose, git avec git-lfs (les archives de conception sont en LFS).
+Node 24 ou plus (aligné sur `package.json` et la CI), npm 10 ou plus, Docker avec Compose, git avec git-lfs (les archives de conception sont en LFS).
 Rien d'autre : pas de base installée localement, pas de client S3, pas de kit vendeur.
 
 ## Démarrer, la première fois
@@ -109,12 +109,25 @@ curl -s localhost:4000/v1/health             # vie du processus, erreurs serveur
 curl -s localhost:4000/v1/ready              # bases et Redis joignables
 ```
 
-Les emails partis en local sont visibles sur http://localhost:8025 (Mailpit). Les objets stockés sont dans la
-console MinIO, http://localhost:9001.
+Mailpit est disponible sur http://localhost:8025, mais au 12/09/2026 l'identité utilise encore le faux
+connecteur email : les codes sont journalisés en développement, aucun email n'est livré à Mailpit. Le
+branchement SMTP est suivi en V1-093. Les objets stockés sont dans la console MinIO, http://localhost:9001.
 
 ## Suivi du projet
 
 `DealPME_Suivi.xlsx` à la racine est le tableau de bord partagé : tâches, versions, jalons, risques, décisions,
 registre de sécurité. Il est **généré**, jamais édité à la main : modifiez `devX/build_suivi.py` puis relancez
 `python3 devX/build_suivi.py`. La colonne des dates de fin réelle sert au suivi ; c'est le chef de projet qui décide
-de l'afficher ou non avant une présentation.
+de l'afficher ou non avant une présentation. Une date réelle ne doit jamais être remplacée par une date
+prévue future. Les estimations d'avancement ne valent pas recette fonctionnelle.
+
+`DealPME_Suivi.ods` est une **archive obsolète** (172 tâches, ancien calendrier jusqu'en juin 2027),
+conservée avec ses dates d'origine. Le `.xlsx` et son générateur portent le suivi actif.
+Dernière revue : [bilan du 12/09/2026](BILAN_AVANCEMENT_2026-09-12.md).
+
+Dans le générateur, `AUDIT_REVIEW` porte les statuts révisés par identifiant et prime sur l'historique
+`PROGRESS` ; `AUDIT_CRITERIA` porte les critères précisés. À la prochaine revue, actualiser ces entrées
+avec leurs preuves et la date `AUDIT_DATE`, puis régénérer le classeur. Les dates de réalisation attestées
+se saisissent dans `VERIFIED_COMPLETION_DATES`. L'historique `PROGRESS` et son seuil fixe
+`LEGACY_PROGRESS_CUTOFF` ne doivent pas être avancés pour transformer d'anciennes prévisions en faits.
+Les nouvelles tâches sont ajoutées en fin de liste afin de conserver les identifiants existants.
